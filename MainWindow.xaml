@@ -15,6 +15,6 @@
         <Label x:Name="label_list" Content="View and modify the anime list.&#xA;" HorizontalAlignment="Center" Margin="257,88,0,0" VerticalAlignment="Top" FontSize="18.667" Height="43"/>
         <Label x:Name="label_settings" Content="Change and modify profile settings.&#xA;" HorizontalAlignment="Center" Margin="257,162,0,0" VerticalAlignment="Top" FontSize="18.667" Height="43"/>
         <Button x:Name="button_folder" Content="Open folder" HorizontalAlignment="Left" Margin="10,237,0,0" VerticalAlignment="Top" Width="75" Click="button_folder_Click"/>
-        <Button x:Name="button_playlist" Content="Create playlist" HorizontalAlignment="Left" Margin="97,237,0,0" VerticalAlignment="Top" Width="86"/>
+        <Button x:Name="button_playlist" Content="Create playlist" HorizontalAlignment="Left" Margin="97,237,0,0" VerticalAlignment="Top" Width="86" Click="button_playlist_Click"/>
     </Grid>
 </Window>
