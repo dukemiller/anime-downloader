@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,6 +21,10 @@ namespace anime_downloader {
     public partial class MainWindow : Window {
         public MainWindow() {
             InitializeComponent();
+        }
+
+        private void button_folder_Click(object sender, RoutedEventArgs e) {
+            Process.Start(@"D:\Output\anime downloader");
         }
     }
 }

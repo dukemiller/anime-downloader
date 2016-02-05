@@ -5,17 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:anime_downloader"
         mc:Ignorable="d"
-        Title="MainWindow" Height="305.334" Width="706.999">
+        Title="Anime Downloader" Height="310" Width="710">
     <Grid>
 
-        <Button x:Name="button" Content="Check for latest" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="226" Height="43" FontSize="24"/>
-        <Label x:Name="label" Content="Search for a single episode for every airing anime.&#xD;&#xA;" HorizontalAlignment="Center" Margin="257,10,0,0" VerticalAlignment="Top" FontSize="18.667" Height="43"/>
-        <Button x:Name="button_Copy" Content="Anime List" HorizontalAlignment="Left" Margin="10,88,0,0" VerticalAlignment="Top" Width="226" Height="43" FontSize="24"/>
-        <Button x:Name="button_Copy1" Content="Settings &amp; Options" HorizontalAlignment="Left" Margin="10,162,0,0" VerticalAlignment="Top" Width="226" Height="43" FontSize="24"/>
-        <Label x:Name="label_Copy" Content="View and modify the anime list.&#xA;" HorizontalAlignment="Center" Margin="257,88,0,0" VerticalAlignment="Top" FontSize="18.667" Height="43"/>
-        <Label x:Name="label_Copy1" Content="Change and modify profile settings.&#xA;" HorizontalAlignment="Center" Margin="257,162,0,0" VerticalAlignment="Top" FontSize="18.667" Height="43"/>
-        <Button x:Name="button1" Content="Open folder" HorizontalAlignment="Left" Margin="10,237,0,0" VerticalAlignment="Top" Width="75"/>
-        <Button x:Name="button1_Copy" Content="Create playlist" HorizontalAlignment="Left" Margin="97,237,0,0" VerticalAlignment="Top" Width="86"/>
-
+        <Button x:Name="button_check" Content="Check for latest" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="226" Height="43" FontSize="24"/>
+        <Label x:Name="label_check" Content="Search for a single episode for every airing anime.&#xD;&#xA;" HorizontalAlignment="Center" Margin="257,10,0,0" VerticalAlignment="Top" FontSize="18.667" Height="43"/>
+        <Button x:Name="button_list" Content="Anime List" HorizontalAlignment="Left" Margin="10,88,0,0" VerticalAlignment="Top" Width="226" Height="43" FontSize="24"/>
+        <Button x:Name="button_settings" Content="Settings &amp; Options" HorizontalAlignment="Left" Margin="10,162,0,0" VerticalAlignment="Top" Width="226" Height="43" FontSize="24"/>
+        <Label x:Name="label_list" Content="View and modify the anime list.&#xA;" HorizontalAlignment="Center" Margin="257,88,0,0" VerticalAlignment="Top" FontSize="18.667" Height="43"/>
+        <Label x:Name="label_settings" Content="Change and modify profile settings.&#xA;" HorizontalAlignment="Center" Margin="257,162,0,0" VerticalAlignment="Top" FontSize="18.667" Height="43"/>
+        <Button x:Name="button_folder" Content="Open folder" HorizontalAlignment="Left" Margin="10,237,0,0" VerticalAlignment="Top" Width="75" Click="button_folder_Click"/>
+        <Button x:Name="button_playlist" Content="Create playlist" HorizontalAlignment="Left" Margin="97,237,0,0" VerticalAlignment="Top" Width="86"/>
     </Grid>
 </Window>
