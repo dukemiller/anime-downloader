@@ -29,12 +29,16 @@ namespace anime_downloader {
         private string folderTorrent;
         private string programUtorrent;
         private string[] subgroups;
+        private UserControl currentDisplay;
 
         public MainWindow() {
             InitializeComponent();
             loadSettings();
             updateTable();
-            mainGrid.Visibility = Visibility.Visible;
+
+            currentDisplay = new UserControls.Home();
+            display.Children.Add(currentDisplay);
+            // mainGrid.Visibility = Visibility.Visible;
         }
 
         private void button_folder_Click(object sender, RoutedEventArgs e) {
@@ -53,10 +57,6 @@ namespace anime_downloader {
             }
         }
 
-        private void button_settings_Click(object sender, RoutedEventArgs e) {
-   
-        }
-        
         private void button_open_executing_Click(object sender, RoutedEventArgs e) {
             Process.Start(".");
         }
@@ -144,7 +144,10 @@ namespace anime_downloader {
 
         private void updateTable() {
             var anime = XDocument.Load("anime.xml").Root;
-            dataGrid.DataContext = anime;
+            var table = currentDisplay as UserControls.AnimeList;
+            if (table != null)
+                table.dataGrid.DataContext = anime;
+            //dataGrid.DataContext = anime;
         }
 
         private void button_test_add_Click(object sender, RoutedEventArgs e) {
@@ -156,17 +159,69 @@ namespace anime_downloader {
             removeAnime("Fairy Tail Zero");
             updateTable();
         }
+        
+        // anime list
+        private void button_list_Click(object sender, RoutedEventArgs e) {
+            display.Children.Clear();
+            currentDisplay = new UserControls.AnimeList();
+            display.Children.Add(currentDisplay);
+            updateTable();
+        }
 
-        private void button_visibility_Click(object sender, RoutedEventArgs e) {
-            dataGrid.Visibility = dataGrid.Visibility == Visibility.Hidden ?
-                Visibility.Visible : Visibility.Hidden;
+        // home
+        private void button_home_Click(object sender, RoutedEventArgs e) {
+            display.Children.Clear();
+            currentDisplay = new UserControls.Home();
+            display.Children.Add(currentDisplay);
+        }
+        
+        // settings
+        private void button_settings_Click(object sender, RoutedEventArgs e) {
+            display.Children.Clear();
+            currentDisplay = new UserControls.Settings();
+            display.Children.Add(currentDisplay);
+
+            var settings = currentDisplay as UserControls.Settings;
+            if (settings != null) {
+                settings.base_textbox.Text = folderAnime;
+                settings.subgroups_textbox.Text = String.Join(", ", subgroups);
+                settings.download_textbox.Text = programUtorrent;
+                settings.torrent_textbox.Text = folderTorrent;
+                settings.button_apply_changes.Click += new RoutedEventHandler(button_apply_settings_Click);
+                // settings.only_whitelist_radio.Checked = 
+            }
+
+
+        }
+
+        private void button_apply_settings_Click(object sender, RoutedEventArgs e) {
+            var settings = currentDisplay as UserControls.Settings;
+            if (settings != null) {
+
+                string[] subgroups = settings.subgroups_textbox.Text.Split(new string[] {", "}, StringSplitOptions.None);
+
+                var subgroup = new XElement("subgroup");
+                foreach (String sub in subgroups)
+                    subgroup.Add(new XElement("name", sub));
+
+                XDocument doc =
+                    new XDocument(
+                        new XDeclaration("1.0", "utf-8", "yes"),
+                        new XComment("User profile settings"),
+                        new XElement("settings",
+                            new XElement("name", "Duke"),
+                            new XElement("path",
+                                new XElement("base", settings.base_textbox.Text),
+                                new XElement("utorrent", settings.download_textbox.Text),
+                                new XElement("torrents", settings.torrent_textbox.Text)),
+                            subgroup,
+                            new XElement("flag",
+                                new XElement("only-whitelisted-subs", settings.only_whitelist_radio.IsChecked)))
+                        );
+
+                doc.Save("settings.xml");
+                loadSettings();
+            }
         }
     }
-}
-
-public class Anime {
-    public string name { get; set; }
-    public string episode { get; set; }
-    public bool airing { get; set; }
-    public string status { get; set; }
 }
