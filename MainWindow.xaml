@@ -16,6 +16,15 @@
         <Label x:Name="label_settings" Content="Change and modify profile settings.&#xA;" HorizontalAlignment="Center" Margin="257,162,0,0" VerticalAlignment="Top" FontSize="18.667" Height="43"/>
         <Button x:Name="button_folder" Content="Open folder" HorizontalAlignment="Left" Margin="10,237,0,0" VerticalAlignment="Top" Width="75" Click="button_folder_Click"/>
         <Button x:Name="button_playlist" Content="Create playlist" HorizontalAlignment="Left" Margin="97,237,0,0" VerticalAlignment="Top" Width="86" Click="button_playlist_Click"/>
-        <Button x:Name="button" Content="test" HorizontalAlignment="Left" Margin="201,237,0,0" VerticalAlignment="Top" Width="75" Click="button_Click"/>
+        <Button x:Name="button" Content="test" HorizontalAlignment="Left" Margin="335,237,0,0" VerticalAlignment="Top" Width="74" Click="button_Click"/>
+        <Button x:Name="button_open_executing" Content="Open Executing Folder" HorizontalAlignment="Left" Margin="197,237,0,0" VerticalAlignment="Top" Width="126" Click="button_open_executing_Click"/>
+        <DataGrid x:Name="dataGrid" ItemsSource="{Binding Path=Elements[show]}"  AutoGenerateColumns="False" HorizontalAlignment="Center" Margin="10,10,12.5,52.333" VerticalAlignment="Center" Height="216.667" Width="679.5" CanUserResizeRows="False" UseLayoutRounding="False" SelectionUnit="Cell" IsReadOnly="True" HorizontalContentAlignment="Center">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Width="300" Binding="{Binding Path=Element[name].Value}"/>
+                <DataGridTextColumn Header="Episode" Binding="{Binding Path=Element[episode].Value}"/>
+                <DataGridTextColumn Header="Status" Width="200" Binding="{Binding Path=Element[status].Value}"/>
+                <DataGridTextColumn Header="Airing" Binding="{Binding Path=Element[airing].Value}"/>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </Window>

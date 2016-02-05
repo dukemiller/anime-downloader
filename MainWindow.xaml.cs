@@ -24,7 +24,11 @@ namespace anime_downloader {
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window {
-        String animeFolder;
+
+        private string folderAnime;
+        private string folderTorrent;
+        private string programUtorrent;
+        private string[] subgroups;
 
         public MainWindow() {
             InitializeComponent();
@@ -32,15 +36,15 @@ namespace anime_downloader {
         }
 
         private void button_folder_Click(object sender, RoutedEventArgs e) {
-            Process.Start(animeFolder);
+            Process.Start(folderAnime);
         }
 
         private void button_playlist_Click(object sender, RoutedEventArgs e) {
-            string[] videos = Directory.GetDirectories(animeFolder)
+            string[] videos = Directory.GetDirectories(folderAnime)
                 .Where(s => !s.EndsWith("torrents") && !s.EndsWith("Grace") && !s.EndsWith("Watched"))
                 .SelectMany(f => Directory.GetFiles(f))
                 .ToArray();
-            using (StreamWriter file = new StreamWriter(path: animeFolder + @"\playlist.m3u", 
+            using (StreamWriter file = new StreamWriter(path: folderAnime + @"\playlist.m3u", 
                                                         append: false)) {
                 foreach(String video in videos)
                     file.WriteLine(video);
@@ -48,40 +52,148 @@ namespace anime_downloader {
         }
 
         private void button_settings_Click(object sender, RoutedEventArgs e) {
-            
-            XDocument doc = 
-                new XDocument(
-                    new XDeclaration("1.0", "utf-8", "yes"),
-                    new XComment("User profile settings"),
-                    new XElement("settings",
-                        new XElement("name", "Duke"),
-                        new XElement("path",
-                            new XElement("base", @"D:\Output\anime downloader"),
-                            new XElement("utorrent", @"C:\Program Files (x86)\uTorrent\uTorrent.exe"),
-                            new XElement("torrents", @"D:\Output\anime downloader\torrents")),
-                        new XElement("subgroup",
-                            new XElement("name", "BakedFish"),
-                            new XElement("name", "HorribleSubs"),
-                            new XElement("name", "DeadFish"),
-                            new XElement("name", "Pyon"),
-                            new XElement("name", "kdfss")),
-                        new XElement("flag",
-                            new XElement("only-whitelisted-subs", "true")))
-                );
-
-            doc.Save("settings.xml");
+   
         }
 
         private void button_Click(object sender, RoutedEventArgs e) {
+
+            dataGrid.Visibility = dataGrid.Visibility == Visibility.Hidden ? 
+                Visibility.Visible : Visibility.Hidden;
+            // removeAnime("Fairy Tail Zero");
             //var path = settings.Root.Elements().Select(x => x.Element("base-path")).First().ToString();
             //MessageBox.Show(path);
             // XmlTextReader reader = new XmlTextReader("settings.xml");
             //reader.Read()
         }
 
-        private void loadSettings() {
-            var settings = XDocument.Load("settings.xml");
-            animeFolder = settings.Root.Element("path").Element("base").Value;
+        private void button_open_executing_Click(object sender, RoutedEventArgs e) {
+            Process.Start(".");
         }
+
+        private void addAnime() {
+            XDocument anime = XDocument.Load("anime.xml");
+
+            var element = new XElement("show",
+                new XElement("name", "Fairy Tail Zero"),
+                new XElement("episode", "04"),
+                new XElement("status", "Watching"),
+                new XElement("resolution", "720"),
+                new XElement("airing", true),
+                new XElement("updated", false),
+                new XElement("name-strict", true),
+                new XElement("last-downloaded", "2016-02-04"));
+
+            anime.Element("anime").Add(element);
+            anime.Save("anime.xml");
+        }
+
+        private void removeAnime(string name) {
+            XDocument anime = XDocument.Load("anime.xml");
+            var result = anime.Root.Elements().Where(x => x.Element("name").Value == name).FirstOrDefault();
+            if (result != null) {
+                result.Remove();
+                anime.Save("anime.xml");
+            }
+        }
+
+        private void createAnimeXML() {
+            XDocument doc =
+                    new XDocument(
+                        new XDeclaration("1.0", "utf-8", "yes"),
+                        new XComment("Anime mockup"),
+                        new XElement("anime",
+                            new XElement("show",
+                                new XElement("name", "Fairy Tail Zero"),
+                                new XElement("episode", "04"),
+                                new XElement("status", "Watching"),
+                                new XElement("resolution", "720"),
+                                new XElement("airing", true),
+                                new XElement("updated", false),
+                                new XElement("name-strict", true),
+                                new XElement("last-downloaded", "2016-02-04")))
+                        );
+
+            doc.Save("anime.xml");
+        }
+
+        private void createSettingsXML() {
+            XDocument doc =
+                    new XDocument(
+                        new XDeclaration("1.0", "utf-8", "yes"),
+                        new XComment("User profile settings"),
+                        new XElement("settings",
+                            new XElement("name", "Duke"),
+                            new XElement("path",
+                                new XElement("base", @"D:\Output\anime downloader"),
+                                new XElement("utorrent", @"C:\Program Files (x86)\uTorrent\uTorrent.exe"),
+                                new XElement("torrents", @"D:\Output\anime downloader\torrents")),
+                            new XElement("subgroup",
+                                new XElement("name", "BakedFish"),
+                                new XElement("name", "HorribleSubs"),
+                                new XElement("name", "DeadFish"),
+                                new XElement("name", "Pyon"),
+                                new XElement("name", "kdfss")),
+                            new XElement("flag",
+                                new XElement("only-whitelisted-subs", "true")))
+                        );
+
+            doc.Save("settings.xml");
+        }
+
+        private void loadSettings() {
+            if (!File.Exists("settings.xml"))
+                createSettingsXML();
+
+
+            XDocument settings = XDocument.Load("settings.xml");
+            folderAnime = settings.Root.Element("path").Element("base").Value;
+            folderTorrent = settings.Root.Element("path").Element("torrents").Value;
+            programUtorrent = settings.Root.Element("path").Element("utorrent").Value;
+            subgroups = settings.Root.Elements("subgroup").Elements("name").Select(x => x.Value).ToArray();
+
+            var anime = XDocument.Load("anime.xml").Root;
+            dataGrid.DataContext = anime;
+
+            /*
+            foreach (var a in anime.Root.Elements()) {
+                dataGrid.Items.Add(new Anime {
+                    name = a.Element("name").Value,
+                    episode = a.Element("episode").Value,
+                    airing = Boolean.Parse(a.Element("airing").Value),
+                    status = a.Element("status").Value
+                });
+            }
+            */
+
+
+            /*
+            dataGrid.Items.Add(new Anime{ name = "1Hey", episode = "04", airing = true, status = "Watching"});
+            dataGrid.Items.Add(new Anime{ name = "2Hey", episode = "03", airing = true, status = "Watching" });
+            dataGrid.Items.Add(new Anime{ name = "3Hey", episode = "02", airing = true, status = "Watching" });
+            dataGrid.Items.Add(new Anime { name = "3Hey", episode = "02", airing = true, status = "Watching" });
+            dataGrid.Items.Add(new Anime { name = "3Hey", episode = "02", airing = true, status = "Watching" });
+            dataGrid.Items.Add(new Anime { name = "3Hey", episode = "02", airing = true, status = "Watching" });
+            dataGrid.Items.Add(new Anime { name = "3Hey", episode = "02", airing = true, status = "Watching" });
+            dataGrid.Items.Add(new Anime { name = "3Hey", episode = "02", airing = true, status = "Watching" });
+            dataGrid.Items.Add(new Anime { name = "3Hey", episode = "02", airing = true, status = "Watching" });
+            dataGrid.Items.Add(new Anime { name = "3Hey", episode = "02", airing = true, status = "Watching" });
+            dataGrid.Items.Add(new Anime { name = "3Hey", episode = "02", airing = true, status = "Watching" });
+            dataGrid.Items.Add(new Anime { name = "3Hey", episode = "02", airing = true, status = "Watching" });
+            dataGrid.Items.Add(new Anime { name = "3Hey", episode = "02", airing = true, status = "Watching" });
+            dataGrid.Items.Add(new Anime { name = "3Hey", episode = "02", airing = true, status = "Watching" });
+            dataGrid.Items.Add(new Anime { name = "3Hey", episode = "02", airing = true, status = "Watching" });
+            dataGrid.Items.Add(new Anime { name = "3Hey", episode = "02", airing = true, status = "Watching" });
+            dataGrid.Items.Add(new Anime { name = "3Hey", episode = "02", airing = true, status = "Watching" });
+            dataGrid.Items.Add(new Anime { name = "3Hey", episode = "02", airing = true, status = "Watching" });
+            */
+        }
+
     }
+}
+
+public class Anime {
+    public string name { get; set; }
+    public string episode { get; set; }
+    public bool airing { get; set; }
+    public string status { get; set; }
 }
