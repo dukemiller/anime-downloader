@@ -34,20 +34,15 @@ namespace anime_downloader {
         }
 
         private void button_playlist_Click(object sender, RoutedEventArgs e) {
-            string[] folders = Directory.GetDirectories(animeFolder)
+            string[] videos = Directory.GetDirectories(animeFolder)
                 .Where(s => !s.EndsWith("torrents") && !s.EndsWith("Grace") && !s.EndsWith("Watched"))
+                .SelectMany(f => Directory.GetFiles(f))
                 .ToArray();
-
             using (StreamWriter file = new StreamWriter(path: animeFolder + @"\playlist.m3u", 
                                                         append: false)) {
-                foreach(String folder in folders)
-                    file.WriteLine(String.Join("\n", Directory.GetFiles(folder)));
+                foreach(String video in videos)
+                    file.WriteLine(video);
             }
-
-            // MessageBox.Show(String.Join(", ", folders));
-
-            // System.Windows.MessageBox.Show(String.Join(", ", ));
-            // Directory.GetDirectories(animeFolder);
         }
     }
 }
