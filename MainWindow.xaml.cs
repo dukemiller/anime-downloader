@@ -14,6 +14,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Xml.Linq;
+using System.Xml;
+
 
 namespace anime_downloader {
 
@@ -25,8 +28,7 @@ namespace anime_downloader {
 
         public MainWindow() {
             InitializeComponent();
-
-            animeFolder = @"D:\Output\anime downloader";
+            loadSettings();
         }
 
         private void button_folder_Click(object sender, RoutedEventArgs e) {
@@ -43,6 +45,43 @@ namespace anime_downloader {
                 foreach(String video in videos)
                     file.WriteLine(video);
             }
+        }
+
+        private void button_settings_Click(object sender, RoutedEventArgs e) {
+            
+            XDocument doc = 
+                new XDocument(
+                    new XDeclaration("1.0", "utf-8", "yes"),
+                    new XComment("User profile settings"),
+                    new XElement("settings",
+                        new XElement("name", "Duke"),
+                        new XElement("path",
+                            new XElement("base", @"D:\Output\anime downloader"),
+                            new XElement("utorrent", @"C:\Program Files (x86)\uTorrent\uTorrent.exe"),
+                            new XElement("torrents", @"D:\Output\anime downloader\torrents")),
+                        new XElement("subgroup",
+                            new XElement("name", "BakedFish"),
+                            new XElement("name", "HorribleSubs"),
+                            new XElement("name", "DeadFish"),
+                            new XElement("name", "Pyon"),
+                            new XElement("name", "kdfss")),
+                        new XElement("flag",
+                            new XElement("only-whitelisted-subs", "true")))
+                );
+
+            doc.Save("settings.xml");
+        }
+
+        private void button_Click(object sender, RoutedEventArgs e) {
+            //var path = settings.Root.Elements().Select(x => x.Element("base-path")).First().ToString();
+            //MessageBox.Show(path);
+            // XmlTextReader reader = new XmlTextReader("settings.xml");
+            //reader.Read()
+        }
+
+        private void loadSettings() {
+            var settings = XDocument.Load("settings.xml");
+            animeFolder = settings.Root.Element("path").Element("base").Value;
         }
     }
 }
