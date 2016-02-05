@@ -6,8 +6,7 @@
         xmlns:local="clr-namespace:anime_downloader"
         mc:Ignorable="d"
         Title="Anime Downloader" Height="310" Width="710">
-    <Grid>
-
+    <Grid x:Name="mainGrid">
         <Button x:Name="button_check" Content="Check for latest" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="226" Height="43" FontSize="24"/>
         <Label x:Name="label_check" Content="Search for a single episode for every airing anime.&#xD;&#xA;" HorizontalAlignment="Center" Margin="257,10,0,0" VerticalAlignment="Top" FontSize="18.667" Height="43"/>
         <Button x:Name="button_list" Content="Anime List" HorizontalAlignment="Left" Margin="10,88,0,0" VerticalAlignment="Top" Width="226" Height="43" FontSize="24"/>
@@ -16,9 +15,9 @@
         <Label x:Name="label_settings" Content="Change and modify profile settings.&#xA;" HorizontalAlignment="Center" Margin="257,162,0,0" VerticalAlignment="Top" FontSize="18.667" Height="43"/>
         <Button x:Name="button_folder" Content="Open folder" HorizontalAlignment="Left" Margin="10,237,0,0" VerticalAlignment="Top" Width="75" Click="button_folder_Click"/>
         <Button x:Name="button_playlist" Content="Create playlist" HorizontalAlignment="Left" Margin="97,237,0,0" VerticalAlignment="Top" Width="86" Click="button_playlist_Click"/>
-        <Button x:Name="button" Content="test" HorizontalAlignment="Left" Margin="335,237,0,0" VerticalAlignment="Top" Width="74" Click="button_Click"/>
+        <Button x:Name="button_visibility" Content="Toggle Visibility" HorizontalAlignment="Left" Margin="335,237,0,0" VerticalAlignment="Top" Width="94" Click="button_visibility_Click"/>
         <Button x:Name="button_open_executing" Content="Open Executing Folder" HorizontalAlignment="Left" Margin="197,237,0,0" VerticalAlignment="Top" Width="126" Click="button_open_executing_Click"/>
-        <DataGrid x:Name="dataGrid" ItemsSource="{Binding Path=Elements[show]}"  AutoGenerateColumns="False" HorizontalAlignment="Center" Margin="10,10,12.5,52.333" VerticalAlignment="Center" Height="216.667" Width="679.5" CanUserResizeRows="False" UseLayoutRounding="False" SelectionUnit="Cell" IsReadOnly="True" HorizontalContentAlignment="Center">
+        <DataGrid x:Name="dataGrid" ItemsSource="{Binding Path=Elements[show]}"  AutoGenerateColumns="False" HorizontalAlignment="Center" Margin="10,10,12.5,52.333" VerticalAlignment="Center" Height="216.667" Width="679.5" CanUserResizeRows="False" UseLayoutRounding="False" SelectionUnit="Cell" IsReadOnly="True" HorizontalContentAlignment="Center" Visibility="Hidden">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Width="300" Binding="{Binding Path=Element[name].Value}"/>
                 <DataGridTextColumn Header="Episode" Binding="{Binding Path=Element[episode].Value}"/>
@@ -26,5 +25,8 @@
                 <DataGridTextColumn Header="Airing" Binding="{Binding Path=Element[airing].Value}"/>
             </DataGrid.Columns>
         </DataGrid>
+        <Button x:Name="button_test_add" Content="test add" HorizontalAlignment="Left" Margin="526,237,0,0" VerticalAlignment="Top" Width="76" Click="button_test_add_Click"/>
+        <Button x:Name="button_test_delete" Content="test delete" HorizontalAlignment="Left" Margin="614,237,0,0" VerticalAlignment="Top" Width="76" Click="button_test_delete_Click"/>
     </Grid>
 </Window>
+

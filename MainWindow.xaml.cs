@@ -33,6 +33,8 @@ namespace anime_downloader {
         public MainWindow() {
             InitializeComponent();
             loadSettings();
+            updateTable();
+            mainGrid.Visibility = Visibility.Visible;
         }
 
         private void button_folder_Click(object sender, RoutedEventArgs e) {
@@ -54,18 +56,7 @@ namespace anime_downloader {
         private void button_settings_Click(object sender, RoutedEventArgs e) {
    
         }
-
-        private void button_Click(object sender, RoutedEventArgs e) {
-
-            dataGrid.Visibility = dataGrid.Visibility == Visibility.Hidden ? 
-                Visibility.Visible : Visibility.Hidden;
-            // removeAnime("Fairy Tail Zero");
-            //var path = settings.Root.Elements().Select(x => x.Element("base-path")).First().ToString();
-            //MessageBox.Show(path);
-            // XmlTextReader reader = new XmlTextReader("settings.xml");
-            //reader.Read()
-        }
-
+        
         private void button_open_executing_Click(object sender, RoutedEventArgs e) {
             Process.Start(".");
         }
@@ -143,51 +134,33 @@ namespace anime_downloader {
         private void loadSettings() {
             if (!File.Exists("settings.xml"))
                 createSettingsXML();
-
-
+            
             XDocument settings = XDocument.Load("settings.xml");
             folderAnime = settings.Root.Element("path").Element("base").Value;
             folderTorrent = settings.Root.Element("path").Element("torrents").Value;
             programUtorrent = settings.Root.Element("path").Element("utorrent").Value;
             subgroups = settings.Root.Elements("subgroup").Elements("name").Select(x => x.Value).ToArray();
-
-            var anime = XDocument.Load("anime.xml").Root;
-            dataGrid.DataContext = anime;
-
-            /*
-            foreach (var a in anime.Root.Elements()) {
-                dataGrid.Items.Add(new Anime {
-                    name = a.Element("name").Value,
-                    episode = a.Element("episode").Value,
-                    airing = Boolean.Parse(a.Element("airing").Value),
-                    status = a.Element("status").Value
-                });
-            }
-            */
-
-
-            /*
-            dataGrid.Items.Add(new Anime{ name = "1Hey", episode = "04", airing = true, status = "Watching"});
-            dataGrid.Items.Add(new Anime{ name = "2Hey", episode = "03", airing = true, status = "Watching" });
-            dataGrid.Items.Add(new Anime{ name = "3Hey", episode = "02", airing = true, status = "Watching" });
-            dataGrid.Items.Add(new Anime { name = "3Hey", episode = "02", airing = true, status = "Watching" });
-            dataGrid.Items.Add(new Anime { name = "3Hey", episode = "02", airing = true, status = "Watching" });
-            dataGrid.Items.Add(new Anime { name = "3Hey", episode = "02", airing = true, status = "Watching" });
-            dataGrid.Items.Add(new Anime { name = "3Hey", episode = "02", airing = true, status = "Watching" });
-            dataGrid.Items.Add(new Anime { name = "3Hey", episode = "02", airing = true, status = "Watching" });
-            dataGrid.Items.Add(new Anime { name = "3Hey", episode = "02", airing = true, status = "Watching" });
-            dataGrid.Items.Add(new Anime { name = "3Hey", episode = "02", airing = true, status = "Watching" });
-            dataGrid.Items.Add(new Anime { name = "3Hey", episode = "02", airing = true, status = "Watching" });
-            dataGrid.Items.Add(new Anime { name = "3Hey", episode = "02", airing = true, status = "Watching" });
-            dataGrid.Items.Add(new Anime { name = "3Hey", episode = "02", airing = true, status = "Watching" });
-            dataGrid.Items.Add(new Anime { name = "3Hey", episode = "02", airing = true, status = "Watching" });
-            dataGrid.Items.Add(new Anime { name = "3Hey", episode = "02", airing = true, status = "Watching" });
-            dataGrid.Items.Add(new Anime { name = "3Hey", episode = "02", airing = true, status = "Watching" });
-            dataGrid.Items.Add(new Anime { name = "3Hey", episode = "02", airing = true, status = "Watching" });
-            dataGrid.Items.Add(new Anime { name = "3Hey", episode = "02", airing = true, status = "Watching" });
-            */
         }
 
+        private void updateTable() {
+            var anime = XDocument.Load("anime.xml").Root;
+            dataGrid.DataContext = anime;
+        }
+
+        private void button_test_add_Click(object sender, RoutedEventArgs e) {
+            addAnime();
+            updateTable();
+        }
+
+        private void button_test_delete_Click(object sender, RoutedEventArgs e) {
+            removeAnime("Fairy Tail Zero");
+            updateTable();
+        }
+
+        private void button_visibility_Click(object sender, RoutedEventArgs e) {
+            dataGrid.Visibility = dataGrid.Visibility == Visibility.Hidden ?
+                Visibility.Visible : Visibility.Hidden;
+        }
     }
 }
 
