@@ -19,7 +19,6 @@
         <Grid x:Name="display" Width="650" Height="330" HorizontalAlignment="Left" Margin="241,10,0,0" VerticalAlignment="Top"/>
         
         <Button x:Name="button_home" Content="Home" HorizontalAlignment="Left" Margin="10,10,0,0" FontSize="24" VerticalAlignment="Top" Width="226" Click="button_home_Click" Height="43"/>
-        <Button x:Name="button_add_new" Content="Add New" HorizontalAlignment="Left" Margin="151,320,0,0" VerticalAlignment="Top" Width="75" Click="button_add_new_Click"/>
     </Grid>
 
 </Window>

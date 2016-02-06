@@ -61,6 +61,8 @@ namespace anime_downloader {
         private void button_open_executing_Click(object sender, RoutedEventArgs e) {
             Process.Start(".");
         }
+        
+        // Prototyping 
 
         private void addAnime() {
             XDocument anime = XDocument.Load("anime.xml");
@@ -78,33 +80,7 @@ namespace anime_downloader {
             anime.Element("anime").Add(element);
             anime.Save("anime.xml");
         }
-
-        private void addAnime(Anime newAnime) {
-            XDocument anime = XDocument.Load("anime.xml");
-
-            var element = new XElement("show",
-                new XElement("name", newAnime.name),
-                new XElement("episode", newAnime.episode),
-                new XElement("status", newAnime.status),
-                new XElement("resolution", newAnime.resolution),
-                new XElement("airing", newAnime.airing),
-                new XElement("updated", false),
-                new XElement("name-strict", newAnime.nameStrict),
-                new XElement("last-downloaded", "2016-02-04"));
-
-            anime.Element("anime").Add(element);
-            anime.Save("anime.xml");
-        }
-
-        private void removeAnime(string name) {
-            XDocument anime = XDocument.Load("anime.xml");
-            var result = anime.Root.Elements().Where(x => x.Element("name").Value == name).FirstOrDefault();
-            if (result != null) {
-                result.Remove();
-                anime.Save("anime.xml");
-            }
-        }
-
+        
         private void createAnimeXML() {
             XDocument doc =
                     new XDocument(
@@ -149,6 +125,34 @@ namespace anime_downloader {
             doc.Save("settings.xml");
         }
 
+        // 
+
+        private void addAnime(Anime newAnime) {
+            XDocument anime = XDocument.Load("anime.xml");
+
+            var element = new XElement("show",
+                new XElement("name", newAnime.name),
+                new XElement("episode", newAnime.episode),
+                new XElement("status", newAnime.status),
+                new XElement("resolution", newAnime.resolution),
+                new XElement("airing", newAnime.airing),
+                new XElement("updated", false),
+                new XElement("name-strict", newAnime.nameStrict),
+                new XElement("last-downloaded", "2016-02-04"));
+
+            anime.Element("anime").Add(element);
+            anime.Save("anime.xml");
+        }
+
+        private void removeAnime(string name) {
+            XDocument anime = XDocument.Load("anime.xml");
+            var result = anime.Root.Elements().Where(x => x.Element("name").Value == name).FirstOrDefault();
+            if (result != null) {
+                result.Remove();
+                anime.Save("anime.xml");
+            }
+        }
+
         private void loadSettings() {
             if (!File.Exists("settings.xml"))
                 createSettingsXML();
@@ -168,16 +172,6 @@ namespace anime_downloader {
                 table.dataGrid.DataContext = anime;
             //dataGrid.DataContext = anime;
         }
-
-        private void button_test_add_Click(object sender, RoutedEventArgs e) {
-            addAnime();
-            updateTable();
-        }
-
-        private void button_test_delete_Click(object sender, RoutedEventArgs e) {
-            removeAnime("Fairy Tail Zero");
-            updateTable();
-        }
         
         // anime list
         private void button_list_Click(object sender, RoutedEventArgs e) {
@@ -187,10 +181,56 @@ namespace anime_downloader {
             updateTable();
 
             var list = currentDisplay as UserControls.AnimeList;
+            list.@new.Click += new RoutedEventHandler(button_add_new_Click);
             list.edit.Click += new RoutedEventHandler(anime_list_edit_Click);
             list.delete.Click += new RoutedEventHandler(anime_list_delete_Click);
             list.dataGrid.PreviewKeyDown += new KeyEventHandler(anime_list_delete_KeyDown);
 
+        }
+
+        private void anime_list_edit_Click(object sender, RoutedEventArgs e) {
+            var table = currentDisplay as UserControls.AnimeList;
+
+            if (table != null) {
+                if (table.dataGrid.SelectedCells.FirstOrDefault().IsValid) {
+                    XElement item = table.dataGrid.SelectedCells[0].Item as XElement; //  .Items[0].ToString());
+
+                    display.Children.Clear();
+                    currentDisplay = new UserControls.Add();
+                    display.Children.Add(currentDisplay);
+
+                    var anime = currentDisplay as UserControls.Add;
+                    anime.add_button.Content = "Edit";
+                    anime.add_button.Click += new RoutedEventHandler(button_anime_edit_Click);
+
+                    anime.name_textbox.KeyUp += new KeyEventHandler((object s, KeyEventArgs k) => {
+                        if (k.Key == Key.Enter) {
+                            anime.add_button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        }
+                    });
+
+                    anime.name_textbox.Text = item.Element("name").Value;
+                    anime.episode_textbox.Text = item.Element("episode").Value;
+                    anime.resolution_combobox.Text = item.Element("resolution").Value;
+                    anime.status_combobox.Text = item.Element("status").Value;
+                    anime.airing_checkbox.IsChecked = Boolean.Parse(item.Element("airing").Value);
+                    anime.name_strict_checkbox.IsChecked = Boolean.Parse(item.Element("name-strict").Value);
+
+                    currentlyEditedAnime = item.Element("name").Value;
+                }
+            }
+        }
+        
+        private void anime_list_delete_Click(object sender, RoutedEventArgs e) {
+            UserControls.AnimeList list = currentDisplay as UserControls.AnimeList;
+            if (list.dataGrid.SelectedCells.FirstOrDefault().IsValid) {
+                XElement row = list.dataGrid.SelectedCells.FirstOrDefault().Item as XElement;
+                if (row != null) {
+                    string name = row.Element("name").Value;
+                    removeAnime(name);
+                    updateTable();
+                }
+            }
         }
 
         private void anime_list_delete_KeyDown(object sender, KeyEventArgs e) {
@@ -200,44 +240,6 @@ namespace anime_downloader {
                 string name = row.Element("name").Value;
                 removeAnime(name);
                 updateTable();
-            }
-        }
-
-        private void anime_list_delete_Click(object sender, RoutedEventArgs e) {
-            UserControls.AnimeList list = currentDisplay as UserControls.AnimeList;
-            XElement row = list.dataGrid.SelectedCells[0].Item as XElement;
-            string name = row.Element("name").Value;
-            removeAnime(name);
-            updateTable();
-        }
-
-        private void anime_list_edit_Click(object sender, RoutedEventArgs e) {
-            var table = currentDisplay as UserControls.AnimeList;
-            if (table != null) {
-                XElement item = table.dataGrid.SelectedCells[0].Item as XElement; //  .Items[0].ToString());
-
-                display.Children.Clear();
-                currentDisplay = new UserControls.Add();
-                display.Children.Add(currentDisplay);
-
-                var anime = currentDisplay as UserControls.Add;
-                anime.add_button.Content = "Edit";
-                anime.add_button.Click += new RoutedEventHandler(button_anime_edit_Click);
-
-                anime.name_textbox.KeyUp += new KeyEventHandler((object s, KeyEventArgs k) => {
-                    if (k.Key == Key.Enter) {
-                        anime.add_button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                    }
-                });
-
-                anime.name_textbox.Text = item.Element("name").Value;
-                anime.episode_textbox.Text = item.Element("episode").Value;
-                anime.resolution_combobox.Text = item.Element("resolution").Value;
-                anime.status_combobox.Text = item.Element("status").Value;
-                anime.airing_checkbox.IsChecked = Boolean.Parse(item.Element("airing").Value);
-                anime.name_strict_checkbox.IsChecked = Boolean.Parse(item.Element("name-strict").Value);
-
-                currentlyEditedAnime = item.Element("name").Value;
             }
         }
 
