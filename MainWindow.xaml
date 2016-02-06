@@ -12,15 +12,14 @@
         <Button x:Name="button_check" Content="Check for latest" HorizontalAlignment="Left" Margin="10,173,0,0" VerticalAlignment="Top" Width="226" Height="43" FontSize="24"/>
         <Button x:Name="button_list" Content="Anime List" HorizontalAlignment="Left" Margin="10,66,0,0" VerticalAlignment="Top" Width="226" Height="43" FontSize="24" Click="button_list_Click"/>
         <Button x:Name="button_settings" Content="Settings &amp; Options" HorizontalAlignment="Left" Margin="10,119,0,0" VerticalAlignment="Top" Width="226" Height="43" FontSize="24" Click="button_settings_Click"/>
-        <Button x:Name="button_folder" Content="Open folder" HorizontalAlignment="Left" Margin="10,267,0,0" VerticalAlignment="Top" Width="126" Click="button_folder_Click"/>
-        <Button x:Name="button_playlist" Content="Create playlist" HorizontalAlignment="Left" Margin="10,295,0,0" VerticalAlignment="Top" Width="126" Click="button_playlist_Click"/>
+        <Button x:Name="button_folder" Content="Open folder" HorizontalAlignment="Left" Margin="10,247,0,0" VerticalAlignment="Top" Width="126" Click="button_folder_Click"/>
+        <Button x:Name="button_playlist" Content="Create playlist" HorizontalAlignment="Left" Margin="10,284,0,0" VerticalAlignment="Top" Width="126" Click="button_playlist_Click"/>
         <Button x:Name="button_open_executing" Content="Open Executing Folder" HorizontalAlignment="Left" Margin="10,320,0,0" VerticalAlignment="Top" Width="126" Click="button_open_executing_Click"/>
-        <Button x:Name="button_test_add" Content="test add" HorizontalAlignment="Left" Margin="150,295,0,0" VerticalAlignment="Top" Width="76" Click="button_test_add_Click"/>
-        <Button x:Name="button_test_delete" Content="test delete" HorizontalAlignment="Left" Margin="150,320,0,0" VerticalAlignment="Top" Width="76" Click="button_test_delete_Click"/>
-        
+
         <Grid x:Name="display" Width="650" Height="330" HorizontalAlignment="Left" Margin="241,10,0,0" VerticalAlignment="Top"/>
         
         <Button x:Name="button_home" Content="Home" HorizontalAlignment="Left" Margin="10,10,0,0" FontSize="24" VerticalAlignment="Top" Width="226" Click="button_home_Click" Height="43"/>
+        <Button x:Name="button_add_new" Content="Add New" HorizontalAlignment="Left" Margin="151,320,0,0" VerticalAlignment="Top" Width="75" Click="button_add_new_Click"/>
     </Grid>
 
 </Window>

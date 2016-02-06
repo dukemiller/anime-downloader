@@ -28,8 +28,10 @@ namespace anime_downloader {
         private string folderAnime;
         private string folderTorrent;
         private string programUtorrent;
+        private bool onlyWhitelisted;
         private string[] subgroups;
         private UserControl currentDisplay;
+        private string currentlyEditedAnime;
 
         public MainWindow() {
             InitializeComponent();
@@ -38,7 +40,6 @@ namespace anime_downloader {
 
             currentDisplay = new UserControls.Home();
             display.Children.Add(currentDisplay);
-            // mainGrid.Visibility = Visibility.Visible;
         }
 
         private void button_folder_Click(object sender, RoutedEventArgs e) {
@@ -72,6 +73,23 @@ namespace anime_downloader {
                 new XElement("airing", true),
                 new XElement("updated", false),
                 new XElement("name-strict", true),
+                new XElement("last-downloaded", "2016-02-04"));
+
+            anime.Element("anime").Add(element);
+            anime.Save("anime.xml");
+        }
+
+        private void addAnime(Anime newAnime) {
+            XDocument anime = XDocument.Load("anime.xml");
+
+            var element = new XElement("show",
+                new XElement("name", newAnime.name),
+                new XElement("episode", newAnime.episode),
+                new XElement("status", newAnime.status),
+                new XElement("resolution", newAnime.resolution),
+                new XElement("airing", newAnime.airing),
+                new XElement("updated", false),
+                new XElement("name-strict", newAnime.nameStrict),
                 new XElement("last-downloaded", "2016-02-04"));
 
             anime.Element("anime").Add(element);
@@ -135,11 +153,12 @@ namespace anime_downloader {
             if (!File.Exists("settings.xml"))
                 createSettingsXML();
             
-            XDocument settings = XDocument.Load("settings.xml");
-            folderAnime = settings.Root.Element("path").Element("base").Value;
-            folderTorrent = settings.Root.Element("path").Element("torrents").Value;
-            programUtorrent = settings.Root.Element("path").Element("utorrent").Value;
-            subgroups = settings.Root.Elements("subgroup").Elements("name").Select(x => x.Value).ToArray();
+            XElement settings = XDocument.Load("settings.xml").Root;
+            folderAnime = settings.Element("path").Element("base").Value;
+            folderTorrent = settings.Element("path").Element("torrents").Value;
+            programUtorrent = settings.Element("path").Element("utorrent").Value;
+            subgroups = settings.Elements("subgroup").Elements("name").Select(x => x.Value).ToArray();
+            onlyWhitelisted = Boolean.Parse(settings.Element("flag").Element("only-whitelisted-subs").Value);
         }
 
         private void updateTable() {
@@ -166,6 +185,60 @@ namespace anime_downloader {
             currentDisplay = new UserControls.AnimeList();
             display.Children.Add(currentDisplay);
             updateTable();
+
+            var list = currentDisplay as UserControls.AnimeList;
+            list.edit.Click += new RoutedEventHandler(anime_list_edit_Click);
+            list.delete.Click += new RoutedEventHandler(anime_list_delete_Click);
+            list.dataGrid.PreviewKeyDown += new KeyEventHandler(anime_list_delete_KeyDown);
+
+        }
+
+        private void anime_list_delete_KeyDown(object sender, KeyEventArgs e) {
+            if (e.Key == Key.Delete) {
+                var list = currentDisplay as UserControls.AnimeList;
+                XElement row = list.dataGrid.SelectedCells[0].Item as XElement;
+                string name = row.Element("name").Value;
+                removeAnime(name);
+                updateTable();
+            }
+        }
+
+        private void anime_list_delete_Click(object sender, RoutedEventArgs e) {
+            UserControls.AnimeList list = currentDisplay as UserControls.AnimeList;
+            XElement row = list.dataGrid.SelectedCells[0].Item as XElement;
+            string name = row.Element("name").Value;
+            removeAnime(name);
+            updateTable();
+        }
+
+        private void anime_list_edit_Click(object sender, RoutedEventArgs e) {
+            var table = currentDisplay as UserControls.AnimeList;
+            if (table != null) {
+                XElement item = table.dataGrid.SelectedCells[0].Item as XElement; //  .Items[0].ToString());
+
+                display.Children.Clear();
+                currentDisplay = new UserControls.Add();
+                display.Children.Add(currentDisplay);
+
+                var anime = currentDisplay as UserControls.Add;
+                anime.add_button.Content = "Edit";
+                anime.add_button.Click += new RoutedEventHandler(button_anime_edit_Click);
+
+                anime.name_textbox.KeyUp += new KeyEventHandler((object s, KeyEventArgs k) => {
+                    if (k.Key == Key.Enter) {
+                        anime.add_button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    }
+                });
+
+                anime.name_textbox.Text = item.Element("name").Value;
+                anime.episode_textbox.Text = item.Element("episode").Value;
+                anime.resolution_combobox.Text = item.Element("resolution").Value;
+                anime.status_combobox.Text = item.Element("status").Value;
+                anime.airing_checkbox.IsChecked = Boolean.Parse(item.Element("airing").Value);
+                anime.name_strict_checkbox.IsChecked = Boolean.Parse(item.Element("name-strict").Value);
+
+                currentlyEditedAnime = item.Element("name").Value;
+            }
         }
 
         // home
@@ -187,8 +260,8 @@ namespace anime_downloader {
                 settings.subgroups_textbox.Text = String.Join(", ", subgroups);
                 settings.download_textbox.Text = programUtorrent;
                 settings.torrent_textbox.Text = folderTorrent;
-                settings.button_apply_changes.Click += new RoutedEventHandler(button_apply_settings_Click);
-                // settings.only_whitelist_radio.Checked = 
+                settings.apply_changes_button.Click += new RoutedEventHandler(button_apply_settings_Click);
+                settings.only_whitelisted_checkbox.IsChecked = onlyWhitelisted;
             }
 
 
@@ -216,12 +289,87 @@ namespace anime_downloader {
                                 new XElement("torrents", settings.torrent_textbox.Text)),
                             subgroup,
                             new XElement("flag",
-                                new XElement("only-whitelisted-subs", settings.only_whitelist_radio.IsChecked)))
+                                new XElement("only-whitelisted-subs", settings.only_whitelisted_checkbox.IsChecked)))
                         );
 
                 doc.Save("settings.xml");
                 loadSettings();
             }
         }
+
+        // new anime
+        private void button_add_new_Click(object sender, RoutedEventArgs e) {
+            display.Children.Clear();
+            currentDisplay = new UserControls.Add();
+            display.Children.Add(currentDisplay);
+
+            var anime = currentDisplay as UserControls.Add;
+            if (anime != null) {
+                anime.add_button.Click += new RoutedEventHandler(button_add_Click);
+            }
+        }
+
+        private void button_add_Click(object sender, RoutedEventArgs e) {
+            var anime = currentDisplay as UserControls.Add;
+            if (anime != null) {
+                Anime newAnime = new Anime {
+                    name = anime.name_textbox.Text,
+                    episode = anime.episode_textbox.Text,
+                    status = anime.status_combobox.Text,
+                    resolution = anime.resolution_combobox.Text,
+                    airing = anime.airing_checkbox.IsChecked.Value,
+                    nameStrict = anime.name_strict_checkbox.IsChecked.Value
+                };
+
+                if (!newAnime.name.Equals("")) {
+                    addAnime(newAnime);
+                    // button_add_new.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    button_list.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                }
+            }
+        }
+
+        // edit anime
+        private void button_anime_edit_Click(object sender, RoutedEventArgs e) {
+            var anime = currentDisplay as UserControls.Add;
+            if (anime != null) {
+
+                Anime editedAnime = new Anime {
+                    name = anime.name_textbox.Text,
+                    episode = anime.episode_textbox.Text,
+                    status = anime.status_combobox.Text,
+                    resolution = anime.resolution_combobox.Text,
+                    airing = anime.airing_checkbox.IsChecked.Value,
+                    nameStrict = anime.name_strict_checkbox.IsChecked.Value
+                };
+                
+                editAnime(currentlyEditedAnime, editedAnime);
+                button_list.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            }
+        }
+
+        private void editAnime(string name, Anime editedAnime) {
+            XDocument doc = XDocument.Load("anime.xml");
+            XElement anime = doc.Root;
+            XElement selected = anime.Elements().Where(a => a.Element("name").Value.Equals(name)).FirstOrDefault();
+
+            selected.Element("name").Value = editedAnime.name;
+            selected.Element("episode").Value = editedAnime.episode;
+            selected.Element("status").Value = editedAnime.status;
+            selected.Element("resolution").Value = editedAnime.resolution;
+            selected.Element("airing").Value = editedAnime.airing.ToString();
+            selected.Element("name-strict").Value = editedAnime.nameStrict.ToString();
+
+            doc.Save("anime.xml");
+        }
     }
+}
+
+public class Anime {
+    public string name { get; set; }
+    public string episode { get; set; }
+    public string status { get; set; }
+    public string resolution { get; set; }
+    public bool airing { get; set; }
+    public bool nameStrict { get; set; }
 }
