@@ -25,9 +25,9 @@ namespace anime_downloader {
     /// </summary>
     public partial class MainWindow : Window {
 
-        private string folderAnime;
-        private string folderTorrent;
-        private string programUtorrent;
+        private string folder_base;
+        private string folder_torrents;
+        private string folder_utorrent;
         private bool onlyWhitelisted;
         private string[] subgroups;
         private UserControl currentDisplay;
@@ -35,23 +35,23 @@ namespace anime_downloader {
 
         public MainWindow() {
             InitializeComponent();
-            loadSettings();
-            updateTable();
-
             currentDisplay = new UserControls.Home();
             display.Children.Add(currentDisplay);
+
+            loadSettings();
+            updateTable();
         }
 
         private void button_folder_Click(object sender, RoutedEventArgs e) {
-            Process.Start(folderAnime);
+            Process.Start(folder_base);
         }
 
         private void button_playlist_Click(object sender, RoutedEventArgs e) {
-            string[] videos = Directory.GetDirectories(folderAnime)
+            string[] videos = Directory.GetDirectories(folder_base)
                 .Where(s => !s.EndsWith("torrents") && !s.EndsWith("Grace") && !s.EndsWith("Watched"))
                 .SelectMany(f => Directory.GetFiles(f))
                 .ToArray();
-            using (StreamWriter file = new StreamWriter(path: folderAnime + @"\playlist.m3u", 
+            using (StreamWriter file = new StreamWriter(path: folder_base + @"\playlist.m3u", 
                                                         append: false)) {
                 foreach(String video in videos)
                     file.WriteLine(video);
@@ -63,45 +63,8 @@ namespace anime_downloader {
         }
         
         // Prototyping 
-
-        private void addAnime() {
-            XDocument anime = XDocument.Load("anime.xml");
-
-            var element = new XElement("show",
-                new XElement("name", "Fairy Tail Zero"),
-                new XElement("episode", "04"),
-                new XElement("status", "Watching"),
-                new XElement("resolution", "720"),
-                new XElement("airing", true),
-                new XElement("updated", false),
-                new XElement("name-strict", true),
-                new XElement("last-downloaded", "2016-02-04"));
-
-            anime.Element("anime").Add(element);
-            anime.Save("anime.xml");
-        }
         
-        private void createAnimeXML() {
-            XDocument doc =
-                    new XDocument(
-                        new XDeclaration("1.0", "utf-8", "yes"),
-                        new XComment("Anime mockup"),
-                        new XElement("anime",
-                            new XElement("show",
-                                new XElement("name", "Fairy Tail Zero"),
-                                new XElement("episode", "04"),
-                                new XElement("status", "Watching"),
-                                new XElement("resolution", "720"),
-                                new XElement("airing", true),
-                                new XElement("updated", false),
-                                new XElement("name-strict", true),
-                                new XElement("last-downloaded", "2016-02-04")))
-                        );
-
-            doc.Save("anime.xml");
-        }
-
-        private void createSettingsXML() {
+        private void createPremadeSettingsXML() {
             XDocument doc =
                     new XDocument(
                         new XDeclaration("1.0", "utf-8", "yes"),
@@ -124,8 +87,28 @@ namespace anime_downloader {
 
             doc.Save("settings.xml");
         }
+       
+        // XML Modification
 
-        // 
+        private void createAnimeXML() {
+            XDocument doc =
+                    new XDocument(
+                        new XDeclaration("1.0", "utf-8", "yes"),
+                        new XComment("Anime mockup"),
+                        new XElement("anime"/*,
+                            new XElement("show",
+                                new XElement("name", "Fairy Tail Zero"),
+                                new XElement("episode", "04"),
+                                new XElement("status", "Watching"),
+                                new XElement("resolution", "720"),
+                                new XElement("airing", true),
+                                new XElement("updated", false),
+                                new XElement("name-strict", true),
+                                new XElement("last-downloaded", "2016-02-04"))*/)
+                        );
+
+            doc.Save("anime.xml");
+        }
 
         private void addAnime(Anime newAnime) {
             XDocument anime = XDocument.Load("anime.xml");
@@ -144,6 +127,21 @@ namespace anime_downloader {
             anime.Save("anime.xml");
         }
 
+        private void editAnime(string name, Anime editedAnime) {
+            XDocument doc = XDocument.Load("anime.xml");
+            XElement anime = doc.Root;
+            XElement selected = anime.Elements().Where(a => a.Element("name").Value.Equals(name)).FirstOrDefault();
+
+            selected.Element("name").Value = editedAnime.name;
+            selected.Element("episode").Value = editedAnime.episode;
+            selected.Element("status").Value = editedAnime.status;
+            selected.Element("resolution").Value = editedAnime.resolution;
+            selected.Element("airing").Value = editedAnime.airing.ToString();
+            selected.Element("name-strict").Value = editedAnime.nameStrict.ToString();
+
+            doc.Save("anime.xml");
+        }
+
         private void removeAnime(string name) {
             XDocument anime = XDocument.Load("anime.xml");
             var result = anime.Root.Elements().Where(x => x.Element("name").Value == name).FirstOrDefault();
@@ -153,16 +151,60 @@ namespace anime_downloader {
             }
         }
 
+        private void createSettingsXML(string basepath, string download, string utorrent, string[] subgroups, bool whitelisted) {
+
+            XElement sub = new XElement("subgroup");
+            foreach (String group in subgroups)
+                sub.Add(new XElement("name", group));
+
+            XDocument doc =
+                    new XDocument(
+                        new XDeclaration("1.0", "utf-8", "yes"),
+                        new XComment("User profile settings"),
+                        new XElement("settings",
+                            new XElement("name", Environment.UserName),
+                            new XElement("path",
+                                new XElement("base", basepath),
+                                new XElement("utorrent", utorrent),
+                                new XElement("torrents", download)),
+                            sub,
+                            new XElement("flag",
+                                new XElement("only-whitelisted-subs", whitelisted)))
+                        );
+
+            doc.Save("settings.xml");
+        }
+
         private void loadSettings() {
+            if (!File.Exists("anime.xml"))
+                createAnimeXML();
+
             if (!File.Exists("settings.xml"))
-                createSettingsXML();
+                newSettings();
             
-            XElement settings = XDocument.Load("settings.xml").Root;
-            folderAnime = settings.Element("path").Element("base").Value;
-            folderTorrent = settings.Element("path").Element("torrents").Value;
-            programUtorrent = settings.Element("path").Element("utorrent").Value;
-            subgroups = settings.Elements("subgroup").Elements("name").Select(x => x.Value).ToArray();
-            onlyWhitelisted = Boolean.Parse(settings.Element("flag").Element("only-whitelisted-subs").Value);
+            else {
+                XElement settings = XDocument.Load("settings.xml").Root;
+                folder_base = settings.Element("path").Element("base").Value;
+                folder_torrents = settings.Element("path").Element("torrents").Value;
+                folder_utorrent = settings.Element("path").Element("utorrent").Value;
+                subgroups = settings.Elements("subgroup").Elements("name").Select(x => x.Value).ToArray();
+                onlyWhitelisted = Boolean.Parse(settings.Element("flag").Element("only-whitelisted-subs").Value);
+            }
+        }
+
+        // 
+
+        private void toggle_buttons(params Button[] buttons) {
+            foreach (Button b in buttons) {
+                if (b.IsHitTestVisible) {
+                    b.IsHitTestVisible = false;
+                    b.Opacity = 0.4;
+                }
+                else {
+                    b.IsHitTestVisible = true;
+                    b.Opacity = 1.0;
+                }
+            }
         }
 
         private void updateTable() {
@@ -172,8 +214,41 @@ namespace anime_downloader {
                 table.dataGrid.DataContext = anime;
             //dataGrid.DataContext = anime;
         }
+
+        private void newSettings() {
+            display.Children.Clear();
+            currentDisplay = new UserControls.Settings();
+            display.Children.Add(currentDisplay);
+
+            var settings = currentDisplay as UserControls.Settings;
+            if (settings != null) {
+                toggle_buttons(button_home, button_list, button_settings, button_check);
+                settings.base_textbox.Text = Directory.GetCurrentDirectory();
+                settings.torrent_textbox.Text = System.IO.Path.Combine(settings.base_textbox.Text, "torrents");
+                settings.download_textbox.Text = @"C:\Program Files (x86)\uTorrent\uTorrent.exe";
+                settings.apply_changes_button.Content = "Create Profile";
+                settings.apply_changes_button.Click += new RoutedEventHandler((object o, RoutedEventArgs e2) => {
+
+                    if (settings.base_textbox.Text.Equals("") || settings.torrent_textbox.Text.Equals("") || settings.download_textbox.Text.Equals(""))
+                        MessageBox.Show("You must enter in Base, Torrent or Utorrent Path Boxes.");
+                    else {
+                        createSettingsXML(settings.base_textbox.Text, 
+                            settings.torrent_textbox.Text,
+                            settings.download_textbox.Text, 
+                            settings.subgroups_textbox.Text.Split(new string[] {" "}, StringSplitOptions.RemoveEmptyEntries),
+                            settings.only_whitelisted_checkbox.IsChecked.Value);
+                        toggle_buttons(button_home, button_list, button_settings, button_check);
+                        loadSettings();
+                        button_home.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    }
+                });
+                
+            }
+        }
         
+        //// Event handling
         // anime list
+
         private void button_list_Click(object sender, RoutedEventArgs e) {
             display.Children.Clear();
             currentDisplay = new UserControls.AnimeList();
@@ -244,6 +319,7 @@ namespace anime_downloader {
         }
 
         // home
+
         private void button_home_Click(object sender, RoutedEventArgs e) {
             display.Children.Clear();
             currentDisplay = new UserControls.Home();
@@ -251,6 +327,7 @@ namespace anime_downloader {
         }
         
         // settings
+
         private void button_settings_Click(object sender, RoutedEventArgs e) {
             display.Children.Clear();
             currentDisplay = new UserControls.Settings();
@@ -258,53 +335,58 @@ namespace anime_downloader {
 
             var settings = currentDisplay as UserControls.Settings;
             if (settings != null) {
-                settings.base_textbox.Text = folderAnime;
+                settings.base_textbox.Text = folder_base;
                 settings.subgroups_textbox.Text = String.Join(", ", subgroups);
-                settings.download_textbox.Text = programUtorrent;
-                settings.torrent_textbox.Text = folderTorrent;
+                settings.download_textbox.Text = folder_utorrent;
+                settings.torrent_textbox.Text = folder_torrents;
                 settings.apply_changes_button.Click += new RoutedEventHandler(button_apply_settings_Click);
                 settings.only_whitelisted_checkbox.IsChecked = onlyWhitelisted;
             }
-
-
         }
 
         private void button_apply_settings_Click(object sender, RoutedEventArgs e) {
             var settings = currentDisplay as UserControls.Settings;
             if (settings != null) {
 
-                string[] subgroups = settings.subgroups_textbox.Text.Split(new string[] {", "}, StringSplitOptions.None);
+                if (settings.base_textbox.Text.Equals("") || settings.torrent_textbox.Text.Equals("") ||
+                    settings.download_textbox.Text.Equals(""))
+                    MessageBox.Show("You must enter in Base, Torrent or Utorrent Path Boxes.");
 
-                var subgroup = new XElement("subgroup");
-                foreach (String sub in subgroups)
-                    subgroup.Add(new XElement("name", sub));
+                else {
+                    string[] subgroups = settings.subgroups_textbox.Text.Split(new string[] {", "},
+                        StringSplitOptions.None);
 
-                XDocument doc =
-                    new XDocument(
-                        new XDeclaration("1.0", "utf-8", "yes"),
-                        new XComment("User profile settings"),
-                        new XElement("settings",
-                            new XElement("name", "Duke"),
-                            new XElement("path",
-                                new XElement("base", settings.base_textbox.Text),
-                                new XElement("utorrent", settings.download_textbox.Text),
-                                new XElement("torrents", settings.torrent_textbox.Text)),
-                            subgroup,
-                            new XElement("flag",
-                                new XElement("only-whitelisted-subs", settings.only_whitelisted_checkbox.IsChecked)))
-                        );
+                    var subgroup = new XElement("subgroup");
+                    foreach (String sub in subgroups)
+                        subgroup.Add(new XElement("name", sub));
 
-                doc.Save("settings.xml");
-                loadSettings();
+                    XDocument doc =
+                        new XDocument(
+                            new XDeclaration("1.0", "utf-8", "yes"),
+                            new XComment("User profile settings"),
+                            new XElement("settings",
+                                new XElement("name", "Duke"),
+                                new XElement("path",
+                                    new XElement("base", settings.base_textbox.Text),
+                                    new XElement("utorrent", settings.download_textbox.Text),
+                                    new XElement("torrents", settings.torrent_textbox.Text)),
+                                subgroup,
+                                new XElement("flag",
+                                    new XElement("only-whitelisted-subs", settings.only_whitelisted_checkbox.IsChecked)))
+                            );
+
+                    doc.Save("settings.xml");
+                    loadSettings();
+                }
             }
         }
 
         // new anime
+
         private void button_add_new_Click(object sender, RoutedEventArgs e) {
             display.Children.Clear();
             currentDisplay = new UserControls.Add();
             display.Children.Add(currentDisplay);
-
             var anime = currentDisplay as UserControls.Add;
             if (anime != null) {
                 anime.add_button.Click += new RoutedEventHandler(button_add_Click);
@@ -332,10 +414,11 @@ namespace anime_downloader {
         }
 
         // edit anime
+
         private void button_anime_edit_Click(object sender, RoutedEventArgs e) {
             var anime = currentDisplay as UserControls.Add;
-            if (anime != null) {
 
+            if (anime != null) {
                 Anime editedAnime = new Anime {
                     name = anime.name_textbox.Text,
                     episode = anime.episode_textbox.Text,
@@ -349,21 +432,7 @@ namespace anime_downloader {
                 button_list.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             }
         }
-
-        private void editAnime(string name, Anime editedAnime) {
-            XDocument doc = XDocument.Load("anime.xml");
-            XElement anime = doc.Root;
-            XElement selected = anime.Elements().Where(a => a.Element("name").Value.Equals(name)).FirstOrDefault();
-
-            selected.Element("name").Value = editedAnime.name;
-            selected.Element("episode").Value = editedAnime.episode;
-            selected.Element("status").Value = editedAnime.status;
-            selected.Element("resolution").Value = editedAnime.resolution;
-            selected.Element("airing").Value = editedAnime.airing.ToString();
-            selected.Element("name-strict").Value = editedAnime.nameStrict.ToString();
-
-            doc.Save("anime.xml");
-        }
+        
     }
 }
 
