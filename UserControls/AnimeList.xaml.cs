@@ -22,6 +22,5 @@ namespace anime_downloader.UserControls {
         public AnimeList() {
             InitializeComponent();
         }
-        
     }
 }

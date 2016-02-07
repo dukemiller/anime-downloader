@@ -54,32 +54,6 @@ namespace anime_downloader {
             Process.Start(applicationPath);
         }
         
-        // Prototyping 
-        
-        private void createPremadeSettingsXML() {
-            XDocument doc =
-                    new XDocument(
-                        new XDeclaration("1.0", "utf-8", "yes"),
-                        new XComment("User profile settings"),
-                        new XElement("settings",
-                            new XElement("name", "Duke"),
-                            new XElement("path",
-                                new XElement("base", @"D:\Output\anime downloader"),
-                                new XElement("utorrent", @"C:\Program Files (x86)\uTorrent\uTorrent.exe"),
-                                new XElement("torrents", @"D:\Output\anime downloader\torrents")),
-                            new XElement("subgroup",
-                                new XElement("name", "BakedFish"),
-                                new XElement("name", "HorribleSubs"),
-                                new XElement("name", "DeadFish"),
-                                new XElement("name", "Pyon"),
-                                new XElement("name", "kdfss")),
-                            new XElement("flag",
-                                new XElement("only-whitelisted-subs", "true")))
-                        );
-
-            doc.Save(settingsXMLPath);
-        }
-       
         // XML Modification
 
         private void createAnimeXML() {
@@ -214,37 +188,6 @@ namespace anime_downloader {
                 table.dataGrid.DataContext = anime;
             //dataGrid.DataContext = anime;
         }
-
-        private void newSettings() {
-            display.Children.Clear();
-            currentDisplay = new UserControls.Settings();
-            display.Children.Add(currentDisplay);
-
-            var settings = currentDisplay as UserControls.Settings;
-            if (settings != null) {
-                toggle_buttons(button_home, button_list, button_settings, button_check, button_folder, button_playlist, button_open_executing);
-                settings.base_textbox.Text = Directory.GetCurrentDirectory();
-                settings.torrent_textbox.Text = System.IO.Path.Combine(settings.base_textbox.Text, "torrents");
-                settings.download_textbox.Text = @"C:\Program Files (x86)\uTorrent\uTorrent.exe";
-                settings.apply_changes_button.Content = "Create Profile";
-                settings.apply_changes_button.Click += new RoutedEventHandler((object o, RoutedEventArgs e2) => {
-
-                    if (settings.base_textbox.Text.Equals("") || settings.torrent_textbox.Text.Equals("") || settings.download_textbox.Text.Equals(""))
-                        MessageBox.Show("You must enter in Base, Torrent or Utorrent Path Boxes.");
-                    else {
-                        createSettingsXML(settings.base_textbox.Text, 
-                            settings.torrent_textbox.Text,
-                            settings.download_textbox.Text, 
-                            settings.subgroups_textbox.Text.Split(new string[] {" "}, StringSplitOptions.RemoveEmptyEntries),
-                            settings.only_whitelisted_checkbox.IsChecked.Value);
-                        toggle_buttons(button_home, button_list, button_settings, button_check, button_folder, button_playlist, button_open_executing);
-                        loadSettings();
-                        button_home.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                    }
-                });
-                
-            }
-        }
         
         //// Event handling
         // anime list
@@ -260,42 +203,9 @@ namespace anime_downloader {
             list.edit.Click += new RoutedEventHandler(anime_list_edit_Click);
             list.delete.Click += new RoutedEventHandler(anime_list_delete_Click);
             list.dataGrid.PreviewKeyDown += new KeyEventHandler(anime_list_delete_KeyDown);
-
+            list.dataGrid.MouseDoubleClick += new MouseButtonEventHandler(anime_list_MouseDoubleClick);
         }
 
-        private void anime_list_edit_Click(object sender, RoutedEventArgs e) {
-            var table = currentDisplay as UserControls.AnimeList;
-
-            if (table != null) {
-                if (table.dataGrid.SelectedCells.FirstOrDefault().IsValid) {
-                    XElement item = table.dataGrid.SelectedCells[0].Item as XElement; //  .Items[0].ToString());
-
-                    display.Children.Clear();
-                    currentDisplay = new UserControls.Add();
-                    display.Children.Add(currentDisplay);
-
-                    var anime = currentDisplay as UserControls.Add;
-                    anime.add_button.Content = "Edit";
-                    anime.add_button.Click += new RoutedEventHandler(button_anime_edit_Click);
-
-                    anime.name_textbox.KeyUp += new KeyEventHandler((object s, KeyEventArgs k) => {
-                        if (k.Key == Key.Enter) {
-                            anime.add_button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                        }
-                    });
-
-                    anime.name_textbox.Text = item.Element("name").Value;
-                    anime.episode_textbox.Text = item.Element("episode").Value;
-                    anime.resolution_combobox.Text = item.Element("resolution").Value;
-                    anime.status_combobox.Text = item.Element("status").Value;
-                    anime.airing_checkbox.IsChecked = Boolean.Parse(item.Element("airing").Value);
-                    anime.name_strict_checkbox.IsChecked = Boolean.Parse(item.Element("name-strict").Value);
-
-                    currentlyEditedAnime = item.Element("name").Value;
-                }
-            }
-        }
-        
         private void anime_list_delete_Click(object sender, RoutedEventArgs e) {
             UserControls.AnimeList list = currentDisplay as UserControls.AnimeList;
             if (list.dataGrid.SelectedCells.FirstOrDefault().IsValid) {
@@ -315,6 +225,13 @@ namespace anime_downloader {
                 string name = row.Element("name").Value;
                 removeAnime(name);
                 updateTable();
+            }
+        }
+
+        private void anime_list_MouseDoubleClick(object sender, MouseEventArgs e) {
+            UserControls.AnimeList list = currentDisplay as UserControls.AnimeList;
+            if (list.dataGrid.SelectedCells.FirstOrDefault().IsValid) {
+                anime_list_edit_Click(sender, e);
             }
         }
 
@@ -343,6 +260,76 @@ namespace anime_downloader {
                 settings.only_whitelisted_checkbox.IsChecked = onlyWhitelisted;
             }
         }
+
+        private void button_apply_settings_Click(object sender, RoutedEventArgs e) {
+            var settings = currentDisplay as UserControls.Settings;
+            if (settings != null) {
+
+                if (settings.base_textbox.Text.Equals("") || settings.torrent_textbox.Text.Equals("") ||
+                    settings.download_textbox.Text.Equals(""))
+                    MessageBox.Show("You must enter in Base, Torrent or Utorrent Path Boxes.");
+
+                else {
+                    string[] subgroups = settings.subgroups_textbox.Text.Split(new string[] { ", " },
+                        StringSplitOptions.None);
+
+                    var subgroup = new XElement("subgroup");
+                    foreach (String sub in subgroups)
+                        subgroup.Add(new XElement("name", sub));
+
+                    XDocument doc =
+                        new XDocument(
+                            new XDeclaration("1.0", "utf-8", "yes"),
+                            new XComment("User profile settings"),
+                            new XElement("settings",
+                                new XElement("name", "Duke"),
+                                new XElement("path",
+                                    new XElement("base", settings.base_textbox.Text),
+                                    new XElement("utorrent", settings.download_textbox.Text),
+                                    new XElement("torrents", settings.torrent_textbox.Text)),
+                                subgroup,
+                                new XElement("flag",
+                                    new XElement("only-whitelisted-subs", settings.only_whitelisted_checkbox.IsChecked)))
+                            );
+
+                    doc.Save(settingsXMLPath);
+                    loadSettings();
+                }
+            }
+        }
+
+        private void newSettings() {
+            display.Children.Clear();
+            currentDisplay = new UserControls.Settings();
+            display.Children.Add(currentDisplay);
+
+            var settings = currentDisplay as UserControls.Settings;
+            if (settings != null) {
+                toggle_buttons(button_home, button_list, button_settings, button_check, button_folder, button_playlist, button_open_executing);
+                settings.base_textbox.Text = Directory.GetCurrentDirectory();
+                settings.torrent_textbox.Text = System.IO.Path.Combine(settings.base_textbox.Text, "torrents");
+                settings.download_textbox.Text = @"C:\Program Files (x86)\uTorrent\uTorrent.exe";
+                settings.apply_changes_button.Content = "Create Profile";
+                settings.apply_changes_button.Click += new RoutedEventHandler((object o, RoutedEventArgs e2) => {
+
+                    if (settings.base_textbox.Text.Equals("") || settings.torrent_textbox.Text.Equals("") || settings.download_textbox.Text.Equals(""))
+                        MessageBox.Show("You must enter in Base, Torrent or Utorrent Path Boxes.");
+                    else {
+                        createSettingsXML(settings.base_textbox.Text,
+                            settings.torrent_textbox.Text,
+                            settings.download_textbox.Text,
+                            settings.subgroups_textbox.Text.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries),
+                            settings.only_whitelisted_checkbox.IsChecked.Value);
+                        toggle_buttons(button_home, button_list, button_settings, button_check, button_folder, button_playlist, button_open_executing);
+                        loadSettings();
+                        button_home.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    }
+                });
+
+            }
+        }
+
+        // download
 
         private async void downloadAnime(TextBox textbox, Anime[] animes) {
             toggle_buttons(button_home, button_list, button_settings, button_check);
@@ -406,43 +393,6 @@ namespace anime_downloader {
             }
         }
 
-        private void button_apply_settings_Click(object sender, RoutedEventArgs e) {
-            var settings = currentDisplay as UserControls.Settings;
-            if (settings != null) {
-
-                if (settings.base_textbox.Text.Equals("") || settings.torrent_textbox.Text.Equals("") ||
-                    settings.download_textbox.Text.Equals(""))
-                    MessageBox.Show("You must enter in Base, Torrent or Utorrent Path Boxes.");
-
-                else {
-                    string[] subgroups = settings.subgroups_textbox.Text.Split(new string[] {", "},
-                        StringSplitOptions.None);
-
-                    var subgroup = new XElement("subgroup");
-                    foreach (String sub in subgroups)
-                        subgroup.Add(new XElement("name", sub));
-
-                    XDocument doc =
-                        new XDocument(
-                            new XDeclaration("1.0", "utf-8", "yes"),
-                            new XComment("User profile settings"),
-                            new XElement("settings",
-                                new XElement("name", "Duke"),
-                                new XElement("path",
-                                    new XElement("base", settings.base_textbox.Text),
-                                    new XElement("utorrent", settings.download_textbox.Text),
-                                    new XElement("torrents", settings.torrent_textbox.Text)),
-                                subgroup,
-                                new XElement("flag",
-                                    new XElement("only-whitelisted-subs", settings.only_whitelisted_checkbox.IsChecked)))
-                            );
-
-                    doc.Save(settingsXMLPath);
-                    loadSettings();
-                }
-            }
-        }
-
         // new anime
 
         private void button_add_new_Click(object sender, RoutedEventArgs e) {
@@ -482,6 +432,42 @@ namespace anime_downloader {
         }
 
         // edit anime
+
+        private void anime_list_edit_Click(object sender, RoutedEventArgs e) {
+            var table = currentDisplay as UserControls.AnimeList;
+
+            if (table != null) {
+                if (table.dataGrid.SelectedCells.FirstOrDefault().IsValid) {
+                    XElement item = table.dataGrid.SelectedCells[0].Item as XElement; //  .Items[0].ToString());
+
+                    display.Children.Clear();
+                    currentDisplay = new UserControls.Add();
+                    display.Children.Add(currentDisplay);
+
+                    var anime = currentDisplay as UserControls.Add;
+                    anime.add_button.Content = "Edit";
+                    anime.add_button.Click += new RoutedEventHandler(button_anime_edit_Click);
+
+                    KeyEventHandler enterApply = new KeyEventHandler((object s, KeyEventArgs k) => {
+                        if (k.Key == Key.Enter) {
+                            anime.add_button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        }
+                    });
+
+                    anime.name_textbox.KeyUp += enterApply;
+                    anime.episode_textbox.KeyUp += enterApply;
+
+                    anime.name_textbox.Text = item.Element("name").Value;
+                    anime.episode_textbox.Text = item.Element("episode").Value;
+                    anime.resolution_combobox.Text = item.Element("resolution").Value;
+                    anime.status_combobox.Text = item.Element("status").Value;
+                    anime.airing_checkbox.IsChecked = Boolean.Parse(item.Element("airing").Value);
+                    anime.name_strict_checkbox.IsChecked = Boolean.Parse(item.Element("name-strict").Value);
+
+                    currentlyEditedAnime = item.Element("name").Value;
+                }
+            }
+        }
 
         private void button_anime_edit_Click(object sender, RoutedEventArgs e) {
             var anime = currentDisplay as UserControls.Add;
