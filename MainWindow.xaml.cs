@@ -10,6 +10,7 @@ using anime_downloader.Classes;
 using System.Net;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Collections.Generic;
 
 namespace anime_downloader {
 
@@ -159,6 +160,9 @@ namespace anime_downloader {
         private async void downloadAnime(TextBox textbox, Anime[] animes) {
             toggleButtons(button_home, button_list, button_settings, button_check);
             int totalDownloaded = 0;
+            List<Anime> Changes = new List<Anime>();
+            WebClient client = new WebClient();
+
             textbox.Text = ">> Searching for currently airing anime episodes ...\n";
 
             foreach (Anime anime in animes) {
@@ -175,29 +179,29 @@ namespace anime_downloader {
                     // Nyaa listing with subgroup
                     else if (!subgroups.Contains(nyaaLink.subgroup())) {
                         if (onlyWhitelisted) {
-                            textbox.Text +=
-                                $"Found result for {anime.name} with non-whitelisted subgroup. Skipping ...\n";
+                            textbox.Text += $"Found result for {anime.name} with non-whitelisted subgroup. Skipping ...\n";
                         }
                     }
 
                     textbox.Text += $"Downloading '{anime.title()}' episode '{anime.nextEpisode()}'.\n";
-
                     string filepath = Path.Combine(folder_torrents, nyaaLink.torrentName());
+
                     if (!File.Exists(filepath))
-                        new WebClient().DownloadFile(nyaaLink.link, filepath);
+                        client.DownloadFile(nyaaLink.link, filepath);
 
                     var command = $"/DIRECTORY \"{getOutputFolder()}\" \"{filepath}\"";
                     callCommand(folder_utorrent, command);
-
                     anime.episode = anime.nextEpisode();
-                    // increment week last downloaded
-
-                    editAnime(anime.name, anime);
-                    updateTable();
+                    Changes.Add(anime);
                     totalDownloaded++;
                 }
             }
 
+
+            foreach(Anime anime in Changes)
+                editAnime(anime.name, anime);
+
+            updateTable();
             textbox.Text += totalDownloaded > 0 ? $">> Found {totalDownloaded} anime downloads." : ">> No new anime found.";
             toggleButtons(button_home, button_list, button_settings, button_check);
         }
@@ -209,8 +213,10 @@ namespace anime_downloader {
             proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.RedirectStandardOutput = true;
             proc.StartInfo.CreateNoWindow = true;
+            // new Thread(() => proc.Start()).Start();
             Task.Run(() => proc.Start());
-            // return proc.StandardOutput.ReadToEnd();
+            // Task.Run(() => proc.Start());
+            //return proc.StandardOutput.ReadToEnd();
         }
 
         private string getOutputFolder() {
@@ -428,7 +434,6 @@ namespace anime_downloader {
                     .Select(x => new Anime(x))
                     .Where(a => a.airing == true)
                     .ToArray();
-                string[] names = animes.Select(a => a.name).ToArray();
 
                 if (download != null) {
                     downloadAnime(download.textBox, animes);
