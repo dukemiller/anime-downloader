@@ -42,48 +42,23 @@ namespace anime_downloader.Classes {
         public string torrentName() {
             string filename, disposition;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(link);
-            try {
 
-                HttpWebResponse res = (HttpWebResponse)request.GetResponse();
+            try {
+                HttpWebResponse res = (HttpWebResponse) request.GetResponse();
                 using (Stream rstream = res.GetResponseStream()) {
                     disposition = res.Headers["content-disposition"];
-                    filename = disposition.Split(new string[] { "filename=\"" }, StringSplitOptions.None)[1].Split('"')[0];
-                    /*
-                    string fileName = res.Headers["Content-Disposition"] != null ?
-                        res.Headers["Content-Disposition"].Replace("attachment; filename=", "").Replace("\"", "") :
-                        res.Headers["Location"] != null ? Path.GetFileName(res.Headers["Location"]) :
-                        Path.GetFileName(url).Contains('?') || Path.GetFileName(url).Contains('=') ?
-                        Path.GetFileName(res.ResponseUri.ToString()) : defaultFileName;
-                        */
+                    filename = disposition.Split(new string[] {"filename=\""}, StringSplitOptions.None)[1].Split('"')[0];
                 }
                 res.Close();
                 return filename;
-
             }
-            catch { }
+
+            catch {
+                
+            }
 
             return null;
-            
-
-            /*
-            string disposition, filename;
-            using (WebClient client = new WebClient()) {
-                /*
-                client.OpenReadCompleted += (object sender, OpenReadCompletedEventArgs e) => {
-                    var disposition = client.ResponseHeaders["content-disposition"];
-                    torrent = disposition.Split(new string[] {"filename=\""}, StringSplitOptions.None)[1].Split('"')[0];
-                };
-                Task.Run(() => client.OpenReadAsync(new Uri(link))).Wait();
-                */
-            /*
-            client.OpenRead(link);
-            disposition = client.ResponseHeaders["content-disposition"];
-            filename = disposition.Split(new string[] { "filename=\"" }, StringSplitOptions.None)[1].Split('"')[0];
         }
-        return filename;
-        */
-        }
-        
 
         public string strippedName(bool removeEpisode=false) {
             List<string> phrases = new List<string>();

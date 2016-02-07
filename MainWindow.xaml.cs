@@ -41,7 +41,7 @@ namespace anime_downloader {
             XDocument doc =
                     new XDocument(
                         new XDeclaration("1.0", "utf-8", "yes"),
-                        new XComment("Anime mockup"),
+                        new XComment("List of Anime"),
                         new XElement("anime"/*,
                             new XElement("show",
                                 new XElement("name", "Fairy Tail Zero"),
@@ -179,10 +179,11 @@ namespace anime_downloader {
                     // Nyaa listing with subgroup
                     else if (!subgroups.Contains(nyaaLink.subgroup())) {
                         if (onlyWhitelisted) {
-                            textbox.Text += $"Found result for {anime.name} with non-whitelisted subgroup. Skipping ...\n";
+                            textbox.Text +=
+                                $"Found result for {anime.name} with non-whitelisted subgroup. Skipping ...\n";
                         }
                     }
-
+                    
                     textbox.Text += $"Downloading '{anime.title()}' episode '{anime.nextEpisode()}'.\n";
                     string filepath = Path.Combine(folder_torrents, nyaaLink.torrentName());
 
@@ -196,8 +197,7 @@ namespace anime_downloader {
                     totalDownloaded++;
                 }
             }
-
-
+            
             foreach(Anime anime in Changes)
                 editAnime(anime.name, anime);
 
@@ -213,10 +213,7 @@ namespace anime_downloader {
             proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.RedirectStandardOutput = true;
             proc.StartInfo.CreateNoWindow = true;
-            // new Thread(() => proc.Start()).Start();
             Task.Run(() => proc.Start());
-            // Task.Run(() => proc.Start());
-            //return proc.StandardOutput.ReadToEnd();
         }
 
         private string getOutputFolder() {
