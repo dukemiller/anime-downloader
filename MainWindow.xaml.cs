@@ -35,18 +35,25 @@ namespace anime_downloader {
         }
 
         private void button_folder_Click(object sender, RoutedEventArgs e) {
-            Process.Start(folder_base);
+            if (Directory.Exists(folder_base))
+                Process.Start(folder_base);
+            else
+                MessageBox.Show("Your base folder doesn't seem to exist.");
         }
 
         private void button_playlist_Click(object sender, RoutedEventArgs e) {
-            string[] videos = Directory.GetDirectories(folder_base)
-                .Where(s => !s.EndsWith("torrents") && !s.EndsWith("Grace") && !s.EndsWith("Watched"))
-                .SelectMany(f => Directory.GetFiles(f))
-                .ToArray();
-            using (StreamWriter file = new StreamWriter(path: folder_base + @"\playlist.m3u", 
-                                                        append: false)) {
-                foreach(String video in videos)
-                    file.WriteLine(video);
+            if (!Directory.Exists(folder_base))
+                MessageBox.Show("Your base folder doesn't seem to exist.");
+            else {
+                string[] videos = Directory.GetDirectories(folder_base)
+                    .Where(s => !s.EndsWith("torrents") && !s.EndsWith("Grace") && !s.EndsWith("Watched"))
+                    .SelectMany(f => Directory.GetFiles(f))
+                    .ToArray();
+                using (StreamWriter file = new StreamWriter(path: folder_base + @"\playlist.m3u",
+                    append: false)) {
+                    foreach (String video in videos)
+                        file.WriteLine(video);
+                }
             }
         }
 
@@ -167,6 +174,30 @@ namespace anime_downloader {
         }
 
         // 
+
+        private string getOutputFolder() {
+            var date = DateTime.Now;
+            var weeknumber = Math.Floor(Convert.ToDouble(date.DayOfYear) / 7);
+            var folderName = $"{date.Year} - Week {weeknumber} - {date.ToString("MMMM")}";
+
+            var outputPath = Path.Combine(folder_base, folderName);
+
+            if (!Directory.Exists(outputPath))
+                Directory.CreateDirectory(outputPath);
+
+            return outputPath;
+        }
+
+        private async Task<string> callCommand(string filename, string command) {
+            Process proc = new Process();
+            proc.StartInfo.FileName = filename;
+            proc.StartInfo.Arguments = command;
+            proc.StartInfo.UseShellExecute = false;
+            proc.StartInfo.RedirectStandardOutput = true;
+            proc.StartInfo.CreateNoWindow = true;
+            await Task.Run(() => proc.Start());
+            return proc.StandardOutput.ReadToEnd();
+        }
 
         private void toggleButtons(params Button[] buttons) {
             foreach (Button b in buttons) {
@@ -360,11 +391,13 @@ namespace anime_downloader {
                     string filepath = Path.Combine(folder_torrents, nyaaLink.torrentName());
                     if (!File.Exists(filepath))
                         new WebClient().DownloadFile(nyaaLink.link, filepath);
-                    // command = '"{}" /DIRECTORY "{}" "{}"'.format(self.utorrent_path, self.get_output_folder(), file)
+
+                    var command = $"/DIRECTORY \"{getOutputFolder()}\" \"{filepath}\"";
+                    await callCommand(folder_utorrent, command);
 
                     anime.episode = anime.nextEpisode();
                     // increment week last downloaded
-
+                    
                     editAnime(anime.name, anime);
                     updateTable();
                     totalDownloaded++;
@@ -374,22 +407,26 @@ namespace anime_downloader {
             textbox.Text += totalDownloaded > 0 ? $">> Found {totalDownloaded} anime downloads." : ">> No new anime found.";
             toggleButtons(button_home, button_list, button_settings, button_check);
         }
-
+        
         private void button_check_Click(object sender, RoutedEventArgs e) {
-            display.Children.Clear();
-            currentDisplay = new UserControls.Download();
-            display.Children.Add(currentDisplay);
-            var download = currentDisplay as UserControls.Download;
+            if (!Directory.Exists(folder_base))
+                MessageBox.Show("Your base folder doesn't seem to exist.");
+            else {
+                display.Children.Clear();
+                currentDisplay = new UserControls.Download();
+                display.Children.Add(currentDisplay);
+                var download = currentDisplay as UserControls.Download;
 
-            XDocument animeXML = XDocument.Load(animeXMLPath);
-            Anime[] animes = animeXML.Element("anime").Elements()
-                .Select(x => new Anime(x))
-                .Where(a => a.airing == true)
-                .ToArray();
-            string[] names = animes.Select(a => a.name).ToArray();
+                XDocument animeXML = XDocument.Load(animeXMLPath);
+                Anime[] animes = animeXML.Element("anime").Elements()
+                    .Select(x => new Anime(x))
+                    .Where(a => a.airing == true)
+                    .ToArray();
+                string[] names = animes.Select(a => a.name).ToArray();
 
-            if (download != null) {
-                downloadAnime(download.textBox, animes);
+                if (download != null) {
+                    downloadAnime(download.textBox, animes);
+                }
             }
         }
 
