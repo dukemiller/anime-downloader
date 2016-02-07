@@ -168,7 +168,7 @@ namespace anime_downloader {
 
         // 
 
-        private void toggle_buttons(params Button[] buttons) {
+        private void toggleButtons(params Button[] buttons) {
             foreach (Button b in buttons) {
                 if (b.IsHitTestVisible) {
                     b.IsHitTestVisible = false;
@@ -305,7 +305,7 @@ namespace anime_downloader {
 
             var settings = currentDisplay as UserControls.Settings;
             if (settings != null) {
-                toggle_buttons(button_home, button_list, button_settings, button_check, button_folder, button_playlist, button_open_executing);
+                toggleButtons(button_home, button_list, button_settings, button_check, button_folder, button_playlist, button_open_executing);
                 settings.base_textbox.Text = Directory.GetCurrentDirectory();
                 settings.torrent_textbox.Text = System.IO.Path.Combine(settings.base_textbox.Text, "torrents");
                 settings.download_textbox.Text = @"C:\Program Files (x86)\uTorrent\uTorrent.exe";
@@ -320,7 +320,7 @@ namespace anime_downloader {
                             settings.download_textbox.Text,
                             settings.subgroups_textbox.Text.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries),
                             settings.only_whitelisted_checkbox.IsChecked.Value);
-                        toggle_buttons(button_home, button_list, button_settings, button_check, button_folder, button_playlist, button_open_executing);
+                        toggleButtons(button_home, button_list, button_settings, button_check, button_folder, button_playlist, button_open_executing);
                         loadSettings();
                         button_home.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                     }
@@ -332,7 +332,7 @@ namespace anime_downloader {
         // download
 
         private async void downloadAnime(TextBox textbox, Anime[] animes) {
-            toggle_buttons(button_home, button_list, button_settings, button_check);
+            toggleButtons(button_home, button_list, button_settings, button_check);
             int totalDownloaded = 0;
             textbox.Text = ">> Searching for currently airing anime episodes ...\n";
 
@@ -372,7 +372,7 @@ namespace anime_downloader {
             }
 
             textbox.Text += totalDownloaded > 0 ? $">> Found {totalDownloaded} anime downloads." : ">> No new anime found.";
-            toggle_buttons(button_home, button_list, button_settings, button_check);
+            toggleButtons(button_home, button_list, button_settings, button_check);
         }
 
         private void button_check_Click(object sender, RoutedEventArgs e) {
@@ -400,8 +400,19 @@ namespace anime_downloader {
             currentDisplay = new UserControls.Add();
             display.Children.Add(currentDisplay);
             var anime = currentDisplay as UserControls.Add;
+
             if (anime != null) {
                 anime.add_button.Click += new RoutedEventHandler(button_add_Click);
+
+                KeyEventHandler enterApply = new KeyEventHandler((object s, KeyEventArgs k) => {
+                    if (k.Key == Key.Enter) {
+                        anime.add_button.Focus();
+                        anime.add_button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    }
+                });
+
+                anime.name_textbox.KeyUp += enterApply;
+                anime.episode_textbox.KeyUp += enterApply;
             }
         }
 
@@ -410,22 +421,21 @@ namespace anime_downloader {
 
             if (anime != null) {
 
-                Anime newAnime = new Anime {
-                    name = anime.name_textbox.Text,
-                    episode = anime.episode_textbox.Text,
-                    status = anime.status_combobox.Text,
-                    resolution = anime.resolution_combobox.Text,
-                    airing = anime.airing_checkbox.IsChecked.Value,
-                    nameStrict = anime.name_strict_checkbox.IsChecked.Value
-                };
-
-                if (newAnime.name.Equals("")) {
-                    MessageBox.Show("There needs to be a name.");
+                if (anime.name_textbox.Text.Equals("") || anime.episode_textbox.Text.Equals("")) {
+                    MessageBox.Show("There needs to be a name and/or episode.");
                 }
 
-                else {
+                else { 
+                    Anime newAnime = new Anime {
+                        name = anime.name_textbox.Text,
+                        episode = string.Format("{0:D2}", int.Parse(anime.episode_textbox.Text)),
+                        status = anime.status_combobox.Text,
+                        resolution = anime.resolution_combobox.Text,
+                        airing = anime.airing_checkbox.IsChecked.Value,
+                        nameStrict = anime.name_strict_checkbox.IsChecked.Value
+                    };
+                    
                     addAnime(newAnime);
-                    // button_add_new.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                     button_list.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                 }
             }
@@ -438,6 +448,7 @@ namespace anime_downloader {
 
             if (table != null) {
                 if (table.dataGrid.SelectedCells.FirstOrDefault().IsValid) {
+                    
                     XElement item = table.dataGrid.SelectedCells[0].Item as XElement; //  .Items[0].ToString());
 
                     display.Children.Clear();
@@ -450,6 +461,7 @@ namespace anime_downloader {
 
                     KeyEventHandler enterApply = new KeyEventHandler((object s, KeyEventArgs k) => {
                         if (k.Key == Key.Enter) {
+                            anime.add_button.Focus();
                             anime.add_button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                         }
                     });
@@ -473,20 +485,25 @@ namespace anime_downloader {
             var anime = currentDisplay as UserControls.Add;
 
             if (anime != null) {
-                Anime editedAnime = new Anime {
-                    name = anime.name_textbox.Text,
-                    episode = anime.episode_textbox.Text,
-                    status = anime.status_combobox.Text,
-                    resolution = anime.resolution_combobox.Text,
-                    airing = anime.airing_checkbox.IsChecked.Value,
-                    nameStrict = anime.name_strict_checkbox.IsChecked.Value
-                };
                 
-                editAnime(currentlyEditedAnime, editedAnime);
-                button_list.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                if (anime.name_textbox.Text.Equals("") || anime.episode_textbox.Text.Equals(""))
+                    MessageBox.Show("There needs to be a name and/or episode.");
+
+                else {
+                    Anime editedAnime = new Anime {
+                        name = anime.name_textbox.Text,
+                        episode = string.Format("{0:D2}", int.Parse(anime.episode_textbox.Text)),
+                        status = anime.status_combobox.Text,
+                        resolution = anime.resolution_combobox.Text,
+                        airing = anime.airing_checkbox.IsChecked.Value,
+                        nameStrict = anime.name_strict_checkbox.IsChecked.Value
+                    };
+
+                    editAnime(currentlyEditedAnime, editedAnime);
+                    button_list.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                }
             }
         }
         
     }
 }
-

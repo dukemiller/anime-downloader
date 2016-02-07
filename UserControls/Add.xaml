@@ -22,9 +22,9 @@
         </Grid.RowDefinitions>
 
         <TextBox x:Name="name_textbox" Grid.Column="1" Grid.Row="0" Height="27" 
-                 TextWrapping="Wrap" Text="" VerticalAlignment="Center" FontSize="18.667" Margin="0,10"/>
+                 TextWrapping="Wrap" Text="" VerticalAlignment="Center" FontSize="18.667" Margin="0,10" GotFocus="name_textbox_GotFocus"/>
         <TextBox x:Name="episode_textbox" Grid.Column="1" Grid.Row="1" Height="27" 
-                 TextWrapping="Wrap" Text="0" VerticalAlignment="Center" KeyDown="episode_textbox_KeyDown" FontSize="18.667" Margin="0,10"/>
+                 TextWrapping="Wrap" Text="00" VerticalAlignment="Center" FontSize="18.667" Margin="0,10" GotFocus="episode_textbox_GotFocus" PreviewTextInput="episode_textbox_PreviewTextInput" />
         <ComboBox x:Name="resolution_combobox" Grid.Column="1" HorizontalAlignment="Left" Margin="0,15,0,0" Grid.Row="2" VerticalAlignment="Top" Width="120">
             <ComboBoxItem Content="480"/>
             <ComboBoxItem IsSelected="True" Content="720"/>
@@ -35,7 +35,7 @@
             <ComboBoxItem Content="Finished"/>
             <ComboBoxItem Content="On Hold"/>
         </ComboBox>
-        <CheckBox x:Name="airing_checkbox" Content="" Grid.Column="1" HorizontalAlignment="Left" Margin="0,18,0,0" Grid.Row="4" VerticalAlignment="Top"/>
+        <CheckBox x:Name="airing_checkbox" IsChecked="True" Content="" Grid.Column="1" HorizontalAlignment="Left" Margin="0,18,0,0" Grid.Row="4" VerticalAlignment="Top"/>
         <CheckBox x:Name="name_strict_checkbox" Content="" Grid.Column="1" HorizontalAlignment="Left" Margin="0,19,0,0" Grid.Row="5" VerticalAlignment="Top"/>
 
         <Label x:Name="name_label" Content="Name: " VerticalAlignment="Center" HorizontalAlignment="Center"  FontSize="16"

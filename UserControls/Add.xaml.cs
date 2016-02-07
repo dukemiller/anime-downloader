@@ -21,21 +21,18 @@ namespace anime_downloader.UserControls {
         public Add() {
             InitializeComponent();
         }
-        
-        private void episode_textbox_KeyDown(object sender, KeyEventArgs e) {
+       
+        private void episode_textbox_GotFocus(object sender, RoutedEventArgs e) {
+            episode_textbox.SelectAll();
+        }
 
-            switch (e.Key) {
-                case Key.D1: case Key.D2: case Key.D3: case Key.D4:
-                case Key.D5: case Key.D6: case Key.D7: case Key.D8:
-                case Key.D9: case Key.D0: case Key.NumPad0:
-                case Key.NumPad1: case Key.NumPad2: case Key.NumPad3:
-                case Key.NumPad4: case Key.NumPad5: case Key.NumPad6:
-                case Key.NumPad7: case Key.NumPad8: case Key.NumPad9:
-                    break;
-                default:
-                    e.Handled = true;
-                    break;
-            }
+        private void name_textbox_GotFocus(object sender, RoutedEventArgs e) {
+            name_textbox.SelectAll();
+        }
+
+        private void episode_textbox_PreviewTextInput(object sender, TextCompositionEventArgs e) {
+            if (!char.IsDigit(e.Text, e.Text.Length - 1))
+                e.Handled = true;
         }
         
     }
