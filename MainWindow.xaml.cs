@@ -419,6 +419,9 @@ namespace anime_downloader {
             if (!Directory.Exists(folder_base))
                 MessageBox.Show("Your base folder doesn't seem to exist.");
 
+            else if (!File.Exists(folder_utorrent) || !folder_utorrent.ToLower().EndsWith(".exe"))
+                MessageBox.Show("Your uTorrent.exe path seems to be wrong.");
+
             else {
                 if (!Directory.Exists(folder_torrents))
                     Directory.CreateDirectory(folder_torrents);
