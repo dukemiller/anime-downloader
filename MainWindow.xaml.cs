@@ -172,15 +172,17 @@ namespace anime_downloader {
 
                     // Nyaa listing with no subgroup in the title
                     if (!nyaaLink.hasSubgroup()) {
-                        if (onlyWhitelisted)
+                        if (onlyWhitelisted) {
                             textbox.Text += $"Found result for {anime.name} with no subgroup. Skipping ...\n";
+                            continue;
+                        }
                     }
 
                     // Nyaa listing with subgroup
                     else if (!subgroups.Contains(nyaaLink.subgroup())) {
                         if (onlyWhitelisted) {
-                            textbox.Text +=
-                                $"Found result for {anime.name} with non-whitelisted subgroup. Skipping ...\n";
+                            textbox.Text += $"Found result for {anime.name} with non-whitelisted subgroup. Skipping ...\n";
+                            continue;
                         }
                     }
                     
