@@ -412,6 +412,10 @@ namespace anime_downloader {
             if (!Directory.Exists(folder_base))
                 MessageBox.Show("Your base folder doesn't seem to exist.");
             else {
+
+                if (!Directory.Exists(folder_torrents))
+                    Directory.CreateDirectory(folder_torrents);
+
                 display.Children.Clear();
                 currentDisplay = new UserControls.Download();
                 display.Children.Add(currentDisplay);
