@@ -8,18 +8,15 @@ using System.Net;
 namespace anime_downloader.Classes {
     public class Nyaa {
 
+        public string name, link, description, measurement;
+        public int seeders;
+        public double size;
+
         private static readonly Dictionary<string, double> toMegabyte = new Dictionary<string, double> {
             { "MiB", 1.04858  },
             { "GiB", 1073.74  },
             { "KiB", 0.001024 }
         };
-
-        public string name;
-        public string link;
-        public string description;
-        public string measurement;
-        public int seeders;
-        public double size;
 
         public Nyaa(HtmlNode node) {
             name = node.Element("title").InnerText;

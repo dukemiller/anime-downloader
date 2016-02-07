@@ -33,33 +33,6 @@ namespace anime_downloader {
             loadSettings();
             updateTable();
         }
-
-        private void button_folder_Click(object sender, RoutedEventArgs e) {
-            if (Directory.Exists(folder_base))
-                Process.Start(folder_base);
-            else
-                MessageBox.Show("Your base folder doesn't seem to exist.");
-        }
-
-        private void button_playlist_Click(object sender, RoutedEventArgs e) {
-            if (!Directory.Exists(folder_base))
-                MessageBox.Show("Your base folder doesn't seem to exist.");
-            else {
-                string[] videos = Directory.GetDirectories(folder_base)
-                    .Where(s => !s.EndsWith("torrents") && !s.EndsWith("Grace") && !s.EndsWith("Watched"))
-                    .SelectMany(f => Directory.GetFiles(f))
-                    .ToArray();
-                using (StreamWriter file = new StreamWriter(path: folder_base + @"\playlist.m3u",
-                    append: false)) {
-                    foreach (String video in videos)
-                        file.WriteLine(video);
-                }
-            }
-        }
-
-        private void button_open_executing_Click(object sender, RoutedEventArgs e) {
-            Process.Start(applicationPath);
-        }
         
         // XML Modification
 
@@ -173,7 +146,72 @@ namespace anime_downloader {
             }
         }
 
+        private void updateTable() {
+            var anime = XDocument.Load(animeXMLPath).Root;
+            var table = currentDisplay as UserControls.AnimeList;
+            if (table != null)
+                table.dataGrid.DataContext = anime;
+            //dataGrid.DataContext = anime;
+        }
+
         // 
+
+        private async void downloadAnime(TextBox textbox, Anime[] animes) {
+            toggleButtons(button_home, button_list, button_settings, button_check);
+            int totalDownloaded = 0;
+            textbox.Text = ">> Searching for currently airing anime episodes ...\n";
+
+            foreach (Anime anime in animes) {
+                var nyaaLink = await anime.getLinkToNextEpisode();
+
+                if (nyaaLink != null) {
+
+                    // Nyaa listing with no subgroup in the title
+                    if (!nyaaLink.hasSubgroup()) {
+                        if (onlyWhitelisted)
+                            textbox.Text += $"Found result for {anime.name} with no subgroup. Skipping ...\n";
+                    }
+
+                    // Nyaa listing with subgroup
+                    else if (!subgroups.Contains(nyaaLink.subgroup())) {
+                        if (onlyWhitelisted) {
+                            textbox.Text +=
+                                $"Found result for {anime.name} with non-whitelisted subgroup. Skipping ...\n";
+                        }
+                    }
+
+                    textbox.Text += $"Downloading '{anime.title()}' episode '{anime.nextEpisode()}'.\n";
+
+                    string filepath = Path.Combine(folder_torrents, nyaaLink.torrentName());
+                    if (!File.Exists(filepath))
+                        new WebClient().DownloadFile(nyaaLink.link, filepath);
+
+                    var command = $"/DIRECTORY \"{getOutputFolder()}\" \"{filepath}\"";
+                    callCommand(folder_utorrent, command);
+
+                    anime.episode = anime.nextEpisode();
+                    // increment week last downloaded
+
+                    editAnime(anime.name, anime);
+                    updateTable();
+                    totalDownloaded++;
+                }
+            }
+
+            textbox.Text += totalDownloaded > 0 ? $">> Found {totalDownloaded} anime downloads." : ">> No new anime found.";
+            toggleButtons(button_home, button_list, button_settings, button_check);
+        }
+        
+        private void callCommand(string filename, string command) {
+            Process proc = new Process();
+            proc.StartInfo.FileName = filename;
+            proc.StartInfo.Arguments = command;
+            proc.StartInfo.UseShellExecute = false;
+            proc.StartInfo.RedirectStandardOutput = true;
+            proc.StartInfo.CreateNoWindow = true;
+            Task.Run(() => proc.Start());
+            // return proc.StandardOutput.ReadToEnd();
+        }
 
         private string getOutputFolder() {
             var date = DateTime.Now;
@@ -186,17 +224,6 @@ namespace anime_downloader {
                 Directory.CreateDirectory(outputPath);
 
             return outputPath;
-        }
-
-        private async Task<string> callCommand(string filename, string command) {
-            Process proc = new Process();
-            proc.StartInfo.FileName = filename;
-            proc.StartInfo.Arguments = command;
-            proc.StartInfo.UseShellExecute = false;
-            proc.StartInfo.RedirectStandardOutput = true;
-            proc.StartInfo.CreateNoWindow = true;
-            await Task.Run(() => proc.Start());
-            return proc.StandardOutput.ReadToEnd();
         }
 
         private void toggleButtons(params Button[] buttons) {
@@ -212,15 +239,36 @@ namespace anime_downloader {
             }
         }
 
-        private void updateTable() {
-            var anime = XDocument.Load(animeXMLPath).Root;
-            var table = currentDisplay as UserControls.AnimeList;
-            if (table != null)
-                table.dataGrid.DataContext = anime;
-            //dataGrid.DataContext = anime;
-        }
-        
         //// Event handling
+        // simple buttons
+
+        private void button_folder_Click(object sender, RoutedEventArgs e) {
+            if (Directory.Exists(folder_base))
+                Process.Start(folder_base);
+            else
+                MessageBox.Show("Your base folder doesn't seem to exist.");
+        }
+
+        private void button_playlist_Click(object sender, RoutedEventArgs e) {
+            if (!Directory.Exists(folder_base))
+                MessageBox.Show("Your base folder doesn't seem to exist.");
+            else {
+                string[] videos = Directory.GetDirectories(folder_base)
+                    .Where(s => !s.EndsWith("torrents") && !s.EndsWith("Grace") && !s.EndsWith("Watched"))
+                    .SelectMany(f => Directory.GetFiles(f))
+                    .ToArray();
+                using (StreamWriter file = new StreamWriter(path: folder_base + @"\playlist.m3u",
+                    append: false)) {
+                    foreach (String video in videos)
+                        file.WriteLine(video);
+                }
+            }
+        }
+
+        private void button_open_executing_Click(object sender, RoutedEventArgs e) {
+            Process.Start(applicationPath);
+        }
+
         // anime list
 
         private void button_list_Click(object sender, RoutedEventArgs e) {
@@ -361,58 +409,12 @@ namespace anime_downloader {
         }
 
         // download
-
-        private async void downloadAnime(TextBox textbox, Anime[] animes) {
-            toggleButtons(button_home, button_list, button_settings, button_check);
-            int totalDownloaded = 0;
-            textbox.Text = ">> Searching for currently airing anime episodes ...\n";
-
-            foreach (Anime anime in animes) {
-                var nyaaLink = await anime.getLinkToNextEpisode();
-
-                if (nyaaLink != null) {
-
-                    // Nyaa listing with no subgroup in the title
-                    if (!nyaaLink.hasSubgroup()) {
-                        if (onlyWhitelisted)
-                            textbox.Text += $"Found result for {anime.name} with no subgroup. Skipping ...\n";
-                    }
-
-                    // Nyaa listing with subgroup
-                    else if (!subgroups.Contains(nyaaLink.subgroup())) {
-                        if (onlyWhitelisted) {
-                            textbox.Text +=
-                                $"Found result for {anime.name} with non-whitelisted subgroup. Skipping ...\n";
-                        }
-                    }
-
-                    textbox.Text += $"Downloading '{anime.title()}' episode '{anime.nextEpisode()}'.\n";
-
-                    string filepath = Path.Combine(folder_torrents, nyaaLink.torrentName());
-                    if (!File.Exists(filepath))
-                        new WebClient().DownloadFile(nyaaLink.link, filepath);
-
-                    var command = $"/DIRECTORY \"{getOutputFolder()}\" \"{filepath}\"";
-                    await callCommand(folder_utorrent, command);
-
-                    anime.episode = anime.nextEpisode();
-                    // increment week last downloaded
-                    
-                    editAnime(anime.name, anime);
-                    updateTable();
-                    totalDownloaded++;
-                }
-            }
-
-            textbox.Text += totalDownloaded > 0 ? $">> Found {totalDownloaded} anime downloads." : ">> No new anime found.";
-            toggleButtons(button_home, button_list, button_settings, button_check);
-        }
         
         private void button_check_Click(object sender, RoutedEventArgs e) {
             if (!Directory.Exists(folder_base))
                 MessageBox.Show("Your base folder doesn't seem to exist.");
-            else {
 
+            else {
                 if (!Directory.Exists(folder_torrents))
                     Directory.CreateDirectory(folder_torrents);
 
