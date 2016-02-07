@@ -1,22 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Xml.Linq;
-using System.Xml;
-
+using anime_downloader.Classes;
+using System.Net;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace anime_downloader {
 
@@ -351,6 +344,68 @@ namespace anime_downloader {
             }
         }
 
+        private async void downloadAnime(TextBox textbox, Anime[] animes) {
+            toggle_buttons(button_home, button_list, button_settings, button_check);
+            int totalDownloaded = 0;
+            textbox.Text = ">> Searching for currently airing anime episodes ...\n";
+
+            foreach (Anime anime in animes) {
+                var nyaaLink = await anime.getLinkToNextEpisode();
+
+                if (nyaaLink != null) {
+
+                    // Nyaa listing with no subgroup in the title
+                    if (!nyaaLink.hasSubgroup()) {
+                        if (onlyWhitelisted)
+                            textbox.Text += $"Found result for {anime.name} with no subgroup. Skipping ...\n";
+                    }
+
+                    // Nyaa listing with subgroup
+                    else if (!subgroups.Contains(nyaaLink.subgroup())) {
+                        if (onlyWhitelisted) {
+                            textbox.Text +=
+                                $"Found result for {anime.name} with non-whitelisted subgroup. Skipping ...\n";
+                        }
+                    }
+
+                    textbox.Text += $"Downloading '{anime.title()}' episode '{anime.nextEpisode()}'.\n";
+
+                    string filepath = Path.Combine(folder_torrents, nyaaLink.torrentName());
+                    if (!File.Exists(filepath))
+                        new WebClient().DownloadFile(nyaaLink.link, filepath);
+                    // command = '"{}" /DIRECTORY "{}" "{}"'.format(self.utorrent_path, self.get_output_folder(), file)
+
+                    anime.episode = anime.nextEpisode();
+                    // increment week last downloaded
+
+                    editAnime(anime.name, anime);
+                    updateTable();
+                    totalDownloaded++;
+                }
+            }
+
+            textbox.Text += totalDownloaded > 0 ? $">> Found {totalDownloaded} anime downloads." : ">> No new anime found.";
+            toggle_buttons(button_home, button_list, button_settings, button_check);
+        }
+
+        private void button_check_Click(object sender, RoutedEventArgs e) {
+            display.Children.Clear();
+            currentDisplay = new UserControls.Download();
+            display.Children.Add(currentDisplay);
+            var download = currentDisplay as UserControls.Download;
+
+            XDocument animeXML = XDocument.Load(animeXMLPath);
+            Anime[] animes = animeXML.Element("anime").Elements()
+                .Select(x => new Anime(x))
+                .Where(a => a.airing == true)
+                .ToArray();
+            string[] names = animes.Select(a => a.name).ToArray();
+
+            if (download != null) {
+                downloadAnime(download.textBox, animes);
+            }
+        }
+
         private void button_apply_settings_Click(object sender, RoutedEventArgs e) {
             var settings = currentDisplay as UserControls.Settings;
             if (settings != null) {
@@ -449,11 +504,3 @@ namespace anime_downloader {
     }
 }
 
-public class Anime {
-    public string name { get; set; }
-    public string episode { get; set; }
-    public string status { get; set; }
-    public string resolution { get; set; }
-    public bool airing { get; set; }
-    public bool nameStrict { get; set; }
-}
