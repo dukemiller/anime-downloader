@@ -14,7 +14,7 @@
         <Button x:Name="button_settings" Content="Settings &amp; Options" HorizontalAlignment="Left" Margin="10,119,0,0" VerticalAlignment="Top" Width="226" Height="43" FontSize="24" Click="button_settings_Click"/>
         <Button x:Name="button_folder" Content="Open folder" HorizontalAlignment="Left" Margin="10,247,0,0" VerticalAlignment="Top" Width="126" Click="button_folder_Click"/>
         <Button x:Name="button_playlist" Content="Create playlist" HorizontalAlignment="Left" Margin="10,284,0,0" VerticalAlignment="Top" Width="126" Click="button_playlist_Click"/>
-        <Button x:Name="button_open_executing" Content="Open Executing Folder" HorizontalAlignment="Left" Margin="10,320,0,0" VerticalAlignment="Top" Width="126" Click="button_open_executing_Click"/>
+        <Button x:Name="button_open_executing" Content="Open Settings Folder" HorizontalAlignment="Left" Margin="10,320,0,0" VerticalAlignment="Top" Width="126" Click="button_open_executing_Click"/>
 
         <Grid x:Name="display" Width="650" Height="330" HorizontalAlignment="Left" Margin="241,10,0,0" VerticalAlignment="Top"/>
         

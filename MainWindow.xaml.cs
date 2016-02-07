@@ -33,11 +33,13 @@ namespace anime_downloader {
         private UserControl currentDisplay;
         private string currentlyEditedAnime;
 
+        private string applicationPath, settingsXMLPath, animeXMLPath;
+
         public MainWindow() {
             InitializeComponent();
             currentDisplay = new UserControls.Home();
             display.Children.Add(currentDisplay);
-
+            
             loadSettings();
             updateTable();
         }
@@ -59,7 +61,7 @@ namespace anime_downloader {
         }
 
         private void button_open_executing_Click(object sender, RoutedEventArgs e) {
-            Process.Start(".");
+            Process.Start(applicationPath);
         }
         
         // Prototyping 
@@ -85,7 +87,7 @@ namespace anime_downloader {
                                 new XElement("only-whitelisted-subs", "true")))
                         );
 
-            doc.Save("settings.xml");
+            doc.Save(settingsXMLPath);
         }
        
         // XML Modification
@@ -107,11 +109,11 @@ namespace anime_downloader {
                                 new XElement("last-downloaded", "2016-02-04"))*/)
                         );
 
-            doc.Save("anime.xml");
+            doc.Save(animeXMLPath);
         }
 
         private void addAnime(Anime newAnime) {
-            XDocument anime = XDocument.Load("anime.xml");
+            XDocument anime = XDocument.Load(animeXMLPath);
 
             var element = new XElement("show",
                 new XElement("name", newAnime.name),
@@ -124,11 +126,11 @@ namespace anime_downloader {
                 new XElement("last-downloaded", "2016-02-04"));
 
             anime.Element("anime").Add(element);
-            anime.Save("anime.xml");
+            anime.Save(animeXMLPath);
         }
 
         private void editAnime(string name, Anime editedAnime) {
-            XDocument doc = XDocument.Load("anime.xml");
+            XDocument doc = XDocument.Load(animeXMLPath);
             XElement anime = doc.Root;
             XElement selected = anime.Elements().Where(a => a.Element("name").Value.Equals(name)).FirstOrDefault();
 
@@ -139,15 +141,15 @@ namespace anime_downloader {
             selected.Element("airing").Value = editedAnime.airing.ToString();
             selected.Element("name-strict").Value = editedAnime.nameStrict.ToString();
 
-            doc.Save("anime.xml");
+            doc.Save(animeXMLPath);
         }
 
         private void removeAnime(string name) {
-            XDocument anime = XDocument.Load("anime.xml");
+            XDocument anime = XDocument.Load(animeXMLPath);
             var result = anime.Root.Elements().Where(x => x.Element("name").Value == name).FirstOrDefault();
             if (result != null) {
                 result.Remove();
-                anime.Save("anime.xml");
+                anime.Save(animeXMLPath);
             }
         }
 
@@ -172,18 +174,26 @@ namespace anime_downloader {
                                 new XElement("only-whitelisted-subs", whitelisted)))
                         );
 
-            doc.Save("settings.xml");
+            doc.Save(settingsXMLPath);
         }
 
         private void loadSettings() {
-            if (!File.Exists("anime.xml"))
+            applicationPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "anime-downloader");
+
+            if (!Directory.Exists(applicationPath))
+                Directory.CreateDirectory(applicationPath);
+
+            animeXMLPath = System.IO.Path.Combine(applicationPath, "anime.xml");
+            settingsXMLPath = System.IO.Path.Combine(applicationPath, "settings.xml");
+
+            if (!File.Exists(animeXMLPath))
                 createAnimeXML();
 
-            if (!File.Exists("settings.xml"))
+            if (!File.Exists(settingsXMLPath))
                 newSettings();
             
             else {
-                XElement settings = XDocument.Load("settings.xml").Root;
+                XElement settings = XDocument.Load(settingsXMLPath).Root;
                 folder_base = settings.Element("path").Element("base").Value;
                 folder_torrents = settings.Element("path").Element("torrents").Value;
                 folder_utorrent = settings.Element("path").Element("utorrent").Value;
@@ -208,7 +218,7 @@ namespace anime_downloader {
         }
 
         private void updateTable() {
-            var anime = XDocument.Load("anime.xml").Root;
+            var anime = XDocument.Load(animeXMLPath).Root;
             var table = currentDisplay as UserControls.AnimeList;
             if (table != null)
                 table.dataGrid.DataContext = anime;
@@ -222,7 +232,7 @@ namespace anime_downloader {
 
             var settings = currentDisplay as UserControls.Settings;
             if (settings != null) {
-                toggle_buttons(button_home, button_list, button_settings, button_check);
+                toggle_buttons(button_home, button_list, button_settings, button_check, button_folder, button_playlist, button_open_executing);
                 settings.base_textbox.Text = Directory.GetCurrentDirectory();
                 settings.torrent_textbox.Text = System.IO.Path.Combine(settings.base_textbox.Text, "torrents");
                 settings.download_textbox.Text = @"C:\Program Files (x86)\uTorrent\uTorrent.exe";
@@ -237,7 +247,7 @@ namespace anime_downloader {
                             settings.download_textbox.Text, 
                             settings.subgroups_textbox.Text.Split(new string[] {" "}, StringSplitOptions.RemoveEmptyEntries),
                             settings.only_whitelisted_checkbox.IsChecked.Value);
-                        toggle_buttons(button_home, button_list, button_settings, button_check);
+                        toggle_buttons(button_home, button_list, button_settings, button_check, button_folder, button_playlist, button_open_executing);
                         loadSettings();
                         button_home.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                     }
@@ -375,7 +385,7 @@ namespace anime_downloader {
                                     new XElement("only-whitelisted-subs", settings.only_whitelisted_checkbox.IsChecked)))
                             );
 
-                    doc.Save("settings.xml");
+                    doc.Save(settingsXMLPath);
                     loadSettings();
                 }
             }
@@ -395,7 +405,9 @@ namespace anime_downloader {
 
         private void button_add_Click(object sender, RoutedEventArgs e) {
             var anime = currentDisplay as UserControls.Add;
+
             if (anime != null) {
+
                 Anime newAnime = new Anime {
                     name = anime.name_textbox.Text,
                     episode = anime.episode_textbox.Text,
@@ -405,7 +417,11 @@ namespace anime_downloader {
                     nameStrict = anime.name_strict_checkbox.IsChecked.Value
                 };
 
-                if (!newAnime.name.Equals("")) {
+                if (newAnime.name.Equals("")) {
+                    MessageBox.Show("There needs to be a name.");
+                }
+
+                else {
                     addAnime(newAnime);
                     // button_add_new.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                     button_list.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
