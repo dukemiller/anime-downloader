@@ -25,15 +25,12 @@ namespace anime_downloader {
     /// </summary>
     public partial class MainWindow : Window {
 
-        private string folder_base;
-        private string folder_torrents;
-        private string folder_utorrent;
+        private string applicationPath, settingsXMLPath, animeXMLPath;
+        private string folder_base, folder_torrents, folder_utorrent;
         private bool onlyWhitelisted;
         private string[] subgroups;
         private UserControl currentDisplay;
         private string currentlyEditedAnime;
-
-        private string applicationPath, settingsXMLPath, animeXMLPath;
 
         public MainWindow() {
             InitializeComponent();
@@ -266,7 +263,7 @@ namespace anime_downloader {
             updateTable();
 
             var list = currentDisplay as UserControls.AnimeList;
-            list.@new.Click += new RoutedEventHandler(button_add_new_Click);
+            list.add.Click += new RoutedEventHandler(button_add_new_Click);
             list.edit.Click += new RoutedEventHandler(anime_list_edit_Click);
             list.delete.Click += new RoutedEventHandler(anime_list_delete_Click);
             list.dataGrid.PreviewKeyDown += new KeyEventHandler(anime_list_delete_KeyDown);
