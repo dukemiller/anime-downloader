@@ -31,7 +31,7 @@ namespace anime_downloader.Classes {
         public string measurement;
 
         /// <summary>
-        /// The amount of people seeidng the torrent.
+        /// The amount of people seeding the torrent.
         /// </summary>
         public int seeders;
 
@@ -41,7 +41,7 @@ namespace anime_downloader.Classes {
         public double size;
 
         /// <summary>
-        /// A conversion chart from Mebibyte to any other of these values.
+        /// A conversion chart from any of these values to megabytes.
         /// </summary>
         private static readonly Dictionary<string, double> toMegabyte = new Dictionary<string, double> {
             { "MiB", 1.04858  },
@@ -95,7 +95,7 @@ namespace anime_downloader.Classes {
             }
 
             catch {
-                
+
             }
 
             return null;
@@ -112,13 +112,15 @@ namespace anime_downloader.Classes {
 
             foreach (Match match in Regex.Matches(text, @"\s *\[(.*?)\]|\((.*?)\)\s*"))
                 phrases.Add(match.Groups[0].Value);
+
             foreach(String phrase in phrases)
                 text = text.Replace(phrase, "");
+
             if (removeEpisode)
                 text = String.Join("-", text.Split('-').Take(text.Split('-').Length-1).ToArray());
-             
+
             return Regex.Replace(text.Trim(), @"\s+", " ");
-            
+
         }
 
         /// <summary>
@@ -135,7 +137,7 @@ namespace anime_downloader.Classes {
         }
 
         /// <summary>
-        /// A check on if the subgroup exists.
+        /// A check if the subgroup exists.
         /// </summary>
         /// <returns>If a subgroup exists.</returns>
         public bool hasSubgroup() => subgroup() != null;
