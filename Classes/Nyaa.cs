@@ -10,16 +10,49 @@ using System.Threading.Tasks;
 namespace anime_downloader.Classes {
     public class Nyaa {
 
-        public string name, link, description, measurement;
+        /// <summary>
+        /// The nyaa's parsed filename.
+        /// </summary>
+        public string name;
+
+        /// <summary>
+        /// The given download link.
+        /// </summary>
+        public string link;
+
+        /// <summary>
+        /// The description containing seeder & measurement information.
+        /// </summary>
+        public string description;
+
+        /// <summary>
+        /// The unit of measurement used in size.
+        /// </summary>
+        public string measurement;
+
+        /// <summary>
+        /// The amount of people seeidng the torrent.
+        /// </summary>
         public int seeders;
+
+        /// <summary>
+        /// The size of the download.
+        /// </summary>
         public double size;
 
+        /// <summary>
+        /// A conversion chart from Mebibyte to any other of these values.
+        /// </summary>
         private static readonly Dictionary<string, double> toMegabyte = new Dictionary<string, double> {
             { "MiB", 1.04858  },
             { "GiB", 1073.74  },
             { "KiB", 0.001024 }
         };
 
+        /// <summary>
+        /// HTML Nyaa Initializer
+        /// </summary>
+        /// <param name="node">A raw node.</param>
         public Nyaa(HtmlNode node) {
             name = node.Element("title").InnerText;
             link = node.Element("#text").InnerText.Replace("#38;", "");
@@ -37,8 +70,16 @@ namespace anime_downloader.Classes {
                     2);
         }
 
+        /// <summary>
+        /// A simple representation of the important attribes of a Nyaa object.
+        /// </summary>
+        /// <returns>summary of nyaa values</returns>
         public override string ToString() => $"Nyaa<name={name}, link={link}, size={size} MB>";
 
+        /// <summary>
+        /// Gathers the torrent's filename from it's meta-data.
+        /// </summary>
+        /// <returns>A valid filename for the torrent.</returns>
         public string torrentName() {
             string filename, disposition;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(link);
@@ -60,6 +101,11 @@ namespace anime_downloader.Classes {
             return null;
         }
 
+        /// <summary>
+        /// Strips the filename to remove extraneous information and returns name.
+        /// </summary>
+        /// <param name="removeEpisode">A flag for also removing the episode number</param>
+        /// <returns>The name of the anime.</returns>
         public string strippedName(bool removeEpisode=false) {
             List<string> phrases = new List<string>();
             string text = name;
@@ -75,6 +121,10 @@ namespace anime_downloader.Classes {
             
         }
 
+        /// <summary>
+        /// Returns the subgroup from the name of the file.
+        /// </summary>
+        /// <returns>The subgroup of the file.</returns>
         public string subgroup() {
             foreach (Match match in Regex.Matches(name, @"\[([A-Za-z0-9_]+)\]+")) {
                 var result = match.Groups[1].Value;
@@ -84,6 +134,10 @@ namespace anime_downloader.Classes {
             return null;
         }
 
+        /// <summary>
+        /// A check on if the subgroup exists.
+        /// </summary>
+        /// <returns>If a subgroup exists.</returns>
         public bool hasSubgroup() => subgroup() != null;
 
     }
