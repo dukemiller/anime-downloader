@@ -10,6 +10,7 @@ using anime_downloader.Classes;
 using System.Net;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace anime_downloader {
 
@@ -121,6 +122,30 @@ namespace anime_downloader {
                 selected.Element("name-strict").Value = anime.nameStrict.ToString();
                 document.Save(settings.animeXMLPath);
             }
+        }
+
+        /// <summary>
+        /// Edit a specific elementName about an anime instead of needing an entire object.
+        /// </summary>
+        /// <param name="name">The identifying key name.</param>
+        /// <param name="elementName">The identifying element name.</param>
+        /// <param name="elementValue">The value to be written to the element.</param>
+        private void editAnime(string name, string elementName, string elementValue) {
+            XDocument document = XDocument.Load(settings.animeXMLPath);
+            XElement root = document.Root;
+
+            XElement selected = root.Elements()
+                .Where(a => a.Element("name").Value.Equals(name))
+                .FirstOrDefault();
+
+            if (selected != null) {
+                var element = selected.Element(elementName);
+                if (element != null) {
+                    element.Value = elementValue;
+                    document.Save(settings.animeXMLPath);
+                }
+            }
+
         }
 
         /// <summary>
@@ -250,12 +275,11 @@ namespace anime_downloader {
         /// <param name="textbox">The output box to display results to.</param>
         /// <param name="animes">The collection of anime to try and get new episodes from.</param>
         private async void downloadAnime(TextBox textbox, Anime[] animes) {
-            toggleButtons(button_home, button_list, button_settings, button_check);
-            int totalDownloaded = 0;
-
             List<Anime> changedAnime = new List<Anime>();
             WebClient client = new WebClient();
-
+            int totalDownloaded = 0;
+            
+            toggleButtons(button_home, button_list, button_settings, button_check);
             textbox.Text = ">> Searching for currently airing anime episodes ...\n";
 
             foreach (Anime anime in animes) {
@@ -266,7 +290,8 @@ namespace anime_downloader {
                     // Nyaa listing with no subgroup in the title
                     if (!nyaaLink.hasSubgroup()) {
                         if (settings.onlyWhitelisted) {
-                            textbox.Text += $"Found result for {anime.name} with no subgroup. Skipping ...\n";
+                            textbox.AppendText($"Found result for {anime.name} with no subgroup. Skipping ...\n");
+                            scrolldownTextbox(textbox);
                             continue;
                         }
                     }
@@ -274,16 +299,18 @@ namespace anime_downloader {
                     // Nyaa listing with subgroup
                     else if (!settings.subgroups.Contains(nyaaLink.subgroup())) {
                         if (settings.onlyWhitelisted) {
-                            textbox.Text += $"Found result for {anime.name} with non-whitelisted subgroup. Skipping ...\n";
+                            textbox.AppendText($"Found result for {anime.name} with non-whitelisted subgroup. Skipping ...\n");
+                            scrolldownTextbox(textbox);
                             continue;
                         }
                     }
                     
-                    textbox.Text += $"Downloading '{anime.title()}' episode '{anime.nextEpisode()}'.\n";
+                    textbox.AppendText($"Downloading '{anime.title()}' episode '{anime.nextEpisode()}'.\n");
+                    scrolldownTextbox(textbox);
                     string filepath = Path.Combine(settings.torrentFilesPath, nyaaLink.torrentName());
 
                     if (!File.Exists(filepath))
-                        client.DownloadFile(nyaaLink.link, filepath);
+                        await client.DownloadFileTaskAsync(nyaaLink.link, filepath);
 
                     var command = $"/DIRECTORY \"{getOutputFolder()}\" \"{filepath}\"";
                     callCommand(settings.utorrentPath, command);
@@ -295,12 +322,31 @@ namespace anime_downloader {
 
             editAnime(changedAnime);
             updateTable();
-            textbox.Text += totalDownloaded > 0 ? $">> Found {totalDownloaded} anime downloads." : ">> No new anime found.";
+            textbox.AppendText(totalDownloaded > 0 ? $">> Found {totalDownloaded} anime downloads." : ">> No new anime found.");
+            scrolldownTextbox(textbox);
             toggleButtons(button_home, button_list, button_settings, button_check);
         }
         
         /// <summary>
-        /// Execute new process in CMD.exe with given parameters.
+        /// Check if Nyaa.eu is online within 1.0 seconds so not to hang when entering download view. 
+        /// </summary>
+        /// <returns></returns>
+        private async Task<bool> NyaaIsOnline() {
+            HttpWebRequest httpReq = (HttpWebRequest)WebRequest.Create("http://www.nyaa.eu/");
+            httpReq.Timeout = 1000;
+            httpReq.AllowAutoRedirect = false;
+            try {
+                HttpWebResponse httpRes = await Task.Run(() => (HttpWebResponse)httpReq.GetResponse());
+                return httpRes.StatusCode == HttpStatusCode.OK;
+            }
+            catch {
+                return false;
+            }
+
+        }
+
+        /// <summary>
+        /// Execute new process with given parameters.
         /// </summary>
         /// <param name="executable">Path to the executable file.</param>
         /// <param name="parameters">Arguments given to the executable.</param>
@@ -366,9 +412,86 @@ namespace anime_downloader {
             display.Children.Add(currentDisplay);
         }
 
-        // implement
-        private void getDownloadedAnime() {
+        /// <summary>
+        /// Strip the video name of all tags (resolution, seeders, etc).
+        /// </summary>
+        /// <param name="name">A downloaded file's name.</param>
+        /// <returns></returns>
+        private string stripFilename(string name) {
+            string pattern = @"(\[(?:.*?)\])|(\((?:.*)\))";
+            string scrubbedName = name;
+            foreach (Match match in Regex.Matches(name, pattern)) {
+                if (match.Groups.Count > 1) {
+                    var m = match.Groups[1]?.Value ?? match.Groups[2]?.Value ?? "";
+                    if (m.Length > 0)
+                        scrubbedName = scrubbedName.Replace(m, "").Trim();
+                }
+            }
+            return scrubbedName;
+        }
+
+        /// <summary>
+        /// Returns a collection of [{animeName: lastGivenEpisode}] from a list of stripped titles.
+        /// </summary>
+        /// <param name="strippedNames">A collection of names passed through stripFilename().</param>
+        /// <returns></returns>
+        private Dictionary<string, int> collectLastEpisode(string[] strippedNames) {
+            Dictionary<string, int> latest = new Dictionary<string, int>();
+
+            foreach (string name in strippedNames) {
+                var animeName = string.Join(" - ",
+                    name.Split(new string[] { " .mp4", " .mkv" }, StringSplitOptions.RemoveEmptyEntries)[0]
+                        .Split(new string[] { " - " }, StringSplitOptions.RemoveEmptyEntries)
+                        .TakeWhile(s => !s.All(c => Char.IsNumber(c))));
+                var animeEpisode = int.Parse(name.Split('-').Last().Split()[1]);
+
+                if (!latest.ContainsKey(animeName))
+                    latest.Add(animeName, animeEpisode);
+                else
+                    if (latest[animeName] < animeEpisode)
+                        latest[animeName] = animeEpisode;
+            }
+
+            return latest;
+        }
+
+        /// <summary>
+        /// Set all anime episode counts in the anime list to their last known values from the "finished" folder.
+        /// </summary>
+        /// <remarks>This is for re-indexing if you don't know which episodes you watched last.</remarks>
+        private void setAnimeEpisodeTotalToLastKnown() {
+
             string path = Path.Combine(settings.baseFolderPath, "watched");
+
+            var finishedAnimes = collectLastEpisode(Directory.GetFiles(path)
+                .Select(f => Path.GetFileName(f))
+                .Select(n => stripFilename(n))
+                .ToArray());
+            
+
+            // I'm not sure how to cleanly turn this into a generic XML function above.
+            XDocument document = XDocument.Load(settings.animeXMLPath);
+            XElement root = document.Root;
+
+            foreach (KeyValuePair<string, int> entry in finishedAnimes) {
+                XElement selected = root.Elements()
+                                        .Where(a => entry.Key.ToLower().Contains(a.Element("name").Value.ToLower()))
+                                        .FirstOrDefault();
+                if (selected != null)
+                    selected.Element("episode").Value = string.Format("{0:D2}", entry.Value);
+            }
+
+            document.Save(settings.animeXMLPath);
+        }
+        
+        /// <summary>
+        /// Scroll to the bottom of a textbox.
+        /// </summary>
+        /// <param name="textbox">The textbox that will be scrolled down in.</param>
+        private void scrolldownTextbox(TextBox textbox) {
+            textbox.Focus();
+            textbox.CaretIndex = textbox.Text.Length;
+            textbox.ScrollToEnd();
         }
 
         // Event handling
@@ -553,7 +676,7 @@ namespace anime_downloader {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void button_check_Click(object sender, RoutedEventArgs e) {
+        private async void button_check_Click(object sender, RoutedEventArgs e) {
             if (!Directory.Exists(settings.baseFolderPath))
                 MessageBox.Show("Your base folder doesn't seem to exist.");
 
@@ -573,8 +696,12 @@ namespace anime_downloader {
                     .Where(a => a.airing == true)
                     .ToArray();
 
-                if (downloadDisplay != null) {
-                    downloadAnime(downloadDisplay.textBox, animes);
+                var online = await NyaaIsOnline();
+                if (!online)
+                    downloadDisplay.textBox.Text = ">> Nyaa is currently offline. Try checking later.";
+                else
+                    if (downloadDisplay != null) {
+                        downloadAnime(downloadDisplay.textBox, animes);
                 }
             }
         }
@@ -692,6 +819,10 @@ namespace anime_downloader {
                 }
             }
         }
-        
+
+        private void button_Click(object sender, RoutedEventArgs e) {
+            setAnimeEpisodeTotalToLastKnown();
+            updateTable();
+        }
     }
 }
