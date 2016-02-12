@@ -54,7 +54,7 @@ namespace anime_downloader.Classes {
         /// </summary>
         /// <param name="node">A raw node.</param>
         public Nyaa(HtmlNode node) {
-            name = node.Element("title").InnerText;
+            name = node.Element("title").InnerText.Replace("Â", "");
             link = node.Element("#text").InnerText.Replace("#38;", "");
             description = node.Element("description").InnerText;
             if (description.Contains("CDATA"))
@@ -110,7 +110,7 @@ namespace anime_downloader.Classes {
             List<string> phrases = new List<string>();
             string text = name;
 
-            foreach (Match match in Regex.Matches(text, @"\s *\[(.*?)\]|\((.*?)\)\s*"))
+            foreach (Match match in Regex.Matches(text, @"\s?\[(.*?)\]|\((.*?)\)\s*"))
                 phrases.Add(match.Groups[0].Value);
 
             foreach(String phrase in phrases)
@@ -128,7 +128,7 @@ namespace anime_downloader.Classes {
         /// </summary>
         /// <returns>The subgroup of the file.</returns>
         public string subgroup() {
-            foreach (Match match in Regex.Matches(name, @"\[([A-Za-z0-9_]+)\]+")) {
+            foreach (Match match in Regex.Matches(name, @"\[([A-Za-z0-9_µ\-]+)\]+")) {
                 var result = match.Groups[1].Value;
                 if (result.All(c => !Char.IsNumber(c)))
                     return result;
@@ -141,6 +141,5 @@ namespace anime_downloader.Classes {
         /// </summary>
         /// <returns>If a subgroup exists.</returns>
         public bool hasSubgroup() => subgroup() != null;
-
     }
 }

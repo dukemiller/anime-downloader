@@ -95,7 +95,7 @@ namespace anime_downloader.Classes {
                 Nyaa[] result = itemNodes.Select(n => new Nyaa(n))
                     .Where(n => n.measurement.Equals("MiB") &&
                                 n.size > 10 &&
-                                n.name.Contains(nextEpisode()) &&
+                                n.strippedName().Contains(nextEpisode()) &&
                                 n.seeders > 0)
                     .ToArray();
 

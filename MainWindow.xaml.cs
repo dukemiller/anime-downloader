@@ -520,7 +520,7 @@ namespace anime_downloader {
                     .Where(s => !s.EndsWith("torrents") && !s.EndsWith("Grace") && !s.EndsWith("Watched"))
                     .SelectMany(f => Directory.GetFiles(f))
                     .ToArray();
-                using (StreamWriter file = new StreamWriter(path: settings.baseFolderPath + @"\playlist.m3u", append: false)) {
+                using (StreamWriter file = new StreamWriter(path: Path.Combine(settings.baseFolderPath, "playlist.m3u"), append: false)) {
                     foreach (String video in videos)
                         file.WriteLine(video);
                 }
