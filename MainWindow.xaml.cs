@@ -279,7 +279,6 @@ namespace anime_downloader {
             WebClient client = new WebClient();
             int totalDownloaded = 0;
             
-            toggleButtons(button_home, button_list, button_settings, button_check);
             textbox.Text = ">> Searching for currently airing anime episodes ...\n";
 
             foreach (Anime anime in animes) {
@@ -713,16 +712,22 @@ namespace anime_downloader {
                 XDocument animeXML = XDocument.Load(settings.animeXMLPath);
                 Anime[] animes = animeXML.Element("anime").Elements()
                     .Select(x => new Anime(x))
-                    .Where(a => a.airing == true)
+                    .Where(a => a.airing == true && a.status == "Watching")
                     .ToArray();
 
+                toggleButtons(button_home, button_list, button_settings, button_check);
+
                 var online = await NyaaIsOnline();
-                if (!online)
+
+                if (!online) {
                     downloadDisplay.textBox.Text = ">> Nyaa is currently offline. Try checking later.";
-                else
-                    if (downloadDisplay != null) {
-                        downloadAnime(downloadDisplay.textBox, animes);
+                    toggleButtons(button_home, button_list, button_settings, button_check);
                 }
+
+                else if (downloadDisplay != null) {
+                    downloadAnime(downloadDisplay.textBox, animes);
+                }
+
             }
         }
 
