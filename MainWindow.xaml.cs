@@ -548,6 +548,11 @@ namespace anime_downloader {
             animeListDisplay.dataGrid.MouseDoubleClick += new MouseButtonEventHandler(anime_list_MouseDoubleClick);
         }
 
+        /// <summary>
+        /// The context menu event for the anime list view, selection: "Delete"
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void anime_list_delete_Click(object sender, RoutedEventArgs e) {
             var animeListDisplay = currentDisplay as UserControls.AnimeList;
             if (animeListDisplay.dataGrid.SelectedCells.FirstOrDefault().IsValid) {
@@ -559,6 +564,11 @@ namespace anime_downloader {
             }
         }
 
+        /// <summary>
+        /// The keydown event for the anime list view. 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void anime_list_delete_KeyDown(object sender, KeyEventArgs e) {
             if (e.Key == Key.Delete) {
                 var animeListDisplay = currentDisplay as UserControls.AnimeList;
@@ -568,6 +578,11 @@ namespace anime_downloader {
             }
         }
 
+        /// <summary>
+        /// The double click event for the anime list view.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void anime_list_MouseDoubleClick(object sender, MouseEventArgs e) {
             var animeListDisplay = currentDisplay as UserControls.AnimeList;
             if (animeListDisplay.dataGrid.SelectedCells.FirstOrDefault().IsValid) {
@@ -594,6 +609,11 @@ namespace anime_downloader {
             }
         }
 
+        /// <summary>
+        /// The submission button event for the edit settings view.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void button_apply_settings_Click(object sender, RoutedEventArgs e) {
             var settingsDisplay = currentDisplay as UserControls.Settings;
             if (settingsDisplay != null) {
@@ -730,6 +750,11 @@ namespace anime_downloader {
             }
         }
 
+        /// <summary>
+        /// The submission button event for the add anime view.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void button_add_Click(object sender, RoutedEventArgs e) {
             var animeDisplay = currentDisplay as UserControls.Add;
 
@@ -796,6 +821,11 @@ namespace anime_downloader {
             }
         }
 
+        /// <summary>
+        /// The submission button event for the edit anime view.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void button_anime_edit_Click(object sender, RoutedEventArgs e) {
             var animeDisplay = currentDisplay as UserControls.Add;
 
@@ -820,6 +850,11 @@ namespace anime_downloader {
             }
         }
 
+        /// <summary>
+        /// A test event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void button_Click(object sender, RoutedEventArgs e) {
             setAnimeEpisodeTotalToLastKnown();
             updateTable();
