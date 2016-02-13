@@ -73,7 +73,9 @@
                 <RowDefinition Height="47*"/>
             </Grid.RowDefinitions>
 
-            <Label x:Name="subgroup_label" Content="Only download from subgroup:" VerticalAlignment="Center" FontSize="16"/>
+            <Label x:Name="subgroup_label" Content="Only download from subgroup:" VerticalAlignment="Center" 
+                   ToolTip="Only download from animes that have this subgroup."
+                   FontSize="16"/>
             <ComboBox x:Name="subgroup_comboBox" Grid.Column="1" HorizontalAlignment="Left" Margin="5,15,0,0" VerticalAlignment="Top" Width="90" Height="22">
                 <ComboBoxItem IsSelected="True" Content="(None)"/>
             </ComboBox>

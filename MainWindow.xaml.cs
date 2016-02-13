@@ -45,6 +45,7 @@ namespace anime_downloader {
         // XML Modification
 
         private void verifyAnimeXMLSchema() {
+
             XDocument document = XDocument.Load(settings.animeXMLPath);
             XElement root = document.Root;
 
@@ -55,7 +56,7 @@ namespace anime_downloader {
 
             document.Save(settings.animeXMLPath);
         }
-
+        
         /// <summary>
         /// Create the Anime XML file with initial nodes.
         /// </summary>
@@ -379,6 +380,27 @@ namespace anime_downloader {
         }
 
         /// <summary>
+        /// Check if the file is fragmented by some byte guesswork.
+        /// </summary>
+        /// <param name="filepath">Full path to the file.</param>
+        /// <returns></returns>
+        private bool isFragmentedVideo(string filepath) {
+            byte currentByte;
+            int counter = 0;
+
+            using (BinaryReader reader = new BinaryReader(File.Open(filepath, FileMode.Open))) {
+                currentByte = reader.ReadByte();
+                while (currentByte == 0) {
+                    if (++counter > 10)
+                        break;
+                    currentByte = reader.ReadByte();
+                }
+            }
+
+            return !(currentByte > 10);
+        }
+
+        /// <summary>
         /// Execute new process with given parameters.
         /// </summary>
         /// <param name="executable">Path to the executable file.</param>
@@ -552,6 +574,7 @@ namespace anime_downloader {
                 string[] videos = Directory.GetDirectories(settings.baseFolderPath)
                     .Where(s => !s.EndsWith("torrents") && !s.EndsWith("Grace") && !s.EndsWith("Watched"))
                     .SelectMany(f => Directory.GetFiles(f))
+                    .Where(f => !isFragmentedVideo(f))
                     .ToArray();
                 using (StreamWriter file = new StreamWriter(path: Path.Combine(settings.baseFolderPath, "playlist.m3u"), append: false)) {
                     foreach (String video in videos)
@@ -913,5 +936,6 @@ namespace anime_downloader {
             setAnimeEpisodeTotalToLastKnown();
             updateTable();
         }
+        
     }
 }
