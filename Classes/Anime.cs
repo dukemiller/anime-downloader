@@ -1,5 +1,7 @@
 ﻿using HtmlAgilityPack;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
@@ -18,28 +20,33 @@ namespace anime_downloader.Classes {
         /// <summary>
         /// User's current watched episode.
         /// </summary>
-        public string episode { get; set; }
+        public string episode { get; set; } = "00";
 
         /// <summary>
         /// User's status on watching the anime.
         /// </summary>
-        public string status { get; set; }
+        public string status { get; set; } = "Watching";
 
         /// <summary>
         /// The quality to be downloaded.
         /// </summary>
-        public string resolution { get; set; }
+        public string resolution { get; set; } = "720";
 
         /// <summary>
         /// If the anime is ongoing and currently airing.
         /// </summary>
-        public bool airing { get; set; }
+        public bool airing { get; set; } = false;
 
         /// <summary>
         /// if searching for the anime should contain exclusively it's own name with no fragments.
         /// </summary>
-        public bool nameStrict { get; set; }
-        
+        public bool nameStrict { get; set; } = false;
+
+        /// <summary>
+        /// If searching for the anime should only download from a specific subgroup if chosen
+        /// </summary>
+        public string preferredSubgroup { get; set; } = "";
+
         /// <summary>
         /// For use in property set initializers.
         /// </summary>
@@ -56,6 +63,7 @@ namespace anime_downloader.Classes {
             resolution = root.Element("resolution").Value;
             airing = Boolean.Parse(root.Element("airing").Value);
             nameStrict = Boolean.Parse(root.Element("name-strict").Value);
+            preferredSubgroup = root.Element("preferredSubgroup").Value;
         }
 
         /// <summary>
@@ -83,7 +91,7 @@ namespace anime_downloader.Classes {
         /// Seeks the next episode for the current anime on Nyaa.eu
         /// </summary>
         /// <returns>A Nyaa object containing information about the file download.</returns>
-        public async Task<Nyaa> getLinkToNextEpisode() {
+        public async Task<Nyaa[]> getLinksToNextEpisode() {
             Uri url = new Uri("https://www.nyaa.eu/?page=rss&cats=1_37&term=" + toRSS() + "&sort=2");
             WebClient client = new WebClient();
             HtmlDocument document = new HtmlAgilityPack.HtmlDocument();
@@ -98,14 +106,9 @@ namespace anime_downloader.Classes {
                                 n.strippedName().Contains(nextEpisode()) &&
                                 n.seeders > 0)
                     .ToArray();
-
-                foreach (Nyaa nyaa in result) {
-                    if (!nameStrict)
-                        return nyaa;
-                    if (nameStrict && name.Equals(nyaa.strippedName(true)))
-                        return nyaa;
-                }
+                return result;
             }
+
             return null;
         }
 

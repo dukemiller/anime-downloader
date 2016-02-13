@@ -59,5 +59,27 @@
                Grid.Column="0" Grid.Row="5" />
         <Button x:Name="add_button" Content="Add" Grid.Column="1" HorizontalAlignment="Left" Margin="447,17,0,0" Grid.Row="6" VerticalAlignment="Top" Width="75"/>
 
+        <Grid Grid.Column="1" HorizontalAlignment="Left" Height="189" Margin="162,0,0,0" 
+              Grid.Row="2" Grid.RowSpan="4" VerticalAlignment="Top" Width="370">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="44*"/>
+                <ColumnDefinition Width="23*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="47*"/>
+                <RowDefinition Height="46*"/>
+                <RowDefinition Height="49*"/>
+                <RowDefinition Height="47*"/>
+            </Grid.RowDefinitions>
+
+            <Label x:Name="subgroup_label" Content="Only download from subgroup:" VerticalAlignment="Center" FontSize="16"/>
+            <ComboBox x:Name="subgroup_comboBox" Grid.Column="1" HorizontalAlignment="Left" Margin="5,15,0,0" VerticalAlignment="Top" Width="90" Height="22">
+                <ComboBoxItem IsSelected="True" Content="(None)"/>
+            </ComboBox>
+
+
+        </Grid>
+
     </Grid>
 </UserControl>

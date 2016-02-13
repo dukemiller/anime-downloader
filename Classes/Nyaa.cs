@@ -54,7 +54,7 @@ namespace anime_downloader.Classes {
         /// </summary>
         /// <param name="node">A raw node.</param>
         public Nyaa(HtmlNode node) {
-            name = node.Element("title").InnerText.Replace("Â", "");
+            name = WebUtility.HtmlDecode(node.Element("title").InnerText.Replace("Â", ""));
             link = node.Element("#text").InnerText.Replace("#38;", "");
             description = node.Element("description").InnerText;
             if (description.Contains("CDATA"))
@@ -120,7 +120,6 @@ namespace anime_downloader.Classes {
                 text = String.Join("-", text.Split('-').Take(text.Split('-').Length-1).ToArray());
 
             return Regex.Replace(text.Trim(), @"\s+", " ");
-
         }
 
         /// <summary>

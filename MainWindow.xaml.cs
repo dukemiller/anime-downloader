@@ -38,10 +38,23 @@ namespace anime_downloader {
             InitializeComponent();
             changeDisplay(new UserControls.Home());
             initializeSettings();
+            verifyAnimeXMLSchema();
             updateTable();
         }
         
         // XML Modification
+
+        private void verifyAnimeXMLSchema() {
+            XDocument document = XDocument.Load(settings.animeXMLPath);
+            XElement root = document.Root;
+
+            foreach (XElement anime in root.Elements()) {
+                if (anime.Element("preferredSubgroup") == null)
+                    anime.Add(new XElement("preferredSubgroup", ""));
+            }
+
+            document.Save(settings.animeXMLPath);
+        }
 
         /// <summary>
         /// Create the Anime XML file with initial nodes.
@@ -71,6 +84,7 @@ namespace anime_downloader {
                 new XElement("airing", anime.airing),
                 new XElement("updated", false),
                 new XElement("name-strict", anime.nameStrict),
+                new XElement("preferredSubgroup", anime.preferredSubgroup),
                 new XElement("last-downloaded", "2016-02-04"));
 
             document.Element("anime").Add(element);
@@ -93,6 +107,7 @@ namespace anime_downloader {
                     new XElement("airing", anime.airing),
                     new XElement("updated", false),
                     new XElement("name-strict", anime.nameStrict),
+                    new XElement("preferredSubgroup", anime.preferredSubgroup),
                     new XElement("last-downloaded", "2016-02-04"));
                 document.Element("anime").Add(element);
             }
@@ -120,6 +135,7 @@ namespace anime_downloader {
                 selected.Element("resolution").Value = anime.resolution;
                 selected.Element("airing").Value = anime.airing.ToString();
                 selected.Element("name-strict").Value = anime.nameStrict.ToString();
+                selected.Element("preferredSubgroup").Value = anime.preferredSubgroup;
                 document.Save(settings.animeXMLPath);
             }
         }
@@ -170,6 +186,7 @@ namespace anime_downloader {
                     selected.Element("resolution").Value = anime.resolution;
                     selected.Element("airing").Value = anime.airing.ToString();
                     selected.Element("name-strict").Value = anime.nameStrict.ToString();
+                    selected.Element("preferredSubgroup").Value = anime.preferredSubgroup;
                 }
             }
 
@@ -275,47 +292,64 @@ namespace anime_downloader {
         /// <param name="textbox">The output box to display results to.</param>
         /// <param name="animes">The collection of anime to try and get new episodes from.</param>
         private async void downloadAnime(TextBox textbox, Anime[] animes) {
-            List<Anime> changedAnime = new List<Anime>();
-            WebClient client = new WebClient();
+            string filepath, command;
+            var changedAnime = new List<Anime>();
+            var client = new WebClient();
             int totalDownloaded = 0;
             
             textbox.Text = ">> Searching for currently airing anime episodes ...\n";
 
             foreach (Anime anime in animes) {
-                var nyaaLink = await anime.getLinkToNextEpisode();
+                Nyaa[] nyaaLinks = await anime.getLinksToNextEpisode();
 
-                if (nyaaLink != null) {
+                if (nyaaLinks != null) {
+                    foreach (Nyaa nyaa in nyaaLinks) {
 
-                    // Nyaa listing with no subgroup in the title
-                    if (!nyaaLink.hasSubgroup()) {
-                        if (settings.onlyWhitelisted) {
-                            textbox.AppendText($"Found result for {anime.name} with no subgroup. Skipping ...\n");
-                            scrolldownTextbox(textbox);
+                        // Most likely wrong torrent
+                        if (anime.nameStrict) {
+                            if (!anime.name.Equals(nyaa.strippedName(true))) {
+                                continue;
+                            }
+                        }
+
+                        // Not the right subgroup
+                        if (!anime.preferredSubgroup.Equals("") &
+                                !nyaa?.subgroup().Contains(anime.preferredSubgroup) ?? false) {
                             continue;
                         }
-                    }
 
-                    // Nyaa listing with subgroup
-                    else if (!settings.subgroups.Contains(nyaaLink.subgroup())) {
                         if (settings.onlyWhitelisted) {
-                            textbox.AppendText($"Found result for {anime.name} with non-whitelisted subgroup. Skipping ...\n");
-                            scrolldownTextbox(textbox);
-                            continue;
+
+                            // Nyaa listing with no subgroup in the title
+                            if (!nyaa.hasSubgroup()) {
+                                // textbox.AppendText($"Found result for {anime.name} with no subgroup. Skipping ...\n");
+                                // scrolldownTextbox(textbox);
+                                continue;
+                            }
+
+                            // Nyaa listing with wrong subgroup
+                            if (!settings.subgroups.Contains(nyaa.subgroup())) {
+                                // textbox.AppendText($"Found result for {anime.name} with non-whitelisted subgroup. Skipping ...\n");
+                                // scrolldownTextbox(textbox);
+                                continue;
+                            }
                         }
+
+                        textbox.AppendText($"Downloading '{anime.title()}' episode '{anime.nextEpisode()}'.\n");
+                        scrolldownTextbox(textbox);
+                        filepath = Path.Combine(settings.torrentFilesPath, nyaa.torrentName());
+
+                        if (!File.Exists(filepath))
+                            await client.DownloadFileTaskAsync(nyaa.link, filepath);
+
+                        command = $"/DIRECTORY \"{getOutputFolder()}\" \"{filepath}\"";
+                        callCommand(settings.utorrentPath, command);
+
+                        anime.episode = anime.nextEpisode();
+                        changedAnime.Add(anime);
+                        totalDownloaded++;
+                        break;
                     }
-                    
-                    textbox.AppendText($"Downloading '{anime.title()}' episode '{anime.nextEpisode()}'.\n");
-                    scrolldownTextbox(textbox);
-                    string filepath = Path.Combine(settings.torrentFilesPath, nyaaLink.torrentName());
-
-                    if (!File.Exists(filepath))
-                        await client.DownloadFileTaskAsync(nyaaLink.link, filepath);
-
-                    var command = $"/DIRECTORY \"{getOutputFolder()}\" \"{filepath}\"";
-                    callCommand(settings.utorrentPath, command);
-                    anime.episode = anime.nextEpisode();
-                    changedAnime.Add(anime);
-                    totalDownloaded++;
                 }
             }
 
@@ -752,6 +786,7 @@ namespace anime_downloader {
 
                 animeDisplay.name_textbox.KeyUp += enterApply;
                 animeDisplay.episode_textbox.KeyUp += enterApply;
+                settings.subgroups.ToList().ForEach(s => animeDisplay.subgroup_comboBox.Items.Add(s));
             }
         }
 
@@ -769,14 +804,19 @@ namespace anime_downloader {
                     MessageBox.Show("There needs to be a name and/or episode.");
                 }
 
-                else { 
+                else {
+                    string subgroup = animeDisplay.subgroup_comboBox.Text;
+                    if (subgroup.Equals("(None)"))
+                        subgroup = "";
+
                     Anime newAnime = new Anime {
                         name = animeDisplay.name_textbox.Text,
                         episode = string.Format("{0:D2}", int.Parse(animeDisplay.episode_textbox.Text)),
                         status = animeDisplay.status_combobox.Text,
                         resolution = animeDisplay.resolution_combobox.Text,
                         airing = animeDisplay.airing_checkbox.IsChecked.Value,
-                        nameStrict = animeDisplay.name_strict_checkbox.IsChecked.Value
+                        nameStrict = animeDisplay.name_strict_checkbox.IsChecked.Value,
+                        preferredSubgroup = subgroup
                     };
                     
                     addAnime(newAnime);
@@ -811,6 +851,8 @@ namespace anime_downloader {
                         }
                     });
 
+                    string subgroup = item.Element("preferredSubgroup").Value;
+                    
                     animeDisplay.name_textbox.KeyUp += enterApply;
                     animeDisplay.episode_textbox.KeyUp += enterApply;
 
@@ -820,6 +862,9 @@ namespace anime_downloader {
                     animeDisplay.status_combobox.Text = item.Element("status").Value;
                     animeDisplay.airing_checkbox.IsChecked = Boolean.Parse(item.Element("airing").Value);
                     animeDisplay.name_strict_checkbox.IsChecked = Boolean.Parse(item.Element("name-strict").Value);
+
+                    settings.subgroups.ToList().ForEach(s => animeDisplay.subgroup_comboBox.Items.Add(s));
+                    animeDisplay.subgroup_comboBox.Text = subgroup.Equals("") ? "(None)" : subgroup;
 
                     currentlyEditedAnime = item.Element("name").Value;
                 }
@@ -840,13 +885,17 @@ namespace anime_downloader {
                     MessageBox.Show("There needs to be a name and/or episode.");
 
                 else {
+
+                    string subgroup = animeDisplay.subgroup_comboBox.Text;
+
                     Anime editedAnime = new Anime {
                         name = animeDisplay.name_textbox.Text,
                         episode = string.Format("{0:D2}", int.Parse(animeDisplay.episode_textbox.Text)),
                         status = animeDisplay.status_combobox.Text,
                         resolution = animeDisplay.resolution_combobox.Text,
                         airing = animeDisplay.airing_checkbox.IsChecked.Value,
-                        nameStrict = animeDisplay.name_strict_checkbox.IsChecked.Value
+                        nameStrict = animeDisplay.name_strict_checkbox.IsChecked.Value,
+                        preferredSubgroup = subgroup.Equals("(None)") ? "" : subgroup
                     };
 
                     editAnime(currentlyEditedAnime, editedAnime);
