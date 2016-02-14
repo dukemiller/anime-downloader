@@ -8,7 +8,6 @@
              d:DesignHeight="330" d:DesignWidth="650">
     <Grid>
         <DataGrid x:Name="dataGrid" 
-                  ItemsSource="{Binding Path=Elements[show]}"  
                   AutoGenerateColumns="False" 
                   CanUserResizeRows="False" 
                   CanUserAddRows = "False"

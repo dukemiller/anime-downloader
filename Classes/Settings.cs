@@ -47,5 +47,10 @@ namespace anime_downloader.Classes {
         /// The user preferred subgroups.
         /// </summary>
         public string[] subgroups;
+
+        /// <summary>
+        /// The user preferred anime list sort method.
+        /// </summary>
+        public string sortBy { get; set; } = "name";
     }
 }

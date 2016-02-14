@@ -38,15 +38,29 @@ namespace anime_downloader {
             InitializeComponent();
             changeDisplay(new UserControls.Home());
             initializeSettings();
-            verifyAnimeXMLSchema();
             updateTable();
         }
-        
+
         // XML Modification
+        
+        /// <summary>
+        /// Kind of a lazy way to test XML changes between versions.
+        /// </summary>
+        private void verifySettingsXMLSchema(string settingsXMLPath) {
+            XDocument document = XDocument.Load(settingsXMLPath);
+            XElement root = document.Root;
 
-        private void verifyAnimeXMLSchema() {
+            if (root.Element("sortBy") == null)
+                root.Add(new XElement("sortBy", "name"));
 
-            XDocument document = XDocument.Load(settings.animeXMLPath);
+            document.Save(settingsXMLPath);
+        }
+
+        /// <summary>
+        /// Kind of a lazy way to test XML changes between versions.
+        /// </summary>
+        private void verifyAnimeXMLSchema(string animeXMLPath) {
+            XDocument document = XDocument.Load(animeXMLPath);
             XElement root = document.Root;
 
             foreach (XElement anime in root.Elements()) {
@@ -54,7 +68,7 @@ namespace anime_downloader {
                     anime.Add(new XElement("preferredSubgroup", ""));
             }
 
-            document.Save(settings.animeXMLPath);
+            document.Save(animeXMLPath);
         }
         
         /// <summary>
@@ -229,7 +243,8 @@ namespace anime_downloader {
                                 new XElement("utorrent", settings.utorrentPath)),
                             subgroups,
                             new XElement("flag",
-                                new XElement("only-whitelisted-subs", settings.onlyWhitelisted)))
+                                new XElement("only-whitelisted-subs", settings.onlyWhitelisted))),
+                            new XElement("sortBy", settings.sortBy)
                         );
 
             document.Save(settings.settingsXMLPath);
@@ -256,6 +271,8 @@ namespace anime_downloader {
 
             if (!File.Exists(settingsXMLPath))
                 newSettings();
+            
+            verifySettingsXMLSchema(settingsXMLPath);
 
             XElement xmlSettings = XDocument.Load(settingsXMLPath).Root;
 
@@ -267,22 +284,29 @@ namespace anime_downloader {
                 torrentFilesPath = xmlSettings.Element("path").Element("torrents").Value,
                 utorrentPath = xmlSettings.Element("path").Element("utorrent").Value,
                 subgroups = xmlSettings.Elements("subgroup").Elements("name").Select(x => x.Value).ToArray(),
-                onlyWhitelisted = Boolean.Parse(xmlSettings.Element("flag").Element("only-whitelisted-subs").Value)
+                onlyWhitelisted = Boolean.Parse(xmlSettings.Element("flag").Element("only-whitelisted-subs").Value),
+                sortBy = xmlSettings.Element("sortBy").Value
             };
             
             if (!File.Exists(settings.animeXMLPath))
                 createAnimeXML();
-            
+
+            verifyAnimeXMLSchema(settings.animeXMLPath);
+
         }
 
         /// <summary>
         /// Update the values in the AnimeList table.
         /// </summary>
         private void updateTable() {
-            XElement root = XDocument.Load(settings.animeXMLPath).Root;
+            var root = XDocument.Load(settings.animeXMLPath).Root.Elements()
+                .OrderBy(e => e.Element(settings.sortBy).Value)
+                .ToList();
+            
             var animeListDisplay = currentDisplay as UserControls.AnimeList;
-            if (animeListDisplay != null)
-                animeListDisplay.dataGrid.DataContext = root;
+            if (animeListDisplay != null) {
+                animeListDisplay.dataGrid.ItemsSource = root;
+            }
         }
 
         // Helper functions
@@ -619,7 +643,7 @@ namespace anime_downloader {
                 }
             }
         }
-
+        
         /// <summary>
         /// The keydown event for the anime list view. 
         /// </summary>
@@ -735,7 +759,8 @@ namespace anime_downloader {
                             subgroups =
                                 settingsDisplay.subgroups_textbox.Text.Split(new string[] {" "},
                                     StringSplitOptions.RemoveEmptyEntries),
-                            onlyWhitelisted = settingsDisplay.only_whitelisted_checkbox.IsChecked.Value
+                            onlyWhitelisted = settingsDisplay.only_whitelisted_checkbox.IsChecked.Value,
+                            sortBy = "name"
                         };
                         createSettingsXML(settings);
                         toggleButtons(button_home, button_list, button_settings, button_check, 
@@ -937,5 +962,6 @@ namespace anime_downloader {
             updateTable();
         }
         
+
     }
 }
