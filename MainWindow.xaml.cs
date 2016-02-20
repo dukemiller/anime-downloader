@@ -593,10 +593,10 @@ namespace anime_downloader {
                 var playlistCreatorDisplay = currentDisplay as UserControls.PlaylistCreator;
 
                 if (playlistCreatorDisplay != null) {
-                    if (playlistCreatorDisplay.episode_radio.IsPressed)
+                    if (playlistCreatorDisplay.episode_radio.IsChecked.Value)
                         playlist.byEpisodeNumber();
 
-                    else if (playlistCreatorDisplay.moment_radio.IsPressed)
+                    else if (playlistCreatorDisplay.moment_radio.IsChecked.Value)
                         playlist.byDate();
 
                     // else pass
