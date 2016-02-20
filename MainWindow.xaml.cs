@@ -25,6 +25,11 @@ namespace anime_downloader {
         private Settings settings;
 
         /// <summary>
+        /// An object to create the playlist with some customization.
+        /// </summary>
+        private Playlist playlist;
+
+        /// <summary>
         /// The current display on the right window pane.
         /// </summary>
         private UserControl currentDisplay;
@@ -293,6 +298,7 @@ namespace anime_downloader {
 
             verifyAnimeXMLSchema(settings.animeXMLPath);
 
+            playlist = new Playlist(settings);
         }
 
         /// <summary>
@@ -300,6 +306,7 @@ namespace anime_downloader {
         /// </summary>
         private void updateTable() {
             var root = XDocument.Load(settings.animeXMLPath).Root.Elements()
+                .AsParallel()
                 .OrderBy(e => e.Element(settings.sortBy).Value)
                 .ToList();
             
@@ -402,28 +409,7 @@ namespace anime_downloader {
             }
 
         }
-
-        /// <summary>
-        /// Check if the file is fragmented by some byte guesswork.
-        /// </summary>
-        /// <param name="filepath">Full path to the file.</param>
-        /// <returns></returns>
-        private bool isFragmentedVideo(string filepath) {
-            byte currentByte;
-            int counter = 0;
-
-            using (BinaryReader reader = new BinaryReader(File.Open(filepath, FileMode.Open))) {
-                currentByte = reader.ReadByte();
-                while (currentByte == 0) {
-                    if (++counter > 10)
-                        break;
-                    currentByte = reader.ReadByte();
-                }
-            }
-
-            return !(currentByte > 10);
-        }
-
+        
         /// <summary>
         /// Execute new process with given parameters.
         /// </summary>
@@ -592,17 +578,33 @@ namespace anime_downloader {
         }
 
         private void button_playlist_Click(object sender, RoutedEventArgs e) {
+            changeDisplay(new UserControls.PlaylistCreator());
+            var playlistCreatorDisplay = currentDisplay as UserControls.PlaylistCreator;
+            playlistCreatorDisplay.button.Click += new RoutedEventHandler(playlist_button_Click);
+        }
+
+        private void playlist_button_Click(object sender, RoutedEventArgs e) {
             if (!Directory.Exists(settings.baseFolderPath))
                 MessageBox.Show("Your base folder doesn't seem to exist.");
+
             else {
-                string[] videos = Directory.GetDirectories(settings.baseFolderPath)
-                    .Where(s => !s.EndsWith("torrents") && !s.EndsWith("Grace") && !s.EndsWith("Watched"))
-                    .SelectMany(f => Directory.GetFiles(f))
-                    .Where(f => !isFragmentedVideo(f))
-                    .ToArray();
-                using (StreamWriter file = new StreamWriter(path: Path.Combine(settings.baseFolderPath, "playlist.m3u"), append: false)) {
-                    foreach (String video in videos)
-                        file.WriteLine(video);
+                playlist.refresh();
+
+                var playlistCreatorDisplay = currentDisplay as UserControls.PlaylistCreator;
+
+                if (playlistCreatorDisplay != null) {
+                    if (playlistCreatorDisplay.episode_radio.IsPressed)
+                        playlist.byEpisodeNumber();
+
+                    else if (playlistCreatorDisplay.moment_radio.IsPressed)
+                        playlist.byDate();
+
+                    // else pass
+
+                    if (playlistCreatorDisplay.seperate_checkBox.IsChecked.Value)
+                        playlist.separateShowOrder();
+
+                    playlist.save();
                 }
             }
         }

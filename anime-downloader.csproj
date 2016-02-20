@@ -63,6 +63,7 @@
     </ApplicationDefinition>
     <Compile Include="Classes\Anime.cs" />
     <Compile Include="Classes\Nyaa.cs" />
+    <Compile Include="Classes\Playlist.cs" />
     <Compile Include="Classes\Settings.cs" />
     <Compile Include="UserControls\Add.xaml.cs">
       <DependentUpon>Add.xaml</DependentUpon>
@@ -75,6 +76,9 @@
     </Compile>
     <Compile Include="UserControls\Home.xaml.cs">
       <DependentUpon>Home.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\PlaylistCreator.xaml.cs">
+      <DependentUpon>PlaylistCreator.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
@@ -104,6 +108,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\Home.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\PlaylistCreator.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
