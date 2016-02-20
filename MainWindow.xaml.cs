@@ -389,7 +389,7 @@ namespace anime_downloader {
             updateTable();
             textbox.AppendText(totalDownloaded > 0 ? $">> Found {totalDownloaded} anime downloads." : ">> No new anime found.");
             scrolldownTextbox(textbox);
-            toggleButtons(button_home, button_list, button_settings, button_check);
+            toggleButtons(button_home, button_list, button_settings, button_check, button_playlist);
         }
         
         /// <summary>
@@ -799,13 +799,13 @@ namespace anime_downloader {
                     .Where(a => a.airing == true && a.status == "Watching")
                     .ToArray();
 
-                toggleButtons(button_home, button_list, button_settings, button_check);
+                toggleButtons(button_home, button_list, button_settings, button_check, button_playlist);
 
                 var online = await NyaaIsOnline();
 
                 if (!online) {
                     downloadDisplay.textBox.Text = ">> Nyaa is currently offline. Try checking later.";
-                    toggleButtons(button_home, button_list, button_settings, button_check);
+                    toggleButtons(button_home, button_list, button_settings, button_check, button_playlist);
                 }
 
                 else if (downloadDisplay != null) {
