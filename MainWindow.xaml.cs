@@ -21,6 +21,11 @@ namespace anime_downloader {
     /// </summary>
     public partial class MainWindow : Window {
         /// <summary>
+        ///     A collection of all the anime.
+        /// </summary>
+        private List<XElement> anime;
+
+        /// <summary>
         ///     The current display on the right window pane.
         /// </summary>
         private UserControl currentDisplay;
@@ -29,11 +34,6 @@ namespace anime_downloader {
         ///     A helper for modifying anime.
         /// </summary>
         private string currentlyEditedAnime;
-        
-        /// <summary>
-        ///     All the anime.
-        /// </summary>
-        private List<XElement> anime;
 
         /// <summary>
         ///     An object to create the playlist with some customization.
@@ -45,221 +45,17 @@ namespace anime_downloader {
         /// </summary>
         private Settings settings;
 
+        /// <summary>
+        ///     The object used to modify the XML documents.
+        /// </summary>
+        private XML xml;
+
         public MainWindow() {
             InitializeComponent();
             changeDisplay(new Home());
             initializeSettings();
             refreshAnime();
         }
-
-        // XML Modification
-
-        /// <summary>
-        ///     Kind of a lazy way to test XML changes between versions.
-        /// </summary>
-        private void verifySettingsXMLSchema(string settingsXMLPath) {
-            var document = XDocument.Load(settingsXMLPath);
-            var root = document.Root;
-
-            if (root.Element("sortBy") == null)
-                root.Add(new XElement("sortBy", "name"));
-
-            document.Save(settingsXMLPath);
-        }
-
-        /// <summary>
-        ///     Kind of a lazy way to test XML changes between versions.
-        /// </summary>
-        private void verifyAnimeXMLSchema(string animeXMLPath) {
-            var document = XDocument.Load(animeXMLPath);
-            var root = document.Root;
-
-            foreach (var anime in root.Elements()) {
-                if (anime.Element("preferredSubgroup") == null)
-                    anime.Add(new XElement("preferredSubgroup", ""));
-            }
-
-            document.Save(animeXMLPath);
-        }
-
-        /// <summary>
-        ///     Create the Anime XML file with initial nodes.
-        /// </summary>
-        private void createAnimeXML() {
-            var document =
-                new XDocument(
-                    new XDeclaration("1.0", "utf-8", "yes"),
-                    new XComment("The anime list."),
-                    new XElement("anime")
-                    );
-            document.Save(settings.animeXMLPath);
-        }
-
-        /// <summary>
-        ///     Add a single anime into the anime XML file.
-        /// </summary>
-        /// <param name="anime">A valid anime object.</param>
-        private void addAnime(Anime anime) {
-            var document = XDocument.Load(settings.animeXMLPath);
-
-            var element = new XElement("show",
-                new XElement("name", anime.name),
-                new XElement("episode", anime.episode),
-                new XElement("status", anime.status),
-                new XElement("resolution", anime.resolution),
-                new XElement("airing", anime.airing),
-                new XElement("updated", false),
-                new XElement("name-strict", anime.nameStrict),
-                new XElement("preferredSubgroup", anime.preferredSubgroup),
-                new XElement("last-downloaded", "2016-02-04"));
-
-            document.Element("anime").Add(element);
-            document.Save(settings.animeXMLPath);
-        }
-
-        /// <summary>
-        ///     Add multiple animes into the anime XML file.
-        /// </summary>
-        /// <param name="animes">A collection of valid animes.</param>
-        private void addAnime(List<Anime> animes) {
-            var document = XDocument.Load(settings.animeXMLPath);
-
-            foreach (var anime in animes) {
-                var element = new XElement("show",
-                    new XElement("name", anime.name),
-                    new XElement("episode", anime.episode),
-                    new XElement("status", anime.status),
-                    new XElement("resolution", anime.resolution),
-                    new XElement("airing", anime.airing),
-                    new XElement("updated", false),
-                    new XElement("name-strict", anime.nameStrict),
-                    new XElement("preferredSubgroup", anime.preferredSubgroup),
-                    new XElement("last-downloaded", "2016-02-04"));
-                document.Element("anime").Add(element);
-            }
-
-            document.Save(settings.animeXMLPath);
-        }
-
-        /// <summary>
-        ///     Edit a single anime and write that change to the anime XML file.
-        /// </summary>
-        /// <param name="name">The identifying key name.</param>
-        /// <param name="anime">The replacing anime object.</param>
-        private void editAnime(string name, Anime anime) {
-            var document = XDocument.Load(settings.animeXMLPath);
-            var root = document.Root;
-
-            var selected = root.Elements()
-                .Where(a => a.Element("name").Value.Equals(name))
-                .FirstOrDefault();
-
-            if (selected != null) {
-                selected.Element("name").Value = anime.name;
-                selected.Element("episode").Value = anime.episode;
-                selected.Element("status").Value = anime.status;
-                selected.Element("resolution").Value = anime.resolution;
-                selected.Element("airing").Value = anime.airing.ToString();
-                selected.Element("name-strict").Value = anime.nameStrict.ToString();
-                selected.Element("preferredSubgroup").Value = anime.preferredSubgroup;
-                document.Save(settings.animeXMLPath);
-            }
-        }
-
-        /// <summary>
-        ///     Edit a specific elementName about an anime instead of needing an entire object.
-        /// </summary>
-        /// <param name="name">The identifying key name.</param>
-        /// <param name="elementName">The identifying element name.</param>
-        /// <param name="elementValue">The value to be written to the element.</param>
-        private void editAnime(string name, string elementName, string elementValue) {
-            var document = XDocument.Load(settings.animeXMLPath);
-            var root = document.Root;
-
-            var selected = root.Elements()
-                .Where(a => a.Element("name").Value.Equals(name))
-                .FirstOrDefault();
-
-            if (selected != null) {
-                var element = selected.Element(elementName);
-                if (element != null) {
-                    element.Value = elementValue;
-                    document.Save(settings.animeXMLPath);
-                }
-            }
-        }
-
-        /// <summary>
-        ///     Edit multiple anime and write those changes to the anime XML file.
-        /// </summary>
-        /// <remarks>This works under the assumption that all Anime "name" are not modified.</remarks>
-        /// <param name="animes">A collection of valid anime objects.</param>
-        private void editAnime(List<Anime> animes) {
-            var document = XDocument.Load(settings.animeXMLPath);
-            var root = document.Root;
-
-            foreach (var anime in animes) {
-                var selected = root.Elements()
-                    .Where(a => a.Element("name").Value.Equals(anime.name))
-                    .FirstOrDefault();
-
-                if (selected != null) {
-                    selected.Element("name").Value = anime.name;
-                    selected.Element("episode").Value = anime.episode;
-                    selected.Element("status").Value = anime.status;
-                    selected.Element("resolution").Value = anime.resolution;
-                    selected.Element("airing").Value = anime.airing.ToString();
-                    selected.Element("name-strict").Value = anime.nameStrict.ToString();
-                    selected.Element("preferredSubgroup").Value = anime.preferredSubgroup;
-                }
-            }
-
-            document.Save(settings.animeXMLPath);
-        }
-
-        /// <summary>
-        ///     Remove a single anime from the anime XML file.
-        /// </summary>
-        /// <param name="name">The identifying key name.</param>
-        private void removeAnime(string name) {
-            var document = XDocument.Load(settings.animeXMLPath);
-            var node = document.Root.Elements().Where(x => x.Element("name").Value == name).FirstOrDefault();
-            if (node != null) {
-                node.Remove();
-                document.Save(settings.animeXMLPath);
-            }
-        }
-
-        /// <summary>
-        ///     Create a new XML file and populate it with the values from a settings object.
-        /// </summary>
-        /// <param name="settings">A valid instantiated settings object.</param>
-        private void createSettingsXML(Settings settings) {
-            var subgroups = new XElement("subgroup");
-            foreach (var group in settings.subgroups)
-                subgroups.Add(new XElement("name", group));
-
-            var document =
-                new XDocument(
-                    new XDeclaration("1.0", "utf-8", "yes"),
-                    new XComment("User profile settings"),
-                    new XElement("settings",
-                        new XElement("name", Environment.UserName),
-                        new XElement("path",
-                            new XElement("base", settings.baseFolderPath),
-                            new XElement("torrents", settings.torrentFilesPath),
-                            new XElement("utorrent", settings.utorrentPath)),
-                        subgroups,
-                        new XElement("flag",
-                            new XElement("only-whitelisted-subs", settings.onlyWhitelisted))),
-                    new XElement("sortBy", settings.sortBy)
-                    );
-
-            document.Save(settings.settingsXMLPath);
-        }
-
-        // implement
-        private void editSettingsXML(Settings settings) {}
 
         /// <summary>
         ///     Initialize and set the settings object.
@@ -277,7 +73,7 @@ namespace anime_downloader {
             if (!File.Exists(settingsXMLPath))
                 newSettings();
 
-            verifySettingsXMLSchema(settingsXMLPath);
+            XML.verifySettingsXMLSchema(settingsXMLPath);
 
             var xmlSettings = XDocument.Load(settingsXMLPath).Root;
 
@@ -293,10 +89,12 @@ namespace anime_downloader {
                 sortBy = xmlSettings.Element("sortBy").Value
             };
 
-            if (!File.Exists(settings.animeXMLPath))
-                createAnimeXML();
+            xml = new XML(settings);
 
-            verifyAnimeXMLSchema(settings.animeXMLPath);
+            if (!File.Exists(settings.animeXMLPath))
+                xml.createAnimeXML();
+
+            XML.verifyAnimeXMLSchema(settings.animeXMLPath);
 
             playlist = new Playlist(settings);
         }
@@ -309,6 +107,8 @@ namespace anime_downloader {
                 .AsParallel()
                 .OrderBy(e => e.Element(settings.sortBy).Value)
                 .ToList();
+            if (currentDisplay is AnimeList)
+                (currentDisplay as AnimeList).dataGrid.ItemsSource = anime;
         }
 
         // Helper functions
@@ -378,7 +178,7 @@ namespace anime_downloader {
                 }
             }
 
-            editAnime(changedAnime);
+            xml.editAnime(changedAnime);
             refreshAnime();
             textbox.AppendText(totalDownloaded > 0
                 ? $">> Found {totalDownloaded} anime downloads."
@@ -632,11 +432,10 @@ namespace anime_downloader {
             if (selected.IsValid) {
                 var row = selected.Item as XElement;
                 if (row != null) {
-                    removeAnime(row.Element("name").Value);
+                    xml.removeAnime(row.Element("name").Value);
                     refreshAnime();
                 }
             }
-
         }
 
         /// <summary>
@@ -648,7 +447,7 @@ namespace anime_downloader {
             if (e.Key == Key.Delete) {
                 var animeListDisplay = currentDisplay as AnimeList;
                 var row = animeListDisplay.dataGrid.SelectedCells[0].Item as XElement;
-                removeAnime(row.Element("name").Value);
+                xml.removeAnime(row.Element("name").Value);
                 refreshAnime();
             }
         }
@@ -673,7 +472,7 @@ namespace anime_downloader {
         /// <param name="e"></param>
         private void button_settings_Click(object sender, RoutedEventArgs e) {
             changeDisplay(new UserControls.Settings());
-            
+
             if (settings != null) {
                 var settingsDisplay = currentDisplay as UserControls.Settings;
                 settingsDisplay.base_textbox.Text = settings.baseFolderPath;
@@ -731,7 +530,7 @@ namespace anime_downloader {
         /// </summary>
         private void newSettings() {
             changeDisplay(new UserControls.Settings());
-            
+
             if (settings != null) {
                 var settingsDisplay = currentDisplay as UserControls.Settings;
                 toggleButtons(button_home, button_list, button_settings, button_check, button_folder, button_playlist,
@@ -757,7 +556,7 @@ namespace anime_downloader {
                             onlyWhitelisted = settingsDisplay.only_whitelisted_checkbox.IsChecked.Value,
                             sortBy = "name"
                         };
-                        createSettingsXML(settings);
+                        xml.createSettingsXML(settings);
                         toggleButtons(button_home, button_list, button_settings, button_check,
                             button_folder, button_playlist, button_open_executing);
                         initializeSettings();
@@ -856,7 +655,7 @@ namespace anime_downloader {
                     preferredSubgroup = subgroup
                 };
 
-                addAnime(newAnime);
+                xml.addAnime(newAnime);
                 refreshAnime();
                 pressButton(button_list);
             }
@@ -926,7 +725,7 @@ namespace anime_downloader {
                     preferredSubgroup = subgroup.Equals("(None)") ? "" : subgroup
                 };
 
-                editAnime(currentlyEditedAnime, editedAnime);
+                xml.editAnime(currentlyEditedAnime, editedAnime);
                 refreshAnime();
                 pressButton(button_list);
             }

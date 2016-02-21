@@ -5,8 +5,8 @@ using System.Text.RegularExpressions;
 
 namespace anime_downloader.Classes {
     public class Playlist {
-        public IEnumerable<string> episodes;
         private readonly Settings settings;
+        public IEnumerable<string> episodes;
 
         public Playlist(Settings settings) {
             this.settings = settings;
@@ -87,7 +87,7 @@ namespace anime_downloader.Classes {
                 }
             }
 
-            catch (IOException e) {
+            catch (IOException) {
                 return true;
             }
 
