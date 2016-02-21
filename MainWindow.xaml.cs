@@ -1,59 +1,60 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Xml.Linq;
 using anime_downloader.Classes;
-using System.Net;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
+using anime_downloader.UserControls;
+using Settings = anime_downloader.Classes.Settings;
 
 namespace anime_downloader {
-
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    ///     Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window {
-
         /// <summary>
-        /// The path and user settings object.
-        /// </summary>
-        private Settings settings;
-
-        /// <summary>
-        /// An object to create the playlist with some customization.
-        /// </summary>
-        private Playlist playlist;
-
-        /// <summary>
-        /// The current display on the right window pane.
+        ///     The current display on the right window pane.
         /// </summary>
         private UserControl currentDisplay;
 
         /// <summary>
-        /// A helper for modifying anime.
+        ///     A helper for modifying anime.
         /// </summary>
         private string currentlyEditedAnime;
 
+        /// <summary>
+        ///     An object to create the playlist with some customization.
+        /// </summary>
+        private Playlist playlist;
+
+        /// <summary>
+        ///     The path and user settings object.
+        /// </summary>
+        private Settings settings;
+
         public MainWindow() {
             InitializeComponent();
-            changeDisplay(new UserControls.Home());
+            changeDisplay(new Home());
             initializeSettings();
             updateTable();
         }
 
         // XML Modification
-        
+
         /// <summary>
-        /// Kind of a lazy way to test XML changes between versions.
+        ///     Kind of a lazy way to test XML changes between versions.
         /// </summary>
         private void verifySettingsXMLSchema(string settingsXMLPath) {
-            XDocument document = XDocument.Load(settingsXMLPath);
-            XElement root = document.Root;
+            var document = XDocument.Load(settingsXMLPath);
+            var root = document.Root;
 
             if (root.Element("sortBy") == null)
                 root.Add(new XElement("sortBy", "name"));
@@ -62,41 +63,41 @@ namespace anime_downloader {
         }
 
         /// <summary>
-        /// Kind of a lazy way to test XML changes between versions.
+        ///     Kind of a lazy way to test XML changes between versions.
         /// </summary>
         private void verifyAnimeXMLSchema(string animeXMLPath) {
-            XDocument document = XDocument.Load(animeXMLPath);
-            XElement root = document.Root;
+            var document = XDocument.Load(animeXMLPath);
+            var root = document.Root;
 
-            foreach (XElement anime in root.Elements()) {
+            foreach (var anime in root.Elements()) {
                 if (anime.Element("preferredSubgroup") == null)
                     anime.Add(new XElement("preferredSubgroup", ""));
             }
 
             document.Save(animeXMLPath);
         }
-        
+
         /// <summary>
-        /// Create the Anime XML file with initial nodes.
+        ///     Create the Anime XML file with initial nodes.
         /// </summary>
         private void createAnimeXML() {
-            XDocument document =
-                    new XDocument(
-                        new XDeclaration("1.0", "utf-8", "yes"),
-                        new XComment("The anime list."),
-                        new XElement("anime")
-                        );
+            var document =
+                new XDocument(
+                    new XDeclaration("1.0", "utf-8", "yes"),
+                    new XComment("The anime list."),
+                    new XElement("anime")
+                    );
             document.Save(settings.animeXMLPath);
         }
 
         /// <summary>
-        /// Add a single anime into the anime XML file.
+        ///     Add a single anime into the anime XML file.
         /// </summary>
         /// <param name="anime">A valid anime object.</param>
         private void addAnime(Anime anime) {
-            XDocument document = XDocument.Load(settings.animeXMLPath);
+            var document = XDocument.Load(settings.animeXMLPath);
 
-            XElement element = new XElement("show",
+            var element = new XElement("show",
                 new XElement("name", anime.name),
                 new XElement("episode", anime.episode),
                 new XElement("status", anime.status),
@@ -112,14 +113,14 @@ namespace anime_downloader {
         }
 
         /// <summary>
-        /// Add multiple animes into the anime XML file.
+        ///     Add multiple animes into the anime XML file.
         /// </summary>
         /// <param name="animes">A collection of valid animes.</param>
         private void addAnime(List<Anime> animes) {
-            XDocument document = XDocument.Load(settings.animeXMLPath);
+            var document = XDocument.Load(settings.animeXMLPath);
 
-            foreach (Anime anime in animes) {
-                XElement element = new XElement("show",
+            foreach (var anime in animes) {
+                var element = new XElement("show",
                     new XElement("name", anime.name),
                     new XElement("episode", anime.episode),
                     new XElement("status", anime.status),
@@ -136,15 +137,15 @@ namespace anime_downloader {
         }
 
         /// <summary>
-        /// Edit a single anime and write that change to the anime XML file.
+        ///     Edit a single anime and write that change to the anime XML file.
         /// </summary>
         /// <param name="name">The identifying key name.</param>
         /// <param name="anime">The replacing anime object.</param>
         private void editAnime(string name, Anime anime) {
-            XDocument document = XDocument.Load(settings.animeXMLPath);
-            XElement root = document.Root;
+            var document = XDocument.Load(settings.animeXMLPath);
+            var root = document.Root;
 
-            XElement selected = root.Elements()
+            var selected = root.Elements()
                 .Where(a => a.Element("name").Value.Equals(name))
                 .FirstOrDefault();
 
@@ -161,16 +162,16 @@ namespace anime_downloader {
         }
 
         /// <summary>
-        /// Edit a specific elementName about an anime instead of needing an entire object.
+        ///     Edit a specific elementName about an anime instead of needing an entire object.
         /// </summary>
         /// <param name="name">The identifying key name.</param>
         /// <param name="elementName">The identifying element name.</param>
         /// <param name="elementValue">The value to be written to the element.</param>
         private void editAnime(string name, string elementName, string elementValue) {
-            XDocument document = XDocument.Load(settings.animeXMLPath);
-            XElement root = document.Root;
+            var document = XDocument.Load(settings.animeXMLPath);
+            var root = document.Root;
 
-            XElement selected = root.Elements()
+            var selected = root.Elements()
                 .Where(a => a.Element("name").Value.Equals(name))
                 .FirstOrDefault();
 
@@ -181,21 +182,19 @@ namespace anime_downloader {
                     document.Save(settings.animeXMLPath);
                 }
             }
-
         }
 
         /// <summary>
-        /// Edit multiple anime and write those changes to the anime XML file.
+        ///     Edit multiple anime and write those changes to the anime XML file.
         /// </summary>
         /// <remarks>This works under the assumption that all Anime "name" are not modified.</remarks>
         /// <param name="animes">A collection of valid anime objects.</param>
         private void editAnime(List<Anime> animes) {
-            XDocument document = XDocument.Load(settings.animeXMLPath);
-            XElement root = document.Root;
+            var document = XDocument.Load(settings.animeXMLPath);
+            var root = document.Root;
 
-            foreach (Anime anime in animes) {
-
-                XElement selected = root.Elements()
+            foreach (var anime in animes) {
+                var selected = root.Elements()
                     .Where(a => a.Element("name").Value.Equals(anime.name))
                     .FirstOrDefault();
 
@@ -214,12 +213,12 @@ namespace anime_downloader {
         }
 
         /// <summary>
-        /// Remove a single anime from the anime XML file.
+        ///     Remove a single anime from the anime XML file.
         /// </summary>
         /// <param name="name">The identifying key name.</param>
         private void removeAnime(string name) {
-            XDocument document = XDocument.Load(settings.animeXMLPath);
-            XElement node = document.Root.Elements().Where(x => x.Element("name").Value == name).FirstOrDefault();
+            var document = XDocument.Load(settings.animeXMLPath);
+            var node = document.Root.Elements().Where(x => x.Element("name").Value == name).FirstOrDefault();
             if (node != null) {
                 node.Remove();
                 document.Save(settings.animeXMLPath);
@@ -227,59 +226,55 @@ namespace anime_downloader {
         }
 
         /// <summary>
-        /// Create a new XML file and populate it with the values from a settings object.
+        ///     Create a new XML file and populate it with the values from a settings object.
         /// </summary>
         /// <param name="settings">A valid instantiated settings object.</param>
         private void createSettingsXML(Settings settings) {
-
-            XElement subgroups = new XElement("subgroup");
-            foreach (String group in settings.subgroups)
+            var subgroups = new XElement("subgroup");
+            foreach (var group in settings.subgroups)
                 subgroups.Add(new XElement("name", group));
 
-            XDocument document =
-                    new XDocument(
-                        new XDeclaration("1.0", "utf-8", "yes"),
-                        new XComment("User profile settings"),
-                        new XElement("settings",
-                            new XElement("name", Environment.UserName),
-                            new XElement("path",
-                                new XElement("base", settings.baseFolderPath),
-                                new XElement("torrents", settings.torrentFilesPath),
-                                new XElement("utorrent", settings.utorrentPath)),
-                            subgroups,
-                            new XElement("flag",
-                                new XElement("only-whitelisted-subs", settings.onlyWhitelisted))),
-                            new XElement("sortBy", settings.sortBy)
-                        );
+            var document =
+                new XDocument(
+                    new XDeclaration("1.0", "utf-8", "yes"),
+                    new XComment("User profile settings"),
+                    new XElement("settings",
+                        new XElement("name", Environment.UserName),
+                        new XElement("path",
+                            new XElement("base", settings.baseFolderPath),
+                            new XElement("torrents", settings.torrentFilesPath),
+                            new XElement("utorrent", settings.utorrentPath)),
+                        subgroups,
+                        new XElement("flag",
+                            new XElement("only-whitelisted-subs", settings.onlyWhitelisted))),
+                    new XElement("sortBy", settings.sortBy)
+                    );
 
             document.Save(settings.settingsXMLPath);
         }
 
         // implement
-        private void editSettingsXML(Settings settings) {
-            
-        }
+        private void editSettingsXML(Settings settings) {}
 
         /// <summary>
-        /// Initialize and set the settings object.
+        ///     Initialize and set the settings object.
         /// </summary>
         private void initializeSettings() {
-
-            string applicationPath =
+            var applicationPath =
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                     "anime-downloader");
 
             if (!Directory.Exists(applicationPath))
                 Directory.CreateDirectory(applicationPath);
 
-            string settingsXMLPath = Path.Combine(applicationPath, "settings.xml");
+            var settingsXMLPath = Path.Combine(applicationPath, "settings.xml");
 
             if (!File.Exists(settingsXMLPath))
                 newSettings();
-            
+
             verifySettingsXMLSchema(settingsXMLPath);
 
-            XElement xmlSettings = XDocument.Load(settingsXMLPath).Root;
+            var xmlSettings = XDocument.Load(settingsXMLPath).Root;
 
             settings = new Settings {
                 applicationPath = applicationPath,
@@ -289,10 +284,10 @@ namespace anime_downloader {
                 torrentFilesPath = xmlSettings.Element("path").Element("torrents").Value,
                 utorrentPath = xmlSettings.Element("path").Element("utorrent").Value,
                 subgroups = xmlSettings.Elements("subgroup").Elements("name").Select(x => x.Value).ToArray(),
-                onlyWhitelisted = Boolean.Parse(xmlSettings.Element("flag").Element("only-whitelisted-subs").Value),
+                onlyWhitelisted = bool.Parse(xmlSettings.Element("flag").Element("only-whitelisted-subs").Value),
                 sortBy = xmlSettings.Element("sortBy").Value
             };
-            
+
             if (!File.Exists(settings.animeXMLPath))
                 createAnimeXML();
 
@@ -302,15 +297,15 @@ namespace anime_downloader {
         }
 
         /// <summary>
-        /// Update the values in the AnimeList table.
+        ///     Update the values in the AnimeList table.
         /// </summary>
         private void updateTable() {
             var root = XDocument.Load(settings.animeXMLPath).Root.Elements()
                 .AsParallel()
                 .OrderBy(e => e.Element(settings.sortBy).Value)
                 .ToList();
-            
-            var animeListDisplay = currentDisplay as UserControls.AnimeList;
+
+            var animeListDisplay = currentDisplay as AnimeList;
             if (animeListDisplay != null) {
                 animeListDisplay.dataGrid.ItemsSource = root;
             }
@@ -319,7 +314,7 @@ namespace anime_downloader {
         // Helper functions
 
         /// <summary>
-        /// Attempt to download anime and display the results.
+        ///     Attempt to download anime and display the results.
         /// </summary>
         /// <param name="textbox">The output box to display results to.</param>
         /// <param name="animes">The collection of anime to try and get new episodes from.</param>
@@ -327,16 +322,15 @@ namespace anime_downloader {
             string filepath, command;
             var changedAnime = new List<Anime>();
             var client = new WebClient();
-            int totalDownloaded = 0;
-            
+            var totalDownloaded = 0;
+
             textbox.Text = ">> Searching for currently airing anime episodes ...\n";
 
-            foreach (Anime anime in animes) {
-                Nyaa[] nyaaLinks = await anime.getLinksToNextEpisode();
+            foreach (var anime in animes) {
+                var nyaaLinks = await anime.getLinksToNextEpisode();
 
                 if (nyaaLinks != null) {
-                    foreach (Nyaa nyaa in nyaaLinks) {
-
+                    foreach (var nyaa in nyaaLinks) {
                         // Most likely wrong torrent
                         if (anime.nameStrict) {
                             if (!anime.name.Equals(nyaa.strippedName(true))) {
@@ -346,12 +340,11 @@ namespace anime_downloader {
 
                         // Not the right subgroup
                         if (!anime.preferredSubgroup.Equals("") &
-                                !nyaa?.subgroup().Contains(anime.preferredSubgroup) ?? false) {
+                            !nyaa?.subgroup().Contains(anime.preferredSubgroup) ?? false) {
                             continue;
                         }
 
                         if (settings.onlyWhitelisted) {
-
                             // Nyaa listing with no subgroup in the title
                             if (!nyaa.hasSubgroup()) {
                                 // textbox.AppendText($"Found result for {anime.name} with no subgroup. Skipping ...\n");
@@ -387,36 +380,37 @@ namespace anime_downloader {
 
             editAnime(changedAnime);
             updateTable();
-            textbox.AppendText(totalDownloaded > 0 ? $">> Found {totalDownloaded} anime downloads." : ">> No new anime found.");
+            textbox.AppendText(totalDownloaded > 0
+                ? $">> Found {totalDownloaded} anime downloads."
+                : ">> No new anime found.");
             scrolldownTextbox(textbox);
             toggleButtons(button_home, button_list, button_settings, button_check, button_playlist);
         }
-        
+
         /// <summary>
-        /// Check if Nyaa.eu is online within 1.0 seconds so not to hang when entering download view. 
+        ///     Check if Nyaa.eu is online within 1.0 seconds so not to hang when entering download view.
         /// </summary>
         /// <returns></returns>
         private async Task<bool> NyaaIsOnline() {
-            HttpWebRequest httpReq = (HttpWebRequest)WebRequest.Create("http://www.nyaa.eu/");
+            var httpReq = (HttpWebRequest) WebRequest.Create("http://www.nyaa.eu/");
             httpReq.Timeout = 1000;
             httpReq.AllowAutoRedirect = false;
             try {
-                HttpWebResponse httpRes = await Task.Run(() => (HttpWebResponse)httpReq.GetResponse());
+                var httpRes = await Task.Run(() => (HttpWebResponse) httpReq.GetResponse());
                 return httpRes.StatusCode == HttpStatusCode.OK;
             }
             catch {
                 return false;
             }
-
         }
-        
+
         /// <summary>
-        /// Execute new process with given parameters.
+        ///     Execute new process with given parameters.
         /// </summary>
         /// <param name="executable">Path to the executable file.</param>
         /// <param name="parameters">Arguments given to the executable.</param>
         private void callCommand(string executable, string parameters) {
-            Process proc = new Process();
+            var proc = new Process();
             proc.StartInfo.FileName = executable;
             proc.StartInfo.Arguments = parameters;
             proc.StartInfo.UseShellExecute = false;
@@ -426,12 +420,12 @@ namespace anime_downloader {
         }
 
         /// <summary>
-        /// Create and return the path to a folder based on a timestamp of the current moment.
+        ///     Create and return the path to a folder based on a timestamp of the current moment.
         /// </summary>
         /// <returns>A path used to download into.</returns>
         private string getOutputFolder() {
             var date = DateTime.Now;
-            var weeknumber = Math.Floor(Convert.ToDouble(date.DayOfYear) / 7);
+            var weeknumber = Math.Floor(Convert.ToDouble(date.DayOfYear)/7);
             var folderName = $"{date.Year} - Week {weeknumber} - {date.ToString("MMMM")}";
 
             var outputPath = Path.Combine(settings.baseFolderPath, folderName);
@@ -443,11 +437,11 @@ namespace anime_downloader {
         }
 
         /// <summary>
-        /// Toggle opacity and visibility of arbitrary amount of buttons.
+        ///     Toggle opacity and visibility of arbitrary amount of buttons.
         /// </summary>
         /// <param name="buttons">Any button element.</param>
         private void toggleButtons(params Button[] buttons) {
-            foreach (Button b in buttons) {
+            foreach (var b in buttons) {
                 if (b.IsHitTestVisible) {
                     b.IsHitTestVisible = false;
                     b.Opacity = 0.4;
@@ -460,15 +454,15 @@ namespace anime_downloader {
         }
 
         /// <summary>
-        /// Simulate a button press.
+        ///     Simulate a button press.
         /// </summary>
         /// <param name="button">The button to press.</param>
         private void pressButton(Button button) {
-            button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
         }
 
         /// <summary>
-        /// Change the current main display to another display.
+        ///     Change the current main display to another display.
         /// </summary>
         /// <param name="userDisplay">The user supplied display.</param>
         private void changeDisplay(UserControl userDisplay) {
@@ -478,13 +472,13 @@ namespace anime_downloader {
         }
 
         /// <summary>
-        /// Strip the video name of all tags (resolution, seeders, etc).
+        ///     Strip the video name of all tags (resolution, seeders, etc).
         /// </summary>
         /// <param name="name">A downloaded file's name.</param>
         /// <returns></returns>
         private string stripFilename(string name) {
-            string pattern = @"(\[(?:.*?)\])|(\((?:.*)\))";
-            string scrubbedName = name;
+            var pattern = @"(\[(?:.*?)\])|(\((?:.*)\))";
+            var scrubbedName = name;
             foreach (Match match in Regex.Matches(name, pattern)) {
                 if (match.Groups.Count > 1) {
                     var m = match.Groups[1]?.Value ?? match.Groups[2]?.Value ?? "";
@@ -496,61 +490,59 @@ namespace anime_downloader {
         }
 
         /// <summary>
-        /// Returns a collection of [{animeName: lastGivenEpisode}] from a list of stripped titles.
+        ///     Returns a collection of [{animeName: lastGivenEpisode}] from a list of stripped titles.
         /// </summary>
         /// <param name="strippedNames">A collection of names passed through stripFilename().</param>
         /// <returns></returns>
         private Dictionary<string, int> collectLastEpisode(string[] strippedNames) {
-            Dictionary<string, int> latest = new Dictionary<string, int>();
+            var latest = new Dictionary<string, int>();
 
-            foreach (string name in strippedNames) {
+            foreach (var name in strippedNames) {
                 var animeName = string.Join(" - ",
-                    name.Split(new string[] { " .mp4", " .mkv" }, StringSplitOptions.RemoveEmptyEntries)[0]
-                        .Split(new string[] { " - " }, StringSplitOptions.RemoveEmptyEntries)
-                        .TakeWhile(s => !s.All(c => Char.IsNumber(c))));
+                    name.Split(new[] {" .mp4", " .mkv"}, StringSplitOptions.RemoveEmptyEntries)[0]
+                        .Split(new[] {" - "}, StringSplitOptions.RemoveEmptyEntries)
+                        .TakeWhile(s => !s.All(c => char.IsNumber(c))));
                 var animeEpisode = int.Parse(name.Split('-').Last().Split()[1]);
 
                 if (!latest.ContainsKey(animeName))
                     latest.Add(animeName, animeEpisode);
-                else
-                    if (latest[animeName] < animeEpisode)
-                        latest[animeName] = animeEpisode;
+                else if (latest[animeName] < animeEpisode)
+                    latest[animeName] = animeEpisode;
             }
 
             return latest;
         }
 
         /// <summary>
-        /// Set all anime episode counts in the anime list to their last known values from the "finished" folder.
+        ///     Set all anime episode counts in the anime list to their last known values from the "finished" folder.
         /// </summary>
         /// <remarks>This is for re-indexing if you don't know which episodes you watched last.</remarks>
         private void setAnimeEpisodeTotalToLastKnown() {
-
-            string path = Path.Combine(settings.baseFolderPath, "watched");
+            var path = Path.Combine(settings.baseFolderPath, "watched");
 
             var finishedAnimes = collectLastEpisode(Directory.GetFiles(path)
                 .Select(f => Path.GetFileName(f))
                 .Select(n => stripFilename(n))
                 .ToArray());
-            
+
 
             // I'm not sure how to cleanly turn this into a generic XML function above.
-            XDocument document = XDocument.Load(settings.animeXMLPath);
-            XElement root = document.Root;
+            var document = XDocument.Load(settings.animeXMLPath);
+            var root = document.Root;
 
-            foreach (KeyValuePair<string, int> entry in finishedAnimes) {
-                XElement selected = root.Elements()
-                                        .Where(a => entry.Key.ToLower().Contains(a.Element("name").Value.ToLower()))
-                                        .FirstOrDefault();
+            foreach (var entry in finishedAnimes) {
+                var selected = root.Elements()
+                    .Where(a => entry.Key.ToLower().Contains(a.Element("name").Value.ToLower()))
+                    .FirstOrDefault();
                 if (selected != null)
                     selected.Element("episode").Value = string.Format("{0:D2}", entry.Value);
             }
 
             document.Save(settings.animeXMLPath);
         }
-        
+
         /// <summary>
-        /// Scroll to the bottom of a textbox.
+        ///     Scroll to the bottom of a textbox.
         /// </summary>
         /// <param name="textbox">The textbox that will be scrolled down in.</param>
         private void scrolldownTextbox(TextBox textbox) {
@@ -562,12 +554,12 @@ namespace anime_downloader {
         // Event handling
 
         /// <summary>
-        /// The home view.
+        ///     The home view.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void button_home_Click(object sender, RoutedEventArgs e) {
-            changeDisplay(new UserControls.Home());
+            changeDisplay(new Home());
         }
 
         private void button_folder_Click(object sender, RoutedEventArgs e) {
@@ -578,9 +570,9 @@ namespace anime_downloader {
         }
 
         private void button_playlist_Click(object sender, RoutedEventArgs e) {
-            changeDisplay(new UserControls.PlaylistCreator());
-            var playlistCreatorDisplay = currentDisplay as UserControls.PlaylistCreator;
-            playlistCreatorDisplay.button.Click += new RoutedEventHandler(playlist_button_Click);
+            changeDisplay(new PlaylistCreator());
+            var playlistCreatorDisplay = currentDisplay as PlaylistCreator;
+            playlistCreatorDisplay.button.Click += playlist_button_Click;
         }
 
         private void playlist_button_Click(object sender, RoutedEventArgs e) {
@@ -590,7 +582,7 @@ namespace anime_downloader {
             else {
                 playlist.refresh();
 
-                var playlistCreatorDisplay = currentDisplay as UserControls.PlaylistCreator;
+                var playlistCreatorDisplay = currentDisplay as PlaylistCreator;
 
                 if (playlistCreatorDisplay != null) {
                     if (playlistCreatorDisplay.episode_radio.IsChecked.Value)
@@ -614,66 +606,66 @@ namespace anime_downloader {
         }
 
         /// <summary>
-        /// The view to display the anime list.
+        ///     The view to display the anime list.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void button_list_Click(object sender, RoutedEventArgs e) {
-            changeDisplay(new UserControls.AnimeList());
+            changeDisplay(new AnimeList());
             updateTable();
 
-            var animeListDisplay = currentDisplay as UserControls.AnimeList;
-            animeListDisplay.add.Click += new RoutedEventHandler(button_add_new_Click);
-            animeListDisplay.edit.Click += new RoutedEventHandler(anime_list_edit_Click);
-            animeListDisplay.delete.Click += new RoutedEventHandler(anime_list_delete_Click);
-            animeListDisplay.dataGrid.PreviewKeyDown += new KeyEventHandler(anime_list_delete_KeyDown);
-            animeListDisplay.dataGrid.MouseDoubleClick += new MouseButtonEventHandler(anime_list_MouseDoubleClick);
+            var animeListDisplay = currentDisplay as AnimeList;
+            animeListDisplay.add.Click += button_add_new_Click;
+            animeListDisplay.edit.Click += anime_list_edit_Click;
+            animeListDisplay.delete.Click += anime_list_delete_Click;
+            animeListDisplay.dataGrid.PreviewKeyDown += anime_list_delete_KeyDown;
+            animeListDisplay.dataGrid.MouseDoubleClick += anime_list_MouseDoubleClick;
         }
 
         /// <summary>
-        /// The context menu event for the anime list view, selection: "Delete"
+        ///     The context menu event for the anime list view, selection: "Delete"
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void anime_list_delete_Click(object sender, RoutedEventArgs e) {
-            var animeListDisplay = currentDisplay as UserControls.AnimeList;
+            var animeListDisplay = currentDisplay as AnimeList;
             if (animeListDisplay.dataGrid.SelectedCells.FirstOrDefault().IsValid) {
-                XElement row = animeListDisplay.dataGrid.SelectedCells.FirstOrDefault().Item as XElement;
+                var row = animeListDisplay.dataGrid.SelectedCells.FirstOrDefault().Item as XElement;
                 if (row != null) {
                     removeAnime(row.Element("name").Value);
                     updateTable();
                 }
             }
         }
-        
+
         /// <summary>
-        /// The keydown event for the anime list view. 
+        ///     The keydown event for the anime list view.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void anime_list_delete_KeyDown(object sender, KeyEventArgs e) {
             if (e.Key == Key.Delete) {
-                var animeListDisplay = currentDisplay as UserControls.AnimeList;
-                XElement row = animeListDisplay.dataGrid.SelectedCells[0].Item as XElement;
+                var animeListDisplay = currentDisplay as AnimeList;
+                var row = animeListDisplay.dataGrid.SelectedCells[0].Item as XElement;
                 removeAnime(row.Element("name").Value);
                 updateTable();
             }
         }
 
         /// <summary>
-        /// The double click event for the anime list view.
+        ///     The double click event for the anime list view.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void anime_list_MouseDoubleClick(object sender, MouseEventArgs e) {
-            var animeListDisplay = currentDisplay as UserControls.AnimeList;
+            var animeListDisplay = currentDisplay as AnimeList;
             if (animeListDisplay.dataGrid.SelectedCells.FirstOrDefault().IsValid) {
                 anime_list_edit_Click(sender, e);
             }
         }
 
         /// <summary>
-        /// The view to manage settings.
+        ///     The view to manage settings.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -683,36 +675,35 @@ namespace anime_downloader {
             var settingsDisplay = currentDisplay as UserControls.Settings;
             if (settings != null) {
                 settingsDisplay.base_textbox.Text = settings.baseFolderPath;
-                settingsDisplay.subgroups_textbox.Text = String.Join(", ", settings.subgroups);
+                settingsDisplay.subgroups_textbox.Text = string.Join(", ", settings.subgroups);
                 settingsDisplay.download_textbox.Text = settings.utorrentPath;
                 settingsDisplay.torrent_textbox.Text = settings.torrentFilesPath;
-                settingsDisplay.apply_changes_button.Click += new RoutedEventHandler(button_apply_settings_Click);
+                settingsDisplay.apply_changes_button.Click += button_apply_settings_Click;
                 settingsDisplay.only_whitelisted_checkbox.IsChecked = settings.onlyWhitelisted;
             }
         }
 
         /// <summary>
-        /// The submission button event for the edit settings view.
+        ///     The submission button event for the edit settings view.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void button_apply_settings_Click(object sender, RoutedEventArgs e) {
             var settingsDisplay = currentDisplay as UserControls.Settings;
             if (settingsDisplay != null) {
-
                 if (settingsDisplay.base_textbox.Text.Equals("") || settingsDisplay.torrent_textbox.Text.Equals("") ||
                     settingsDisplay.download_textbox.Text.Equals(""))
                     MessageBox.Show("You must enter in Base, Torrent or Utorrent Path Boxes.");
 
                 else {
-                    string[] subgroups = settingsDisplay.subgroups_textbox.Text.Split(new string[] { ", " },
+                    var subgroups = settingsDisplay.subgroups_textbox.Text.Split(new[] {", "},
                         StringSplitOptions.None);
 
                     var subgroup = new XElement("subgroup");
-                    foreach (String sub in subgroups)
+                    foreach (var sub in subgroups)
                         subgroup.Add(new XElement("name", sub));
 
-                    XDocument doc =
+                    var doc =
                         new XDocument(
                             new XDeclaration("1.0", "utf-8", "yes"),
                             new XComment("User profile settings"),
@@ -724,7 +715,8 @@ namespace anime_downloader {
                                     new XElement("torrents", settingsDisplay.torrent_textbox.Text)),
                                 subgroup,
                                 new XElement("flag",
-                                    new XElement("only-whitelisted-subs", settingsDisplay.only_whitelisted_checkbox.IsChecked)))
+                                    new XElement("only-whitelisted-subs",
+                                        settingsDisplay.only_whitelisted_checkbox.IsChecked)))
                             );
 
                     doc.Save(settings.settingsXMLPath);
@@ -734,23 +726,23 @@ namespace anime_downloader {
         }
 
         /// <summary>
-        /// The view to create a new settings profile.
+        ///     The view to create a new settings profile.
         /// </summary>
         private void newSettings() {
             changeDisplay(new UserControls.Settings());
 
             var settingsDisplay = currentDisplay as UserControls.Settings;
             if (settings != null) {
-                toggleButtons(button_home, button_list, button_settings, button_check, button_folder, button_playlist, button_open_executing);
+                toggleButtons(button_home, button_list, button_settings, button_check, button_folder, button_playlist,
+                    button_open_executing);
                 settingsDisplay.base_textbox.Text = Directory.GetCurrentDirectory();
-                settingsDisplay.torrent_textbox.Text = System.IO.Path.Combine(settingsDisplay.base_textbox.Text, "torrents");
+                settingsDisplay.torrent_textbox.Text = Path.Combine(settingsDisplay.base_textbox.Text, "torrents");
                 settingsDisplay.download_textbox.Text = @"C:\Program Files (x86)\uTorrent\uTorrent.exe";
                 settingsDisplay.apply_changes_button.Content = "Create Profile";
-                settingsDisplay.apply_changes_button.Click += new RoutedEventHandler((object o, RoutedEventArgs e2) => {
-
-                    if (settingsDisplay.base_textbox.Text.Equals("")        
-                            || settingsDisplay.torrent_textbox.Text.Equals("") 
-                            || settingsDisplay.download_textbox.Text.Equals(""))
+                settingsDisplay.apply_changes_button.Click += (object o, RoutedEventArgs e2) => {
+                    if (settingsDisplay.base_textbox.Text.Equals("")
+                        || settingsDisplay.torrent_textbox.Text.Equals("")
+                        || settingsDisplay.download_textbox.Text.Equals(""))
                         MessageBox.Show("You must enter in Base, Torrent or Utorrent Path Boxes.");
 
                     else {
@@ -759,23 +751,23 @@ namespace anime_downloader {
                             torrentFilesPath = settingsDisplay.torrent_textbox.Text,
                             utorrentPath = settingsDisplay.download_textbox.Text,
                             subgroups =
-                                settingsDisplay.subgroups_textbox.Text.Split(new string[] {" "},
+                                settingsDisplay.subgroups_textbox.Text.Split(new[] {" "},
                                     StringSplitOptions.RemoveEmptyEntries),
                             onlyWhitelisted = settingsDisplay.only_whitelisted_checkbox.IsChecked.Value,
                             sortBy = "name"
                         };
                         createSettingsXML(settings);
-                        toggleButtons(button_home, button_list, button_settings, button_check, 
-                                      button_folder, button_playlist, button_open_executing);
+                        toggleButtons(button_home, button_list, button_settings, button_check,
+                            button_folder, button_playlist, button_open_executing);
                         initializeSettings();
                         pressButton(button_home);
                     }
-                });
+                };
             }
         }
 
         /// <summary>
-        /// The view to check for new anime and download it.
+        ///     The view to check for new anime and download it.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -789,14 +781,14 @@ namespace anime_downloader {
             else {
                 if (!Directory.Exists(settings.torrentFilesPath))
                     Directory.CreateDirectory(settings.torrentFilesPath);
-                
-                changeDisplay(new UserControls.Download());
-                var downloadDisplay = currentDisplay as UserControls.Download;
 
-                XDocument animeXML = XDocument.Load(settings.animeXMLPath);
-                Anime[] animes = animeXML.Element("anime").Elements()
+                changeDisplay(new Download());
+                var downloadDisplay = currentDisplay as Download;
+
+                var animeXML = XDocument.Load(settings.animeXMLPath);
+                var animes = animeXML.Element("anime").Elements()
                     .Select(x => new Anime(x))
-                    .Where(a => a.airing == true && a.status == "Watching")
+                    .Where(a => a.airing && a.status == "Watching")
                     .ToArray();
 
                 toggleButtons(button_home, button_list, button_settings, button_check, button_playlist);
@@ -811,28 +803,27 @@ namespace anime_downloader {
                 else if (downloadDisplay != null) {
                     downloadAnime(downloadDisplay.textBox, animes);
                 }
-
             }
         }
 
         /// <summary>
-        /// The view to add new anime to the anime list.
+        ///     The view to add new anime to the anime list.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void button_add_new_Click(object sender, RoutedEventArgs e) {
-            changeDisplay(new UserControls.Add());
-            var animeDisplay = currentDisplay as UserControls.Add;
+            changeDisplay(new Add());
+            var animeDisplay = currentDisplay as Add;
 
             if (animeDisplay != null) {
-                animeDisplay.add_button.Click += new RoutedEventHandler(button_add_Click);
+                animeDisplay.add_button.Click += button_add_Click;
 
-                KeyEventHandler enterApply = new KeyEventHandler((object s, KeyEventArgs k) => {
+                KeyEventHandler enterApply = (object s, KeyEventArgs k) => {
                     if (k.Key == Key.Enter) {
                         animeDisplay.add_button.Focus();
                         pressButton(animeDisplay.add_button);
                     }
-                });
+                };
 
                 animeDisplay.name_textbox.KeyUp += enterApply;
                 animeDisplay.episode_textbox.KeyUp += enterApply;
@@ -841,25 +832,24 @@ namespace anime_downloader {
         }
 
         /// <summary>
-        /// The submission button event for the add anime view.
+        ///     The submission button event for the add anime view.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void button_add_Click(object sender, RoutedEventArgs e) {
-            var animeDisplay = currentDisplay as UserControls.Add;
+            var animeDisplay = currentDisplay as Add;
 
             if (animeDisplay != null) {
-
                 if (animeDisplay.name_textbox.Text.Equals("") || animeDisplay.episode_textbox.Text.Equals("")) {
                     MessageBox.Show("There needs to be a name and/or episode.");
                 }
 
                 else {
-                    string subgroup = animeDisplay.subgroup_comboBox.Text;
+                    var subgroup = animeDisplay.subgroup_comboBox.Text;
                     if (subgroup.Equals("(None)"))
                         subgroup = "";
 
-                    Anime newAnime = new Anime {
+                    var newAnime = new Anime {
                         name = animeDisplay.name_textbox.Text,
                         episode = string.Format("{0:D2}", int.Parse(animeDisplay.episode_textbox.Text)),
                         status = animeDisplay.status_combobox.Text,
@@ -868,7 +858,7 @@ namespace anime_downloader {
                         nameStrict = animeDisplay.name_strict_checkbox.IsChecked.Value,
                         preferredSubgroup = subgroup
                     };
-                    
+
                     addAnime(newAnime);
                     pressButton(button_list);
                 }
@@ -876,33 +866,32 @@ namespace anime_downloader {
         }
 
         /// <summary>
-        /// The view to edit anime selected from the anime list.
+        ///     The view to edit anime selected from the anime list.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void anime_list_edit_Click(object sender, RoutedEventArgs e) {
-            var tableDisplay = currentDisplay as UserControls.AnimeList;
+            var tableDisplay = currentDisplay as AnimeList;
 
             if (tableDisplay != null) {
                 if (tableDisplay.dataGrid.SelectedCells.FirstOrDefault().IsValid) {
-                    
-                    XElement item = tableDisplay.dataGrid.SelectedCells[0].Item as XElement; //  .Items[0].ToString());
+                    var item = tableDisplay.dataGrid.SelectedCells[0].Item as XElement; //  .Items[0].ToString());
 
-                    changeDisplay(new UserControls.Add());
+                    changeDisplay(new Add());
 
-                    var animeDisplay = currentDisplay as UserControls.Add;
+                    var animeDisplay = currentDisplay as Add;
                     animeDisplay.add_button.Content = "Edit";
-                    animeDisplay.add_button.Click += new RoutedEventHandler(button_anime_edit_Click);
+                    animeDisplay.add_button.Click += button_anime_edit_Click;
 
-                    KeyEventHandler enterApply = new KeyEventHandler((object s, KeyEventArgs k) => {
+                    KeyEventHandler enterApply = (object s, KeyEventArgs k) => {
                         if (k.Key == Key.Enter) {
                             animeDisplay.add_button.Focus();
                             pressButton(animeDisplay.add_button);
                         }
-                    });
+                    };
 
-                    string subgroup = item.Element("preferredSubgroup").Value;
-                    
+                    var subgroup = item.Element("preferredSubgroup").Value;
+
                     animeDisplay.name_textbox.KeyUp += enterApply;
                     animeDisplay.episode_textbox.KeyUp += enterApply;
 
@@ -910,8 +899,8 @@ namespace anime_downloader {
                     animeDisplay.episode_textbox.Text = item.Element("episode").Value;
                     animeDisplay.resolution_combobox.Text = item.Element("resolution").Value;
                     animeDisplay.status_combobox.Text = item.Element("status").Value;
-                    animeDisplay.airing_checkbox.IsChecked = Boolean.Parse(item.Element("airing").Value);
-                    animeDisplay.name_strict_checkbox.IsChecked = Boolean.Parse(item.Element("name-strict").Value);
+                    animeDisplay.airing_checkbox.IsChecked = bool.Parse(item.Element("airing").Value);
+                    animeDisplay.name_strict_checkbox.IsChecked = bool.Parse(item.Element("name-strict").Value);
 
                     settings.subgroups.ToList().ForEach(s => animeDisplay.subgroup_comboBox.Items.Add(s));
                     animeDisplay.subgroup_comboBox.Text = subgroup.Equals("") ? "(None)" : subgroup;
@@ -922,23 +911,21 @@ namespace anime_downloader {
         }
 
         /// <summary>
-        /// The submission button event for the edit anime view.
+        ///     The submission button event for the edit anime view.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void button_anime_edit_Click(object sender, RoutedEventArgs e) {
-            var animeDisplay = currentDisplay as UserControls.Add;
+            var animeDisplay = currentDisplay as Add;
 
             if (animeDisplay != null) {
-                
                 if (animeDisplay.name_textbox.Text.Equals("") || animeDisplay.episode_textbox.Text.Equals(""))
                     MessageBox.Show("There needs to be a name and/or episode.");
 
                 else {
+                    var subgroup = animeDisplay.subgroup_comboBox.Text;
 
-                    string subgroup = animeDisplay.subgroup_comboBox.Text;
-
-                    Anime editedAnime = new Anime {
+                    var editedAnime = new Anime {
                         name = animeDisplay.name_textbox.Text,
                         episode = string.Format("{0:D2}", int.Parse(animeDisplay.episode_textbox.Text)),
                         status = animeDisplay.status_combobox.Text,
@@ -955,7 +942,7 @@ namespace anime_downloader {
         }
 
         /// <summary>
-        /// A test event.
+        ///     A test event.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -963,7 +950,5 @@ namespace anime_downloader {
             setAnimeEpisodeTotalToLastKnown();
             updateTable();
         }
-        
-
     }
 }

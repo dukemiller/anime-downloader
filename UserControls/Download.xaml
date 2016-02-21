@@ -1,12 +1,13 @@
 ﻿<UserControl x:Class="anime_downloader.UserControls.Download"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:anime_downloader.UserControls"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              d:DesignHeight="330" d:DesignWidth="650">
     <Grid>
-        <TextBox x:Name="textBox" TextWrapping="Wrap" FontSize="16" IsReadOnly="True" VerticalScrollBarVisibility="Auto" />
+        <TextBox x:Name="textBox" TextWrapping="Wrap" FontSize="16" IsReadOnly="True"
+                 VerticalScrollBarVisibility="Auto" />
     </Grid>
 </UserControl>

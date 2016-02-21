@@ -4,6 +4,6 @@
              xmlns:local="clr-namespace:anime_downloader"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+
     </Application.Resources>
 </Application>
