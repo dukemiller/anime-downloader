@@ -234,3 +234,8 @@ _Pvt_Extensions
 
 # FAKE - F# Make
 .fake/
+
+.vs/
+packages/
+*.DotSettings.user
+*.sln
