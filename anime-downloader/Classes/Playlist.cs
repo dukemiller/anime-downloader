@@ -25,6 +25,7 @@ namespace anime_downloader.Classes {
         /// </summary>
         public void refresh() {
             episodes = Directory.GetDirectories(settings.baseFolderPath)
+                .AsParallel()
                 .Where(s => !s.EndsWith("torrents") && !s.EndsWith("Grace") && !s.EndsWith("Watched"))
                 .SelectMany(f => Directory.GetFiles(f))
                 .Where(f => !isFragmentedVideo(f));

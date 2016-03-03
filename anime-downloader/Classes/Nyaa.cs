@@ -78,20 +78,27 @@ namespace anime_downloader.Classes {
         /// </summary>
         /// <returns>A valid filename for the torrent.</returns>
         public string torrentName() {
-            string filename, disposition;
-            var request = (HttpWebRequest) WebRequest.Create(link);
+            string filename;
+            string disposition;
+
+            var request = WebRequest.Create(link) as HttpWebRequest;
+
+            HttpWebResponse response = null;
 
             try {
-                var res = (HttpWebResponse) request.GetResponse();
-                using (var rstream = res.GetResponseStream()) {
-                    disposition = res.Headers["content-disposition"];
+                response = request.GetResponse() as HttpWebResponse;
+                using (var responseStream = response.GetResponseStream()) {
+                    disposition = response.Headers["content-disposition"];
                     filename = disposition.Split(new[] {"filename=\""}, StringSplitOptions.None)[1].Split('"')[0];
+                    return filename;
                 }
-                res.Close();
-                return filename;
             }
 
             catch {}
+
+            finally {
+                response?.Close();
+            }
 
             return null;
         }

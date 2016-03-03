@@ -97,6 +97,7 @@ namespace anime_downloader.Classes {
 
             if (itemNodes != null) {
                 var result = itemNodes.Select(n => new Nyaa(n))
+                    .AsParallel()
                     .Where(n => n.measurement.Equals("MiB") &&
                                 n.size > 10 &&
                                 n.strippedName().Contains(nextEpisode()) &&

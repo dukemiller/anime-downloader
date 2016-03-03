@@ -131,6 +131,7 @@ namespace anime_downloader {
 
                 if (nyaaLinks != null) {
                     foreach (var nyaa in nyaaLinks) {
+
                         // Most likely wrong torrent
                         if (anime.nameStrict) {
                             if (!anime.name.Equals(nyaa.strippedName(true))) {
@@ -145,6 +146,7 @@ namespace anime_downloader {
                         }
 
                         if (settings.onlyWhitelisted) {
+
                             // Nyaa listing with no subgroup in the title
                             if (!nyaa.hasSubgroup()) {
                                 // textbox.AppendText($"Found result for {anime.name} with no subgroup. Skipping ...\n");
@@ -188,11 +190,11 @@ namespace anime_downloader {
         }
 
         /// <summary>
-        ///     Check if Nyaa.eu is online within 1.0 seconds so not to hang when entering download view.
+        ///     Check if Nyaa.se is online within 1.0 seconds so not to hang when entering download view.
         /// </summary>
         /// <returns></returns>
         private async Task<bool> NyaaIsOnline() {
-            var httpReq = (HttpWebRequest) WebRequest.Create("http://www.nyaa.eu/");
+            var httpReq = (HttpWebRequest) WebRequest.Create("https://www.nyaa.se/");
             httpReq.Timeout = 1000;
             httpReq.AllowAutoRedirect = false;
             try {
@@ -225,15 +227,14 @@ namespace anime_downloader {
         /// <returns>A path used to download into.</returns>
         private string getOutputFolder() {
             var date = DateTime.Now;
-            var weeknumber = Math.Floor(Convert.ToDouble(date.DayOfYear)/7);
-            var folderName = $"{date.Year} - Week {weeknumber} - {date.ToString("MMMM")}";
+            var week = Math.Floor(Convert.ToDouble(date.DayOfYear)/7);
+            var folder = $"{date.Year} - Week {week} - {date.ToString("MMMM")}";
+            var path = Path.Combine(settings.baseFolderPath, folder);
 
-            var outputPath = Path.Combine(settings.baseFolderPath, folderName);
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
 
-            if (!Directory.Exists(outputPath))
-                Directory.CreateDirectory(outputPath);
-
-            return outputPath;
+            return path;
         }
 
         /// <summary>
@@ -241,14 +242,14 @@ namespace anime_downloader {
         /// </summary>
         /// <param name="buttons">Any button element.</param>
         private void toggleButtons(params Button[] buttons) {
-            foreach (var b in buttons) {
-                if (b.IsHitTestVisible) {
-                    b.IsHitTestVisible = false;
-                    b.Opacity = 0.4;
+            foreach (var button in buttons) {
+                if (button.IsHitTestVisible) {
+                    button.IsHitTestVisible = false;
+                    button.Opacity = 0.4;
                 }
                 else {
-                    b.IsHitTestVisible = true;
-                    b.Opacity = 1.0;
+                    button.IsHitTestVisible = true;
+                    button.Opacity = 1.0;
                 }
             }
         }
@@ -316,7 +317,7 @@ namespace anime_downloader {
         }
 
         /// <summary>
-        ///     Set all anime episode counts in the anime list to their last known values from the "finished" folder.
+        ///     Set all anime episode counts in the anime list to their last known values from the "watched" folder.
         /// </summary>
         /// <remarks>This is for re-indexing if you don't know which episodes you watched last.</remarks>
         private void setAnimeEpisodeTotalToLastKnown() {
@@ -326,8 +327,7 @@ namespace anime_downloader {
                 .Select(f => Path.GetFileName(f))
                 .Select(n => stripFilename(n))
                 .ToArray());
-
-
+            
             // I'm not sure how to cleanly turn this into a generic XML function above.
             var document = XDocument.Load(settings.animeXMLPath);
             var root = document.Root;
