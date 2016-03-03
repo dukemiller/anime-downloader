@@ -28,7 +28,7 @@
                   Margin="212,71,0,0" VerticalAlignment="Top" Height="92" Width="197" Grid.Column="0">
             <StackPanel>
                 <CheckBox x:Name="seperate_checkBox" Content="Separate show order" Margin="5"
-                          ToolTip="Distribute the show order so that you don't watch the same episode twice in a row." />
+                          ToolTip="Distribute the show order so that you don't watch the same show twice in a row." />
             </StackPanel>
         </GroupBox>
         <TextBlock x:Name="textBlock" Margin="15,11,16,277" TextWrapping="Wrap" FontSize="16" TextAlignment="Justify"
