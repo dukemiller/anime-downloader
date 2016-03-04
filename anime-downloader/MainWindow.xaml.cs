@@ -129,54 +129,47 @@ namespace anime_downloader {
             foreach (var anime in animes) {
                 var nyaaLinks = await anime.getLinksToNextEpisode();
 
-                if (nyaaLinks != null) {
-                    foreach (var nyaa in nyaaLinks) {
+                foreach (var nyaa in nyaaLinks) {
 
-                        // Most likely wrong torrent
-                        if (anime.nameStrict) {
-                            if (!anime.name.Equals(nyaa.strippedName(true))) {
-                                continue;
-                            }
-                        }
+                    // Most likely wrong torrent
+                    if (anime.nameStrict && !anime.name.Equals(nyaa.strippedName(true)))
+                        continue;
 
-                        // Not the right subgroup
-                        if (!anime.preferredSubgroup.Equals("") &
-                            !nyaa?.subgroup().Contains(anime.preferredSubgroup) ?? false) {
+                    // Not the right subgroup
+                    if (!anime.preferredSubgroup.Equals("") & !nyaa?.subgroup().Contains(anime.preferredSubgroup) ?? false)
+                        continue;
+
+                    if (settings.onlyWhitelisted) {
+
+                        // Nyaa listing with no subgroup in the title
+                        if (!nyaa.hasSubgroup()) {
+                            // textbox.AppendText($"Found result for {anime.name} with no subgroup. Skipping ...\n");
+                            // scrolldownTextbox(textbox);
                             continue;
                         }
 
-                        if (settings.onlyWhitelisted) {
-
-                            // Nyaa listing with no subgroup in the title
-                            if (!nyaa.hasSubgroup()) {
-                                // textbox.AppendText($"Found result for {anime.name} with no subgroup. Skipping ...\n");
-                                // scrolldownTextbox(textbox);
-                                continue;
-                            }
-
-                            // Nyaa listing with wrong subgroup
-                            if (!settings.subgroups.Contains(nyaa.subgroup())) {
-                                // textbox.AppendText($"Found result for {anime.name} with non-whitelisted subgroup. Skipping ...\n");
-                                // scrolldownTextbox(textbox);
-                                continue;
-                            }
+                        // Nyaa listing with wrong subgroup
+                        if (!settings.subgroups.Contains(nyaa.subgroup())) {
+                            // textbox.AppendText($"Found result for {anime.name} with non-whitelisted subgroup. Skipping ...\n");
+                            // scrolldownTextbox(textbox);
+                            continue;
                         }
-
-                        textbox.AppendText($"Downloading '{anime.title()}' episode '{anime.nextEpisode()}'.\n");
-                        scrolldownTextbox(textbox);
-                        filepath = Path.Combine(settings.torrentFilesPath, nyaa.torrentName());
-
-                        if (!File.Exists(filepath))
-                            await client.DownloadFileTaskAsync(nyaa.link, filepath);
-
-                        command = $"/DIRECTORY \"{getOutputFolder()}\" \"{filepath}\"";
-                        callCommand(settings.utorrentPath, command);
-
-                        anime.episode = anime.nextEpisode();
-                        changedAnime.Add(anime);
-                        totalDownloaded++;
-                        break;
                     }
+
+                    textbox.AppendText($"Downloading '{anime.title()}' episode '{anime.nextEpisode()}'.\n");
+                    scrolldownTextbox(textbox);
+                    filepath = Path.Combine(settings.torrentFilesPath, nyaa.torrentName());
+
+                    if (!File.Exists(filepath))
+                        await client.DownloadFileTaskAsync(nyaa.link, filepath);
+
+                    command = $"/DIRECTORY \"{getOutputFolder()}\" \"{filepath}\"";
+                    callCommand(settings.utorrentPath, command);
+
+                    anime.episode = anime.nextEpisode();
+                    changedAnime.Add(anime);
+                    totalDownloaded++;
+                    break;
                 }
             }
 
@@ -194,13 +187,15 @@ namespace anime_downloader {
         /// </summary>
         /// <returns></returns>
         private async Task<bool> NyaaIsOnline() {
-            var httpReq = (HttpWebRequest) WebRequest.Create("https://www.nyaa.se/");
-            httpReq.Timeout = 1000;
-            httpReq.AllowAutoRedirect = false;
+            var httpWebRequest = WebRequest.Create("https://www.nyaa.se/") as HttpWebRequest;
+            httpWebRequest.Timeout = 1000;
+            httpWebRequest.AllowAutoRedirect = false;
+
             try {
-                var httpRes = await Task.Run(() => (HttpWebResponse) httpReq.GetResponse());
-                return httpRes.StatusCode == HttpStatusCode.OK;
+                var httpWebResponse = await httpWebRequest.GetResponseAsync() as HttpWebResponse;
+                return httpWebResponse.StatusCode == HttpStatusCode.OK;
             }
+
             catch {
                 return false;
             }
@@ -212,13 +207,13 @@ namespace anime_downloader {
         /// <param name="executable">Path to the executable file.</param>
         /// <param name="parameters">Arguments given to the executable.</param>
         private void callCommand(string executable, string parameters) {
-            var proc = new Process();
-            proc.StartInfo.FileName = executable;
-            proc.StartInfo.Arguments = parameters;
-            proc.StartInfo.UseShellExecute = false;
-            proc.StartInfo.RedirectStandardOutput = true;
-            proc.StartInfo.CreateNoWindow = true;
-            Task.Run(() => proc.Start());
+            var process = new Process();
+            process.StartInfo.FileName = executable;
+            process.StartInfo.Arguments = parameters;
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.CreateNoWindow = true;
+            Task.Run(() => process.Start());
         }
 
         /// <summary>
@@ -324,6 +319,7 @@ namespace anime_downloader {
             var path = Path.Combine(settings.baseFolderPath, "watched");
 
             var finishedAnimes = collectLastEpisode(Directory.GetFiles(path)
+                .AsParallel()
                 .Select(f => Path.GetFileName(f))
                 .Select(n => stripFilename(n))
                 .ToArray());
@@ -334,6 +330,7 @@ namespace anime_downloader {
 
             foreach (var entry in finishedAnimes) {
                 var selected = root.Elements()
+                    .AsParallel()
                     .Where(a => entry.Key.ToLower().Contains(a.Element("name").Value.ToLower()))
                     .FirstOrDefault();
                 if (selected != null)
@@ -587,6 +584,7 @@ namespace anime_downloader {
 
                 var animeXML = XDocument.Load(settings.animeXMLPath);
                 var animes = animeXML.Element("anime").Elements()
+                    .AsParallel()
                     .Select(x => new Anime(x))
                     .Where(a => a.airing && a.status == "Watching")
                     .ToArray();

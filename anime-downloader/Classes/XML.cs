@@ -108,6 +108,7 @@ namespace anime_downloader.Classes {
             var root = document.Root;
 
             var selected = root.Elements()
+                .AsParallel()
                 .Where(a => a.Element("name").Value.Equals(name))
                 .FirstOrDefault();
 
@@ -134,6 +135,7 @@ namespace anime_downloader.Classes {
             var root = document.Root;
 
             var selected = root.Elements()
+                .AsParallel()
                 .Where(a => a.Element("name").Value.Equals(name))
                 .FirstOrDefault();
 
@@ -157,6 +159,7 @@ namespace anime_downloader.Classes {
 
             foreach (var anime in animes) {
                 var selected = root.Elements()
+                    .AsParallel()
                     .Where(a => a.Element("name").Value.Equals(anime.name))
                     .FirstOrDefault();
 

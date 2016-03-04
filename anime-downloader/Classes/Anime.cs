@@ -88,7 +88,7 @@ namespace anime_downloader.Classes {
         /// </summary>
         /// <returns>A Nyaa object containing information about the file download.</returns>
         public async Task<Nyaa[]> getLinksToNextEpisode() {
-            var url = new Uri("https://www.nyaa.eu/?page=rss&cats=1_37&term=" + toRSS() + "&sort=2");
+            var url = new Uri("https://www.nyaa.se/?page=rss&cats=1_37&term=" + toRSS() + "&sort=2");
             var client = new WebClient();
             var document = new HtmlDocument();
             var html = await Task.Run(() => client.DownloadString(url));
@@ -106,7 +106,7 @@ namespace anime_downloader.Classes {
                 return result;
             }
 
-            return null;
+            return new Nyaa[0];
         }
     }
 }
