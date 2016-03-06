@@ -18,68 +18,68 @@ namespace anime_downloader.Classes {
         /// </summary>
         /// <param name="root">The root node from the anime XML file</param>
         public Anime(XElement root) {
-            name = root.Element("name").Value;
-            episode = root.Element("episode").Value;
-            status = root.Element("status").Value;
-            resolution = root.Element("resolution").Value;
-            airing = bool.Parse(root.Element("airing").Value);
-            nameStrict = bool.Parse(root.Element("name-strict").Value);
-            preferredSubgroup = root.Element("preferredSubgroup").Value;
+            Name = root.Element("name")?.Value;
+            Episode = root.Element("episode")?.Value;
+            Status = root.Element("status")?.Value;
+            Resolution = root.Element("resolution")?.Value;
+            Airing = bool.Parse(root.Element("airing")?.Value ?? "false");
+            NameStrict = bool.Parse(root.Element("name-strict")?.Value ?? "false");
+            PreferredSubgroup = root.Element("preferredSubgroup")?.Value;
         }
 
         /// <summary>
         ///     Main referenced title.
         /// </summary>
-        public string name { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
         ///     User's current watched episode.
         /// </summary>
-        public string episode { get; set; } = "00";
+        public string Episode { get; set; } = "00";
 
         /// <summary>
         ///     User's status on watching the anime.
         /// </summary>
-        public string status { get; set; } = "Watching";
+        public string Status { get; set; } = "Watching";
 
         /// <summary>
         ///     The quality to be downloaded.
         /// </summary>
-        public string resolution { get; set; } = "720";
+        public string Resolution { get; set; } = "720";
 
         /// <summary>
         ///     If the anime is ongoing and currently airing.
         /// </summary>
-        public bool airing { get; set; }
+        public bool Airing { get; set; }
 
         /// <summary>
         ///     if searching for the anime should contain exclusively it's own name with no fragments.
         /// </summary>
-        public bool nameStrict { get; set; }
+        public bool NameStrict { get; set; }
 
         /// <summary>
         ///     If searching for the anime should only download from a specific subgroup if chosen
         /// </summary>
-        public string preferredSubgroup { get; set; } = "";
+        public string PreferredSubgroup { get; set; } = "";
 
         /// <summary>
         ///     Proper title name of anime.
         /// </summary>
         /// <returns>A title</returns>
-        public string title() => new CultureInfo("en-US", false).TextInfo.ToTitleCase(name);
+        public string Title() => new CultureInfo("en-US", false).TextInfo.ToTitleCase(Name);
 
         /// <summary>
         ///     A zero padded string of the number of the next episode.
         /// </summary>
         /// <returns>A padded string representation of the next episode in sequence.</returns>
-        public string nextEpisode() => string.Format("{0:D2}", int.Parse(episode) + 1);
+        public string NextEpisode() => $"{int.Parse(Episode) + 1:D2}";
 
         /// <summary>
         ///     Joins properties of anime together to a string that can be read by an RSS query.
         /// </summary>
         /// <returns>A RSS parsable string.</returns>
-        public string toRSS() {
-            string[] seperators = {string.Join("+", title().Split(' ')), nextEpisode(), resolution};
+        public string ToRSS() {
+            string[] seperators = {string.Join("+", Title().Split(' ')), NextEpisode(), Resolution};
             return string.Join("+", seperators);
         }
 
@@ -87,8 +87,8 @@ namespace anime_downloader.Classes {
         ///     Seeks the next episode for the current anime on Nyaa.eu
         /// </summary>
         /// <returns>A Nyaa object containing information about the file download.</returns>
-        public async Task<Nyaa[]> getLinksToNextEpisode() {
-            var url = new Uri("https://www.nyaa.se/?page=rss&cats=1_37&term=" + toRSS() + "&sort=2");
+        public async Task<Nyaa[]> GetLinksToNextEpisode() {
+            var url = new Uri("https://www.nyaa.se/?page=rss&cats=1_37&term=" + ToRSS() + "&sort=2");
             var client = new WebClient();
             var document = new HtmlDocument();
             var html = await Task.Run(() => client.DownloadString(url));
@@ -98,10 +98,10 @@ namespace anime_downloader.Classes {
             if (itemNodes != null) {
                 var result = itemNodes.Select(n => new Nyaa(n))
                     .AsParallel()
-                    .Where(n => n.measurement.Equals("MiB") &&
-                                n.size > 10 &&
-                                n.strippedName().Contains(nextEpisode()) &&
-                                n.seeders > 0)
+                    .Where(n => n.Measurement.Equals("MiB") &&
+                                n.Size > 10 &&
+                                n.StrippedName().Contains(NextEpisode()) &&
+                                n.Seeders > 0)
                     .ToArray();
                 return result;
             }

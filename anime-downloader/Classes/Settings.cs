@@ -1,48 +1,50 @@
-﻿namespace anime_downloader.Classes {
+﻿using System.IO;
+
+namespace anime_downloader.Classes {
     public class Settings {
         /// <summary>
         ///     The user preference for only wanting anime downloaded containing whitelisted subgroups.
         /// </summary>
-        public bool onlyWhitelisted;
+        public bool OnlyWhitelisted;
 
         /// <summary>
         ///     The user preferred subgroups.
         /// </summary>
-        public string[] subgroups;
+        public string[] Subgroups;
 
         /// <summary>
         ///     Where all XML files are stored.
         /// </summary>
-        public string applicationPath { get; set; }
+        public string ApplicationPath { get; set; }
 
         /// <summary>
         ///     The path of the settings XML file.
         /// </summary>
-        public string settingsXMLPath { get; set; }
+        public string SettingsXmlPath => Path.Combine(ApplicationPath, "settings.xml");
 
         /// <summary>
         ///     The path of the anime XML file.
         /// </summary>
-        public string animeXMLPath { get; set; }
+        public string AnimeXmlPath => Path.Combine(ApplicationPath, "anime.xml");
 
         /// <summary>
         ///     The path of base downloading folder.
         /// </summary>
-        public string baseFolderPath { get; set; }
+        public string BaseFolderPath { get; set; }
 
         /// <summary>
         ///     The path where all .torrent files will be downloaded to.
         /// </summary>
-        public string torrentFilesPath { get; set; }
+        public string TorrentFilesPath { get; set; }
 
         /// <summary>
         ///     The path to the utorrent executable.
         /// </summary>
-        public string utorrentPath { get; set; }
+        public string UtorrentPath { get; set; }
 
         /// <summary>
         ///     The user preferred anime list sort method.
         /// </summary>
-        public string sortBy { get; set; } = "name";
+        public string SortBy { get; set; } = "name";
     }
 }

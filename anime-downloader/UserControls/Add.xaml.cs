@@ -12,11 +12,11 @@ namespace anime_downloader.UserControls {
         }
 
         private void episode_textbox_GotFocus(object sender, RoutedEventArgs e) {
-            episode_textbox.SelectAll();
+            EpisodeTextbox.SelectAll();
         }
 
         private void name_textbox_GotFocus(object sender, RoutedEventArgs e) {
-            name_textbox.SelectAll();
+            NameTextbox.SelectAll();
         }
 
         private void episode_textbox_PreviewTextInput(object sender, TextCompositionEventArgs e) {

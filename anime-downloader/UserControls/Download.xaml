@@ -7,7 +7,7 @@
              mc:Ignorable="d"
              d:DesignHeight="330" d:DesignWidth="650">
     <Grid>
-        <TextBox x:Name="textBox" TextWrapping="Wrap" FontSize="16" IsReadOnly="True"
+        <TextBox x:Name="TextBox" TextWrapping="Wrap" FontSize="16" IsReadOnly="True"
                  VerticalScrollBarVisibility="Auto" />
     </Grid>
 </UserControl>

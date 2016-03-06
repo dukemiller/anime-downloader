@@ -7,31 +7,29 @@
              mc:Ignorable="d"
              d:DesignHeight="330" d:DesignWidth="650">
     <Grid>
-        <Grid.ColumnDefinitions>
-        </Grid.ColumnDefinitions>
-        <Button x:Name="button" Content="Create" HorizontalAlignment="Left" Margin="533,285,0,0" Width="107"
+        <Button x:Name="CreateButton" Content="Create" HorizontalAlignment="Left" Margin="533,285,0,0" Width="107"
                 Height="35" VerticalAlignment="Top" />
 
-        <GroupBox x:Name="sortGroupBox" FontSize="16" Header="Sort by" HorizontalAlignment="Left" Margin="10,71,0,0"
+        <GroupBox x:Name="SortGroupBox" FontSize="16" Header="Sort by" HorizontalAlignment="Left" Margin="10,71,0,0"
                   VerticalAlignment="Top" Height="auto" Width="197" Grid.Column="0">
             <StackPanel>
-                <RadioButton x:Name="default_radio" Content="Default file listing" Margin="5"
+                <RadioButton x:Name="DefaultRadio" Content="Default file listing" Margin="5"
                              ToolTip="Default windows style sort" />
-                <RadioButton x:Name="episode_radio" Content="Episode number" Margin="5" IsChecked="True"
+                <RadioButton x:Name="EpisodeRadio" Content="Episode number" Margin="5" IsChecked="True"
                              ToolTip="A more rigorous episode number check so that episodes are in order" />
-                <RadioButton x:Name="moment_radio" Content="Date downloaded" Margin="5"
+                <RadioButton x:Name="MomentRadio" Content="Date downloaded" Margin="5"
                              ToolTip="When the file was created" />
             </StackPanel>
         </GroupBox>
 
-        <GroupBox x:Name="optionsGroupBox" FontSize="16" Header="Options" HorizontalAlignment="Left"
+        <GroupBox x:Name="OptionsGroupBox" FontSize="16" Header="Options" HorizontalAlignment="Left"
                   Margin="212,71,0,0" VerticalAlignment="Top" Height="92" Width="197" Grid.Column="0">
             <StackPanel>
-                <CheckBox x:Name="seperate_checkBox" Content="Separate show order" Margin="5"
+                <CheckBox x:Name="SeperateCheckBox" Content="Separate show order" Margin="5"
                           ToolTip="Distribute the show order so that you don't watch the same show twice in a row." />
             </StackPanel>
         </GroupBox>
-        <TextBlock x:Name="textBlock" Margin="15,11,16,277" TextWrapping="Wrap" FontSize="16" TextAlignment="Justify"
+        <TextBlock x:Name="TextBlock" Margin="15,11,16,277" TextWrapping="Wrap" FontSize="16" TextAlignment="Justify"
                    Text="Create a playlist from all completed video files inside the base folder path (excluding files in a 'finished' folder) as the filename 'playlist.m3u'."
                    VerticalAlignment="Center" RenderTransformOrigin="-0.503,0" HorizontalAlignment="Center" Width="619" />
 

@@ -5,59 +5,55 @@ using System.Text.RegularExpressions;
 
 namespace anime_downloader.Classes {
     public class Playlist {
-        private readonly Settings settings;
-        public IEnumerable<string> episodes;
+        private readonly Settings _settings;
+        private IEnumerable<string> _episodes;
 
         public Playlist(Settings settings) {
-            this.settings = settings;
-            refresh();
+            _settings = settings;
         }
 
         /// <summary>
         ///     A path to where the playlist will be created.
         /// </summary>
-        private string path {
-            get { return Path.Combine(settings.baseFolderPath, "playlist.m3u"); }
-        }
+        private string Path => System.IO.Path.Combine(_settings.BaseFolderPath, "playlist.m3u");
 
         /// <summary>
         ///     Re-initialize the collection of episodes from the folders.
         /// </summary>
-        public void refresh() {
-            episodes = Directory.GetDirectories(settings.baseFolderPath)
+        public void Refresh() {
+            _episodes = Directory.GetDirectories(_settings.BaseFolderPath)
                 .AsParallel()
                 .Where(s => !s.EndsWith("torrents") && !s.EndsWith("Grace") && !s.EndsWith("Watched"))
-                .SelectMany(f => Directory.GetFiles(f))
+                .SelectMany(Directory.GetFiles)
                 .Where(f => !isFragmentedVideo(f));
         }
 
         /// <summary>
         ///     Do a more rigid sort by episode number of the show.
         /// </summary>
-        public void byEpisodeNumber() {
-            episodes = episodes.OrderBy(f => strip(Path.GetFileName(f)));
+        public void ByEpisodeNumber() {
+            _episodes = _episodes.OrderBy(f => strip(System.IO.Path.GetFileName(f)));
         }
 
         /// <summary>
         ///     Sort simply by the time the file was created.
         /// </summary>
-        public void byDate() {
-            episodes = episodes.OrderBy(f => File.GetCreationTime(f));
+        public void ByDate() {
+            _episodes = _episodes.OrderBy(File.GetCreationTime);
         }
 
         /// <summary>
         ///     Distribute the show order so that you don't watch the same show twice in a row.
         /// </summary>
-        public void separateShowOrder() {
+        public void SeparateShowOrder() {
             var sortedEpisodes = new List<string>();
-            var currentEpisodes = episodes.ToList();
-            List<string> addedShows;
+            var currentEpisodes = _episodes.ToList();
 
             while (currentEpisodes.Count > 0) {
                 currentEpisodes.RemoveAll(e => sortedEpisodes.Contains(e));
-                addedShows = new List<string>();
+                var addedShows = new List<string>();
                 foreach (var episode in currentEpisodes) {
-                    var show = strip(Path.GetFileName(episode), true);
+                    var show = strip(System.IO.Path.GetFileName(episode), true);
                     if (addedShows.Contains(show))
                         continue;
                     sortedEpisodes.Add(episode);
@@ -65,13 +61,13 @@ namespace anime_downloader.Classes {
                 }
             }
 
-            episodes = sortedEpisodes;
+            _episodes = sortedEpisodes;
         }
 
         /// <summary>
         ///     Check if the file is fragmented by some byte guesswork.
         /// </summary>
-        /// <param name="filepath">Full path to the file.</param>
+        /// <param name="fullFilepath">Full path to the file.</param>
         /// <returns></returns>
         private bool isFragmentedVideo(string fullFilepath) {
             byte currentByte;
@@ -108,8 +104,7 @@ namespace anime_downloader.Classes {
             foreach (Match match in Regex.Matches(text, @"\s?\[(.*?)\]|\((.*?)\)\s*"))
                 phrases.Add(match.Groups[0].Value);
 
-            foreach (var phrase in phrases)
-                text = text.Replace(phrase, "");
+            phrases.ForEach(p => text = text.Replace(p, ""));
 
             if (removeEpisode)
                 text = string.Join("-", text.Split('-').Take(text.Split('-').Length - 1).ToArray());
@@ -120,9 +115,9 @@ namespace anime_downloader.Classes {
         /// <summary>
         ///     Save and create the playlist.
         /// </summary>
-        public void save() {
-            using (var writer = new StreamWriter(path, false)) {
-                foreach (var episode in episodes)
+        public void Save() {
+            using (var writer = new StreamWriter(Path, false)) {
+                foreach (var episode in _episodes)
                     writer.WriteLine(episode);
             }
         }

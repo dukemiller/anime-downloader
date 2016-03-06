@@ -7,7 +7,7 @@
              mc:Ignorable="d"
              d:DesignHeight="330" d:DesignWidth="650">
     <Grid>
-        <DataGrid x:Name="dataGrid"
+        <DataGrid x:Name="DataGrid"
                   AutoGenerateColumns="False"
                   CanUserResizeRows="False"
                   CanUserAddRows="False"
@@ -17,10 +17,10 @@
                   HorizontalContentAlignment="Center"
                   GridLinesVisibility="None" BorderThickness="0" FontSize="16">
             <DataGrid.ContextMenu>
-                <ContextMenu Name="contextMenu">
-                    <MenuItem Name="add" Header="Add ..." />
-                    <MenuItem Name="edit" Header="Edit ..." />
-                    <MenuItem Name="delete" Header="Delete ..." />
+                <ContextMenu Name="AnimeContextMenu">
+                    <MenuItem Name="Add" Header="Add ..." />
+                    <MenuItem Name="Edit" Header="Edit ..." />
+                    <MenuItem Name="Delete" Header="Delete ..." />
                 </ContextMenu>
             </DataGrid.ContextMenu>
             <DataGrid.Columns>
