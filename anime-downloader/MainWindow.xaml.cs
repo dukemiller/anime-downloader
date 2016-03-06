@@ -65,11 +65,13 @@ namespace anime_downloader {
             _xml = new Xml(_settings);
             _playlist = new Playlist(_settings);
 
-            _settings.ApplicationPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "anime-downloader");
+            _settings.ApplicationPath =
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "anime-downloader");
 
             if (!Directory.Exists(_settings.ApplicationPath))
                 Directory.CreateDirectory(_settings.ApplicationPath);
-            
+
             if (!File.Exists(_settings.SettingsXmlPath))
                 NewSettings();
 
@@ -86,7 +88,8 @@ namespace anime_downloader {
                 _settings.TorrentFilesPath = xmlSettings.Element("path")?.Element("torrents")?.Value;
                 _settings.Subgroups = xmlSettings.Elements("subgroup").Elements("name").Select(x => x.Value).ToArray();
                 _settings.UtorrentPath = xmlSettings.Element("path")?.Element("utorrent")?.Value;
-                _settings.OnlyWhitelisted = bool.Parse(xmlSettings.Element("flag")?.Element("only-whitelisted-subs")?.Value ?? "false");
+                _settings.OnlyWhitelisted =
+                    bool.Parse(xmlSettings.Element("flag")?.Element("only-whitelisted-subs")?.Value ?? "false");
                 _settings.SortBy = xmlSettings.Element("sortBy")?.Value;
             }
         }
@@ -100,7 +103,7 @@ namespace anime_downloader {
                 .OrderBy(e => e.Element(_settings.SortBy)?.Value)
                 .ToList();
             var animeListDisplay = _currentDisplay as AnimeList;
-            if (animeListDisplay != null && _allAnime != null) 
+            if (animeListDisplay != null && _allAnime != null)
                 animeListDisplay.DataGrid.ItemsSource = _allAnime;
         }
 
@@ -122,17 +125,16 @@ namespace anime_downloader {
                 var nyaaLinks = await anime.GetLinksToNextEpisode();
 
                 foreach (var nyaa in nyaaLinks) {
-
                     // Most likely wrong torrent
                     if (anime.NameStrict && !anime.Name.Equals(nyaa.StrippedName(true)))
                         continue;
 
                     // Not the right subgroup
-                    if (!anime.PreferredSubgroup.Equals("") & !nyaa?.Subgroup().Contains(anime.PreferredSubgroup) ?? false)
+                    if (!anime.PreferredSubgroup.Equals("") & !nyaa?.Subgroup().Contains(anime.PreferredSubgroup) ??
+                        false)
                         continue;
 
                     if (_settings.OnlyWhitelisted) {
-
                         // Nyaa listing with no subgroup in the title
                         if (!nyaa?.HasSubgroup() ?? false) {
                             // textbox.AppendText($"Found result for {anime.name} with no subgroup. Skipping ...\n");
@@ -204,14 +206,14 @@ namespace anime_downloader {
         /// <param name="executable">Path to the executable file.</param>
         /// <param name="parameters">Arguments given to the executable.</param>
         private void callCommand(string executable, string parameters) {
-            ProcessStartInfo info = new ProcessStartInfo() {
+            var info = new ProcessStartInfo {
                 FileName = executable,
                 Arguments = parameters,
                 UseShellExecute = false,
                 RedirectStandardOutput = true
             };
 
-            var process = new Process() {
+            var process = new Process {
                 StartInfo = info
             };
 
@@ -326,7 +328,7 @@ namespace anime_downloader {
                 .Select(Path.GetFileName)
                 .Select(stripFilename)
                 .ToArray());
-            
+
             // I'm not sure how to cleanly turn this into a generic XML function above.
             var document = XDocument.Load(_settings.AnimeXmlPath);
             var root = document.Root;
@@ -384,14 +386,13 @@ namespace anime_downloader {
         private void PlaylistCreateButtonClick(object sender, RoutedEventArgs e) {
             if (!Directory.Exists(_settings.BaseFolderPath))
                 MessageBox.Show("Your base folder doesn't seem to exist.");
-            
+
             else {
                 _playlist.Refresh();
 
                 var playlistCreatorDisplay = _currentDisplay as PlaylistCreator;
 
                 if (playlistCreatorDisplay != null) {
-
                     if (playlistCreatorDisplay.EpisodeRadio.IsChecked ?? false)
                         _playlist.ByEpisodeNumber();
 
@@ -747,7 +748,6 @@ namespace anime_downloader {
             var animeDisplay = _currentDisplay as Add;
 
             if (animeDisplay != null) {
-
                 if (animeDisplay.NameTextbox.Text.Equals("") || animeDisplay.EpisodeTextbox.Text.Equals(""))
                     MessageBox.Show("There needs to be a name and/or episode.");
 

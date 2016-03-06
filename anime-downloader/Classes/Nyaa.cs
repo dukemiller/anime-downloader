@@ -96,7 +96,7 @@ namespace anime_downloader.Classes {
                 response?.Close();
             }
 
-        
+
             return null;
         }
 
@@ -108,7 +108,7 @@ namespace anime_downloader.Classes {
         public string StrippedName(bool removeEpisode = false) {
             var phrases = new List<string>();
             var text = Name;
-            
+
             foreach (Match match in Regex.Matches(text, @"\s?\[(.*?)\]|\((.*?)\)\s*"))
                 phrases.Add(match.Groups[0].Value);
 

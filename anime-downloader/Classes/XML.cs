@@ -5,7 +5,6 @@ using System.Xml.Linq;
 
 namespace anime_downloader.Classes {
     public class Xml {
-
         private readonly Settings _settings;
 
         public Xml(Settings settings) {
