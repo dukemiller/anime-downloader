@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
@@ -87,7 +88,7 @@ namespace anime_downloader.Classes {
         ///     Seeks the next episode for the current anime on Nyaa.eu
         /// </summary>
         /// <returns>A Nyaa object containing information about the file download.</returns>
-        public async Task<Nyaa[]> GetLinksToNextEpisode() {
+        public async Task<IEnumerable<Nyaa>> GetLinksToNextEpisode() {
             var url = new Uri("https://www.nyaa.se/?page=rss&cats=1_37&term=" + ToRSS() + "&sort=2");
             var client = new WebClient();
             var document = new HtmlDocument();
@@ -95,18 +96,13 @@ namespace anime_downloader.Classes {
             document.LoadHtml(html);
             var itemNodes = document.DocumentNode.SelectNodes("//item");
 
-            if (itemNodes != null) {
-                var result = itemNodes.Select(n => new Nyaa(n))
-                    .AsParallel()
-                    .Where(n => n.Measurement.Equals("MiB") &&
-                                n.Size > 10 &&
-                                n.StrippedName().Contains(NextEpisode()) &&
-                                n.Seeders > 0)
-                    .ToArray();
-                return result;
-            }
+            var result = itemNodes?.Select(n => new Nyaa(n))
+                .Where(n => n.Measurement.Equals("MiB") &&
+                            n.Size > 10 &&
+                            n.StrippedName().Contains(NextEpisode()) &&
+                            n.Seeders > 0);
 
-            return new Nyaa[0];
+            return result;
         }
     }
 }

@@ -32,9 +32,8 @@ namespace anime_downloader.Classes {
             var root = document.Root;
 
             if (root != null) {
-                foreach (var anime in root.Elements()) {
-                    if (anime.Element("preferredSubgroup") == null)
-                        anime.Add(new XElement("preferredSubgroup", ""));
+                foreach (var anime in root.Elements().Where(anime => anime.Element("preferredSubgroup") == null)) {
+                    anime.Add(new XElement("preferredSubgroup", ""));
                 }
             }
 
@@ -109,20 +108,20 @@ namespace anime_downloader.Classes {
             var document = XDocument.Load(_settings.AnimeXmlPath);
 
             var selected = document.Root?.Elements()
-                .AsParallel()
                 .Where(a => a.Element("name")?.Value.Equals(name) ?? false)
                 .FirstOrDefault();
 
-            if (selected != null && anime != null) {
-                selected.SetElementValue("name", anime.Name);
-                selected.SetElementValue("episode", anime.Episode);
-                selected.SetElementValue("status", anime.Status);
-                selected.SetElementValue("resolution", anime.Resolution);
-                selected.SetElementValue("airing", anime.Airing.ToString());
-                selected.SetElementValue("name-strict", anime.NameStrict);
-                selected.SetElementValue("preferredSubgroup", anime.PreferredSubgroup);
-                document.Save(_settings.AnimeXmlPath);
-            }
+            if (selected == null || anime == null)
+                return;
+
+            selected.SetElementValue("name", anime.Name);
+            selected.SetElementValue("episode", anime.Episode);
+            selected.SetElementValue("status", anime.Status);
+            selected.SetElementValue("resolution", anime.Resolution);
+            selected.SetElementValue("airing", anime.Airing.ToString());
+            selected.SetElementValue("name-strict", anime.NameStrict);
+            selected.SetElementValue("preferredSubgroup", anime.PreferredSubgroup);
+            document.Save(_settings.AnimeXmlPath);
         }
 
         /// <summary>
@@ -135,7 +134,6 @@ namespace anime_downloader.Classes {
             var document = XDocument.Load(_settings.AnimeXmlPath);
 
             var selected = document.Root?.Elements()
-                .AsParallel()
                 .Where(a => a.Element("name")?.Value.Equals(name) ?? false)
                 .FirstOrDefault();
             var element = selected?.Element(elementName);
@@ -150,27 +148,30 @@ namespace anime_downloader.Classes {
         /// </summary>
         /// <remarks>This works under the assumption that all Anime "name" are not modified.</remarks>
         /// <param name="animes">A collection of valid anime objects.</param>
-        public void EditAnime(List<Anime> animes) {
+        public void EditAnime(IEnumerable<Anime> animes) {
             var document = XDocument.Load(_settings.AnimeXmlPath);
 
-            if (animes != null) {
-                foreach (var anime in animes) {
-                    if (anime != null) {
-                        var selected = document.Root?.Elements()
-                            .AsParallel()
-                            .Where(a => a.Element("name")?.Value.Equals(anime.Name) ?? false)
-                            .FirstOrDefault();
-                        if (selected != null) {
-                            selected.SetElementValue("name", anime.Name);
-                            selected.SetElementValue("episode", anime.Episode);
-                            selected.SetElementValue("status", anime.Status);
-                            selected.SetElementValue("resolution", anime.Resolution);
-                            selected.SetElementValue("airing", anime.Airing.ToString());
-                            selected.SetElementValue("name-strict", anime.NameStrict.ToString());
-                            selected.SetElementValue("preferredSubgroup", anime.PreferredSubgroup);
-                        }
-                    }
-                }
+            if (animes == null)
+                return;
+
+            foreach (var anime in animes) {
+                if (anime == null)
+                    continue;
+
+                var selected = document.Root?.Elements()
+                    .Where(a => a.Element("name")?.Value.Equals(anime.Name) ?? false)
+                    .FirstOrDefault();
+
+                if (selected == null)
+                    continue;
+
+                selected.SetElementValue("name", anime.Name);
+                selected.SetElementValue("episode", anime.Episode);
+                selected.SetElementValue("status", anime.Status);
+                selected.SetElementValue("resolution", anime.Resolution);
+                selected.SetElementValue("airing", anime.Airing.ToString());
+                selected.SetElementValue("name-strict", anime.NameStrict.ToString());
+                selected.SetElementValue("preferredSubgroup", anime.PreferredSubgroup);
             }
 
             document.Save(_settings.AnimeXmlPath);
@@ -183,10 +184,12 @@ namespace anime_downloader.Classes {
         public void RemoveAnime(string name) {
             var document = XDocument.Load(_settings.AnimeXmlPath);
             var node = document.Root?.Elements().Where(x => x.Element("name")?.Value == name).FirstOrDefault();
-            if (node != null) {
-                node.Remove();
-                document.Save(_settings.AnimeXmlPath);
-            }
+
+            if (node == null)
+                return;
+
+            node.Remove();
+            document.Save(_settings.AnimeXmlPath);
         }
 
         /// <summary>

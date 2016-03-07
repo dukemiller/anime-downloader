@@ -10,16 +10,16 @@
 
     <Grid>
         <Button x:Name="ButtonHome" Content="Home" HorizontalAlignment="Left" Margin="10,10,0,0" FontSize="24"
-                VerticalAlignment="Top" Width="226" Click="button_home_Click" Height="43" />
+                VerticalAlignment="Top" Width="226" Click="ButtonHome_Click" Height="43" />
         <Button x:Name="ButtonList" Content="Anime List" HorizontalAlignment="Left" Margin="10,66,0,0"
-                VerticalAlignment="Top" Width="226" Height="43" FontSize="24" Click="button_list_Click" />
+                VerticalAlignment="Top" Width="226" Height="43" FontSize="24" Click="ButtonList_Click" />
         <Button x:Name="ButtonSettings" Content="Settings &amp; Options" HorizontalAlignment="Left"
                 Margin="10,119,0,0" VerticalAlignment="Top" Width="226" Height="43" FontSize="24"
-                Click="button_settings_Click" />
+                Click="ButtonSettings_Click" />
         <Button x:Name="ButtonCheck" Content="Check for latest" HorizontalAlignment="Left" Margin="10,173,0,0"
-                VerticalAlignment="Top" Width="226" Height="43" FontSize="24" Click="button_check_Click" />
+                VerticalAlignment="Top" Width="226" Height="43" FontSize="24" Click="ButtonCheck_Click" />
         <Button x:Name="ButtonPlaylist" Content="Playlist Creator" HorizontalAlignment="Left" Margin="10,226,0,0"
-                FontSize="16" VerticalAlignment="Top" Width="126" Click="button_playlist_Click" Height="34" />
+                FontSize="16" VerticalAlignment="Top" Width="126" Click="ButtonPlaylist_Click" Height="34" />
 
         <Grid x:Name="Display" Width="650" Height="330" HorizontalAlignment="Left" Margin="241,10,0,0"
               VerticalAlignment="Top" />
@@ -28,9 +28,9 @@
                   Margin="10,267,0,0" VerticalAlignment="Top">
             <StackPanel>
                 <Button x:Name="ButtonFolder" Content="Base" HorizontalAlignment="Left" VerticalAlignment="Top"
-                        Width="70" Margin="5" Click="button_folder_Click" />
+                        Width="70" Margin="5" Click="ButtonFolder_Click" />
                 <Button x:Name="ButtonOpenExecuting" Content="Settings" HorizontalAlignment="Left"
-                        VerticalAlignment="Top" Margin="5" Width="70" Click="button_open_executing_Click" />
+                        VerticalAlignment="Top" Margin="5" Width="70" Click="ButtonOpenExecuting_Click" />
             </StackPanel>
         </GroupBox>
     </Grid>

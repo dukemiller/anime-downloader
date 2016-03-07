@@ -22,17 +22,16 @@ namespace anime_downloader.Classes {
         /// </summary>
         public void Refresh() {
             _episodes = Directory.GetDirectories(_settings.BaseFolderPath)
-                .AsParallel()
                 .Where(s => !s.EndsWith("torrents") && !s.EndsWith("Grace") && !s.EndsWith("Watched"))
                 .SelectMany(Directory.GetFiles)
-                .Where(f => !isFragmentedVideo(f));
+                .Where(f => !IsFragmentedVideo(f));
         }
 
         /// <summary>
         ///     Do a more rigid sort by episode number of the show.
         /// </summary>
         public void ByEpisodeNumber() {
-            _episodes = _episodes.OrderBy(f => strip(System.IO.Path.GetFileName(f)));
+            _episodes = _episodes.OrderBy(f => Strip(System.IO.Path.GetFileName(f)));
         }
 
         /// <summary>
@@ -53,7 +52,7 @@ namespace anime_downloader.Classes {
                 currentEpisodes.RemoveAll(e => sortedEpisodes.Contains(e));
                 var addedShows = new List<string>();
                 foreach (var episode in currentEpisodes) {
-                    var show = strip(System.IO.Path.GetFileName(episode), true);
+                    var show = Strip(System.IO.Path.GetFileName(episode), true);
                     if (addedShows.Contains(show))
                         continue;
                     sortedEpisodes.Add(episode);
@@ -69,7 +68,7 @@ namespace anime_downloader.Classes {
         /// </summary>
         /// <param name="fullFilepath">Full path to the file.</param>
         /// <returns></returns>
-        private bool isFragmentedVideo(string fullFilepath) {
+        private static bool IsFragmentedVideo(string fullFilepath) {
             byte currentByte;
             var counter = 0;
 
@@ -97,12 +96,10 @@ namespace anime_downloader.Classes {
         /// <param name="fileName">A file name, not a filepath.</param>
         /// <param name="removeEpisode">A flag to also optionally remove the episode number.</param>
         /// <returns></returns>
-        private string strip(string fileName, bool removeEpisode = false) {
-            var phrases = new List<string>();
+        private static string Strip(string fileName, bool removeEpisode = false) {
             var text = fileName;
 
-            foreach (Match match in Regex.Matches(text, @"\s?\[(.*?)\]|\((.*?)\)\s*"))
-                phrases.Add(match.Groups[0].Value);
+            var phrases = (from Match match in Regex.Matches(text, @"\s?\[(.*?)\]|\((.*?)\)\s*") select match.Groups[0].Value).ToList();
 
             phrases.ForEach(p => text = text.Replace(p, ""));
 
@@ -115,10 +112,10 @@ namespace anime_downloader.Classes {
         /// <summary>
         ///     Save and create the playlist.
         /// </summary>
-        public void Save() {
+        public async void Save() {
             using (var writer = new StreamWriter(Path, false)) {
                 foreach (var episode in _episodes)
-                    writer.WriteLine(episode);
+                    await writer.WriteLineAsync(episode);
             }
         }
     }

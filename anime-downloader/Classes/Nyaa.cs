@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using HtmlAgilityPack;
 
 namespace anime_downloader.Classes {
@@ -78,13 +79,13 @@ namespace anime_downloader.Classes {
         /// </summary>
         /// <returns>A valid filename for the torrent.</returns>
         public string TorrentName() {
-            var request = WebRequest.Create(Link) as HttpWebRequest;
+            var request = (HttpWebRequest) WebRequest.Create(Link);
             HttpWebResponse response = null;
 
             try {
-                response = request?.GetResponse() as HttpWebResponse;
-                response?.GetResponseStream();
-                var disposition = response?.Headers["content-disposition"];
+                response = (HttpWebResponse) request.GetResponse();
+                response.GetResponseStream();
+                var disposition = response.Headers["content-disposition"];
                 var filename =
                     disposition?.Split(new[] {"filename=\""}, StringSplitOptions.None)[1].Split('"')[0];
                 return filename;
@@ -106,11 +107,10 @@ namespace anime_downloader.Classes {
         /// <param name="removeEpisode">A flag for also removing the episode number</param>
         /// <returns>The name of the anime.</returns>
         public string StrippedName(bool removeEpisode = false) {
-            var phrases = new List<string>();
             var text = Name;
 
-            foreach (Match match in Regex.Matches(text, @"\s?\[(.*?)\]|\((.*?)\)\s*"))
-                phrases.Add(match.Groups[0].Value);
+            var phrases = (from Match match in Regex.Matches(text, @"\s?\[(.*?)\]|\((.*?)\)\s*")
+                           select match.Groups[0].Value).ToList();
 
             phrases.ForEach(p => text = text.Replace(p, ""));
 
@@ -125,12 +125,8 @@ namespace anime_downloader.Classes {
         /// </summary>
         /// <returns>The subgroup of the file.</returns>
         public string Subgroup() {
-            foreach (Match match in Regex.Matches(Name, @"\[([A-Za-z0-9_µ\-]+)\]+")) {
-                var result = match.Groups[1].Value;
-                if (result.All(c => !char.IsNumber(c)))
-                    return result;
-            }
-            return null;
+            return (from Match match in Regex.Matches(Name, @"\[([A-Za-z0-9_µ\-]+)\]+")
+                    select match.Groups[1].Value).FirstOrDefault(result => result.All(c => !char.IsNumber(c)));
         }
 
         /// <summary>
@@ -138,5 +134,25 @@ namespace anime_downloader.Classes {
         /// </summary>
         /// <returns>If a subgroup exists.</returns>
         public bool HasSubgroup() => Subgroup() != null;
+
+        /// <summary>
+        ///     Check if Nyaa.se is online within 1.0 seconds so not to hang when entering download view.
+        /// </summary>
+        /// <returns></returns>
+        public static async Task<bool> IsOnline() {
+            var httpWebRequest = (HttpWebRequest) WebRequest.Create("https://www.nyaa.se/");
+            httpWebRequest.Timeout = 1000;
+            httpWebRequest.AllowAutoRedirect = false;
+
+            try {
+                var httpWebResponse = (HttpWebResponse) await httpWebRequest.GetResponseAsync();
+                return httpWebResponse.StatusCode == HttpStatusCode.OK;
+            }
+
+            catch {
+                return false;
+            }
+            
+        }
     }
 }
