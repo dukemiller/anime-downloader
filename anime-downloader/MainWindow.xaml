@@ -8,7 +8,7 @@
         ResizeMode="NoResize"
         Title="Anime Downloader" Height="386" Width="918">
 
-    <Grid>
+    <Grid x:Name="Grid">
         <Button x:Name="ButtonHome" Content="Home" HorizontalAlignment="Left" Margin="10,10,0,0" FontSize="24"
                 VerticalAlignment="Top" Width="226" Click="ButtonHome_Click" Height="43" />
         <Button x:Name="ButtonList" Content="Anime List" HorizontalAlignment="Left" Margin="10,66,0,0"

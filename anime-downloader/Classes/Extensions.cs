@@ -68,6 +68,10 @@ namespace anime_downloader.Classes {
                 button.Toggle();
         }
 
+        public static List<T> GetAll<T>(this Window window) where T : DependencyObject {
+            return GetLogicalChildCollection<T>(window);
+        }
+
         private static List<T> GetLogicalChildCollection<T>(object parent) where T : DependencyObject {
             var logicalCollection = new List<T>();
             GetLogicalChildCollection(parent as DependencyObject, logicalCollection);

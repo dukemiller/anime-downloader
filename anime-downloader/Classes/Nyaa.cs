@@ -91,14 +91,13 @@ namespace anime_downloader.Classes {
                 return filename;
             }
 
-            catch {}
+            catch (Exception ex) when (ex is WebException || ex is InvalidOperationException) {
+                return null;
+            }
 
             finally {
                 response?.Close();
             }
-
-
-            return null;
         }
 
         /// <summary>

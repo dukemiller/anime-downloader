@@ -62,7 +62,7 @@
     <Compile Include="Classes\Nyaa.cs" />
     <Compile Include="Classes\Playlist.cs" />
     <Compile Include="Classes\Settings.cs" />
-    <Compile Include="Classes\XML.cs" />
+    <Compile Include="Classes\Xml.cs" />
     <Compile Include="UserControls\Add.xaml.cs">
       <DependentUpon>Add.xaml</DependentUpon>
     </Compile>

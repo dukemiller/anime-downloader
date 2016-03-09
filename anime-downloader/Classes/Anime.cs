@@ -79,7 +79,7 @@ namespace anime_downloader.Classes {
         ///     Joins properties of anime together to a string that can be read by an RSS query.
         /// </summary>
         /// <returns>A RSS parsable string.</returns>
-        public string ToRSS() {
+        public string ToRss() {
             string[] seperators = {string.Join("+", Title().Split(' ')), NextEpisode(), Resolution};
             return string.Join("+", seperators);
         }
@@ -89,7 +89,7 @@ namespace anime_downloader.Classes {
         /// </summary>
         /// <returns>A Nyaa object containing information about the file download.</returns>
         public async Task<IEnumerable<Nyaa>> GetLinksToNextEpisode() {
-            var url = new Uri("https://www.nyaa.se/?page=rss&cats=1_37&term=" + ToRSS() + "&sort=2");
+            var url = new Uri("https://www.nyaa.se/?page=rss&cats=1_37&term=" + ToRss() + "&sort=2");
             var client = new WebClient();
             var document = new HtmlDocument();
             var html = await Task.Run(() => client.DownloadString(url));

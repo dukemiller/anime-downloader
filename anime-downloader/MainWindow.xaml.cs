@@ -8,7 +8,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Xml.Linq;
 using anime_downloader.Classes;
@@ -397,6 +396,12 @@ namespace anime_downloader {
             animeListDisplay.DataGrid.PreviewKeyDown += AnimeListDelete_KeyDown;
             animeListDisplay.DataGrid.MouseDoubleClick += AnimeList_MouseDoubleClick;
             animeListDisplay.DataGrid.ItemsSource = _allAnime;
+
+            Grid.KeyDown += (o, keyEventArgs) => {
+                if (keyEventArgs.Key == Key.F && (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))) {
+                    AnimeListFind();
+                }
+            };
         }
 
         /// <summary>
@@ -427,19 +432,75 @@ namespace anime_downloader {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void AnimeListDelete_KeyDown(object sender, KeyEventArgs e) {
-            if (e.Key != Key.Delete)
-                return;
-
             var animeListDisplay = _currentDisplay as AnimeList;
 
             if (animeListDisplay == null)
                 return;
 
-            var row = animeListDisplay.DataGrid?.SelectedCells?[0].Item as XElement;
-            _xml.RemoveAnime(row?.Element("name")?.Value);
-            RefreshAnime();
+            if (e.Key == Key.Delete) {
+                var row = animeListDisplay.DataGrid?.SelectedCells?[0].Item as XElement;
+                _xml.RemoveAnime(row?.Element("name")?.Value);
+                RefreshAnime();
+            }
         }
 
+        private void AnimeListFind() {
+            var animeListDisplay = _currentDisplay as AnimeList;
+            if (animeListDisplay == null)
+                return;
+
+            // Don't recreate it again
+            var box = Grid.Children.OfType<TextBox>().FirstOrDefault(t => t.Name.Equals("FindBox"));
+            if (box != null)
+                return;
+
+            var findWindow = new TextBox {
+                Name = "FindBox",
+                Width = 400, Height = 30,
+                Margin = new Thickness(470, 290, 0, 0),
+                FontSize = 18
+            };
+            
+            // Reset values and remove the find
+            RoutedEventHandler closeFindWindow = (sender, routedEventArgs) => {
+                Grid.Children.Remove(findWindow);
+                animeListDisplay.DataGrid.ItemsSource = _allAnime;
+                animeListDisplay.DataGrid.Focus();
+                // Keyboard.ClearFocus();
+            };
+
+            MouseButtonEventHandler closeFindWindowMouse = (sender, mouseButtonEventArgs) => {
+                closeFindWindow(sender, mouseButtonEventArgs);
+            };
+
+            // --> Closing the find
+            // Make any button press close the find window, and going into anime details too
+            this.GetAll<Button>().ForEach(b => b.Click += closeFindWindow);
+            animeListDisplay.DataGrid.MouseDoubleClick += closeFindWindowMouse;
+
+            // CTRL-F again or Escape also close find
+            Grid.KeyDown += (sender, keyEventArgs) => {
+                if (keyEventArgs.Key == Key.Escape)
+                    closeFindWindow(sender, keyEventArgs);
+                else if (keyEventArgs.Key == Key.F && (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))) {
+                    if (findWindow.IsSelectionActive)
+                        closeFindWindow(sender, keyEventArgs);
+                    else
+                        findWindow.Focus();
+                }
+            };
+
+            // --> The actual functionality
+            findWindow.KeyUp += (sender, keyEventArgs) => {
+                var text = findWindow.Text.ToLower();
+                var copy = _allAnime.Where(a => a.Element("name")?.Value.ToLower().Contains(text) ?? true);
+                animeListDisplay.DataGrid.ItemsSource = copy;
+            };
+            
+            Grid.Children.Add(findWindow);
+            findWindow.Focus();
+        }
+        
         /// <summary>
         ///     The double click event for the anime list view.
         /// </summary>

@@ -13,6 +13,7 @@
                   CanUserAddRows="False"
                   UseLayoutRounding="False"
                   SelectionUnit="Cell" IsReadOnly="True"
+                  FocusVisualStyle="{x:Null}"
                   RowHeaderWidth="0"
                   HorizontalContentAlignment="Center"
                   GridLinesVisibility="None" BorderThickness="0" FontSize="16">
