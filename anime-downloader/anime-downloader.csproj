@@ -58,6 +58,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Classes\Anime.cs" />
+    <Compile Include="Classes\Extensions.cs" />
     <Compile Include="Classes\Nyaa.cs" />
     <Compile Include="Classes\Playlist.cs" />
     <Compile Include="Classes\Settings.cs" />

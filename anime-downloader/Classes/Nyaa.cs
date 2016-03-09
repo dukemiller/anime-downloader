@@ -60,7 +60,7 @@ namespace anime_downloader.Classes {
                     .Split(new[] {"<![CDATA["}, StringSplitOptions.None)[1]
                     .Split(new[] {"]]>"}, StringSplitOptions.None)[0];
             Seeders = int.Parse(Description.Split(new[] {" seeder"}, StringSplitOptions.None)[0]);
-            Measurement = ToMegabyte.Where(d => Description.Contains(d.Key)).First().Key;
+            Measurement = ToMegabyte.First(d => Description.Contains(d.Key)).Key;
             Size =
                 Math.Round(double.Parse(Description.Split(new[] {$" {Measurement}"}, StringSplitOptions.None)[0]
                     .Split(new[] {" - "}, StringSplitOptions.None)[1])

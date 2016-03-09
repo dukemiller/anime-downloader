@@ -151,7 +151,7 @@ namespace anime_downloader {
                     }
 
                     textbox.AppendText($"Downloading '{anime.Title()}' episode '{anime.NextEpisode()}'.\n");
-                    ScrolldownTextbox(textbox);
+                    textbox.ScrollDown();
                     var filepath = Path.Combine(_settings?.TorrentFilesPath, nyaa.TorrentName());
 
                     if (!File.Exists(filepath))
@@ -172,8 +172,8 @@ namespace anime_downloader {
             textbox.AppendText(totalDownloaded > 0
                 ? $">> Found {totalDownloaded} anime downloads."
                 : ">> No new anime found.");
-            ScrolldownTextbox(textbox);
-            ToggleButtons(ButtonHome, ButtonList, ButtonSettings, ButtonCheck, ButtonPlaylist);
+            textbox.ScrollDown();
+            this.ToggleButtons();
         }
         
         /// <summary>
@@ -211,32 +211,7 @@ namespace anime_downloader {
 
             return path;
         }
-
-        /// <summary>
-        ///     Toggle opacity and visibility of arbitrary amount of buttons.
-        /// </summary>
-        /// <param name="buttons">Any button element.</param>
-        private static void ToggleButtons(params Button[] buttons) {
-            foreach (var button in buttons) {
-                if (button.IsHitTestVisible) {
-                    button.IsHitTestVisible = false;
-                    button.Opacity = 0.4;
-                }
-                else {
-                    button.IsHitTestVisible = true;
-                    button.Opacity = 1.0;
-                }
-            }
-        }
-
-        /// <summary>
-        ///     Simulate a button press.
-        /// </summary>
-        /// <param name="button">The button to press.</param>
-        private static void PressButton(IInputElement button) {
-            button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
-        }
-
+        
         /// <summary>
         ///     Change the current main display to another display.
         /// </summary>
@@ -328,17 +303,7 @@ namespace anime_downloader {
 
             document.Save(_settings.AnimeXmlPath);
         }
-
-        /// <summary>
-        ///     Scroll to the bottom of a textbox.
-        /// </summary>
-        /// <param name="textbox">The textbox that will be scrolled down in.</param>
-        private static void ScrolldownTextbox(TextBox textbox) {
-            textbox.Focus();
-            textbox.CaretIndex = textbox.Text.Length;
-            textbox.ScrollToEnd();
-        }
-
+        
         // Event handling
 
         /// <summary>
@@ -378,9 +343,10 @@ namespace anime_downloader {
         /// <param name="e"></param>
         private void ButtonPlaylist_Click(object sender, RoutedEventArgs e) {
             var playlistDisplay = ChangeDisplay(new PlaylistCreator()) as PlaylistCreator;
-            if (playlistDisplay != null) {
-                playlistDisplay.CreateButton.Click += PlaylistCreateButton_Click;
-            }
+            if (playlistDisplay == null)
+                return;
+
+            playlistDisplay.CreateButton.Click += PlaylistCreateButton_Click;
         }
 
         /// <summary>
@@ -542,7 +508,7 @@ namespace anime_downloader {
                         new XDeclaration("1.0", "utf-8", "yes"),
                         new XComment("User profile settings"),
                         new XElement("settings",
-                            new XElement("name", "Duke"),
+                            new XElement("name", Environment.UserName),
                             new XElement("path",
                                 new XElement("base", settingsDisplay.BaseTextbox.Text),
                                 new XElement("utorrent", settingsDisplay.DownloadTextbox.Text),
@@ -570,37 +536,35 @@ namespace anime_downloader {
             if (settingsDisplay == null)
                 return;
 
-            ToggleButtons(ButtonHome, ButtonList, ButtonSettings, ButtonCheck, ButtonFolder, ButtonPlaylist,
-                ButtonOpenExecuting);
+            this.ToggleButtons();
             settingsDisplay.BaseTextbox.Text = Directory.GetCurrentDirectory();
             settingsDisplay.TorrentTextbox.Text = Path.Combine(settingsDisplay.BaseTextbox.Text, "torrents");
             settingsDisplay.DownloadTextbox.Text = @"C:\Program Files (x86)\uTorrent\uTorrent.exe";
             settingsDisplay.ApplyChangesButton.Content = "Create Profile";
 
             settingsDisplay.ApplyChangesButton.Click += (obj, ev) => {
-                if (settingsDisplay.BaseTextbox.Text.Equals("")
-                    || settingsDisplay.TorrentTextbox.Text.Equals("")
-                    || settingsDisplay.DownloadTextbox.Text.Equals(""))
+                if (settingsDisplay.BaseTextbox.Empty() || settingsDisplay.TorrentTextbox.Empty() || settingsDisplay.DownloadTextbox.Empty())
                     MessageBox.Show("You must enter in Base, Torrent or Utorrent Path Boxes.");
-
                 else {
-                    _settings = new Settings {
-                        BaseFolderPath = settingsDisplay.BaseTextbox.Text,
-                        TorrentFilesPath = settingsDisplay.TorrentTextbox.Text,
-                        UtorrentPath = settingsDisplay.DownloadTextbox.Text,
-                        Subgroups =
-                            settingsDisplay.SubgroupsTextbox.Text.Split(new[] {" "},
-                                StringSplitOptions.RemoveEmptyEntries),
-                        OnlyWhitelisted = settingsDisplay.OnlyWhitelistedCheckbox.IsChecked ?? false,
-                        SortBy = "name"
-                    };
-                    _xml.CreateSettingsXml(_settings);
-                    ToggleButtons(ButtonHome, ButtonList, ButtonSettings, ButtonCheck,
-                        ButtonFolder, ButtonPlaylist, ButtonOpenExecuting);
-                    InitializeSettings();
-                    PressButton(ButtonHome);
+                    CreateSettings(settingsDisplay);
                 }
             };
+        }
+
+        private void CreateSettings(UserControls.Settings settingsDisplay) {
+            _settings.BaseFolderPath = settingsDisplay.BaseTextbox.Text;
+            _settings.TorrentFilesPath = settingsDisplay.TorrentTextbox.Text;
+            _settings.UtorrentPath = settingsDisplay.DownloadTextbox.Text;
+            _settings.Subgroups =
+                settingsDisplay.SubgroupsTextbox.Text.Split(new[] {" "},
+                    StringSplitOptions.RemoveEmptyEntries);
+            _settings.OnlyWhitelisted = settingsDisplay.OnlyWhitelistedCheckbox.IsChecked ?? false;
+            _settings.SortBy = "name";
+            _xml.CreateSettingsXml(_settings);
+
+            this.ToggleButtons();
+            InitializeSettings();
+            ButtonHome.Press();
         }
 
         /// <summary>
@@ -628,7 +592,7 @@ namespace anime_downloader {
                     .Where(a => a.Airing && a.Status == "Watching")
                     .ToArray();
 
-                ToggleButtons(ButtonHome, ButtonList, ButtonSettings, ButtonCheck, ButtonPlaylist);
+                this.ToggleButtons();
 
                 var online = await Nyaa.IsOnline();
 
@@ -637,7 +601,7 @@ namespace anime_downloader {
 
                 if (!online) {
                     downloadDisplay.TextBox.Text = ">> Nyaa is currently offline. Try checking later.";
-                    ToggleButtons(ButtonHome, ButtonList, ButtonSettings, ButtonCheck, ButtonPlaylist);
+                    this.ToggleButtons();
                 }
 
                 else {
@@ -664,7 +628,7 @@ namespace anime_downloader {
                     return;
 
                 animeDisplay.AddButton.Focus();
-                PressButton(animeDisplay.AddButton);
+                animeDisplay.AddButton.Press();
             };
 
             animeDisplay.NameTextbox.KeyUp += enterApply;
@@ -683,7 +647,7 @@ namespace anime_downloader {
             if (animeDisplay == null)
                 return;
 
-            if (animeDisplay.NameTextbox.Text.Equals("") || animeDisplay.EpisodeTextbox.Text.Equals("")) {
+            if (animeDisplay.NameTextbox.Empty() || animeDisplay.EpisodeTextbox.Empty()) {
                 MessageBox.Show("There needs to be a name and/or episode.");
             }
 
@@ -704,7 +668,7 @@ namespace anime_downloader {
 
                 _xml.AddAnime(newAnime);
                 RefreshAnime();
-                PressButton(ButtonList);
+                ButtonList.Press();
             }
         }
 
@@ -732,7 +696,7 @@ namespace anime_downloader {
                 if (k.Key != Key.Enter)
                     return;
                 animeDisplay.AddButton.Focus();
-                PressButton(animeDisplay.AddButton);
+                animeDisplay.AddButton.Press();
             };
 
             if (item == null)
@@ -784,7 +748,7 @@ namespace anime_downloader {
 
                 _xml.EditAnime(_currentlyEditedAnime, editedAnime);
                 RefreshAnime();
-                PressButton(ButtonList);
+                ButtonList.Press();
             }
         }
 

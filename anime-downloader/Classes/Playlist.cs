@@ -99,7 +99,10 @@ namespace anime_downloader.Classes {
         private static string Strip(string fileName, bool removeEpisode = false) {
             var text = fileName;
 
-            var phrases = (from Match match in Regex.Matches(text, @"\s?\[(.*?)\]|\((.*?)\)\s*") select match.Groups[0].Value).ToList();
+            var phrases = (from Match match in Regex.Matches(text, @"\s?\[(.*?)\]|\((.*?)\)\s*")
+                           select match.Groups[0].Value).ToList();
+
+            new[] { "-", "_", ".mp4", ".mkv", ".avi" }.ToList().ForEach(p => phrases.Add(p));
 
             phrases.ForEach(p => text = text.Replace(p, ""));
 
