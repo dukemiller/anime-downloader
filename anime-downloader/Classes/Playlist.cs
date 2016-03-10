@@ -102,7 +102,7 @@ namespace anime_downloader.Classes {
             var phrases = (from Match match in Regex.Matches(text, @"\s?\[(.*?)\]|\((.*?)\)\s*")
                            select match.Groups[0].Value).ToList();
 
-            new[] { "-", "_", ".mp4", ".mkv", ".avi" }.ToList().ForEach(p => phrases.Add(p));
+            new[] { "_", ".mp4", ".mkv", ".avi" }.ToList().ForEach(p => phrases.Add(p));
 
             phrases.ForEach(p => text = text.Replace(p, ""));
 
