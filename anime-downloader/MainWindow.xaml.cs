@@ -763,6 +763,19 @@ namespace anime_downloader {
             if (item == null)
                 return;
 
+            // escape to go back
+            KeyDown += (o, keyEventArgs) => {
+                var key = keyEventArgs.Key;
+                if (key == Key.Escape || key == Key.BrowserBack)
+                    ButtonList.Press();
+            };
+
+            // mouse button back
+            MouseDown += (o, buttonEventArgs) => {
+                if (buttonEventArgs.ChangedButton.Equals(MouseButton.XButton1))
+                    ButtonList.Press();
+            };
+
             var subgroup = item.Element("preferredSubgroup")?.Value;
 
             animeDisplay.NameTextbox.KeyUp += enterApply;
