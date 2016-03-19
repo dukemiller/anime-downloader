@@ -1,10 +1,8 @@
-﻿using System.Windows.Controls;
-
-namespace anime_downloader.UserControls {
+﻿namespace anime_downloader.Views {
     /// <summary>
     ///     Interaction logic for Download.xaml
     /// </summary>
-    public partial class Download : UserControl {
+    public partial class Download {
         public Download() {
             InitializeComponent();
         }

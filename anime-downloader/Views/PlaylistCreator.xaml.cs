@@ -1,10 +1,8 @@
-﻿using System.Windows.Controls;
-
-namespace anime_downloader.UserControls {
+﻿namespace anime_downloader.Views {
     /// <summary>
     ///     Interaction logic for PlaylistCreator.xaml
     /// </summary>
-    public partial class PlaylistCreator : UserControl {
+    public partial class PlaylistCreator {
         public PlaylistCreator() {
             InitializeComponent();
         }

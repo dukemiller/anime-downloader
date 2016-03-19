@@ -62,23 +62,26 @@
     <Compile Include="Classes\Nyaa.cs" />
     <Compile Include="Classes\Playlist.cs" />
     <Compile Include="Classes\Settings.cs" />
-    <Compile Include="Classes\Xml.cs" />
-    <Compile Include="UserControls\Add.xaml.cs">
+    <Compile Include="Classes\Xml\Xml.cs" />
+    <Compile Include="Classes\Xml\XmlController.cs" />
+    <Compile Include="Classes\Xml\XmlCreate.cs" />
+    <Compile Include="Classes\Xml\XmlVerify.cs" />
+    <Compile Include="Views\Add.xaml.cs">
       <DependentUpon>Add.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\AnimeList.xaml.cs">
+    <Compile Include="Views\AnimeList.xaml.cs">
       <DependentUpon>AnimeList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\Download.xaml.cs">
+    <Compile Include="Views\Download.xaml.cs">
       <DependentUpon>Download.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\Home.xaml.cs">
+    <Compile Include="Views\Home.xaml.cs">
       <DependentUpon>Home.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\PlaylistCreator.xaml.cs">
+    <Compile Include="Views\PlaylistCreator.xaml.cs">
       <DependentUpon>PlaylistCreator.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\Settings.xaml.cs">
+    <Compile Include="Views\Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
@@ -93,27 +96,27 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="UserControls\Add.xaml">
+    <Page Include="Views\Add.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\AnimeList.xaml">
+    <Page Include="Views\AnimeList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\Download.xaml">
+    <Page Include="Views\Download.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\Home.xaml">
+    <Page Include="Views\Home.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\PlaylistCreator.xaml">
+    <Page Include="Views\PlaylistCreator.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\Settings.xaml">
+    <Page Include="Views\Settings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

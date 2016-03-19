@@ -1,12 +1,11 @@
 ﻿using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace anime_downloader.UserControls {
+namespace anime_downloader.Views {
     /// <summary>
     ///     Interaction logic for Add.xaml
     /// </summary>
-    public partial class Add : UserControl {
+    public partial class Add {
         public Add() {
             InitializeComponent();
         }

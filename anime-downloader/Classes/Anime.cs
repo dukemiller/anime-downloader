@@ -5,69 +5,140 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using anime_downloader.Classes.Xml;
 using HtmlAgilityPack;
 
 namespace anime_downloader.Classes {
     public class Anime {
-        /// <summary>
-        ///     For use in property set initializers.
-        /// </summary>
-        public Anime() {}
+        private readonly XmlController _xml;
 
-        /// <summary>
-        ///     XML anime initializer.
-        /// </summary>
-        /// <param name="root">The root node from the anime XML file</param>
-        public Anime(XElement root) {
-            Name = root.Element("name")?.Value;
-            Episode = root.Element("episode")?.Value;
-            Status = root.Element("status")?.Value;
-            Resolution = root.Element("resolution")?.Value;
-            Airing = bool.Parse(root.Element("airing")?.Value ?? "false");
-            NameStrict = bool.Parse(root.Element("name-strict")?.Value ?? "false");
-            PreferredSubgroup = root.Element("preferredSubgroup")?.Value;
+        public XContainer Root { get; }
+       
+        public Anime() {
+            Root = new XElement("show",
+                new XElement("name"),
+                new XElement("episode", "00"),
+                new XElement("status", "Watching"),
+                new XElement("resolution", "720"),
+                new XElement("airing", false),
+                new XElement("updated", false),
+                new XElement("name-strict", false),
+                new XElement("preferredSubgroup"),
+                new XElement("last-downloaded", "2016-02-04")
+            );
+        }
+        
+        public Anime(XContainer root, XmlController xml) {
+            _xml = xml;
+            Root = root;
+        }
+
+        private void Save() {
+            if (_xml == null || !_xml.AutoSave)
+                return;
+            _xml.SaveAnime();
+        }
+
+        public void Remove() {
+            _xml?.Remove(this);
         }
 
         /// <summary>
         ///     Main referenced title.
         /// </summary>
-        public string Name { get; set; }
+        public string Name {
+            get { return Root.Element("name")?.Value; }
+            set {
+                if (value.Equals(Name))
+                    return;
+                Root.Element("name")?.SetValue(value);
+                Save();
+            }
+        }
 
         /// <summary>
         ///     User's current watched episode.
         /// </summary>
-        public string Episode { get; set; } = "00";
+        public string Episode {
+            get { return Root.Element("episode")?.Value; }
+            set {
+                if (value.Equals(Episode))
+                    return;
+                Root.Element("episode")?.SetValue(value);
+                Save();
+            }
+        }
 
         /// <summary>
         ///     User's status on watching the anime.
         /// </summary>
-        public string Status { get; set; } = "Watching";
+        public string Status {
+            get { return Root.Element("status")?.Value; }
+            set {
+                if (value.Equals(Status))
+                    return;
+                Root.Element("status")?.SetValue(value);
+                Save();
+            }
+        }
 
         /// <summary>
         ///     The quality to be downloaded.
         /// </summary>
-        public string Resolution { get; set; } = "720";
+        public string Resolution {
+            get { return Root.Element("resolution")?.Value; }
+            set {
+                if (value.Equals(Resolution))
+                    return;
+                Root.Element("resolution")?.SetValue(value);
+                Save();
+            }
+        }
 
         /// <summary>
         ///     If the anime is ongoing and currently airing.
         /// </summary>
-        public bool Airing { get; set; }
+        public bool Airing {
+            get { return bool.Parse(Root.Element("airing")?.Value ?? bool.FalseString); }
+            set {
+                if (value == Airing)
+                    return;
+                Root.Element("airing")?.SetValue(value);
+                Save();
+            }
+        }
 
         /// <summary>
         ///     if searching for the anime should contain exclusively it's own name with no fragments.
         /// </summary>
-        public bool NameStrict { get; set; }
+        public bool NameStrict {
+            get { return bool.Parse(Root.Element("name-strict")?.Value ?? bool.FalseString); }
+            set {
+                if (value == NameStrict)
+                    return;
+                Root.Element("name-strict")?.SetValue(value);
+                Save();
+            }
+        }
 
         /// <summary>
         ///     If searching for the anime should only download from a specific subgroup if chosen
         /// </summary>
-        public string PreferredSubgroup { get; set; } = "";
+        public string PreferredSubgroup {
+            get { return Root.Element("preferredSubgroup")?.Value; }
+            set {
+                if (value.Equals(PreferredSubgroup))
+                    return;
+                Root.Element("preferredSubgroup")?.SetValue(value);
+                Save();
+            }
+        }
 
         /// <summary>
         ///     Proper title name of anime.
         /// </summary>
         /// <returns>A title</returns>
-        public string Title() => new CultureInfo("en-US", false).TextInfo.ToTitleCase(Name);
+        public string Title => new CultureInfo("en-US", false).TextInfo.ToTitleCase(Name);
 
         /// <summary>
         ///     A zero padded string of the number of the next episode.
@@ -80,7 +151,7 @@ namespace anime_downloader.Classes {
         /// </summary>
         /// <returns>A RSS parsable string.</returns>
         public string ToRss() {
-            string[] seperators = {string.Join("+", Title().Split(' ')), NextEpisode(), Resolution};
+            string[] seperators = {string.Join("+", Title.Split(' ')), NextEpisode(), Resolution};
             return string.Join("+", seperators);
         }
 
@@ -104,5 +175,6 @@ namespace anime_downloader.Classes {
 
             return result;
         }
+        
     }
 }

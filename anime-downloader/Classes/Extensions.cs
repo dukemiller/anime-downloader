@@ -1,10 +1,40 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 
 namespace anime_downloader.Classes {
     public static class Extensions {
+
+        /// <summary>
+        ///     Sort the animes with the specified property name of the anime type
+        /// </summary>
+        /// <param name="animes"></param>
+        /// <param name="sort"></param>
+        /// <returns></returns>
+        /// <remarks>The sort has to be a property of Anime, or else this will fail. This was the
+        /// only way I could dynamically change the property of the sort</remarks>
+        public static IEnumerable<Anime> SortedWith(this IEnumerable<Anime> animes, string sort) {
+            var prop = TypeDescriptor.GetProperties(typeof(Anime)).Find(sort, true);
+            return animes.OrderBy(x => prop.GetValue(x));
+        }
+
+        public static Anime Find(this IEnumerable<Anime> animes, string name) {
+            return (from anime in animes
+                    where anime.Name.ToLower().Equals(name.ToLower())
+                    select anime).FirstOrDefault();
+        }
+
+        /// <summary>
+        ///     "Refresh" the datacontext on the UI.
+        /// </summary>
+        /// <param name="dataGrid"></param>
+        /// <param name="data"></param>
+        public static void Refresh(this DataGrid dataGrid, IEnumerable<Anime> data) {
+            dataGrid.ItemsSource = data;
+        }
 
         /// <summary>
         ///     Check if the container is empty.

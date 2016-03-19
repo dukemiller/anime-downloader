@@ -1,9 +1,8 @@
-﻿<UserControl x:Class="anime_downloader.UserControls.AnimeList"
+﻿<UserControl x:Class="anime_downloader.Views.AnimeList"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:anime_downloader.UserControls"
              mc:Ignorable="d"
              d:DesignHeight="330" d:DesignWidth="650">
     <Grid>
@@ -16,7 +15,7 @@
                   FocusVisualStyle="{x:Null}"
                   RowHeaderWidth="0"
                   HorizontalContentAlignment="Center"
-                  GridLinesVisibility="None" BorderThickness="0" FontSize="16">
+                  GridLinesVisibility="None" BorderThickness="0" FontSize="16" >
             <DataGrid.ContextMenu>
                 <ContextMenu Name="AnimeContextMenu">
                     <MenuItem Name="Add" Header="Add ..." />
@@ -25,10 +24,10 @@
                 </ContextMenu>
             </DataGrid.ContextMenu>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Name" Width="350" Binding="{Binding Path=Element[name].Value}" />
-                <DataGridTextColumn Header="Episode" Binding="{Binding Path=Element[episode].Value}" />
-                <DataGridTextColumn Header="Status" Width="80" Binding="{Binding Path=Element[status].Value}" />
-                <DataGridTextColumn Header="Airing" Width="auto" Binding="{Binding Path=Element[airing].Value}" />
+                <DataGridTextColumn Header="Name" Width="350" Binding="{Binding Path=Title}" />
+                <DataGridTextColumn Header="Episode" Binding="{Binding Path=Episode}" />
+                <DataGridTextColumn Header="Status" Width="80" Binding="{Binding Path=Status}" />
+                <DataGridTextColumn Header="Airing" Width="auto" Binding="{Binding Path=Airing}" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

@@ -1,21 +1,29 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Xml.Linq;
+using anime_downloader.Classes.Xml;
 
 namespace anime_downloader.Classes {
     public class Settings {
-        /// <summary>
-        ///     The user preference for only wanting anime downloaded containing whitelisted subgroups.
-        /// </summary>
-        public bool OnlyWhitelisted;
+        
+        private XContainer Root => Xml.SettingsRoot();
 
-        /// <summary>
-        ///     The user preferred subgroups.
-        /// </summary>
-        public string[] Subgroups;
+        private XmlController _xml;
+
+        private XmlController Xml => _xml ?? (_xml = XmlController.GetXmlController(this));
+
+        private void Save() {
+            if (!Xml.AutoSave)
+                return;
+            Xml.SaveSettings();
+        }
 
         /// <summary>
         ///     Where all XML files are stored.
         /// </summary>
-        public string ApplicationPath { get; set; }
+        public string ApplicationPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "anime-downloader");
 
         /// <summary>
         ///     The path of the settings XML file.
@@ -30,21 +38,70 @@ namespace anime_downloader.Classes {
         /// <summary>
         ///     The path of base downloading folder.
         /// </summary>
-        public string BaseFolderPath { get; set; }
+        public string BaseFolderPath {
+            get { return Root.Element("path")?.Element("base")?.Value; }
+            set {
+                if (value.Equals(BaseFolderPath))
+                    return;
+                Root.Element("path")?.Element("base")?.SetValue(value);
+                Save();
+            }
+        }
 
         /// <summary>
         ///     The path where all .torrent files will be downloaded to.
         /// </summary>
-        public string TorrentFilesPath { get; set; }
+        public string TorrentFilesPath {
+            get { return Root.Element("path")?.Element("torrents")?.Value; }
+            set {
+                Root.Element("path")?.Element("torrents")?.SetValue(value);
+                Save();
+            }
+        }
 
         /// <summary>
         ///     The path to the utorrent executable.
         /// </summary>
-        public string UtorrentPath { get; set; }
+        public string UtorrentPath {
+            get { return Root.Element("path")?.Element("utorrent")?.Value; }
+            set {
+                Root.Element("path")?.Element("utorrent")?.SetValue(value);
+                Save();
+            }
+        }
 
         /// <summary>
         ///     The user preferred anime list sort method.
         /// </summary>
-        public string SortBy { get; set; } = "name";
+        public string SortBy {
+            get { return Root.Element("sortBy")?.Value ?? "name"; }
+            set {
+                Root.Element("sortBy")?.SetValue(value);
+                Save();
+            }
+        }
+
+        /// <summary>
+        ///     The user preference for only wanting anime downloaded containing whitelisted subgroups.
+        /// </summary>
+        public bool OnlyWhitelisted {
+            get { return bool.Parse(Root.Element("flag")?.Element("only-whitelisted-subs")?.Value ?? "false"); }
+            set {
+                Root.Element("flag")?.Element("only-whitelisted-subs")?.SetValue(value);
+                Save();
+            }
+        }
+
+        /// <summary>
+        ///     The user preferred subgroups.
+        /// </summary>
+        public string[] Subgroups {
+            get { return Root.Elements("subgroup").Elements("name").Select(x => x.Value).ToArray(); }
+            set {
+                //TODO
+                Save();
+            }
+        }
+
     }
 }

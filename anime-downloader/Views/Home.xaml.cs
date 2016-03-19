@@ -1,10 +1,8 @@
-﻿using System.Windows.Controls;
-
-namespace anime_downloader.UserControls {
+﻿namespace anime_downloader.Views {
     /// <summary>
     ///     Interaction logic for Home.xaml
     /// </summary>
-    public partial class Home : UserControl {
+    public partial class Home {
         public Home() {
             InitializeComponent();
         }
