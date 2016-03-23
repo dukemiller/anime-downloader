@@ -15,22 +15,12 @@ namespace anime_downloader.Classes {
         public XContainer Root { get; }
        
         public Anime() {
-            Root = new XElement("show",
-                new XElement("name"),
-                new XElement("episode", "00"),
-                new XElement("status", "Watching"),
-                new XElement("resolution", "720"),
-                new XElement("airing", false),
-                new XElement("updated", false),
-                new XElement("name-strict", false),
-                new XElement("preferredSubgroup"),
-                new XElement("last-downloaded", "2016-02-04")
-            );
+            Root = XmlCreate.AnimeNode();
         }
         
         public Anime(XContainer root, XmlController xml) {
-            _xml = xml;
             Root = root;
+            _xml = xml;
         }
 
         private void Save() {
@@ -42,7 +32,7 @@ namespace anime_downloader.Classes {
         public void Remove() {
             _xml?.Remove(this);
         }
-
+        
         /// <summary>
         ///     Main referenced title.
         /// </summary>

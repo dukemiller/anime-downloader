@@ -42,6 +42,9 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -58,7 +61,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Classes\Anime.cs" />
+    <Compile Include="Classes\Downloader.cs" />
     <Compile Include="Classes\Extensions.cs" />
+    <Compile Include="Classes\Logger.cs" />
     <Compile Include="Classes\Nyaa.cs" />
     <Compile Include="Classes\Playlist.cs" />
     <Compile Include="Classes\Settings.cs" />
@@ -66,8 +71,8 @@
     <Compile Include="Classes\Xml\XmlController.cs" />
     <Compile Include="Classes\Xml\XmlCreate.cs" />
     <Compile Include="Classes\Xml\XmlVerify.cs" />
-    <Compile Include="Views\Add.xaml.cs">
-      <DependentUpon>Add.xaml</DependentUpon>
+    <Compile Include="Views\AnimeDetails.xaml.cs">
+      <DependentUpon>AnimeDetails.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\AnimeList.xaml.cs">
       <DependentUpon>AnimeList.xaml</DependentUpon>
@@ -77,6 +82,9 @@
     </Compile>
     <Compile Include="Views\Home.xaml.cs">
       <DependentUpon>Home.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Misc.xaml.cs">
+      <DependentUpon>Misc.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PlaylistCreator.xaml.cs">
       <DependentUpon>PlaylistCreator.xaml</DependentUpon>
@@ -96,9 +104,9 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\Add.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Views\AnimeDetails.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\AnimeList.xaml">
       <SubType>Designer</SubType>
@@ -109,6 +117,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Home.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Misc.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

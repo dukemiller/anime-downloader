@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using anime_downloader.Views;
 
 namespace anime_downloader.Classes {
     public static class Extensions {
@@ -35,7 +36,7 @@ namespace anime_downloader.Classes {
         public static void Refresh(this DataGrid dataGrid, IEnumerable<Anime> data) {
             dataGrid.ItemsSource = data;
         }
-
+        
         /// <summary>
         ///     Check if the container is empty.
         /// </summary>
@@ -101,6 +102,10 @@ namespace anime_downloader.Classes {
         public static List<T> GetAll<T>(this Window window) where T : DependencyObject {
             return GetLogicalChildCollection<T>(window);
         }
+
+        public static List<T> GetAll<T>(this UserControl userControl) where T : DependencyObject {
+            return GetLogicalChildCollection<T>(userControl);
+        } 
 
         private static List<T> GetLogicalChildCollection<T>(object parent) where T : DependencyObject {
             var logicalCollection = new List<T>();

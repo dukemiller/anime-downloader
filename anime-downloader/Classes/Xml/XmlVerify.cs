@@ -2,15 +2,20 @@
 using System.Xml.Linq;
 
 namespace anime_downloader.Classes.Xml {
+    /// <summary>
+    ///     The purpose for this class to ensure that the schema gets updated 
+    ///     and populated with initial nodes if there is a change in schema for any
+    ///     updates in features.
+    /// </summary>
     public class XmlVerify {
         private readonly Settings _settings;
 
         public XmlVerify(Settings settings) {
             _settings = settings;
         }
-
+        
         /// <summary>
-        ///     Kind of a lazy way to test XML changes between versions.
+        ///     Check the settings xml file for any inconsistencies in schema.
         /// </summary>
         public void SettingsSchema() {
             var document = XDocument.Load(_settings.SettingsXmlPath);
@@ -23,7 +28,7 @@ namespace anime_downloader.Classes.Xml {
         }
 
         /// <summary>
-        ///     Kind of a lazy way to test XML changes between versions.
+        ///     Check the anime xml file for any inconsistencies in schema.
         /// </summary>
         public void AnimeSchema() {
             var document = XDocument.Load(_settings.AnimeXmlPath);

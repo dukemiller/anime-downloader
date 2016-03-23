@@ -98,9 +98,38 @@ namespace anime_downloader.Classes {
         public string[] Subgroups {
             get { return Root.Elements("subgroup").Elements("name").Select(x => x.Value).ToArray(); }
             set {
-                //TODO
+                Root.Elements("subgroup").Elements("name").Remove();
+                foreach (var subgroup in value) {
+                    Root.Element("subgroup")?.Add(new XElement("name", subgroup));
+                }
                 Save();
             }
+        }
+
+        /// <summary>
+        ///     The user preference if there should be a log file in the folder detailing 
+        ///     when files are downloaded.
+        /// </summary>
+        public bool UseLogging {
+            get { return bool.Parse(Root.Element("flag")?.Element("use-logging")?.Value ?? "false"); }
+            set {
+                Root.Element("flag")?.Element("use-logging")?.SetValue(value);
+                Save();
+            }
+        }
+
+        public string LogPath => Path.Combine(BaseFolderPath, "log.txt");
+
+        /// <summary>
+        ///     Create and return the path to a folder based on a timestamp of the current moment.
+        /// </summary>
+        /// <returns>A path used to download into.</returns>
+        public string GetOutputFolder() {
+            var date = DateTime.Now;
+            var week = Math.Floor(Convert.ToDouble(date.DayOfYear) / 7);
+            var folder = $"{date.Year} - Week {week} - {date.ToString("MMMM")}";
+            var path = Path.Combine(BaseFolderPath, folder);
+            return path;
         }
 
     }
