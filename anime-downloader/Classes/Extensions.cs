@@ -4,7 +4,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using anime_downloader.Views;
 
 namespace anime_downloader.Classes {
     public static class Extensions {

@@ -24,6 +24,9 @@ namespace anime_downloader.Classes.Xml {
             if (root?.Element("sortBy") == null)
                 root?.Add(new XElement("sortBy", "name"));
 
+            if (root?.Element("flag")?.Element("use-logging") == null)
+                root?.Element("flag")?.Add(new XElement("use-logging", false));
+
             document.Save(_settings.SettingsXmlPath);
         }
 

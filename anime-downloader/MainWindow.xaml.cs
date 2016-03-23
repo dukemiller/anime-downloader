@@ -273,7 +273,7 @@ namespace anime_downloader {
             if (!selected?.IsValid ?? false)
                 return;
 
-            var anime = selected?.Item as Classes.Anime;
+            var anime = selected?.Item as Anime;
             anime?.Remove();
             animeListDisplay?.DataGrid.Refresh(_xml.Controller.SortedAnimes);
         }
@@ -293,7 +293,7 @@ namespace anime_downloader {
                 if (!selected.IsValid)
                     return;
 
-                var anime = selected.Item as Classes.Anime;
+                var anime = selected.Item as Anime;
                 anime?.Remove();
                 animeListDisplay.DataGrid.Refresh(_xml.Controller.SortedAnimes);
             }
@@ -428,7 +428,7 @@ namespace anime_downloader {
                 if (subgroup.Equals("(None)"))
                     subgroup = "";
 
-                var anime = new Classes.Anime {
+                var anime = new Anime {
                     Name = animeDisplay.NameTextbox.Text,
                     Episode = $"{int.Parse(animeDisplay.EpisodeTextbox.Text):D2}",
                     Status = animeDisplay.StatusCombobox.Text,
