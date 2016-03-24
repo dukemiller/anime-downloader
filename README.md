@@ -5,6 +5,7 @@ anime-downloader
 
 ### build and run instructions  
 requires: [nuget.exe](https://dist.nuget.org/win-x86-commandline/latest/nuget.exe) on PATH
+requires: Visual Studio 2015 and/or C# 6.0 Roslyn Compiler
 
 **shell:**  
 ``` 
