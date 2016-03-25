@@ -19,10 +19,10 @@ namespace anime_downloader.Classes {
         /// <summary>
         ///     Attempt to download anime and display the results.
         /// </summary>
-        /// <param name="textbox">The output box to display results to.</param>
         /// <param name="animes">The collection of anime to try and get new episodes from.</param>
+        /// <param name="textbox">The output box to display results to.</param>
         /// <param name="logger"></param>
-        public async Task<int> DownloadAnime(TextBox textbox, IEnumerable<Anime> animes, Logger logger) {
+        public async Task<int> DownloadAnime(IEnumerable<Anime> animes, TextBox textbox, Logger logger) {
             var downloaded = 0;
 
             textbox.Text = ">> Searching for currently airing anime episodes ...\n";

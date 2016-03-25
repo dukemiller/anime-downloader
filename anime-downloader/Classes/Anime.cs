@@ -13,11 +13,26 @@ namespace anime_downloader.Classes {
         private readonly XmlController _xml;
 
         public XContainer Root { get; }
-       
+
+        /// <summary>
+        ///     Create an empty anime xml node.
+        /// </summary>
+        /// <remarks>
+        ///      Must be explicitly added to the schema with the XmlController.
+        /// </remarks>
         public Anime() {
             Root = XmlCreate.AnimeNode();
         }
-        
+
+        /// <summary>
+        ///     Create an anime object with explicit xml nodes.  
+        /// </summary>
+        /// <remarks>
+        ///     Preferrably read from the already existing schema and 
+        ///     instantiated from the XmlController.
+        /// </remarks>
+        /// <param name="root"></param>
+        /// <param name="xml"></param>
         public Anime(XContainer root, XmlController xml) {
             Root = root;
             _xml = xml;
