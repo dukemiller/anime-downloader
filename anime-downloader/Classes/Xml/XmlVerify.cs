@@ -9,17 +9,21 @@ namespace anime_downloader.Classes.Xml {
     /// </summary>
     public class XmlVerify {
         private readonly Settings _settings;
+        private readonly XmlController _controller;
 
-        public XmlVerify(Settings settings) {
+        public XmlVerify(Settings settings, XmlController controller) {
             _settings = settings;
+            _controller = controller;
         }
-        
+
         /// <summary>
         ///     Check the settings xml file for any inconsistencies in schema.
         /// </summary>
         public void SettingsSchema() {
-            var document = XDocument.Load(_settings.SettingsXmlPath);
-            var root = document.Root;
+            // var document = XDocument.Load(_settings.SettingsXmlPath);
+            // var root = document.Root;
+
+            var root = _controller.SettingsRoot;
 
             if (root?.Element("sortBy") == null)
                 root?.Add(new XElement("sortBy", "name"));
@@ -27,15 +31,14 @@ namespace anime_downloader.Classes.Xml {
             if (root?.Element("flag")?.Element("use-logging") == null)
                 root?.Element("flag")?.Add(new XElement("use-logging", false));
 
-            document.Save(_settings.SettingsXmlPath);
+            _controller.SettingsDocument.Save(_settings.SettingsXmlPath);
         }
 
         /// <summary>
         ///     Check the anime xml file for any inconsistencies in schema.
         /// </summary>
         public void AnimeSchema() {
-            var document = XDocument.Load(_settings.AnimeXmlPath);
-            var root = document.Root;
+            var root = _controller.AnimeRoot;
 
             if (root != null) {
                 foreach (var anime in root.Elements().Where(anime => anime.Element("preferredSubgroup") == null)) {
@@ -43,7 +46,7 @@ namespace anime_downloader.Classes.Xml {
                 }
             }
 
-            document.Save(_settings.AnimeXmlPath);
+            _controller.AnimeDocument.Save(_settings.AnimeXmlPath);
         }
         
     }

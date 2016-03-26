@@ -7,7 +7,7 @@ using anime_downloader.Classes.Xml;
 namespace anime_downloader.Classes {
     public class Settings {
         
-        private XContainer Root => Xml.SettingsRoot();
+        private XContainer Root => Xml.SettingsRoot;
 
         private XmlController _xml;
 

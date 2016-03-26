@@ -527,7 +527,7 @@ namespace anime_downloader {
 
             else {
                 var subgroup = display.SubgroupComboBox.Text;
-                var anime = _allAnime.Find(_currentlyEditedAnime);
+                var anime = _allAnime.Get(_currentlyEditedAnime);
                 anime.Name = display.NameTextbox.Text;
                 anime.Episode = $"{int.Parse(display.EpisodeTextbox.Text):D2}";
                 anime.Status = display.StatusCombobox.Text;

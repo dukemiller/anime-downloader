@@ -21,7 +21,7 @@ namespace anime_downloader.Classes {
             return animes.OrderBy(x => prop.GetValue(x));
         }
 
-        public static Anime Find(this IEnumerable<Anime> animes, string name) {
+        public static Anime Get(this IEnumerable<Anime> animes, string name) {
             return (from anime in animes
                     where anime.Name.ToLower().Equals(name.ToLower())
                     select anime).FirstOrDefault();

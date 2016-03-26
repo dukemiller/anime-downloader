@@ -72,16 +72,20 @@ namespace anime_downloader.Classes.Xml {
         ///     The root for manipulating the settings document.
         /// </summary>
         /// <returns></returns>
-        public XElement SettingsRoot() {
-            return SettingsDocument?.Root;
-        } 
-        
+        public XElement SettingsRoot => SettingsDocument?.Root;
+
+        /// <summary>
+        ///     The root for manipulating the anime document.
+        /// </summary>
+        /// <returns></returns>
+        public XElement AnimeRoot => AnimeDocument?.Root;
+
         /// <summary>
         ///     Add an anime instance to the current anime xml.
         /// </summary>
         /// <param name="anime"></param>
         public void Add(Anime anime) {
-            AnimeDocument.Root?.Add(anime.Root);
+            AnimeRoot?.Add(anime.Root);
             if (AutoSave)
                 SaveAnime();
         }
@@ -91,7 +95,7 @@ namespace anime_downloader.Classes.Xml {
         /// </summary>
         /// <param name="anime"></param>
         public void Remove(Anime anime) {
-            AnimeDocument.Root?.Elements().FirstOrDefault(a => a.Element("name")?.Value.Equals(anime.Name) ?? false)?.Remove();
+            AnimeRoot?.Elements().FirstOrDefault(a => a.Element("name")?.Value.Equals(anime.Name) ?? false)?.Remove();
             if (AutoSave)
                 SaveAnime();
         }

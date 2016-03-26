@@ -19,7 +19,7 @@
         public Xml(Settings settings) {
             Controller = XmlController.GetXmlController(settings);
             Create = new XmlCreate(settings);
-            Verify = new XmlVerify(settings);
+            Verify = new XmlVerify(settings, Controller);
         }
     }
 }
