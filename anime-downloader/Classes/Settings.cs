@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -34,6 +35,35 @@ namespace anime_downloader.Classes {
         ///     The path of the anime XML file.
         /// </summary>
         public string AnimeXmlPath => Path.Combine(ApplicationPath, "anime.xml");
+
+        /// <summary>
+        ///     The path of watched files.
+        /// </summary>
+        public string WatchedPath => Path.Combine(BaseFolderPath, "Watched");
+
+        /// <summary>
+        ///     The path of duplicate files.
+        /// </summary>
+        public string DuplicatesPath => Path.Combine(BaseFolderPath, "Duplicates");
+
+        /// <summary>
+        ///     The paths where the episodes are stored.
+        /// </summary>
+        /// <remarks>
+        ///     The path will always start with a "2" since it starts with the year, 
+        ///     so this will need updating in about 984 years or any time named directories change.
+        /// </remarks>
+        /// <returns></returns>
+        public IEnumerable<string> EpisodePaths(bool includeWatched = false) => Directory
+            .GetDirectories(BaseFolderPath)
+            .Where(folder => {
+                var path = Path.GetFileName(folder);
+                return path != null &&
+                       (path.StartsWith("2") ||
+                        !path.ToLower().Equals("torrents") && 
+                        (includeWatched & path.ToLower().Equals("watched")) &&
+                        !path.ToLower().Equals("duplicates"));
+            });
 
         /// <summary>
         ///     The path of base downloading folder.
@@ -124,7 +154,7 @@ namespace anime_downloader.Classes {
         ///     Create and return the path to a folder based on a timestamp of the current moment.
         /// </summary>
         /// <returns>A path used to download into.</returns>
-        public string GetOutputFolder() {
+        public string GetEpisodeFolder() {
             var date = DateTime.Now;
             var week = Math.Floor(Convert.ToDouble(date.DayOfYear) / 7);
             var folder = $"{date.Year} - Week {week} - {date.ToString("MMMM")}";

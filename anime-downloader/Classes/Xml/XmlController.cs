@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
@@ -8,6 +9,8 @@ namespace anime_downloader.Classes.Xml {
     ///     both read/write operations on the XML files to one location.
     /// </summary>
     public class XmlController {
+
+        public class XmlNotInstantiatedWithSettings : Exception { }
 
         private static XmlController _xmlController;
 
@@ -26,13 +29,12 @@ namespace anime_downloader.Classes.Xml {
         ///     The document object for the settings xml.
         /// </summary>
         public XDocument SettingsDocument => _settingsDocument ?? (_settingsDocument = XDocument.Load(_settings.SettingsXmlPath));
-        
+
         /// <summary>
         ///     Retrieve a static collection of the anime currently in the anime xml as Anime objects.
         /// </summary>
-        public IEnumerable<Anime> Animes => 
-            from anime in AnimeDocument.Root?.Elements()
-            select new Anime(anime, this);
+        public IEnumerable<Anime> Animes => from anime in AnimeRoot.Elements()
+                                            select new Anime(anime, this);
 
         /// <summary>
         ///     Retrieve a static and settings-defined sorted collection of the anime currently in the 
@@ -61,6 +63,20 @@ namespace anime_downloader.Classes.Xml {
         }
 
         /// <summary>
+        ///     Singleton instance grabber with no _settings, only use this in the case where
+        ///     you know you have already instantiated XMLController atleast once
+        /// </summary>
+        /// <remarks>
+        ///     I guess this is almost sort of just making _settings a potential global variable
+        /// </remarks>
+        /// <returns></returns>
+        public static XmlController GetXmlController() {
+            if (_xmlController != null)
+                return _xmlController;
+            throw new XmlNotInstantiatedWithSettings();
+        }
+
+        /// <summary>
         ///     Singleton-style private access constructor.
         /// </summary>
         /// <param name="settings"></param>
@@ -78,14 +94,14 @@ namespace anime_downloader.Classes.Xml {
         ///     The root for manipulating the anime document.
         /// </summary>
         /// <returns></returns>
-        public XElement AnimeRoot => AnimeDocument?.Root;
+        public XElement AnimeRoot => AnimeDocument.Root;
 
         /// <summary>
         ///     Add an anime instance to the current anime xml.
         /// </summary>
         /// <param name="anime"></param>
         public void Add(Anime anime) {
-            AnimeRoot?.Add(anime.Root);
+            AnimeRoot.Add(anime.Root);
             if (AutoSave)
                 SaveAnime();
         }
@@ -95,7 +111,7 @@ namespace anime_downloader.Classes.Xml {
         /// </summary>
         /// <param name="anime"></param>
         public void Remove(Anime anime) {
-            AnimeRoot?.Elements().FirstOrDefault(a => a.Element("name")?.Value.Equals(anime.Name) ?? false)?.Remove();
+            AnimeRoot.Elements().FirstOrDefault(a => a.Element("name")?.Value.Equals(anime.Name) ?? false)?.Remove();
             if (AutoSave)
                 SaveAnime();
         }

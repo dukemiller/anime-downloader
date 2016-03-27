@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using anime_downloader.Classes.Web;
 using anime_downloader.Classes.Xml;
 using HtmlAgilityPack;
 
@@ -42,10 +43,6 @@ namespace anime_downloader.Classes {
             if (_xml == null || !_xml.AutoSave)
                 return;
             _xml.SaveAnime();
-        }
-
-        public void Remove() {
-            _xml?.Remove(this);
         }
         
         /// <summary>

@@ -61,10 +61,11 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Classes\Anime.cs" />
-    <Compile Include="Classes\Downloader.cs" />
+    <Compile Include="Classes\FileHandling\FileHandler.cs" />
+    <Compile Include="Classes\FileHandling\Downloader.cs" />
     <Compile Include="Classes\Extensions.cs" />
     <Compile Include="Classes\Logger.cs" />
-    <Compile Include="Classes\Nyaa.cs" />
+    <Compile Include="Classes\Web\Nyaa.cs" />
     <Compile Include="Classes\Playlist.cs" />
     <Compile Include="Classes\Settings.cs" />
     <Compile Include="Classes\Xml\Xml.cs" />

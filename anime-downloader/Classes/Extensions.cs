@@ -22,9 +22,7 @@ namespace anime_downloader.Classes {
         }
 
         public static Anime Get(this IEnumerable<Anime> animes, string name) {
-            return (from anime in animes
-                    where anime.Name.ToLower().Equals(name.ToLower())
-                    select anime).FirstOrDefault();
+            return animes.FirstOrDefault(anime => anime.Name.ToLower().Equals(name.ToLower()));
         }
 
         /// <summary>
@@ -56,7 +54,7 @@ namespace anime_downloader.Classes {
         }
 
         /// <summary>
-        ///     Simulate a button press.
+        ///     Simulate a ButtonSubmit press.
         /// </summary>
         /// <param name="button"></param>
         public static void Press(this IInputElement button) {
@@ -64,7 +62,7 @@ namespace anime_downloader.Classes {
         }
 
         /// <summary>
-        ///     Toggle opacity and visibility of a button between two states.
+        ///     Toggle opacity and visibility of a ButtonSubmit between two states.
         /// </summary>
         /// <param name="button"></param>
         public static void Toggle(this Button button) {

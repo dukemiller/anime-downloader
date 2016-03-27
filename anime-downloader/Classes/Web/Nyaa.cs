@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
 
-namespace anime_downloader.Classes {
+namespace anime_downloader.Classes.Web {
     public class Nyaa {
         /// <summary>
         ///     A conversion chart from any of these values to megabytes.

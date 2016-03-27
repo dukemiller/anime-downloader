@@ -8,6 +8,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using anime_downloader.Classes;
+using anime_downloader.Classes.FileHandling;
+using anime_downloader.Classes.Web;
 using anime_downloader.Classes.Xml;
 using anime_downloader.Views;
 using Settings = anime_downloader.Classes.Settings;
@@ -57,6 +59,8 @@ namespace anime_downloader {
         /// </summary>
         private Downloader _downloader;
 
+        private FileHandler _filehandler;
+
         public MainWindow() {
             InitializeComponent();
             InitializeSettings();
@@ -71,6 +75,7 @@ namespace anime_downloader {
             _xml = new Xml(_settings);
             _logger = new Logger(_settings);
             _downloader = new Downloader(_settings);
+            _filehandler = new FileHandler(_settings, _downloader, _logger);
             
             if (!Directory.Exists(_settings.ApplicationPath))
                 Directory.CreateDirectory(_settings.ApplicationPath);
@@ -113,64 +118,6 @@ namespace anime_downloader {
             Display.Children.Clear();
             Display.Children.Add(_currentDisplay);
             return (TView) _currentDisplay;
-        }
-        
-        /// <summary>
-        ///     Strip the video name of all tags (resolution, seeders, etc).
-        /// </summary>
-        /// <param name="name">A downloaded file's name.</param>
-        /// <returns></returns>
-        private static string StripFilename(string name) {
-            const string pattern = @"(\[(?:.*?)\])|(\((?:.*)\))";
-
-            return (from Match match in Regex.Matches(name, pattern)
-                    where match.Groups.Count > 1
-                    select match.Groups[1].Length > 0 ? match.Groups[1].Value : match.Groups[2].Value into m
-                    where m.Length > 0
-                    select m).Aggregate(name, (current, m) => current.Replace(m, "").Trim());
-        }
-
-        /// <summary>
-        ///     Returns a collection of [{animeName: lastGivenEpisode}] from a list of stripped titles.
-        /// </summary>
-        /// <param name="strippedNames">A collection of names passed through stripFilename().</param>
-        /// <returns></returns>
-        private static Dictionary<string, int> CollectLastEpisode(IEnumerable<string> strippedNames) {
-            var latest = new Dictionary<string, int>();
-
-            foreach (var name in strippedNames) {
-                var animeName = string.Join(" - ",
-                    name.Split(new[] {" .mp4", " .mkv"}, StringSplitOptions.RemoveEmptyEntries)[0]
-                        .Split(new[] {" - "}, StringSplitOptions.RemoveEmptyEntries)
-                        .TakeWhile(s => !s.All(char.IsNumber)));
-                var animeEpisode = int.Parse(name.Split('-').Last().Split()[1]);
-
-                if (!latest.ContainsKey(animeName))
-                    latest.Add(animeName, animeEpisode);
-                else if (latest[animeName] < animeEpisode)
-                    latest[animeName] = animeEpisode;
-            }
-
-            return latest;
-        }
-
-        /// <summary>
-        ///     Set all anime episode counts in the anime list to their last known values from the "watched" folder.
-        /// </summary>
-        /// <remarks>This is for re-indexing if you don't know which episodes you watched last.</remarks>
-        private void SetAnimeEpisodeTotalToLastKnown() {
-            var path = Path.Combine(_settings.BaseFolderPath, "watched");
-
-            var finishedAnimes = CollectLastEpisode(Directory.GetFiles(path)
-                .Select(Path.GetFileName)
-                .Select(StripFilename)
-                .ToArray());
-
-            foreach (var finishedAnime in finishedAnimes) {
-                var anime = _allAnime.FirstOrDefault(a => a.Name.ToLower().Contains(finishedAnime.Key.ToLower()));
-                if (anime != null)
-                    anime.Episode = $"{finishedAnime.Value:D2}";
-            }
         }
         
         // Event handling
@@ -269,7 +216,6 @@ namespace anime_downloader {
             display.Delete.Click += AnimeListDelete_Click;
             display.DataGrid.PreviewKeyDown += AnimeListDelete_KeyDown;
             display.DataGrid.MouseDoubleClick += AnimeList_MouseDoubleClick;
-            display.DataGrid.ItemsSource = _allAnime;
 
             Grid.KeyDown += (o, keyEventArgs) => {
                 if (keyEventArgs.Key == Key.F && (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))) {
@@ -288,9 +234,8 @@ namespace anime_downloader {
             var selected = display?.DataGrid.SelectedCells.FirstOrDefault();
             if (!selected?.IsValid ?? false)
                 return;
-
             var anime = selected?.Item as Anime;
-            anime?.Remove();
+            _xml.Controller.Remove(anime);
             display?.DataGrid.Refresh(_xml.Controller.SortedAnimes);
         }
         
@@ -308,7 +253,7 @@ namespace anime_downloader {
                 if (!selected.IsValid)
                     return;
                 var anime = selected.Item as Anime;
-                anime?.Remove();
+                _xml.Controller.Remove(anime);
                 display.DataGrid.Refresh(_xml.Controller.SortedAnimes);
             }
 
@@ -353,7 +298,7 @@ namespace anime_downloader {
             };
 
             // --> Closing the find
-            // Make any button press close the find window, and going into anime details too
+            // Make any ButtonSubmit press close the find window, and going into anime details too
             this.GetAll<Button>().ForEach(b => b.Click += closeFindWindow);
             display.DataGrid.MouseDoubleClick += closeFindWindowMouse;
 
@@ -488,7 +433,7 @@ namespace anime_downloader {
                 }
             };
 
-            // Press mouse button back to go back
+            // Press mouse ButtonSubmit back to go back
             MouseDown += (o, buttonEventArgs) => {
                 if (buttonEventArgs.ChangedButton.Equals(MouseButton.XButton1)) {
                     ButtonHome.Press();
@@ -656,6 +601,7 @@ namespace anime_downloader {
                 }
 
                 else {
+                    textBox.Text = ">> Searching for currently airing anime episodes ...\n";
                     var downloaded = await _downloader.DownloadAnime(_xml.Controller.AiringAnimes, textBox, _logger);
                     textBox.AppendText(downloaded > 0
                         ? $">> Found {downloaded} anime downloads."
@@ -672,7 +618,83 @@ namespace anime_downloader {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void ButtonMisc_Click(object sender, RoutedEventArgs e) {
-            ChangeDisplay<Misc>();
+            var display = ChangeDisplay<Misc>();
+
+
+            display.GetAll<RadioButton>().ForEach(r => r.KeyDown += (o, args) => {
+                if (args.Key == Key.Enter)
+                    display.ButtonSubmit.Press();
+            });
+
+            display.ButtonSubmit.Click += async delegate {
+
+                this.ToggleButtons();
+
+                if (display.RadioDownload.IsChecked ?? false) {
+                    var count = await _filehandler.DownloadMissing();
+                    MessageBox.Show($"Downloaded {count} episodes.");
+                }
+
+                else if (display.RadioCatchUp.IsChecked ?? false) {
+                    var response =
+                        MessageBox.Show(
+                            "Please don't do this often, it expends a lot of requests. Are you sure you want to?",
+                            "Confirmation", MessageBoxButton.YesNo);
+
+                    if (response == MessageBoxResult.Yes) {
+                        var downloadDisplay = ChangeDisplay<Download>();
+                        var textBox = downloadDisplay.TextBox;
+                        int result;
+                        var total = 0;
+
+                        this.ToggleButtons();
+
+                        textBox.Text = ">> Attempting to catch up on airing anime episodes ...\n";
+
+                        do {
+                            result = await _downloader.DownloadAnime(_xml.Controller.AiringAnimes, textBox, _logger);
+                            total += result;
+                        } while (result != 0);
+
+                        textBox.AppendText(total > 0
+                            ? $">> Found {total} anime downloads."
+                            : ">> No new anime found.");
+                        textBox.ScrollDown();
+                    }
+
+                }
+
+                else if (display.RadioDuplicates.IsChecked ?? false) {
+                    var count = await _filehandler.MoveDuplicates();
+                    MessageBox.Show($"Moved {count} files to duplicate folder.");
+                }
+
+                else if (display.RadioIndexLastWatched.IsChecked ?? false) {
+                    _filehandler.IndexAnimesToWatched(_allAnime.Where(a => a.Status.Equals("Watching")));
+                    MessageBox.Show("Reset episode order to last known in Watched folder.");
+                }
+
+                else if (display.RadioIndexLastUnwatched.IsChecked ?? false) {
+                    _filehandler.IndexAnimesToUnwatched(_allAnime.Where(a => a.Status.Equals("Watching")));
+                    MessageBox.Show("Reset episode order to last known in any folder.");
+                }
+
+                else if (display.RadioIndexFirstWatched.IsChecked ?? false) {
+                    _filehandler.ResetKnown(_allAnime.Where(a => a.Status.Equals("Watching")));
+                    MessageBox.Show("Reset episode count to first known episode.");
+                }
+
+                else if (display.RadioIndexZero.IsChecked ?? false) {
+                    foreach (var anime in _allAnime.Where(a => a.Status.Equals("Watching")))
+                        anime.Episode = "00";
+                    MessageBox.Show("Reset episode count to zero.");
+                }
+
+                this.ToggleButtons();
+
+
+
+            };
         }
     }
 }

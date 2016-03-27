@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace anime_downloader.Classes {
     public class Logger {
@@ -12,7 +13,7 @@ namespace anime_downloader.Classes {
 
         public bool IsEnabled { get; set; }
 
-        public async void WriteLine(string message) {
+        public async Task WriteLine(string message) {
             var timestamp = $"{DateTime.UtcNow:[yyyy:mm:dd][hh:mm:ss]}";
 
             using (var streamWriter = new StreamWriter(_settings.LogPath, true)) {
