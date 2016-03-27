@@ -67,7 +67,7 @@ namespace anime_downloader.Classes.FileHandling {
         /// <summary>
         /// Compute the distance between two strings.
         /// </summary>
-        public static int LevenshteinDistance(string s, string t) {
+        private static int LevenshteinDistance(string s, string t) {
             var n = s.Length;
             var m = t.Length;
             var d = new int[n + 1, m + 1];
@@ -88,12 +88,18 @@ namespace anime_downloader.Classes.FileHandling {
             return d[n, m];
         }
 
-        public static Anime ClosestTo(IEnumerable<Anime> animes, string name)
-            =>
-                animes.Select(a => new AnimePair { Anime = a, Distance = LevenshteinDistance(a.Name, name) })
-                    .OrderBy(ap => ap.Distance)
-                    .First()
-                    .Anime;
+        /// <summary>
+        ///     Gets the best guess to what the anime is based solely on name
+        /// </summary>
+        /// <param name="animes"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static Anime ClosestTo(IEnumerable<Anime> animes, string name) {
+            return animes.Select(a => new AnimePair {Anime = a, Distance = LevenshteinDistance(a.Name, name)})
+                .OrderBy(ap => ap.Distance)
+                .First()
+                .Anime;
+        }
 
         /// <summary>
         ///     Set all anime episode counts in the anime list to their last known values from the "watched" folder.
@@ -123,7 +129,7 @@ namespace anime_downloader.Classes.FileHandling {
         public void ResetKnown(IEnumerable<Anime> animes) {
             animes = animes.ToArray();
             foreach (var firstAnime in FirstEpisodes(GetAllAnimeFiles())) {
-                var anime = animes.Get(firstAnime.Name);
+                var anime = ClosestTo(animes, firstAnime.Name);
                 if (anime != null)
                     anime.Episode = $"{firstAnime.Episode:D2}";
             }
@@ -219,6 +225,9 @@ namespace anime_downloader.Classes.FileHandling {
             return earliest.OrderBy(af => af.Name);
         }
 
+        /// <summary>
+        ///     All the details of an anime file as it's interpretted on the filesystem.
+        /// </summary>
         private class AnimeFile {
 
             public AnimeFile(string filePath) {
@@ -246,6 +255,9 @@ namespace anime_downloader.Classes.FileHandling {
             public string FilePath { get; }
         }
 
+        /// <summary>
+        ///     The difference between an anime's first and last episode with identifying information
+        /// </summary>
         private class AnimeFileDelta {
 
             public IEnumerable<int> Range { get; }
@@ -257,7 +269,10 @@ namespace anime_downloader.Classes.FileHandling {
             }
         }
 
-        public class AnimePair {
+        /// <summary>
+        ///     Holds the difference copmared from some string to the anime's name with identifying information
+        /// </summary>
+        private class AnimePair {
             public Anime Anime { get; set; }
             public int Distance { get; set; }
         }
