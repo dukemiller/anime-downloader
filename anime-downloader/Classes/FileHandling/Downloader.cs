@@ -81,7 +81,7 @@ namespace anime_downloader.Classes.FileHandling {
             var fileDirectory = _settings.GetEpisodeFolder();
             var filePath = Path.Combine(_settings.TorrentFilesPath, nyaa.TorrentName());
 
-            if (!System.IO.File.Exists(filePath))
+            if (!File.Exists(filePath))
                 await _client.DownloadFileTaskAsync(nyaa.Link, filePath);
 
             if (!Directory.Exists(fileDirectory))

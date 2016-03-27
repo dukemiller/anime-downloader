@@ -79,7 +79,7 @@ namespace anime_downloader.Classes.FileHandling {
             for (var j = 0; j <= m; d[0, j] = j++) { }
             for (var i = 1; i <= n; i++) {
                 for (var j = 1; j <= m; j++) {
-                    var cost = (t[j - 1] == s[i - 1]) ? 0 : 1;
+                    var cost = t[j - 1] == s[i - 1] ? 0 : 1;
                     d[i, j] = Math.Min(
                         Math.Min(d[i - 1, j] + 1, d[i, j - 1] + 1),
                         d[i - 1, j - 1] + cost);
@@ -226,7 +226,7 @@ namespace anime_downloader.Classes.FileHandling {
         }
 
         /// <summary>
-        ///     All the details of an anime file as it's interpretted on the filesystem.
+        ///     All the details of an anime file as it's interpreted on the filesystem.
         /// </summary>
         private class AnimeFile {
 
@@ -270,7 +270,7 @@ namespace anime_downloader.Classes.FileHandling {
         }
 
         /// <summary>
-        ///     Holds the difference copmared from some string to the anime's name with identifying information
+        ///     Holds the difference compared from some string to the anime's name with identifying information
         /// </summary>
         private class AnimePair {
             public Anime Anime { get; set; }

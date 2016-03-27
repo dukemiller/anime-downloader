@@ -11,7 +11,7 @@ namespace anime_downloader.Classes {
             _settings = settings;
         }
 
-        public bool IsEnabled { get; set; }
+        public bool IsEnabled => _settings.UseLogging;
 
         public async Task WriteLine(string message) {
             var timestamp = $"{DateTime.UtcNow:[yyyy:mm:dd][hh:mm:ss]}";
