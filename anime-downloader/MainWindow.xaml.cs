@@ -620,7 +620,6 @@ namespace anime_downloader {
         private void ButtonMisc_Click(object sender, RoutedEventArgs e) {
             var display = ChangeDisplay<Misc>();
 
-
             display.GetAll<RadioButton>().ForEach(r => r.KeyDown += (o, args) => {
                 if (args.Key == Key.Enter)
                     display.ButtonSubmit.Press();
@@ -646,8 +645,6 @@ namespace anime_downloader {
                         var textBox = downloadDisplay.TextBox;
                         int result;
                         var total = 0;
-
-                        this.ToggleButtons();
 
                         textBox.Text = ">> Attempting to catch up on airing anime episodes ...\n";
 
@@ -691,9 +688,6 @@ namespace anime_downloader {
                 }
 
                 this.ToggleButtons();
-
-
-
             };
         }
     }

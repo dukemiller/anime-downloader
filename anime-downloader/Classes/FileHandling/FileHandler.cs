@@ -65,26 +65,56 @@ namespace anime_downloader.Classes.FileHandling {
         }
 
         /// <summary>
+        /// Compute the distance between two strings.
+        /// </summary>
+        public static int LevenshteinDistance(string s, string t) {
+            var n = s.Length;
+            var m = t.Length;
+            var d = new int[n + 1, m + 1];
+            if (n == 0)
+                return m;
+            if (m == 0)
+                return n;
+            for (var i = 0; i <= n; d[i, 0] = i++) { }
+            for (var j = 0; j <= m; d[0, j] = j++) { }
+            for (var i = 1; i <= n; i++) {
+                for (var j = 1; j <= m; j++) {
+                    var cost = (t[j - 1] == s[i - 1]) ? 0 : 1;
+                    d[i, j] = Math.Min(
+                        Math.Min(d[i - 1, j] + 1, d[i, j - 1] + 1),
+                        d[i - 1, j - 1] + cost);
+                }
+            }
+            return d[n, m];
+        }
+
+        public static Anime ClosestTo(IEnumerable<Anime> animes, string name)
+            =>
+                animes.Select(a => new AnimePair { Anime = a, Distance = LevenshteinDistance(a.Name, name) })
+                    .OrderBy(ap => ap.Distance)
+                    .First()
+                    .Anime;
+
+        /// <summary>
         ///     Set all anime episode counts in the anime list to their last known values from the "watched" folder.
         /// </summary>
         /// <remarks>This is for re-indexing if you don't know which episodes you watched last.</remarks>
         public void IndexAnimesToWatched(IEnumerable<Anime> animes) {
             animes = animes.ToArray();
             foreach (var finishedAnime in LastEpisodes(GetWatchedAnimeFiles())) {
-                var anime = animes.Get(finishedAnime.Name);
-                if (anime != null)
-                    anime.Episode = $"{finishedAnime.Episode:D2}";
+                var anime = ClosestTo(animes, finishedAnime.Name);
+                anime.Episode = $"{finishedAnime.Episode:D2}";
             }
         }
 
         /// <summary>
-        ///     Set all anime episode counts in the anime list to their last known values from the "watched" folder.
+        ///     Set all anime episode counts in the anime list to their last known values from the episodes folder.
         /// </summary>
         /// <remarks>This is for re-indexing if you don't know which episodes you watched last.</remarks>
         public void IndexAnimesToUnwatched(IEnumerable<Anime> animes) {
             animes = animes.ToArray();
             foreach (var finishedAnime in LastEpisodes(GetUnwatchedAnimeFiles())) {
-                var anime = animes.Get(finishedAnime.Name);
+                var anime = ClosestTo(animes, finishedAnime.Name);
                 if (anime != null)
                     anime.Episode = $"{finishedAnime.Episode:D2}";
             }
@@ -225,6 +255,11 @@ namespace anime_downloader.Classes.FileHandling {
                 Range = Enumerable.Range(a.Episode, b.Episode - a.Episode + 1);
                 Name = a.Name;
             }
+        }
+
+        public class AnimePair {
+            public Anime Anime { get; set; }
+            public int Distance { get; set; }
         }
     }
 }

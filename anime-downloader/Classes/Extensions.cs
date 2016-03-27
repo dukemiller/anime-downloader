@@ -22,7 +22,9 @@ namespace anime_downloader.Classes {
         }
 
         public static Anime Get(this IEnumerable<Anime> animes, string name) {
-            return animes.FirstOrDefault(anime => anime.Name.ToLower().Equals(name.ToLower()));
+            return name.Split(' ').Length == 0
+                ? animes.FirstOrDefault(anime => anime.Name.ToLower().Equals(name.ToLower()))
+                : animes.FirstOrDefault(anime => anime.Name.ToLower().Contains(name.ToLower()));
         }
 
         /// <summary>
