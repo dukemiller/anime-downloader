@@ -200,32 +200,37 @@ namespace anime_downloader {
 
         // 
 
+        /// <summary>
+        ///     View -> Add Multiple
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void AnimeListAddMultiple_Click(object sender, RoutedEventArgs e) {
             var display = ChangeDisplay<AnimeDetailsMultiple>();
 
-            display.InputTextBox.Loaded += delegate { display.InputTextBox.Focus(); };
+            display.InputTextBox.Loaded += delegate {
+                display.InputTextBox.Focus();
+            };
 
             display.SubmitButton.Click += delegate {
                 var names = display.InputTextBox.Text.Split(Environment.NewLine.ToCharArray(), 
-                    StringSplitOptions.RemoveEmptyEntries);
-
-                if (names.Distinct().Count() != names.Length) {
+                    StringSplitOptions.RemoveEmptyEntries).Select(n => n.ToLower()).ToList();
+                if (names.Distinct().Count() != names.Count)
                     MessageBox.Show("Names have to be unique.");
-                    return;
+                else if (_allAnime.Select(a => a.Name.ToLower()).Intersect(names).Any())
+                    MessageBox.Show("A title entered already exists in the anime list.");
+                else {
+                    foreach (var name in names) {
+                        _xml.Controller.Add(new Anime {
+                            Name = name,
+                            Airing = display.AiringCheckBox.IsChecked ?? false,
+                            Episode = display.EpisodeTextBox.Text,
+                            Status = display.StatusComboBox.Text,
+                            Resolution = display.ResolutionComboBox.Text
+                        });
+                    }
+                    ButtonList.Press();
                 }
-
-                foreach (var name in names) {
-                    var anime = new Anime {
-                        Name = name,
-                        Airing = display.AiringCheckBox.IsChecked ?? false,
-                        Episode = display.EpisodeTextBox.Text,
-                        Status = display.StatusComboBox.Text,
-                        Resolution = display.ResolutionComboBox.Text
-                    };
-                    _xml.Controller.Add(anime);
-                }
-
-                ButtonList.Press();
             };
         }
 

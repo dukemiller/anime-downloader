@@ -9,7 +9,7 @@
         <Grid.Background>White</Grid.Background>
 
         <TextBlock x:Name="InfoTextBlock" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" FontSize="16" VerticalAlignment="Top">
-            Put each anime on own line, each will be added with the same template chosen below.
+            Put each anime on own line, each will be added with the template chosen below.
         </TextBlock>
         <TextBox x:Name="InputTextBox" HorizontalAlignment="Left" Height="174" Margin="10,36,0,0" FontSize="16" TextWrapping="Wrap" AcceptsReturn="True" VerticalAlignment="Top" Width="630"/>
         <Grid HorizontalAlignment="Left" Height="70" Margin="10,234,0,0" VerticalAlignment="Top" Width="465">
