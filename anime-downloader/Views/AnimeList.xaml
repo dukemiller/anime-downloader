@@ -18,7 +18,8 @@
                   GridLinesVisibility="None" BorderThickness="0" FontSize="16" >
             <DataGrid.ContextMenu>
                 <ContextMenu Name="AnimeContextMenu">
-                    <MenuItem Name="Add" Header="Add ..." />
+                    <MenuItem Name="Add" Header="Add Single ..." />
+                    <MenuItem Name="AddMultiple" Header="Add Multiple ..." />
                     <MenuItem Name="Edit" Header="Edit ..." />
                     <MenuItem Name="Delete" Header="Delete ..." />
                 </ContextMenu>

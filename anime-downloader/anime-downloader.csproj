@@ -75,6 +75,9 @@
     <Compile Include="Views\AnimeDetails.xaml.cs">
       <DependentUpon>AnimeDetails.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\AnimeDetailsMultiple.xaml.cs">
+      <DependentUpon>AnimeDetailsMultiple.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\AnimeList.xaml.cs">
       <DependentUpon>AnimeList.xaml</DependentUpon>
     </Compile>
@@ -108,6 +111,10 @@
     <Page Include="Views\AnimeDetails.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\AnimeDetailsMultiple.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\AnimeList.xaml">
       <SubType>Designer</SubType>

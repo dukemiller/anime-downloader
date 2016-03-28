@@ -178,7 +178,6 @@ namespace anime_downloader.Classes.FileHandling {
                         total++;
                         break;
                     }
-
                 }
             }
             return total;

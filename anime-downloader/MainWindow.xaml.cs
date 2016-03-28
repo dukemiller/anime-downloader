@@ -200,6 +200,37 @@ namespace anime_downloader {
 
         // 
 
+        private void AnimeListAddMultiple_Click(object sender, RoutedEventArgs e) {
+            var display = ChangeDisplay<AnimeDetailsMultiple>();
+
+            display.InputTextBox.Loaded += delegate { display.InputTextBox.Focus(); };
+
+            display.SubmitButton.Click += delegate {
+                var names = display.InputTextBox.Text.Split(Environment.NewLine.ToCharArray(), 
+                    StringSplitOptions.RemoveEmptyEntries);
+
+                if (names.Distinct().Count() != names.Length) {
+                    MessageBox.Show("Names have to be unique.");
+                    return;
+                }
+
+                foreach (var name in names) {
+                    var anime = new Anime {
+                        Name = name,
+                        Airing = display.AiringCheckBox.IsChecked ?? false,
+                        Episode = display.EpisodeTextBox.Text,
+                        Status = display.StatusComboBox.Text,
+                        Resolution = display.ResolutionComboBox.Text
+                    };
+                    _xml.Controller.Add(anime);
+                }
+
+                ButtonList.Press();
+            };
+        }
+
+        // 
+
         /// <summary>
         ///     View: Anime list.
         /// </summary>
@@ -213,6 +244,7 @@ namespace anime_downloader {
             display.Add.Click += ButtonAddNew_Click;
             display.Edit.Click += AnimeListEdit_Click;
             display.Delete.Click += AnimeListDelete_Click;
+            display.AddMultiple.Click += AnimeListAddMultiple_Click;
             display.DataGrid.PreviewKeyDown += AnimeListDelete_KeyDown;
             display.DataGrid.MouseDoubleClick += AnimeList_MouseDoubleClick;
 
@@ -230,12 +262,9 @@ namespace anime_downloader {
         /// <param name="e"></param>
         private void AnimeListDelete_Click(object sender, RoutedEventArgs e) {
             var display = (AnimeList) _currentDisplay;
-            var selected = display?.DataGrid.SelectedCells.FirstOrDefault();
-            if (!selected?.IsValid ?? false)
-                return;
-            var anime = selected?.Item as Anime;
-            _xml.Controller.Remove(anime);
-            display?.DataGrid.Refresh(_xml.Controller.SortedAnimes);
+            foreach (var cell in display.DataGrid.SelectedCells)
+                _xml.Controller.Remove(cell.Item as Anime);
+            display.DataGrid.Refresh(_xml.Controller.SortedAnimes);
         }
         
         /// <summary>
@@ -248,11 +277,8 @@ namespace anime_downloader {
 
             // Delete
             if (e.Key == Key.Delete) {
-                var selected = display.DataGrid.SelectedCells.FirstOrDefault();
-                if (!selected.IsValid)
-                    return;
-                var anime = selected.Item as Anime;
-                _xml.Controller.Remove(anime);
+                foreach (var cell in display.DataGrid.SelectedCells)
+                    _xml.Controller.Remove(cell.Item as Anime);
                 display.DataGrid.Refresh(_xml.Controller.SortedAnimes);
             }
 
