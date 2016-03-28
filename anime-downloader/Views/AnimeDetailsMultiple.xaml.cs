@@ -1,6 +1,4 @@
-﻿using System.Windows.Controls;
-
-namespace anime_downloader.Views {
+﻿namespace anime_downloader.Views {
     /// <summary>
     /// Interaction logic for AnimeDetailsMultiple.xaml
     /// </summary>
