@@ -106,7 +106,7 @@ namespace anime_downloader.Classes.FileHandling {
         /// </summary>
         /// <remarks>This is for re-indexing if you don't know which episodes you watched last.</remarks>
         public void IndexAnimesToWatched(IEnumerable<Anime> animes) {
-            animes = animes.ToArray();
+            animes = animes.ToList();
             foreach (var finishedAnime in LastEpisodes(GetWatchedAnimeFiles())) {
                 var anime = ClosestTo(animes, finishedAnime.Name);
                 anime.Episode = $"{finishedAnime.Episode:D2}";
@@ -118,7 +118,7 @@ namespace anime_downloader.Classes.FileHandling {
         /// </summary>
         /// <remarks>This is for re-indexing if you don't know which episodes you watched last.</remarks>
         public void IndexAnimesToUnwatched(IEnumerable<Anime> animes) {
-            animes = animes.ToArray();
+            animes = animes.ToList();
             foreach (var finishedAnime in LastEpisodes(GetUnwatchedAnimeFiles())) {
                 var anime = ClosestTo(animes, finishedAnime.Name);
                 if (anime != null)
@@ -127,7 +127,7 @@ namespace anime_downloader.Classes.FileHandling {
         }
 
         public void ResetKnown(IEnumerable<Anime> animes) {
-            animes = animes.ToArray();
+            animes = animes.ToList();
             foreach (var firstAnime in FirstEpisodes(GetAllAnimeFiles())) {
                 var anime = ClosestTo(animes, firstAnime.Name);
                 if (anime != null)
@@ -136,15 +136,15 @@ namespace anime_downloader.Classes.FileHandling {
         }
 
         public async Task<int> MoveDuplicates() {
-            var animes = GetUnwatchedAnimeFiles().ToArray();
+            var animes = GetUnwatchedAnimeFiles().ToList();
 
             // if there's another anime with the same name and episode count,
             // and it's not in the duplicate list already
             var duplicates = await Task.Run(() => animes.Where(anime => animes.Any(a => anime.Name.Equals(a.Name) &&
-                                                                   anime.Episode.Equals(a.Episode) &&
-                                                                   anime != a)).ToArray());
+                                                                                        anime.Episode.Equals(a.Episode) &&
+                                                                                        anime != a)).ToList());
 
-            if (duplicates.Length > 0) {
+            if (duplicates.Count > 0) {
                 if (!Directory.Exists(_settings.DuplicatesPath))
                     Directory.CreateDirectory(_settings.DuplicatesPath);
 
@@ -152,12 +152,12 @@ namespace anime_downloader.Classes.FileHandling {
                     File.Move(duplicate.FilePath, Path.Combine(_settings.DuplicatesPath, duplicate.FileName));
             }
 
-            return duplicates.Length;
+            return duplicates.Count;
         }
 
         public async Task<int> DownloadMissing() {
             var total = 0;
-            var allEpisodes = await Task.Run(() => GetAllAnimeFiles().ToArray());
+            var allEpisodes = await Task.Run(() => GetAllAnimeFiles().ToList());
             var animeFileDeltas = await Task.Run(() => FirstEpisodes(allEpisodes)
                 .OrderBy(a => a.Name)
                 .Zip(LastEpisodes(allEpisodes).OrderBy(a => a.Name), (a, b) => new AnimeFileDelta(a, b)));

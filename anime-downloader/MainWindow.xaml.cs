@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -12,6 +13,7 @@ using anime_downloader.Classes.Web;
 using anime_downloader.Classes.Xml;
 using anime_downloader.Views;
 using Settings = anime_downloader.Classes.Settings;
+using UserControl = System.Windows.Controls.UserControl;
 
 namespace anime_downloader {
     /// <summary>
@@ -60,10 +62,15 @@ namespace anime_downloader {
 
         private FileHandler _filehandler;
 
+        private System.Windows.Forms.NotifyIcon _notifyIcon;
+
         public MainWindow() {
             InitializeComponent();
             InitializeSettings();
+            InitializeTray();
         }
+
+        // Helper functions
 
         /// <summary>
         ///     Initialize and set the settings object.
@@ -95,8 +102,24 @@ namespace anime_downloader {
                 _xml.Create.AnimeXmlAndSave();
         }
 
-        // Helper functions
+        private void InitializeTray() {
+            // get the image from the program
+            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            var stream = assembly.GetManifestResourceStream("anime_downloader.ad3.ico");
+            Debug.Assert(stream != null, "myStream != null");
+            var icon = new Icon(stream);
 
+            _notifyIcon = new System.Windows.Forms.NotifyIcon {
+                Icon = icon
+                // Icon = new System.Drawing.Icon(image)
+            };
+
+            _notifyIcon.Click += delegate {
+                Show();
+                WindowState = WindowState.Normal;
+            };
+        }
+        
         /// <summary>
         ///     Change the display to UserControl TView.
         /// </summary>
@@ -118,7 +141,17 @@ namespace anime_downloader {
             Display.Children.Add(_currentDisplay);
             return (TView) _currentDisplay;
         }
-        
+
+        private void Window_StateChanged(object sender, EventArgs e) {
+            if (WindowState == WindowState.Minimized) {
+                Hide();
+                _notifyIcon.Visible = true;
+            }
+            else if (WindowState == WindowState.Normal) {
+                _notifyIcon.Visible = false;
+            }
+        }
+
         // Event handling
 
         /// <summary>
@@ -302,8 +335,7 @@ namespace anime_downloader {
             var display = (AnimeList) _currentDisplay;
 
             // Don't recreate it again
-            var box = Grid.Children.OfType<TextBox>().FirstOrDefault(t => t.Name.Equals("FindBox"));
-            if (box != null)
+            if (Grid.Children.OfType<TextBox>().Any(t => t.Name.Equals("FindBox")))
                 return;
 
             var findWindow = new TextBox {
@@ -328,7 +360,7 @@ namespace anime_downloader {
             };
 
             // --> Closing the find
-            // Make any ButtonSubmit press close the find window, and going into anime details too
+            // Make any button press close the find window, and going into anime details too
             this.GetAll<Button>().ForEach(b => b.Click += closeFindWindow);
             display.DataGrid.MouseDoubleClick += closeFindWindowMouse;
 
@@ -416,7 +448,7 @@ namespace anime_downloader {
                 if (subgroup.Equals("(None)"))
                     subgroup = "";
 
-                var anime = new Anime {
+                _xml.Controller.Add(new Anime {
                     Name = display.NameTextbox.Text,
                     Episode = $"{int.Parse(display.EpisodeTextbox.Text):D2}",
                     Status = display.StatusCombobox.Text,
@@ -424,9 +456,8 @@ namespace anime_downloader {
                     Airing = display.AiringCheckbox.IsChecked ?? false,
                     NameStrict = display.NameStrictCheckbox.IsChecked ?? false,
                     PreferredSubgroup = subgroup
-                };
+                });
 
-                _xml.Controller.Add(anime);
                 ButtonList.Press();
             }
         }
@@ -572,7 +603,7 @@ namespace anime_downloader {
 
             // Default guessed values
             display.BaseTextbox.Text = Directory.GetCurrentDirectory();
-            display.TorrentTextbox.Text = Path.Combine(display.BaseTextbox.Text, "torrents");
+            display.TorrentTextbox.Text = Path.Combine(display.BaseTextbox.Text, "Torrents");
             display.DownloadTextbox.Text = @"C:\Program Files (x86)\uTorrent\uTorrent.exe";
             display.ApplyChangesButton.Content = "Create Profile";
 
@@ -623,9 +654,8 @@ namespace anime_downloader {
                 var downloadDisplay = ChangeDisplay<Download>();
                 var textBox = downloadDisplay.TextBox;
                 this.ToggleButtons();
-                var online = await Nyaa.IsOnline();
 
-                if (!online) {
+                if (!await Nyaa.IsOnline()) {
                     textBox.Text = ">> Nyaa is currently offline. Try checking later.";
                     this.ToggleButtons();
                 }
@@ -720,5 +750,6 @@ namespace anime_downloader {
                 this.ToggleButtons();
             };
         }
+        
     }
 }
