@@ -7,7 +7,7 @@ using System.Windows.Controls.Primitives;
 
 namespace anime_downloader.Classes {
     public static class Extensions {
-
+        
         /// <summary>
         ///     Sort the animes with the specified property name of the anime type
         /// </summary>
@@ -20,6 +20,8 @@ namespace anime_downloader.Classes {
             var prop = TypeDescriptor.GetProperties(typeof(Anime)).Find(sort, true);
             return animes.OrderBy(x => prop.GetValue(x));
         }
+
+        public static IEnumerable<Anime> Watching(this IEnumerable<Anime> animes) => animes.Where(a => a.Status.Equals("Watching"));
 
         public static Anime Get(this IEnumerable<Anime> animes, string name) {
             return name.Split(' ').Length == 0

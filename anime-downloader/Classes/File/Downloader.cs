@@ -7,17 +7,19 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using anime_downloader.Classes.Web;
 
-namespace anime_downloader.Classes.FileHandling {
+namespace anime_downloader.Classes.File {
     public class Downloader {
         private readonly Settings _settings;
+        private readonly Logger _logger;
         private readonly WebClient _client;
 
-        public Downloader(Settings settings) {
+        public Downloader(Settings settings, Logger logger) {
             _settings = settings;
+            _logger = logger;
             _client = new WebClient();
         }
 
-        public bool CanDownload(Nyaa nyaa, Anime anime) {
+        private bool CanDownload(Nyaa nyaa, Anime anime) {
             if (nyaa == null)
                 return false; 
 
@@ -49,7 +51,7 @@ namespace anime_downloader.Classes.FileHandling {
         /// <param name="animes">The collection of anime to try and get new episodes from.</param>
         /// <param name="textbox">The output box to display results to.</param>
         /// <param name="logger"></param>
-        public async Task<int> DownloadAnime(IEnumerable<Anime> animes, TextBox textbox, Logger logger) {
+        public async Task<int> Download(IEnumerable<Anime> animes, TextBox textbox) {
             var downloaded = 0;
 
             foreach (var anime in animes) {
@@ -62,9 +64,10 @@ namespace anime_downloader.Classes.FileHandling {
                 foreach (var nyaa in nyaaLinks.Where(nyaa => CanDownload(nyaa, anime))) {
                     textbox.AppendText($"Downloading '{anime.Title}' episode '{anime.NextEpisode()}'.\n");
                     textbox.ScrollDown();
-                    await DownloadTorrent(nyaa);
-                    if (logger.IsEnabled)
-                        await logger.WriteLine($"Downloaded '{anime.Title}' episode {anime.NextEpisode()}.");
+                    var filePath = await DownloadTorrent(nyaa);
+                    StartTorrent(filePath);
+                    if (_logger.IsEnabled)
+                        await _logger.WriteLine($"Downloaded '{anime.Title}' episode {anime.NextEpisode()}.");
                     anime.Episode = anime.NextEpisode();
                     downloaded++;
                     break;
@@ -73,17 +76,60 @@ namespace anime_downloader.Classes.FileHandling {
 
             return downloaded;
         }
+        
+        public async Task<int> Download(IEnumerable<Anime> animes, 
+                                        IEnumerable<AnimeEpisodeDelta> animeEpisodeDeltas,
+                                        IEnumerable<AnimeEpisode> allEpisodes) {
+            var downloaded = 0;
+            var animeList = animes.ToList();
 
-        public async Task DownloadTorrent(Nyaa nyaa) {
+            foreach (var animeEpisode in animeEpisodeDeltas) {
+                var animeBase = Anime.ClosestTo(animeList, animeEpisode.Name);
+                foreach (var episode in animeEpisode.EpisodeRange) {
+
+                    if (await Task.Run(() =>
+                            allEpisodes.Any(a => animeEpisode.Name.Equals(a.Name) && a.Episode.Equals(episode))))
+                        continue;
+
+                    // TODO: make a copy constructor?
+                    var anime = new Anime {
+                        Name = animeEpisode.Name,
+                        Episode = episode,
+                        Airing = animeBase.Airing,
+                        Resolution = animeBase.Resolution,
+                        PreferredSubgroup = animeBase.PreferredSubgroup,
+                        NameStrict = animeBase.NameStrict
+                    };
+
+                    var nyaaLinks = await anime.GetLinksToNextEpisode();
+
+                    foreach (var nyaa in nyaaLinks.Where(nyaa => CanDownload(nyaa, anime))) {
+                        var filePath = await DownloadTorrent(nyaa);
+                        StartTorrent(filePath);
+                        if (_logger?.IsEnabled ?? false)
+                            await _logger.WriteLine($"Downloaded '{anime.Title}' episode {episode}.");
+                        downloaded++;
+                        break;
+                    }
+                }
+            }
+            return downloaded;
+        }
+
+        private async Task<string> DownloadTorrent(Nyaa nyaa) {
             if (_settings == null)
-                return;
-
-            var fileDirectory = _settings.GetEpisodeFolder();
+                return null;
+            
             var filePath = Path.Combine(_settings.TorrentFilesPath, nyaa.TorrentName());
 
-            if (!File.Exists(filePath))
+            if (!System.IO.File.Exists(filePath))
                 await _client.DownloadFileTaskAsync(nyaa.Link, filePath);
 
+            return filePath;
+        }
+
+        private void StartTorrent(string filePath) {
+            var fileDirectory = _settings.GetEpisodeFolder();
             if (!Directory.Exists(fileDirectory))
                 Directory.CreateDirectory(fileDirectory);
 
@@ -96,7 +142,7 @@ namespace anime_downloader.Classes.FileHandling {
         /// </summary>
         /// <param name="executable">Path to the executable file.</param>
         /// <param name="parameters">Arguments given to the executable.</param>
-        public static void CallCommand(string executable, string parameters) {
+        private static void CallCommand(string executable, string parameters) {
             var info = new ProcessStartInfo {
                 FileName = executable,
                 Arguments = parameters,

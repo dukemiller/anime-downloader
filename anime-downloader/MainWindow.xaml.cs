@@ -8,7 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using anime_downloader.Classes;
-using anime_downloader.Classes.FileHandling;
+using anime_downloader.Classes.File;
 using anime_downloader.Classes.Web;
 using anime_downloader.Classes.Xml;
 using anime_downloader.Views;
@@ -80,8 +80,8 @@ namespace anime_downloader {
             _playlist = new Playlist(_settings);
             _xml = new Xml(_settings);
             _logger = new Logger(_settings);
-            _downloader = new Downloader(_settings);
-            _filehandler = new FileHandler(_settings, _downloader, _logger);
+            _downloader = new Downloader(_settings, _logger);
+            _filehandler = new FileHandler(_settings, _downloader);
             
             if (!Directory.Exists(_settings.ApplicationPath))
                 Directory.CreateDirectory(_settings.ApplicationPath);
@@ -102,6 +102,9 @@ namespace anime_downloader {
                 _xml.Create.AnimeXmlAndSave();
         }
 
+        /// <summary>
+        ///     Create the tray.
+        /// </summary>
         private void InitializeTray() {
             // get the image from the program
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
@@ -662,7 +665,7 @@ namespace anime_downloader {
 
                 else {
                     textBox.Text = ">> Searching for currently airing anime episodes ...\n";
-                    var downloaded = await _downloader.DownloadAnime(_xml.Controller.AiringAnimes, textBox, _logger);
+                    var downloaded = await _downloader.Download(_xml.Controller.AiringAnimes, textBox);
                     textBox.AppendText(downloaded > 0
                         ? $">> Found {downloaded} anime downloads."
                         : ">> No new anime found.");
@@ -671,6 +674,8 @@ namespace anime_downloader {
                 }
             }
         }
+
+        // 
 
         /// <summary>
         ///     View: Misc
@@ -690,7 +695,7 @@ namespace anime_downloader {
                 this.ToggleButtons();
 
                 if (display.RadioDownload.IsChecked ?? false) {
-                    var count = await _filehandler.DownloadMissing();
+                    var count = await _filehandler.DownloadMissing(_allAnime.Watching());
                     MessageBox.Show($"Downloaded {count} episodes.");
                 }
 
@@ -709,7 +714,7 @@ namespace anime_downloader {
                         textBox.Text = ">> Attempting to catch up on airing anime episodes ...\n";
 
                         do {
-                            result = await _downloader.DownloadAnime(_xml.Controller.AiringAnimes, textBox, _logger);
+                            result = await _downloader.Download(_xml.Controller.AiringAnimes, textBox);
                             total += result;
                         } while (result != 0);
 
@@ -718,7 +723,6 @@ namespace anime_downloader {
                             : ">> No new anime found.");
                         textBox.ScrollDown();
                     }
-
                 }
 
                 else if (display.RadioDuplicates.IsChecked ?? false) {
@@ -727,22 +731,22 @@ namespace anime_downloader {
                 }
 
                 else if (display.RadioIndexLastWatched.IsChecked ?? false) {
-                    _filehandler.IndexAnimesToWatched(_allAnime.Where(a => a.Status.Equals("Watching")));
+                    _filehandler.AnimesToLastEpisode_Watched(_allAnime.Watching());
                     MessageBox.Show("Reset episode order to last known in Watched folder.");
                 }
 
                 else if (display.RadioIndexLastUnwatched.IsChecked ?? false) {
-                    _filehandler.IndexAnimesToUnwatched(_allAnime.Where(a => a.Status.Equals("Watching")));
+                    _filehandler.AnimesToLastEpisode_Unwatched(_allAnime.Watching());
                     MessageBox.Show("Reset episode order to last known in any folder.");
                 }
 
                 else if (display.RadioIndexFirstWatched.IsChecked ?? false) {
-                    _filehandler.ResetKnown(_allAnime.Where(a => a.Status.Equals("Watching")));
+                    _filehandler.AnimesToBeginningEpisode_All(_allAnime.Watching());
                     MessageBox.Show("Reset episode count to first known episode.");
                 }
 
                 else if (display.RadioIndexZero.IsChecked ?? false) {
-                    foreach (var anime in _allAnime.Where(a => a.Status.Equals("Watching")))
+                    foreach (var anime in _allAnime.Watching())
                         anime.Episode = "00";
                     MessageBox.Show("Reset episode count to zero.");
                 }

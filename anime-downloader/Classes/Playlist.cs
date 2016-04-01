@@ -37,7 +37,7 @@ namespace anime_downloader.Classes {
         ///     Sort simply by the time the file was created.
         /// </summary>
         public void ByDate() {
-            _episodes = _episodes.OrderBy(File.GetCreationTime);
+            _episodes = _episodes.OrderBy(System.IO.File.GetCreationTime);
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace anime_downloader.Classes {
             var counter = 0;
 
             try {
-                using (var reader = new BinaryReader(File.Open(fullFilepath, FileMode.Open))) {
+                using (var reader = new BinaryReader(System.IO.File.Open(fullFilepath, FileMode.Open))) {
                     currentByte = reader.ReadByte();
                     while (currentByte == 0) {
                         if (++counter > 10)

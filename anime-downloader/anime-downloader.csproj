@@ -64,8 +64,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Classes\Anime.cs" />
-    <Compile Include="Classes\FileHandling\FileHandler.cs" />
-    <Compile Include="Classes\FileHandling\Downloader.cs" />
+    <Compile Include="Classes\File\AnimeEpisode.cs" />
+    <Compile Include="Classes\File\FileHandler.cs" />
+    <Compile Include="Classes\File\Downloader.cs" />
     <Compile Include="Classes\Extensions.cs" />
     <Compile Include="Classes\Logger.cs" />
     <Compile Include="Classes\Web\Nyaa.cs" />
