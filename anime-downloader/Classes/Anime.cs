@@ -51,7 +51,7 @@ namespace anime_downloader.Classes {
         }
 
         private readonly XmlController _xml;
-
+        
         public XContainer Root { get; }
 
         /// <summary>
@@ -192,7 +192,7 @@ namespace anime_downloader.Classes {
         /// </summary>
         /// <returns>A RSS parsable string.</returns>
         public string ToRss() {
-            string[] seperators = {string.Join("+", Title.Split(' ')), NextEpisode(), Resolution};
+            string[] seperators = {string.Join("+", Title.Replace("'s", "").Split(' ')), NextEpisode(), Resolution};
             return string.Join("+", seperators);
         }
 

@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -684,76 +686,76 @@ namespace anime_downloader {
         /// <param name="e"></param>
         private void ButtonMisc_Click(object sender, RoutedEventArgs e) {
             var display = ChangeDisplay<Misc>();
-
             display.GetAll<RadioButton>().ForEach(r => r.KeyDown += (o, args) => {
                 if (args.Key == Key.Enter)
                     display.ButtonSubmit.Press();
             });
-
-            display.ButtonSubmit.Click += async delegate {
-
-                this.ToggleButtons();
-
-                if (display.RadioDownload.IsChecked ?? false) {
-                    var count = await _filehandler.DownloadMissing(_allAnime.Watching());
-                    MessageBox.Show($"Downloaded {count} episodes.");
-                }
-
-                else if (display.RadioCatchUp.IsChecked ?? false) {
-                    var response =
-                        MessageBox.Show(
-                            "Please don't do this often, it expends a lot of requests. Are you sure you want to?",
-                            "Confirmation", MessageBoxButton.YesNo);
-
-                    if (response == MessageBoxResult.Yes) {
-                        var downloadDisplay = ChangeDisplay<Download>();
-                        var textBox = downloadDisplay.TextBox;
-                        int result;
-                        var total = 0;
-
-                        textBox.Text = ">> Attempting to catch up on airing anime episodes ...\n";
-
-                        do {
-                            result = await _downloader.Download(_xml.Controller.AiringAnimes, textBox);
-                            total += result;
-                        } while (result != 0);
-
-                        textBox.AppendText(total > 0
-                            ? $">> Found {total} anime downloads."
-                            : ">> No new anime found.");
-                        textBox.ScrollDown();
-                    }
-                }
-
-                else if (display.RadioDuplicates.IsChecked ?? false) {
-                    var count = await _filehandler.MoveDuplicates();
-                    MessageBox.Show($"Moved {count} files to duplicate folder.");
-                }
-
-                else if (display.RadioIndexLastWatched.IsChecked ?? false) {
-                    _filehandler.AnimesToLastEpisode_Watched(_allAnime.Watching());
-                    MessageBox.Show("Reset episode order to last known in Watched folder.");
-                }
-
-                else if (display.RadioIndexLastUnwatched.IsChecked ?? false) {
-                    _filehandler.AnimesToLastEpisode_Unwatched(_allAnime.Watching());
-                    MessageBox.Show("Reset episode order to last known in any folder.");
-                }
-
-                else if (display.RadioIndexFirstWatched.IsChecked ?? false) {
-                    _filehandler.AnimesToBeginningEpisode_All(_allAnime.Watching());
-                    MessageBox.Show("Reset episode count to first known episode.");
-                }
-
-                else if (display.RadioIndexZero.IsChecked ?? false) {
-                    foreach (var anime in _allAnime.Watching())
-                        anime.Episode = "00";
-                    MessageBox.Show("Reset episode count to zero.");
-                }
-
-                this.ToggleButtons();
-            };
+            display.ButtonSubmit.Click += ButtonMisc_Submit;
         }
         
+        private async void ButtonMisc_Submit(object sender, RoutedEventArgs e) {
+            this.ToggleButtons();
+
+            var display = (Misc) _currentDisplay;
+            
+            if (display.RadioDownload.IsChecked ?? false) {
+                var count = await _filehandler.DownloadMissing(_allAnime.Watching());
+                MessageBox.Show($"Downloaded {count} episodes.");
+            }
+
+            else if (display.RadioCatchUp.IsChecked ?? false) {
+                var response =
+                    MessageBox.Show(
+                        "Please don't do this often, it expends a lot of requests. Are you sure you want to?",
+                        "Confirmation", MessageBoxButton.YesNo);
+
+                if (response == MessageBoxResult.Yes) {
+                    var downloadDisplay = ChangeDisplay<Download>();
+                    var textBox = downloadDisplay.TextBox;
+                    int result;
+                    var total = 0;
+
+                    textBox.Text = ">> Attempting to catch up on airing anime episodes ...\n";
+
+                    do {
+                        result = await _downloader.Download(_xml.Controller.AiringAnimes, textBox);
+                        total += result;
+                    } while (result != 0);
+
+                    textBox.AppendText(total > 0
+                        ? $">> Found {total} anime downloads."
+                        : ">> No new anime found.");
+                    textBox.ScrollDown();
+                }
+            }
+
+            else if (display.RadioDuplicates.IsChecked ?? false) {
+                var count = await _filehandler.MoveDuplicates();
+                MessageBox.Show($"Moved {count} files to duplicate folder.");
+            }
+
+            else if (display.RadioIndexLastWatched.IsChecked ?? false) {
+                _filehandler.AnimesToLastEpisode_Watched(_allAnime.Watching());
+                MessageBox.Show("Reset episode order to last known in Watched folder.");
+            }
+
+            else if (display.RadioIndexLastUnwatched.IsChecked ?? false) {
+                _filehandler.AnimesToLastEpisode_Unwatched(_allAnime.Watching());
+                MessageBox.Show("Reset episode order to last known in any folder.");
+            }
+
+            else if (display.RadioIndexFirstWatched.IsChecked ?? false) {
+                _filehandler.AnimesToBeginningEpisode_All(_allAnime.Watching());
+                MessageBox.Show("Reset episode count to first known episode.");
+            }
+
+            else if (display.RadioIndexZero.IsChecked ?? false) {
+                foreach (var anime in _allAnime.Watching())
+                    anime.Episode = "00";
+                MessageBox.Show("Reset episode count to zero.");
+            }
+
+            this.ToggleButtons();
+        }
     }
 }

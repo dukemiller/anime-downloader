@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Forms.VisualStyles;
 
 namespace anime_downloader.Classes {
     public static class Extensions {
@@ -58,7 +60,7 @@ namespace anime_downloader.Classes {
         }
 
         /// <summary>
-        ///     Simulate a ButtonSubmit press.
+        ///     Simulate a button press.
         /// </summary>
         /// <param name="button"></param>
         public static void Press(this IInputElement button) {
@@ -70,14 +72,8 @@ namespace anime_downloader.Classes {
         /// </summary>
         /// <param name="button"></param>
         public static void Toggle(this Button button) {
-            if (button.IsHitTestVisible) {
-                button.IsHitTestVisible = false;
-                button.Opacity = 0.4;
-            }
-            else {
-                button.IsHitTestVisible = true;
-                button.Opacity = 1.0;
-            }
+            button.Opacity = button.IsHitTestVisible ? 0.4 : 1.0;
+            button.IsHitTestVisible ^= true;
         }
 
         /// <summary>
@@ -85,50 +81,34 @@ namespace anime_downloader.Classes {
         /// </summary>
         /// <param name="mainWindow"></param>
         public static void ToggleButtons(this MainWindow mainWindow) {
-            var buttons = GetLogicalChildCollection<Button>(mainWindow);
+            var buttons = GetDependencyObject<Button>(mainWindow);
             foreach (var button in buttons)
                 button.Toggle();
         }
-
-        /// <summary>
-        ///     Toggle opacity and visibility of arbitrary amount of buttons.
-        /// </summary>
-        /// <param name="mainWindow"></param>
-        /// <param name="buttons"></param>
-        public static void ToggleButtons(this MainWindow mainWindow, params Button[] buttons) {
-            foreach (var button in buttons)
-                button.Toggle();
-        }
-
+        
         public static List<T> GetAll<T>(this Window window) where T : DependencyObject {
-            return GetLogicalChildCollection<T>(window);
+            return GetDependencyObject<T>(window);
         }
 
         public static List<T> GetAll<T>(this UserControl userControl) where T : DependencyObject {
-            return GetLogicalChildCollection<T>(userControl);
+            return GetDependencyObject<T>(userControl);
         } 
 
-        private static List<T> GetLogicalChildCollection<T>(object parent) where T : DependencyObject {
+        private static List<T> GetDependencyObject<T>(object parent) where T : DependencyObject {
             var logicalCollection = new List<T>();
-            GetLogicalChildCollection(parent as DependencyObject, logicalCollection);
+            GetDependencyObject(parent as DependencyObject, logicalCollection);
             return logicalCollection;
         }
 
-        private static void GetLogicalChildCollection<T>(DependencyObject parent, ICollection<T> logicalCollection) where T : DependencyObject {
+        private static void GetDependencyObject<T>(DependencyObject parent, ICollection<T> logicalCollection) where T : DependencyObject {
             var children = LogicalTreeHelper.GetChildren(parent);
-
             foreach (var child in children) {
-
                 if (!(child is DependencyObject))
                     continue;
-
                 var dependencyObject = child as DependencyObject;
-
-                if (child is T) {
+                if (child is T)
                     logicalCollection.Add(child as T);
-                }
-
-                GetLogicalChildCollection(dependencyObject, logicalCollection);
+                GetDependencyObject(dependencyObject, logicalCollection);
             }
         }
     }
