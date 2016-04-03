@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 namespace anime_downloader.Classes.File {
     public class FileHandler {
 
-        private readonly Settings _settings;
+        public readonly Settings _settings;
 
-        private readonly Downloader _downloader;
+        public readonly Downloader _downloader;
 
         public FileHandler(Settings settings, Downloader downloader) {
             _settings = settings;
@@ -82,10 +82,10 @@ namespace anime_downloader.Classes.File {
         ///     Get every anime not in the watched folder.
         /// </summary>
         /// <returns></returns>
-        private IEnumerable<AnimeEpisode> UnwatchedAnime() {
+        public IEnumerable<AnimeEpisode> UnwatchedAnime() {
             return _settings.EpisodePaths()
                 .SelectMany(Directory.GetFiles)
-                .Where(file => !IsFragmentedVideo(file))
+                 //.Where(file => !IsFragmentedVideo(file))
                 .Select(filePath => new AnimeEpisode(filePath))
                 .OrderBy(animeFile => animeFile.Name)
                 .ThenBy(animeFile => animeFile.IntEpisode);
@@ -95,9 +95,9 @@ namespace anime_downloader.Classes.File {
         ///     Get every anime in the watched folder.
         /// </summary>
         /// <returns></returns>
-        private IEnumerable<AnimeEpisode> WatchedAnime() {
+        public IEnumerable<AnimeEpisode> WatchedAnime() {
             return Directory.GetFiles(_settings.WatchedPath)
-                .Where(file => !IsFragmentedVideo(file))
+                 //.Where(file => !IsFragmentedVideo(file))
                 .Select(filePath => new AnimeEpisode(filePath))
                 .OrderBy(animeFile => animeFile.Name)
                 .ThenBy(animeFile => animeFile.IntEpisode);
@@ -107,10 +107,10 @@ namespace anime_downloader.Classes.File {
         ///     Get every anime in every folder.
         /// </summary>
         /// <returns></returns>
-        private IEnumerable<AnimeEpisode> AllAnime() {
+        public IEnumerable<AnimeEpisode> AllAnime() {
             return _settings.EpisodePaths(includeWatched:true)
                 .SelectMany(Directory.GetFiles)
-                .Where(file => !IsFragmentedVideo(file))
+                 //.Where(file => !IsFragmentedVideo(file))
                 .Select(filePath => new AnimeEpisode(filePath))
                 .OrderBy(animeFile => animeFile.Name)
                 .ThenBy(animeFile => animeFile.IntEpisode);
@@ -121,7 +121,7 @@ namespace anime_downloader.Classes.File {
         /// </summary>
         /// <param name="animes"></param>
         /// <returns></returns>
-        private static IEnumerable<AnimeEpisode> LastEpisodes(IEnumerable<AnimeEpisode> animes) {
+        public static IEnumerable<AnimeEpisode> LastEpisodes(IEnumerable<AnimeEpisode> animes) {
             var latest = new List<AnimeEpisode>();
             var reversed = animes.OrderByDescending(animeFile => animeFile.IntEpisode);
             foreach (var anime in reversed.Where(anime => !latest.Any(af => af.Name.Equals(anime.Name))))
@@ -134,13 +134,14 @@ namespace anime_downloader.Classes.File {
         /// </summary>
         /// <param name="animes"></param>
         /// <returns></returns>
-        private static IEnumerable<AnimeEpisode> FirstEpisodes(IEnumerable<AnimeEpisode> animes) {
+        public static IEnumerable<AnimeEpisode> FirstEpisodes(IEnumerable<AnimeEpisode> animes) {
             var earliest = new List<AnimeEpisode>();
             foreach (var anime in animes.Where(anime => !earliest.Any(af => af.Name.Equals(anime.Name))))
                 earliest.Add(anime);
             return earliest.OrderBy(af => af.Name);
         }
 
+        /*
         /// <summary>
         ///     Check if the file is fragmented by some byte guesswork.
         /// </summary>
@@ -167,6 +168,6 @@ namespace anime_downloader.Classes.File {
 
             return !(currentByte > 10);
         }
-
+        */
     }
 }

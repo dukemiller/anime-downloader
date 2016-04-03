@@ -191,17 +191,20 @@ namespace anime_downloader.Classes {
         ///     Joins properties of anime together to a string that can be read by an RSS query.
         /// </summary>
         /// <returns>A RSS parsable string.</returns>
-        public string ToRss() {
-            string[] seperators = {string.Join("+", Title.Replace("'s", "").Split(' ')), NextEpisode(), Resolution};
+        public string ToRss(string episode) {
+            string[] seperators = {string.Join("+", Title.Replace("'s", "").Split(' ')), episode, Resolution};
             return string.Join("+", seperators);
         }
 
-        /// <summary>
-        ///     Seeks the next episode for the current anime on Nyaa.eu
-        /// </summary>
-        /// <returns>A Nyaa object containing information about the file download.</returns>
-        public async Task<IEnumerable<Nyaa>> GetLinksToNextEpisode() {
-            var url = new Uri("https://www.nyaa.se/?page=rss&cats=1_37&term=" + ToRss() + "&sort=2");
+        public string ToRss()
+        {
+            string[] seperators = { string.Join("+", Title.Replace("'s", "").Split(' ')), NextEpisode(), Resolution };
+            return string.Join("+", seperators);
+        }
+
+        public async Task<IEnumerable<Nyaa>> GetLinksToEpisode(string episode)
+        {
+            var url = new Uri("https://www.nyaa.se/?page=rss&cats=1_37&term=" + ToRss(episode) + "&sort=2");
             var client = new WebClient();
             var document = new HtmlDocument();
             var html = await Task.Run(() => client.DownloadString(url));
@@ -211,10 +214,24 @@ namespace anime_downloader.Classes {
             var result = itemNodes?.Select(n => new Nyaa(n))
                 .Where(n => n.Measurement.Equals("MiB") &&
                             n.Size > 10 &&
-                            n.StrippedName().Contains(NextEpisode()) &&
+                            n.StrippedName().Contains(episode) &&
                             n.Seeders > 0);
 
             return result;
+        }
+
+        public async Task<IEnumerable<Nyaa>> GetLinksToCurrentEpisode()
+        {
+            return await GetLinksToEpisode(Episode);
+        }
+
+        /// <summary>
+        ///     Seeks the next episode for the current anime on Nyaa.eu
+        /// </summary>
+        /// <returns>A Nyaa object containing information about the file download.</returns>
+        public async Task<IEnumerable<Nyaa>> GetLinksToNextEpisode()
+        {
+            return await GetLinksToEpisode(NextEpisode());
         }
         
     }

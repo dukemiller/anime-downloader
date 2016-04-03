@@ -1,22 +1,28 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using anime_downloader.Classes.Web;
 
 namespace anime_downloader.Classes.File {
+
     public class Downloader {
         private readonly Settings _settings;
         private readonly Logger _logger;
         private readonly WebClient _client;
+        private readonly DownloadQueue _downloadQueue;
 
         public Downloader(Settings settings, Logger logger) {
             _settings = settings;
             _logger = logger;
             _client = new WebClient();
+            _downloadQueue = new DownloadQueue();
         }
 
         private bool CanDownload(Nyaa nyaa, Anime anime) {
@@ -64,8 +70,8 @@ namespace anime_downloader.Classes.File {
                 foreach (var nyaa in nyaaLinks.Where(nyaa => CanDownload(nyaa, anime))) {
                     textbox.AppendText($"Downloading '{anime.Title}' episode '{anime.NextEpisode()}'.\n");
                     textbox.ScrollDown();
-                    var filePath = await DownloadTorrent(nyaa);
-                    StartTorrent(filePath);
+
+                    _downloadQueue.Enqueue(() => StartDownload(nyaa));
                     if (_logger.IsEnabled)
                         await _logger.WriteLine($"Downloaded '{anime.Title}' episode {anime.NextEpisode()}.");
                     anime.Episode = anime.NextEpisode();
@@ -87,8 +93,8 @@ namespace anime_downloader.Classes.File {
                 var animeBase = Anime.ClosestTo(animeList, animeEpisode.Name);
                 foreach (var episode in animeEpisode.EpisodeRange) {
 
-                    if (await Task.Run(() =>
-                            allEpisodes.Any(a => animeEpisode.Name.Equals(a.Name) && a.Episode.Equals(episode))))
+                    if (await Task.Run(() => allEpisodes.Any(a => a.Name.Equals(animeEpisode.Name) && 
+                                                                  a.Episode.Equals(episode))))
                         continue;
 
                     // TODO: make a copy constructor?
@@ -101,13 +107,13 @@ namespace anime_downloader.Classes.File {
                         NameStrict = animeBase.NameStrict
                     };
 
-                    var nyaaLinks = await anime.GetLinksToNextEpisode();
+                    var nyaaLinks = await anime.GetLinksToCurrentEpisode();
 
-                    foreach (var nyaa in nyaaLinks.Where(nyaa => CanDownload(nyaa, anime))) {
-                        var filePath = await DownloadTorrent(nyaa);
-                        StartTorrent(filePath);
-                        if (_logger?.IsEnabled ?? false)
-                            await _logger.WriteLine($"Downloaded '{anime.Title}' episode {episode}.");
+                    foreach (var nyaa in nyaaLinks.Where(nyaa => CanDownload(nyaa, anime)))
+                    {
+                        _downloadQueue.Enqueue(() => StartDownload(nyaa));
+                        if (_logger.IsEnabled)
+                            await _logger.WriteLine($"Downloaded '{anime.Title}' episode {anime.NextEpisode()}.");
                         downloaded++;
                         break;
                     }
@@ -116,14 +122,20 @@ namespace anime_downloader.Classes.File {
             return downloaded;
         }
 
-        private async Task<string> DownloadTorrent(Nyaa nyaa) {
+        private void StartDownload(Nyaa nyaa)
+        {
+            var filePath = DownloadTorrent(nyaa);
+            StartTorrent(filePath);
+        }
+
+        private string DownloadTorrent(Nyaa nyaa) {
             if (_settings == null)
                 return null;
             
             var filePath = Path.Combine(_settings.TorrentFilesPath, nyaa.TorrentName());
 
             if (!System.IO.File.Exists(filePath))
-                await _client.DownloadFileTaskAsync(nyaa.Link, filePath);
+                _client.DownloadFile(nyaa.Link, filePath);
 
             return filePath;
         }
@@ -157,5 +169,24 @@ namespace anime_downloader.Classes.File {
             Task.Run(() => process.Start());
         }
 
+    }
+
+    internal class DownloadQueue 
+    {
+        private Action _result;
+        private readonly ConcurrentQueue<Action> _queue;
+
+        public DownloadQueue()
+        {
+            _queue = new ConcurrentQueue<Action>();
+        }
+
+        public async void Enqueue(Action a)
+        {
+            _queue.Enqueue(a);
+            while (_queue.TryDequeue(out _result))
+                await Task.Run(_result);
+        }
+        
     }
 }
