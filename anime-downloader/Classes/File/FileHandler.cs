@@ -3,14 +3,16 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace anime_downloader.Classes.File {
-    public class FileHandler {
+namespace anime_downloader.Classes.File
+{
+    public class FileHandler
+    {
+        public readonly Downloader _downloader;
 
         public readonly Settings _settings;
 
-        public readonly Downloader _downloader;
-
-        public FileHandler(Settings settings, Downloader downloader) {
+        public FileHandler(Settings settings, Downloader downloader)
+        {
             _settings = settings;
             _downloader = downloader;
         }
@@ -19,7 +21,8 @@ namespace anime_downloader.Classes.File {
         ///     Set all anime episode counts in the anime list to their last known values from the "watched" folder.
         /// </summary>
         /// <remarks>This is for re-indexing if you don't know which episodes you watched last.</remarks>
-        public void AnimesToLastEpisode_Watched(IEnumerable<Anime> animes) {
+        public void AnimesToLastEpisode_Watched(IEnumerable<Anime> animes)
+        {
             animes = animes.ToList();
             foreach (var finishedAnime in LastEpisodes(WatchedAnime()))
                 Anime.ClosestTo(animes, finishedAnime.Name).Episode = finishedAnime.Episode;
@@ -29,13 +32,15 @@ namespace anime_downloader.Classes.File {
         ///     Set all anime episode counts in the anime list to their last known values from the episodes folder.
         /// </summary>
         /// <remarks>This is for re-indexing if you don't know which episodes you watched last.</remarks>
-        public void AnimesToLastEpisode_Unwatched(IEnumerable<Anime> animes) {
+        public void AnimesToLastEpisode_Unwatched(IEnumerable<Anime> animes)
+        {
             animes = animes.ToList();
             foreach (var finishedAnime in LastEpisodes(UnwatchedAnime()))
                 Anime.ClosestTo(animes, finishedAnime.Name).Episode = finishedAnime.Episode;
         }
 
-        public void AnimesToBeginningEpisode_All(IEnumerable<Anime> animes) {
+        public void AnimesToBeginningEpisode_All(IEnumerable<Anime> animes)
+        {
             animes = animes.ToList();
             foreach (var firstAnime in FirstEpisodes(AllAnime()))
                 Anime.ClosestTo(animes, firstAnime.Name).Episode = firstAnime.Episode;
@@ -45,7 +50,8 @@ namespace anime_downloader.Classes.File {
         ///     Find and move any duplicate files to another folder.
         /// </summary>
         /// <returns></returns>
-        public async Task<int> MoveDuplicates() {
+        public async Task<int> MoveDuplicates()
+        {
             var animes = UnwatchedAnime().ToList();
 
             // if there's another anime with the same name and episode count,
@@ -54,7 +60,8 @@ namespace anime_downloader.Classes.File {
                                                                                         anime.Episode.Equals(a.Episode) &&
                                                                                         anime != a)).ToList());
 
-            if (duplicates.Count > 0) {
+            if (duplicates.Count > 0)
+            {
                 if (!Directory.Exists(_settings.DuplicatesPath))
                     Directory.CreateDirectory(_settings.DuplicatesPath);
 
@@ -70,7 +77,8 @@ namespace anime_downloader.Classes.File {
         /// </summary>
         /// <param name="animes"></param>
         /// <returns></returns>
-        public async Task<int> DownloadMissing(IEnumerable<Anime> animes) {
+        public async Task<int> DownloadMissing(IEnumerable<Anime> animes)
+        {
             var allEpisodes = await Task.Run(() => AllAnime().ToList());
             var animeFileDeltas = await Task.Run(() => FirstEpisodes(allEpisodes)
                 .OrderBy(a => a.Name)
@@ -82,10 +90,11 @@ namespace anime_downloader.Classes.File {
         ///     Get every anime not in the watched folder.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<AnimeEpisode> UnwatchedAnime() {
+        public IEnumerable<AnimeEpisode> UnwatchedAnime()
+        {
             return _settings.EpisodePaths()
                 .SelectMany(Directory.GetFiles)
-                 //.Where(file => !IsFragmentedVideo(file))
+                //.Where(file => !IsFragmentedVideo(file))
                 .Select(filePath => new AnimeEpisode(filePath))
                 .OrderBy(animeFile => animeFile.Name)
                 .ThenBy(animeFile => animeFile.IntEpisode);
@@ -95,9 +104,10 @@ namespace anime_downloader.Classes.File {
         ///     Get every anime in the watched folder.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<AnimeEpisode> WatchedAnime() {
+        public IEnumerable<AnimeEpisode> WatchedAnime()
+        {
             return Directory.GetFiles(_settings.WatchedPath)
-                 //.Where(file => !IsFragmentedVideo(file))
+                //.Where(file => !IsFragmentedVideo(file))
                 .Select(filePath => new AnimeEpisode(filePath))
                 .OrderBy(animeFile => animeFile.Name)
                 .ThenBy(animeFile => animeFile.IntEpisode);
@@ -107,10 +117,11 @@ namespace anime_downloader.Classes.File {
         ///     Get every anime in every folder.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<AnimeEpisode> AllAnime() {
-            return _settings.EpisodePaths(includeWatched:true)
+        public IEnumerable<AnimeEpisode> AllAnime()
+        {
+            return _settings.EpisodePaths(true)
                 .SelectMany(Directory.GetFiles)
-                 //.Where(file => !IsFragmentedVideo(file))
+                //.Where(file => !IsFragmentedVideo(file))
                 .Select(filePath => new AnimeEpisode(filePath))
                 .OrderBy(animeFile => animeFile.Name)
                 .ThenBy(animeFile => animeFile.IntEpisode);
@@ -121,7 +132,8 @@ namespace anime_downloader.Classes.File {
         /// </summary>
         /// <param name="animes"></param>
         /// <returns></returns>
-        public static IEnumerable<AnimeEpisode> LastEpisodes(IEnumerable<AnimeEpisode> animes) {
+        public static IEnumerable<AnimeEpisode> LastEpisodes(IEnumerable<AnimeEpisode> animes)
+        {
             var latest = new List<AnimeEpisode>();
             var reversed = animes.OrderByDescending(animeFile => animeFile.IntEpisode);
             foreach (var anime in reversed.Where(anime => !latest.Any(af => af.Name.Equals(anime.Name))))
@@ -134,7 +146,8 @@ namespace anime_downloader.Classes.File {
         /// </summary>
         /// <param name="animes"></param>
         /// <returns></returns>
-        public static IEnumerable<AnimeEpisode> FirstEpisodes(IEnumerable<AnimeEpisode> animes) {
+        public static IEnumerable<AnimeEpisode> FirstEpisodes(IEnumerable<AnimeEpisode> animes)
+        {
             var earliest = new List<AnimeEpisode>();
             foreach (var anime in animes.Where(anime => !earliest.Any(af => af.Name.Equals(anime.Name))))
                 earliest.Add(anime);

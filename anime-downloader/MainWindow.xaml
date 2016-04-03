@@ -8,25 +8,25 @@
         Title="Anime Downloader" Height="386" Width="918" StateChanged="Window_StateChanged">
 
     <Grid x:Name="Grid">
-        <Button x:Name="ButtonHome" 
-                Content="Home" 
+        <Button x:Name="ButtonHome"
+                Content="Home"
                 HorizontalAlignment="Left" Margin="10,10,0,0" FontSize="24"
                 VerticalAlignment="Top" Width="226" Click="ButtonHome_Click" Height="43" />
-        <Button x:Name="ButtonList" 
-                Content="Anime List" 
+        <Button x:Name="ButtonList"
+                Content="Anime List"
                 HorizontalAlignment="Left" Margin="10,66,0,0"
                 VerticalAlignment="Top" Width="226" Height="43" FontSize="24" Click="ButtonList_Click" />
-        <Button x:Name="ButtonSettings" 
-                Content="Settings &amp; Options" 
+        <Button x:Name="ButtonSettings"
+                Content="Settings &amp; Options"
                 HorizontalAlignment="Left"
                 Margin="10,119,0,0" VerticalAlignment="Top" Width="226" Height="43" FontSize="24"
                 Click="ButtonSettings_Click" />
-        <Button x:Name="ButtonCheck" 
-                Content="Check for latest" 
+        <Button x:Name="ButtonCheck"
+                Content="Check for latest"
                 HorizontalAlignment="Left" Margin="10,173,0,0"
                 VerticalAlignment="Top" Width="226" Height="43" FontSize="24" Click="ButtonCheck_Click" />
-        <Button x:Name="ButtonPlaylist" 
-                Content="Playlist Creator" 
+        <Button x:Name="ButtonPlaylist"
+                Content="Playlist Creator"
                 HorizontalAlignment="Left" Margin="10,226,0,0"
                 FontSize="16" VerticalAlignment="Top" Width="110" Click="ButtonPlaylist_Click" Height="34" />
 
@@ -42,10 +42,10 @@
                         VerticalAlignment="Top" Margin="5" Width="70" Click="ButtonOpenExecuting_Click" />
             </StackPanel>
         </GroupBox>
-        <Button x:Name="ButtonMisc" 
-        	Content="Misc" 
-        	HorizontalAlignment="Left" Margin="126,226,0,0"
-        	FontSize="16" VerticalAlignment="Top" Width="110" Click="ButtonMisc_Click" Height="34" />
+        <Button x:Name="ButtonMisc"
+                Content="Misc"
+                HorizontalAlignment="Left" Margin="126,226,0,0"
+                FontSize="16" VerticalAlignment="Top" Width="110" Click="ButtonMisc_Click" Height="34" />
     </Grid>
 
 </Window>

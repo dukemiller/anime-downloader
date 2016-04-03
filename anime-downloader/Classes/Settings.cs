@@ -5,26 +5,22 @@ using System.Linq;
 using System.Xml.Linq;
 using anime_downloader.Classes.Xml;
 
-namespace anime_downloader.Classes {
-    public class Settings {
-        
-        private XContainer Root => Xml.SettingsRoot;
-
+namespace anime_downloader.Classes
+{
+    public class Settings
+    {
         private XmlController _xml;
 
-        private XmlController Xml => _xml ?? (_xml = XmlController.GetXmlController(this));
+        private XContainer Root => Xml.SettingsRoot;
 
-        private void Save() {
-            if (!Xml.AutoSave)
-                return;
-            Xml.SaveSettings();
-        }
+        private XmlController Xml => _xml ?? (_xml = XmlController.GetXmlController(this));
 
         /// <summary>
         ///     Where all XML files are stored.
         /// </summary>
-        public string ApplicationPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    "anime-downloader");
+        public string ApplicationPath
+            => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "anime-downloader");
 
         /// <summary>
         ///     The path of the settings XML file.
@@ -47,30 +43,13 @@ namespace anime_downloader.Classes {
         public string DuplicatesPath => Path.Combine(BaseFolderPath, "Duplicates");
 
         /// <summary>
-        ///     The paths where the episodes are stored.
-        /// </summary>
-        /// <remarks>
-        ///     The path will always start with a "2" since it starts with the year, 
-        ///     so this will need updating in about 984 years or any time named directories change.
-        /// </remarks>
-        /// <returns></returns>
-        public IEnumerable<string> EpisodePaths(bool includeWatched = false) => Directory
-            .GetDirectories(BaseFolderPath)
-            .Where(folder => {
-                var path = Path.GetFileName(folder);
-                return path != null &&
-                       (path.StartsWith("2") ||
-                        !path.ToLower().Equals("torrents") && 
-                        (includeWatched & path.ToLower().Equals("watched")) &&
-                        !path.ToLower().Equals("duplicates"));
-            });
-
-        /// <summary>
         ///     The path of base downloading folder.
         /// </summary>
-        public string BaseFolderPath {
+        public string BaseFolderPath
+        {
             get { return Root.Element("path")?.Element("base")?.Value; }
-            set {
+            set
+            {
                 if (value.Equals(BaseFolderPath))
                     return;
                 Root.Element("path")?.Element("base")?.SetValue(value);
@@ -81,9 +60,11 @@ namespace anime_downloader.Classes {
         /// <summary>
         ///     The path where all .torrent files will be downloaded to.
         /// </summary>
-        public string TorrentFilesPath {
+        public string TorrentFilesPath
+        {
             get { return Root.Element("path")?.Element("torrents")?.Value; }
-            set {
+            set
+            {
                 Root.Element("path")?.Element("torrents")?.SetValue(value);
                 Save();
             }
@@ -92,9 +73,11 @@ namespace anime_downloader.Classes {
         /// <summary>
         ///     The path to the utorrent executable.
         /// </summary>
-        public string UtorrentPath {
+        public string UtorrentPath
+        {
             get { return Root.Element("path")?.Element("utorrent")?.Value; }
-            set {
+            set
+            {
                 Root.Element("path")?.Element("utorrent")?.SetValue(value);
                 Save();
             }
@@ -103,9 +86,11 @@ namespace anime_downloader.Classes {
         /// <summary>
         ///     The user preferred anime list sort method.
         /// </summary>
-        public string SortBy {
+        public string SortBy
+        {
             get { return Root.Element("sortBy")?.Value ?? "name"; }
-            set {
+            set
+            {
                 Root.Element("sortBy")?.SetValue(value);
                 Save();
             }
@@ -114,9 +99,11 @@ namespace anime_downloader.Classes {
         /// <summary>
         ///     The user preference for only wanting anime downloaded containing whitelisted subgroups.
         /// </summary>
-        public bool OnlyWhitelisted {
+        public bool OnlyWhitelisted
+        {
             get { return bool.Parse(Root.Element("flag")?.Element("only-whitelisted-subs")?.Value ?? "false"); }
-            set {
+            set
+            {
                 Root.Element("flag")?.Element("only-whitelisted-subs")?.SetValue(value);
                 Save();
             }
@@ -125,11 +112,14 @@ namespace anime_downloader.Classes {
         /// <summary>
         ///     The user preferred subgroups.
         /// </summary>
-        public string[] Subgroups {
+        public string[] Subgroups
+        {
             get { return Root.Elements("subgroup").Elements("name").Select(x => x.Value).ToArray(); }
-            set {
+            set
+            {
                 Root.Elements("subgroup").Elements("name").Remove();
-                foreach (var subgroup in value) {
+                foreach (var subgroup in value)
+                {
                     Root.Element("subgroup")?.Add(new XElement("name", subgroup));
                 }
                 Save();
@@ -137,12 +127,14 @@ namespace anime_downloader.Classes {
         }
 
         /// <summary>
-        ///     The user preference if there should be a log file in the folder detailing 
+        ///     The user preference if there should be a log file in the folder detailing
         ///     when files are downloaded.
         /// </summary>
-        public bool UseLogging {
+        public bool UseLogging
+        {
             get { return bool.Parse(Root.Element("flag")?.Element("use-logging")?.Value ?? "false"); }
-            set {
+            set
+            {
                 Root.Element("flag")?.Element("use-logging")?.SetValue(value);
                 Save();
             }
@@ -150,17 +142,44 @@ namespace anime_downloader.Classes {
 
         public string LogPath => Path.Combine(BaseFolderPath, "log.txt");
 
+        private void Save()
+        {
+            if (!Xml.AutoSave)
+                return;
+            Xml.SaveSettings();
+        }
+
+        /// <summary>
+        ///     The paths where the episodes are stored.
+        /// </summary>
+        /// <remarks>
+        ///     The path will always start with a "2" since it starts with the year,
+        ///     so this will need updating in about 984 years or any time named directories change.
+        /// </remarks>
+        /// <returns></returns>
+        public IEnumerable<string> EpisodePaths(bool includeWatched = false) => Directory
+            .GetDirectories(BaseFolderPath)
+            .Where(folder =>
+            {
+                var path = Path.GetFileName(folder);
+                return path != null &&
+                       (path.StartsWith("2") ||
+                        !path.ToLower().Equals("torrents") &&
+                        (includeWatched & path.ToLower().Equals("watched")) &&
+                        !path.ToLower().Equals("duplicates"));
+            });
+
         /// <summary>
         ///     Create and return the path to a folder based on a timestamp of the current moment.
         /// </summary>
         /// <returns>A path used to download into.</returns>
-        public string GetEpisodeFolder() {
+        public string GetEpisodeFolder()
+        {
             var date = DateTime.Now;
-            var week = Math.Floor(Convert.ToDouble(date.DayOfYear) / 7);
+            var week = Math.Floor(Convert.ToDouble(date.DayOfYear)/7);
             var folder = $"{date.Year} - Week {week} - {date.ToString("MMMM")}";
             var path = Path.Combine(BaseFolderPath, folder);
             return path;
         }
-
     }
 }

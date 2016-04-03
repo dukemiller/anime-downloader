@@ -15,7 +15,7 @@
                   FocusVisualStyle="{x:Null}"
                   RowHeaderWidth="0"
                   HorizontalContentAlignment="Center"
-                  GridLinesVisibility="None" BorderThickness="0" FontSize="16" >
+                  GridLinesVisibility="None" BorderThickness="0" FontSize="16">
             <DataGrid.ContextMenu>
                 <ContextMenu Name="AnimeContextMenu">
                     <MenuItem Name="Add" Header="Add Single ..." />

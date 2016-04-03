@@ -6,12 +6,15 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
 
-namespace anime_downloader.Classes.Web {
-    public class Nyaa {
+namespace anime_downloader.Classes.Web
+{
+    public class Nyaa
+    {
         /// <summary>
         ///     A conversion chart from any of these values to megabytes.
         /// </summary>
-        private static readonly Dictionary<string, double> ToMegabyte = new Dictionary<string, double> {
+        private static readonly Dictionary<string, double> ToMegabyte = new Dictionary<string, double>
+        {
             {"MiB", 1.04858},
             {"GiB", 1073.74},
             {"KiB", 0.001024}
@@ -51,7 +54,8 @@ namespace anime_downloader.Classes.Web {
         ///     HTML Nyaa Initializer
         /// </summary>
         /// <param name="node">A raw node.</param>
-        public Nyaa(HtmlNode node) {
+        public Nyaa(HtmlNode node)
+        {
             Name = WebUtility.HtmlDecode(node.Element("title").InnerText.Replace("Â", ""));
             Link = node.Element("#text").InnerText.Replace("#38;", "");
             Description = node.Element("description").InnerText;
@@ -78,11 +82,13 @@ namespace anime_downloader.Classes.Web {
         ///     Gathers the torrent's filename from it's meta-data.
         /// </summary>
         /// <returns>A valid filename for the torrent.</returns>
-        public string TorrentName() {
+        public string TorrentName()
+        {
             var request = (HttpWebRequest) WebRequest.Create(Link);
             HttpWebResponse response = null;
 
-            try {
+            try
+            {
                 response = (HttpWebResponse) request.GetResponse();
                 response.GetResponseStream();
                 var disposition = response.Headers["content-disposition"];
@@ -91,11 +97,13 @@ namespace anime_downloader.Classes.Web {
                 return filename;
             }
 
-            catch (Exception ex) when (ex is WebException || ex is InvalidOperationException) {
+            catch (Exception ex) when (ex is WebException || ex is InvalidOperationException)
+            {
                 return null;
             }
 
-            finally {
+            finally
+            {
                 response?.Close();
             }
         }
@@ -105,11 +113,12 @@ namespace anime_downloader.Classes.Web {
         /// </summary>
         /// <param name="removeEpisode">A flag for also removing the episode number</param>
         /// <returns>The name of the anime.</returns>
-        public string StrippedName(bool removeEpisode = false) {
+        public string StrippedName(bool removeEpisode = false)
+        {
             var text = Name;
 
             var phrases = (from Match match in Regex.Matches(text, @"\s?\[(.*?)\]|\((.*?)\)\s*")
-                           select match.Groups[0].Value).ToList();
+                select match.Groups[0].Value).ToList();
 
             phrases.ForEach(p => text = text.Replace(p, ""));
 
@@ -123,9 +132,10 @@ namespace anime_downloader.Classes.Web {
         ///     Returns the subgroup from the name of the file.
         /// </summary>
         /// <returns>The subgroup of the file.</returns>
-        public string Subgroup() {
+        public string Subgroup()
+        {
             return (from Match match in Regex.Matches(Name, @"\[([A-Za-z0-9_µ\-]+)\]+")
-                    select match.Groups[1].Value).FirstOrDefault(result => result.All(c => !char.IsNumber(c)));
+                select match.Groups[1].Value).FirstOrDefault(result => result.All(c => !char.IsNumber(c)));
         }
 
         /// <summary>
@@ -138,20 +148,22 @@ namespace anime_downloader.Classes.Web {
         ///     Check if Nyaa.se is online within 1.0 seconds so not to hang when entering download view.
         /// </summary>
         /// <returns></returns>
-        public static async Task<bool> IsOnline() {
+        public static async Task<bool> IsOnline()
+        {
             var httpWebRequest = (HttpWebRequest) WebRequest.Create("https://www.nyaa.se/");
             httpWebRequest.Timeout = 1000;
             httpWebRequest.AllowAutoRedirect = false;
 
-            try {
+            try
+            {
                 var httpWebResponse = (HttpWebResponse) await httpWebRequest.GetResponseAsync();
                 return httpWebResponse.StatusCode == HttpStatusCode.OK;
             }
 
-            catch {
+            catch
+            {
                 return false;
             }
-            
         }
     }
 }

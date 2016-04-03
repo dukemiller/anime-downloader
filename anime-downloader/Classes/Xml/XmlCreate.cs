@@ -1,15 +1,18 @@
 using System;
 using System.Xml.Linq;
 
-namespace anime_downloader.Classes.Xml {
+namespace anime_downloader.Classes.Xml
+{
     /// <summary>
     ///     The purpose of this class is to keep the schema for any nodes or documents
     ///     in one location.
     /// </summary>
-    public class XmlCreate {
+    public class XmlCreate
+    {
         private readonly Settings _settings;
 
-        public XmlCreate(Settings settings) {
+        public XmlCreate(Settings settings)
+        {
             _settings = settings;
         }
 
@@ -17,13 +20,14 @@ namespace anime_downloader.Classes.Xml {
         ///     Create the anime xml file with initial nodes.
         /// </summary>
         /// <returns></returns>
-        public static XDocument AnimeXml() {
+        public static XDocument AnimeXml()
+        {
             var document =
                 new XDocument(
                     new XDeclaration("1.0", "utf-8", "yes"),
                     new XComment("The anime list."),
                     new XElement("anime")
-                );
+                    );
             return document;
         }
 
@@ -31,7 +35,8 @@ namespace anime_downloader.Classes.Xml {
         ///     Create an anime node.
         /// </summary>
         /// <returns></returns>
-        public static XContainer AnimeNode() {
+        public static XContainer AnimeNode()
+        {
             var node = new XElement("show",
                 new XElement("name"),
                 new XElement("episode", "00"),
@@ -50,7 +55,8 @@ namespace anime_downloader.Classes.Xml {
         ///     Create the settings xml file with initial nodes.
         /// </summary>
         /// <returns></returns>
-        public static XDocument SettingsXml() {
+        public static XDocument SettingsXml()
+        {
             var document =
                 new XDocument(
                     new XDeclaration("1.0", "utf-8", "yes"),
@@ -61,22 +67,23 @@ namespace anime_downloader.Classes.Xml {
                             new XElement("base"),
                             new XElement("torrents"),
                             new XElement("utorrent")
-                        ),
+                            ),
                         new XElement("subgroup"),
                         new XElement("flag",
                             new XElement("only-whitelisted-subs"),
                             new XElement("use-logging")
                             ),
-                    new XElement("sortBy")
-                    )
-                );
+                        new XElement("sortBy")
+                        )
+                    );
             return document;
         }
 
         /// <summary>
         ///     Create the settings xml file with initial nodes and save to settings-defined xml location.
         /// </summary>
-        public void SettingsXmlAndSave() {
+        public void SettingsXmlAndSave()
+        {
             var document = SettingsXml();
             document.Save(_settings.SettingsXmlPath);
         }
@@ -84,7 +91,8 @@ namespace anime_downloader.Classes.Xml {
         /// <summary>
         ///     Create the anime xml file with initial nodes and save to settings-defined xml location.
         /// </summary>
-        public void AnimeXmlAndSave() {
+        public void AnimeXmlAndSave()
+        {
             var document = AnimeXml();
             document.Save(_settings.AnimeXmlPath);
         }

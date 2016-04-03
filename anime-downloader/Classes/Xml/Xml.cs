@@ -1,6 +1,7 @@
-﻿namespace anime_downloader.Classes.Xml {
-    public class Xml {
-
+﻿namespace anime_downloader.Classes.Xml
+{
+    public class Xml
+    {
         /// <summary>
         ///     The XML file data controlling class.
         /// </summary>
@@ -16,7 +17,8 @@
         /// </summary>
         public XmlVerify Verify;
 
-        public Xml(Settings settings) {
+        public Xml(Settings settings)
+        {
             Controller = XmlController.GetXmlController(settings);
             Create = new XmlCreate(settings);
             Verify = new XmlVerify(settings, Controller);

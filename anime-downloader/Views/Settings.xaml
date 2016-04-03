@@ -20,7 +20,7 @@
             <RowDefinition Height="12*" />
             <RowDefinition Height="12*" />
         </Grid.RowDefinitions>
-        
+
         <Label x:Name="BaseLabel" Content="Base Path: " FontSize="16" HorizontalAlignment="Center"
                Grid.Row="0" Grid.Column="0"
                ToolTip="Path to the base path for the application."
@@ -42,15 +42,15 @@
         <Label x:Name="UseLogger" Content="Enabler Logger" FontSize="16" HorizontalAlignment="Center"
                ToolTip="Create a text file that will record all the files you downloaded."
                VerticalAlignment="Center" Grid.Row="5" Grid.Column="0" Width="180" />
-        
-        <TextBox x:Name="BaseTextbox" Grid.Column="1" Height="33" 
+
+        <TextBox x:Name="BaseTextbox" Grid.Column="1" Height="33"
                  VerticalContentAlignment="Center" VerticalAlignment="Center"
                  Grid.Row="0" FontSize="15" />
-        <TextBox x:Name="TorrentTextbox" Grid.Column="1" Height="33" 
+        <TextBox x:Name="TorrentTextbox" Grid.Column="1" Height="33"
                  VerticalContentAlignment="Center" VerticalAlignment="Center"
                  Grid.Row="1" FontSize="15" />
-        <TextBox x:Name="DownloadTextbox" Grid.Column="1" Height="33" 
-                 VerticalContentAlignment="Center" VerticalAlignment="Center" 
+        <TextBox x:Name="DownloadTextbox" Grid.Column="1" Height="33"
+                 VerticalContentAlignment="Center" VerticalAlignment="Center"
                  Grid.Row="2" FontSize="15" />
         <TextBox x:Name="SubgroupsTextbox" Grid.Column="1" Height="33"
                  VerticalContentAlignment="Center" VerticalAlignment="Center"
@@ -59,11 +59,11 @@
                   Grid.Row="4" VerticalAlignment="Center" />
         <CheckBox x:Name="UseLoggerCheckbox" Content="" Grid.Column="1" HorizontalAlignment="Left"
                   Grid.Row="5" VerticalAlignment="Center" />
-        
-        <Button x:Name="ApplyChangesButton" 
-                Content="Apply Changes"  
+
+        <Button x:Name="ApplyChangesButton"
+                Content="Apply Changes"
                 VerticalAlignment="Center" HorizontalAlignment="Right"
-                Grid.Row="6"  Width="107" Height="35" Grid.Column="1" />
+                Grid.Row="6" Width="107" Height="35" Grid.Column="1" />
 
     </Grid>
 </UserControl>

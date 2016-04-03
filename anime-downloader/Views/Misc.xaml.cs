@@ -1,9 +1,12 @@
-﻿namespace anime_downloader.Views {
+﻿namespace anime_downloader.Views
+{
     /// <summary>
-    /// Interaction logic for Misc.xaml
+    ///     Interaction logic for Misc.xaml
     /// </summary>
-    public partial class Misc {
-        public Misc() {
+    public partial class Misc
+    {
+        public Misc()
+        {
             InitializeComponent();
         }
     }

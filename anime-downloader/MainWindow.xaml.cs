@@ -4,8 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -15,13 +14,15 @@ using anime_downloader.Classes.Web;
 using anime_downloader.Classes.Xml;
 using anime_downloader.Views;
 using Settings = anime_downloader.Classes.Settings;
-using UserControl = System.Windows.Controls.UserControl;
+using TextBox = System.Windows.Controls.TextBox;
 
-namespace anime_downloader {
+namespace anime_downloader
+{
     /// <summary>
     ///     Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow {
+    public partial class MainWindow
+    {
         /// <summary>
         ///     A collection of all the anime.
         /// </summary>
@@ -38,6 +39,20 @@ namespace anime_downloader {
         private string _currentlyEditedAnime;
 
         /// <summary>
+        ///     Handles downloading operations.
+        /// </summary>
+        private Downloader _downloader;
+
+        private FileHandler _filehandler;
+
+        /// <summary>
+        ///     Handles file logging operations.
+        /// </summary>
+        private Logger _logger;
+
+        private System.Windows.Forms.NotifyIcon _notifyIcon;
+
+        /// <summary>
         ///     Handle playlist creation with some customization.
         /// </summary>
         private Playlist _playlist;
@@ -52,21 +67,8 @@ namespace anime_downloader {
         /// </summary>
         private Xml _xml;
 
-        /// <summary>
-        ///     Handles file logging operations.
-        /// </summary>
-        private Logger _logger;
-
-        /// <summary>
-        ///     Handles downloading operations.
-        /// </summary>
-        private Downloader _downloader;
-
-        private FileHandler _filehandler;
-
-        private System.Windows.Forms.NotifyIcon _notifyIcon;
-
-        public MainWindow() {
+        public MainWindow()
+        {
             InitializeComponent();
             InitializeSettings();
             InitializeTray();
@@ -77,14 +79,15 @@ namespace anime_downloader {
         /// <summary>
         ///     Initialize and set the settings object.
         /// </summary>
-        private void InitializeSettings() {
+        private void InitializeSettings()
+        {
             _settings = new Settings();
             _playlist = new Playlist(_settings);
             _xml = new Xml(_settings);
             _logger = new Logger(_settings);
             _downloader = new Downloader(_settings, _logger);
             _filehandler = new FileHandler(_settings, _downloader);
-            
+
             if (!Directory.Exists(_settings.ApplicationPath))
                 Directory.CreateDirectory(_settings.ApplicationPath);
 
@@ -92,7 +95,8 @@ namespace anime_downloader {
             if (!File.Exists(_settings.SettingsXmlPath))
                 CreateNewSettings();
 
-            else {
+            else
+            {
                 _xml.Verify.SettingsSchema();
                 _xml.Verify.AnimeSchema();
                 _allAnime = _xml.Controller.SortedAnimes;
@@ -107,24 +111,27 @@ namespace anime_downloader {
         /// <summary>
         ///     Create the tray.
         /// </summary>
-        private void InitializeTray() {
+        private void InitializeTray()
+        {
             // get the image from the program
-            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            var assembly = Assembly.GetExecutingAssembly();
             var stream = assembly.GetManifestResourceStream("anime_downloader.ad3.ico");
             Debug.Assert(stream != null, "myStream != null");
             var icon = new Icon(stream);
 
-            _notifyIcon = new System.Windows.Forms.NotifyIcon {
+            _notifyIcon = new System.Windows.Forms.NotifyIcon
+            {
                 Icon = icon
                 // Icon = new System.Drawing.Icon(image)
             };
 
-            _notifyIcon.Click += delegate {
+            _notifyIcon.Click += delegate
+            {
                 Show();
                 WindowState = WindowState.Normal;
             };
         }
-        
+
         /// <summary>
         ///     Change the display to UserControl TView.
         /// </summary>
@@ -137,22 +144,26 @@ namespace anime_downloader {
         /// <returns>
         ///     A an instantiated view of type TView
         /// </returns>
-        private TView ChangeDisplay<TView>() where TView : UserControl, new() {
+        private TView ChangeDisplay<TView>() where TView : UserControl, new()
+        {
             // Don't reload the same view
-            if (_currentDisplay != null && _currentDisplay.GetType() == typeof(TView))
+            if (_currentDisplay != null && _currentDisplay.GetType() == typeof (TView))
                 return (TView) _currentDisplay;
-            _currentDisplay = new TView(); 
+            _currentDisplay = new TView();
             Display.Children.Clear();
             Display.Children.Add(_currentDisplay);
             return (TView) _currentDisplay;
         }
 
-        private void Window_StateChanged(object sender, EventArgs e) {
-            if (WindowState == WindowState.Minimized) {
+        private void Window_StateChanged(object sender, EventArgs e)
+        {
+            if (WindowState == WindowState.Minimized)
+            {
                 Hide();
                 _notifyIcon.Visible = true;
             }
-            else if (WindowState == WindowState.Normal) {
+            else if (WindowState == WindowState.Normal)
+            {
                 _notifyIcon.Visible = false;
             }
         }
@@ -164,7 +175,8 @@ namespace anime_downloader {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ButtonHome_Click(object sender, RoutedEventArgs e) {
+        private void ButtonHome_Click(object sender, RoutedEventArgs e)
+        {
             ChangeDisplay<Home>();
         }
 
@@ -173,7 +185,8 @@ namespace anime_downloader {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ButtonFolder_Click(object sender, RoutedEventArgs e) {
+        private void ButtonFolder_Click(object sender, RoutedEventArgs e)
+        {
             if (Directory.Exists(_settings.BaseFolderPath))
                 Process.Start(_settings.BaseFolderPath);
             else
@@ -185,7 +198,8 @@ namespace anime_downloader {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ButtonOpenExecuting_Click(object sender, RoutedEventArgs e) {
+        private void ButtonOpenExecuting_Click(object sender, RoutedEventArgs e)
+        {
             Process.Start(_settings.ApplicationPath);
         }
 
@@ -196,7 +210,8 @@ namespace anime_downloader {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ButtonPlaylist_Click(object sender, RoutedEventArgs e) {
+        private void ButtonPlaylist_Click(object sender, RoutedEventArgs e)
+        {
             var playlistDisplay = ChangeDisplay<PlaylistCreator>();
             if (playlistDisplay == null)
                 return;
@@ -209,11 +224,13 @@ namespace anime_downloader {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void PlaylistCreateButton_Click(object sender, RoutedEventArgs e) {
+        private void PlaylistCreateButton_Click(object sender, RoutedEventArgs e)
+        {
             if (!Directory.Exists(_settings.BaseFolderPath))
                 MessageBox.Show("Your base folder doesn't seem to exist.");
 
-            else {
+            else
+            {
                 _playlist.Refresh();
 
                 var playlistCreatorDisplay = _currentDisplay as PlaylistCreator;
@@ -243,23 +260,26 @@ namespace anime_downloader {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void AnimeListAddMultiple_Click(object sender, RoutedEventArgs e) {
+        private void AnimeListAddMultiple_Click(object sender, RoutedEventArgs e)
+        {
             var display = ChangeDisplay<AnimeDetailsMultiple>();
 
-            display.InputTextBox.Loaded += delegate {
-                display.InputTextBox.Focus();
-            };
+            display.InputTextBox.Loaded += delegate { display.InputTextBox.Focus(); };
 
-            display.SubmitButton.Click += delegate {
-                var names = display.InputTextBox.Text.Split(Environment.NewLine.ToCharArray(), 
+            display.SubmitButton.Click += delegate
+            {
+                var names = display.InputTextBox.Text.Split(Environment.NewLine.ToCharArray(),
                     StringSplitOptions.RemoveEmptyEntries).Select(n => n.ToLower()).ToList();
                 if (names.Distinct().Count() != names.Count)
                     MessageBox.Show("Names have to be unique.");
                 else if (_allAnime.Select(a => a.Name.ToLower()).Intersect(names).Any())
                     MessageBox.Show("A title entered already exists in the anime list.");
-                else {
-                    foreach (var name in names) {
-                        _xml.Controller.Add(new Anime {
+                else
+                {
+                    foreach (var name in names)
+                    {
+                        _xml.Controller.Add(new Anime
+                        {
                             Name = name,
                             Airing = display.AiringCheckBox.IsChecked ?? false,
                             Episode = display.EpisodeTextBox.Text,
@@ -279,7 +299,8 @@ namespace anime_downloader {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ButtonList_Click(object sender, RoutedEventArgs e) {
+        private void ButtonList_Click(object sender, RoutedEventArgs e)
+        {
             var display = ChangeDisplay<AnimeList>();
 
             display.DataGrid.Refresh(_xml.Controller.SortedAnimes);
@@ -291,8 +312,10 @@ namespace anime_downloader {
             display.DataGrid.PreviewKeyDown += AnimeListDelete_KeyDown;
             display.DataGrid.MouseDoubleClick += AnimeList_MouseDoubleClick;
 
-            Grid.KeyDown += (o, keyEventArgs) => {
-                if (keyEventArgs.Key == Key.F && (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))) {
+            Grid.KeyDown += (o, keyEventArgs) =>
+            {
+                if (keyEventArgs.Key == Key.F && (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
+                {
                     CreateAnimeFindPopup();
                 }
             };
@@ -303,31 +326,36 @@ namespace anime_downloader {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void AnimeListDelete_Click(object sender, RoutedEventArgs e) {
+        private void AnimeListDelete_Click(object sender, RoutedEventArgs e)
+        {
             var display = (AnimeList) _currentDisplay;
             foreach (var cell in display.DataGrid.SelectedCells)
                 _xml.Controller.Remove(cell.Item as Anime);
             display.DataGrid.Refresh(_xml.Controller.SortedAnimes);
         }
-        
+
         /// <summary>
         ///     Event: Keydown -> Anime list
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void AnimeListDelete_KeyDown(object sender, KeyEventArgs e) {
+        private void AnimeListDelete_KeyDown(object sender, KeyEventArgs e)
+        {
             var display = (AnimeList) _currentDisplay;
 
             // Delete
-            if (e.Key == Key.Delete) {
+            if (e.Key == Key.Delete)
+            {
                 foreach (var cell in display.DataGrid.SelectedCells)
                     _xml.Controller.Remove(cell.Item as Anime);
                 display.DataGrid.Refresh(_xml.Controller.SortedAnimes);
             }
 
             // Edit
-            else if (e.Key == Key.Enter) {
-                if (display.DataGrid.SelectedCells.FirstOrDefault().IsValid) {
+            else if (e.Key == Key.Enter)
+            {
+                if (display.DataGrid.SelectedCells.FirstOrDefault().IsValid)
+                {
                     AnimeListEdit_Click(sender, e);
                 }
             }
@@ -336,14 +364,16 @@ namespace anime_downloader {
         /// <summary>
         ///     Secondary View: Find anime box
         /// </summary>
-        private void CreateAnimeFindPopup() {
+        private void CreateAnimeFindPopup()
+        {
             var display = (AnimeList) _currentDisplay;
 
             // Don't recreate it again
             if (Grid.Children.OfType<TextBox>().Any(t => t.Name.Equals("FindBox")))
                 return;
 
-            var findWindow = new TextBox {
+            var findWindow = new TextBox
+            {
                 Name = "FindBox",
                 Width = 400,
                 Height = 30,
@@ -352,13 +382,15 @@ namespace anime_downloader {
             };
 
             // Reset values and remove the find
-            RoutedEventHandler closeFindWindow = delegate {
+            RoutedEventHandler closeFindWindow = delegate
+            {
                 Grid.Children.Remove(findWindow);
                 display.DataGrid.ItemsSource = _allAnime;
                 display.DataGrid.Focus();
             };
 
-            MouseButtonEventHandler closeFindWindowMouse = delegate {
+            MouseButtonEventHandler closeFindWindowMouse = delegate
+            {
                 Grid.Children.Remove(findWindow);
                 display.DataGrid.ItemsSource = _allAnime;
                 display.DataGrid.Focus();
@@ -370,10 +402,13 @@ namespace anime_downloader {
             display.DataGrid.MouseDoubleClick += closeFindWindowMouse;
 
             // CTRL-F again or Escape also close find
-            Grid.KeyDown += (sender, keyEventArgs) => {
+            Grid.KeyDown += (sender, keyEventArgs) =>
+            {
                 if (keyEventArgs.Key == Key.Escape)
                     closeFindWindow(sender, keyEventArgs);
-                else if (keyEventArgs.Key == Key.F && (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))) {
+                else if (keyEventArgs.Key == Key.F &&
+                         (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
+                {
                     if (findWindow.IsSelectionActive)
                         closeFindWindow(sender, keyEventArgs);
                     else
@@ -382,7 +417,8 @@ namespace anime_downloader {
             };
 
             // --> The actual functionality
-            findWindow.KeyUp += delegate {
+            findWindow.KeyUp += delegate
+            {
                 var text = findWindow.Text.ToLower().Trim();
                 var copy = _allAnime.Where(a => a.Name.ToLower().Contains(text));
                 display.DataGrid.ItemsSource = copy;
@@ -397,10 +433,12 @@ namespace anime_downloader {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void AnimeList_MouseDoubleClick(object sender, MouseEventArgs e) {
+        private void AnimeList_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
             var display = (AnimeList) _currentDisplay;
             var selected = display.DataGrid.SelectedCells.FirstOrDefault();
-            if (selected.IsValid) {
+            if (selected.IsValid)
+            {
                 AnimeListEdit_Click(sender, e);
             }
         }
@@ -408,16 +446,18 @@ namespace anime_downloader {
         // 
 
         /// <summary>
-        ///     View: AnimeDetails (add)    
+        ///     View: AnimeDetails (add)
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ButtonAddNew_Click(object sender, RoutedEventArgs e) {
+        private void ButtonAddNew_Click(object sender, RoutedEventArgs e)
+        {
             var display = ChangeDisplay<AnimeDetails>();
             display.AddButton.Click += ButtonAdd_Click;
 
             // Enter will create the anime
-            KeyEventHandler enterToAdd = (obj, k) => {
+            KeyEventHandler enterToAdd = (obj, k) =>
+            {
                 if (k.Key != Key.Enter)
                     return;
 
@@ -426,14 +466,11 @@ namespace anime_downloader {
             };
 
             // Focus the name textbox on load
-            display.NameTextbox.Loaded += delegate {
-                display.NameTextbox.Focus();
-            };
+            display.NameTextbox.Loaded += delegate { display.NameTextbox.Focus(); };
 
             display.NameTextbox.KeyUp += enterToAdd;
             display.EpisodeTextbox.KeyUp += enterToAdd;
             _settings.Subgroups.ToList().ForEach(s => display.SubgroupComboBox.Items.Add(s));
-
         }
 
         /// <summary>
@@ -441,19 +478,22 @@ namespace anime_downloader {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ButtonAdd_Click(object sender, RoutedEventArgs e) {
+        private void ButtonAdd_Click(object sender, RoutedEventArgs e)
+        {
             var display = (AnimeDetails) _currentDisplay;
 
             if (display.NameTextbox.Empty() ||
                 display.EpisodeTextbox.Empty())
                 MessageBox.Show("There needs to be a name and/or episode.");
 
-            else {
+            else
+            {
                 var subgroup = display.SubgroupComboBox.Text;
                 if (subgroup.Equals("(None)"))
                     subgroup = "";
 
-                _xml.Controller.Add(new Anime {
+                _xml.Controller.Add(new Anime
+                {
                     Name = display.NameTextbox.Text,
                     Episode = $"{int.Parse(display.EpisodeTextbox.Text):D2}",
                     Status = display.StatusCombobox.Text,
@@ -472,7 +512,8 @@ namespace anime_downloader {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void AnimeListEdit_Click(object sender, RoutedEventArgs e) {
+        private void AnimeListEdit_Click(object sender, RoutedEventArgs e)
+        {
             var tableDisplay = (AnimeList) _currentDisplay;
             var anime = tableDisplay.DataGrid.SelectedCells.FirstOrDefault().Item as Anime;
             if (anime == null)
@@ -483,7 +524,8 @@ namespace anime_downloader {
             display.AddButton.Click += ButtonAnimeEdit_Click;
 
             // Press enter to add the anime
-            KeyEventHandler enterApply = (obj, k) => {
+            KeyEventHandler enterApply = (obj, k) =>
+            {
                 if (k.Key != Key.Enter)
                     return;
                 display.AddButton.Focus();
@@ -491,17 +533,21 @@ namespace anime_downloader {
             };
 
             // Press Escape to go back
-            KeyDown += (o, keyEventArgs) => {
+            KeyDown += (o, keyEventArgs) =>
+            {
                 var key = keyEventArgs.Key;
-                if (key == Key.Escape || key == Key.BrowserBack) {
+                if (key == Key.Escape || key == Key.BrowserBack)
+                {
                     ButtonHome.Press();
                     ButtonList.Press();
                 }
             };
 
             // Press mouse ButtonSubmit back to go back
-            MouseDown += (o, buttonEventArgs) => {
-                if (buttonEventArgs.ChangedButton.Equals(MouseButton.XButton1)) {
+            MouseDown += (o, buttonEventArgs) =>
+            {
+                if (buttonEventArgs.ChangedButton.Equals(MouseButton.XButton1))
+                {
                     ButtonHome.Press();
                     ButtonList.Press();
                 }
@@ -529,14 +575,16 @@ namespace anime_downloader {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ButtonAnimeEdit_Click(object sender, RoutedEventArgs e) {
+        private void ButtonAnimeEdit_Click(object sender, RoutedEventArgs e)
+        {
             var display = (AnimeDetails) _currentDisplay;
 
             if (display.NameTextbox.Empty() ||
                 display.EpisodeTextbox.Empty())
                 MessageBox.Show("There needs to be a name and/or episode.");
 
-            else {
+            else
+            {
                 var subgroup = display.SubgroupComboBox.Text;
                 var anime = _allAnime.Get(_currentlyEditedAnime);
                 anime.Name = display.NameTextbox.Text;
@@ -557,10 +605,12 @@ namespace anime_downloader {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ButtonSettings_Click(object sender, RoutedEventArgs e) {
+        private void ButtonSettings_Click(object sender, RoutedEventArgs e)
+        {
             var display = ChangeDisplay<Views.Settings>();
 
-            display.GetAll<TextBox>().ForEach(t => t.KeyUp += (o, k) => {
+            display.GetAll<TextBox>().ForEach(t => t.KeyUp += (o, k) =>
+            {
                 if (k.Key == Key.Enter)
                     display.ApplyChangesButton.Press();
             });
@@ -579,7 +629,8 @@ namespace anime_downloader {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ButtonApplySettings_Click(object sender, RoutedEventArgs e) {
+        private void ButtonApplySettings_Click(object sender, RoutedEventArgs e)
+        {
             var display = (Views.Settings) _currentDisplay;
 
             if (display.BaseTextbox.Empty() ||
@@ -587,7 +638,8 @@ namespace anime_downloader {
                 display.DownloadTextbox.Empty())
                 MessageBox.Show("You must enter in Base, Torrent or Utorrent Path Boxes.");
 
-            else {
+            else
+            {
                 _settings.Subgroups = display.SubgroupsTextbox.Text.Split(new[] {", "},
                     StringSplitOptions.RemoveEmptyEntries);
                 _settings.BaseFolderPath = display.BaseTextbox.Text;
@@ -601,7 +653,8 @@ namespace anime_downloader {
         /// <summary>
         ///     View: Settings (new)
         /// </summary>
-        private void CreateNewSettings() {
+        private void CreateNewSettings()
+        {
             this.ToggleButtons();
             var display = ChangeDisplay<Views.Settings>();
             display.ApplyChangesButton.Toggle();
@@ -612,14 +665,15 @@ namespace anime_downloader {
             display.DownloadTextbox.Text = @"C:\Program Files (x86)\uTorrent\uTorrent.exe";
             display.ApplyChangesButton.Content = "Create Profile";
 
-            display.ApplyChangesButton.Click += (obj, ev) => {
-
+            display.ApplyChangesButton.Click += (obj, ev) =>
+            {
                 if (display.BaseTextbox.Empty() ||
                     display.TorrentTextbox.Empty() ||
                     display.DownloadTextbox.Empty())
                     MessageBox.Show("You must enter in Base, Torrent or Utorrent Path Boxes.");
 
-                else {
+                else
+                {
                     _xml.Create.SettingsXmlAndSave();
                     _settings.BaseFolderPath = display.BaseTextbox.Text;
                     _settings.TorrentFilesPath = display.TorrentTextbox.Text;
@@ -645,14 +699,16 @@ namespace anime_downloader {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void ButtonCheck_Click(object sender, RoutedEventArgs e) {
+        private async void ButtonCheck_Click(object sender, RoutedEventArgs e)
+        {
             if (!Directory.Exists(_settings.BaseFolderPath))
                 MessageBox.Show("Your base folder doesn't seem to exist.");
 
             else if (!File.Exists(_settings.UtorrentPath) || !_settings.UtorrentPath.ToLower().EndsWith(".exe"))
                 MessageBox.Show("Your uTorrent.exe path seems to be wrong.");
 
-            else {
+            else
+            {
                 if (!Directory.Exists(_settings.TorrentFilesPath))
                     Directory.CreateDirectory(_settings.TorrentFilesPath);
 
@@ -660,12 +716,14 @@ namespace anime_downloader {
                 var textBox = downloadDisplay.TextBox;
                 this.ToggleButtons();
 
-                if (!await Nyaa.IsOnline()) {
+                if (!await Nyaa.IsOnline())
+                {
                     textBox.Text = ">> Nyaa is currently offline. Try checking later.";
                     this.ToggleButtons();
                 }
 
-                else {
+                else
+                {
                     textBox.Text = ">> Searching for currently airing anime episodes ...\n";
                     var downloaded = await _downloader.Download(_xml.Controller.AiringAnimes, textBox);
                     textBox.AppendText(downloaded > 0
@@ -684,32 +742,38 @@ namespace anime_downloader {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ButtonMisc_Click(object sender, RoutedEventArgs e) {
+        private void ButtonMisc_Click(object sender, RoutedEventArgs e)
+        {
             var display = ChangeDisplay<Misc>();
-            display.GetAll<RadioButton>().ForEach(r => r.KeyDown += (o, args) => {
+            display.GetAll<RadioButton>().ForEach(r => r.KeyDown += (o, args) =>
+            {
                 if (args.Key == Key.Enter)
                     display.ButtonSubmit.Press();
             });
             display.ButtonSubmit.Click += ButtonMisc_Submit;
         }
-        
-        private async void ButtonMisc_Submit(object sender, RoutedEventArgs e) {
+
+        private async void ButtonMisc_Submit(object sender, RoutedEventArgs e)
+        {
             this.ToggleButtons();
 
             var display = (Misc) _currentDisplay;
-            
-            if (display.RadioDownload.IsChecked ?? false) {
+
+            if (display.RadioDownload.IsChecked ?? false)
+            {
                 var count = await _filehandler.DownloadMissing(_allAnime.Watching());
                 MessageBox.Show($"Downloaded {count} episodes.");
             }
 
-            else if (display.RadioCatchUp.IsChecked ?? false) {
+            else if (display.RadioCatchUp.IsChecked ?? false)
+            {
                 var response =
                     MessageBox.Show(
                         "Please don't do this often, it expends a lot of requests. Are you sure you want to?",
                         "Confirmation", MessageBoxButton.YesNo);
 
-                if (response == MessageBoxResult.Yes) {
+                if (response == MessageBoxResult.Yes)
+                {
                     var downloadDisplay = ChangeDisplay<Download>();
                     var textBox = downloadDisplay.TextBox;
                     int result;
@@ -717,7 +781,8 @@ namespace anime_downloader {
 
                     textBox.Text = ">> Attempting to catch up on airing anime episodes ...\n";
 
-                    do {
+                    do
+                    {
                         result = await _downloader.Download(_xml.Controller.AiringAnimes, textBox);
                         total += result;
                     } while (result != 0);
@@ -729,27 +794,32 @@ namespace anime_downloader {
                 }
             }
 
-            else if (display.RadioDuplicates.IsChecked ?? false) {
+            else if (display.RadioDuplicates.IsChecked ?? false)
+            {
                 var count = await _filehandler.MoveDuplicates();
                 MessageBox.Show($"Moved {count} files to duplicate folder.");
             }
 
-            else if (display.RadioIndexLastWatched.IsChecked ?? false) {
+            else if (display.RadioIndexLastWatched.IsChecked ?? false)
+            {
                 _filehandler.AnimesToLastEpisode_Watched(_allAnime.Watching());
                 MessageBox.Show("Reset episode order to last known in Watched folder.");
             }
 
-            else if (display.RadioIndexLastUnwatched.IsChecked ?? false) {
+            else if (display.RadioIndexLastUnwatched.IsChecked ?? false)
+            {
                 _filehandler.AnimesToLastEpisode_Unwatched(_allAnime.Watching());
                 MessageBox.Show("Reset episode order to last known in any folder.");
             }
 
-            else if (display.RadioIndexFirstWatched.IsChecked ?? false) {
+            else if (display.RadioIndexFirstWatched.IsChecked ?? false)
+            {
                 _filehandler.AnimesToBeginningEpisode_All(_allAnime.Watching());
                 MessageBox.Show("Reset episode count to first known episode.");
             }
 
-            else if (display.RadioIndexZero.IsChecked ?? false) {
+            else if (display.RadioIndexZero.IsChecked ?? false)
+            {
                 foreach (var anime in _allAnime.Watching())
                     anime.Episode = "00";
                 MessageBox.Show("Reset episode count to zero.");

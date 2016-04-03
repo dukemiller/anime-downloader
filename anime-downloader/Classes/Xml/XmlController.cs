@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace anime_downloader.Classes.Xml {
+namespace anime_downloader.Classes.Xml
+{
     /// <summary>
     ///     The purpose of this class is to consolidate operations that may require
     ///     both read/write operations on the XML files to one location.
     /// </summary>
-    public class XmlController {
-
-        public class XmlNotInstantiatedWithSettings : Exception { }
-
+    public class XmlController
+    {
         private static XmlController _xmlController;
 
         private readonly Settings _settings;
@@ -21,6 +20,15 @@ namespace anime_downloader.Classes.Xml {
         private XDocument _settingsDocument;
 
         /// <summary>
+        ///     Singleton-style private access constructor.
+        /// </summary>
+        /// <param name="settings"></param>
+        private XmlController(Settings settings)
+        {
+            _settings = settings;
+        }
+
+        /// <summary>
         ///     The document object for the anime xml.
         /// </summary>
         public XDocument AnimeDocument => _animeDocument ?? (_animeDocument = XDocument.Load(_settings.AnimeXmlPath));
@@ -28,16 +36,17 @@ namespace anime_downloader.Classes.Xml {
         /// <summary>
         ///     The document object for the settings xml.
         /// </summary>
-        public XDocument SettingsDocument => _settingsDocument ?? (_settingsDocument = XDocument.Load(_settings.SettingsXmlPath));
+        public XDocument SettingsDocument
+            => _settingsDocument ?? (_settingsDocument = XDocument.Load(_settings.SettingsXmlPath));
 
         /// <summary>
         ///     Retrieve a static collection of the anime currently in the anime xml as Anime objects.
         /// </summary>
         public IEnumerable<Anime> Animes => from anime in AnimeRoot.Elements()
-                                            select new Anime(anime, this);
+            select new Anime(anime, this);
 
         /// <summary>
-        ///     Retrieve a static and settings-defined sorted collection of the anime currently in the 
+        ///     Retrieve a static and settings-defined sorted collection of the anime currently in the
         ///     anime xml as Anime objects.
         /// </summary>
         public IEnumerable<Anime> SortedAnimes => Animes.SortedWith(_settings.SortBy);
@@ -54,37 +63,6 @@ namespace anime_downloader.Classes.Xml {
         public bool AutoSave { get; set; } = true;
 
         /// <summary>
-        ///     Singleton static constructor for retrieving the same instance on any class.
-        /// </summary>
-        /// <param name="settings"></param>
-        /// <returns></returns>
-        public static XmlController GetXmlController(Settings settings) {
-            return _xmlController ?? (_xmlController = new XmlController(settings));
-        }
-
-        /// <summary>
-        ///     Singleton instance grabber with no _settings, only use this in the case where
-        ///     you know you have already instantiated XMLController atleast once
-        /// </summary>
-        /// <remarks>
-        ///     I guess this is almost sort of just making _settings a potential global variable
-        /// </remarks>
-        /// <returns></returns>
-        public static XmlController GetXmlController() {
-            if (_xmlController != null)
-                return _xmlController;
-            throw new XmlNotInstantiatedWithSettings();
-        }
-
-        /// <summary>
-        ///     Singleton-style private access constructor.
-        /// </summary>
-        /// <param name="settings"></param>
-        private XmlController(Settings settings) {
-            _settings = settings;
-        }
-
-        /// <summary>
         ///     The root for manipulating the settings document.
         /// </summary>
         /// <returns></returns>
@@ -97,10 +75,36 @@ namespace anime_downloader.Classes.Xml {
         public XElement AnimeRoot => AnimeDocument.Root;
 
         /// <summary>
+        ///     Singleton static constructor for retrieving the same instance on any class.
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <returns></returns>
+        public static XmlController GetXmlController(Settings settings)
+        {
+            return _xmlController ?? (_xmlController = new XmlController(settings));
+        }
+
+        /// <summary>
+        ///     Singleton instance grabber with no _settings, only use this in the case where
+        ///     you know you have already instantiated XMLController atleast once
+        /// </summary>
+        /// <remarks>
+        ///     I guess this is almost sort of just making _settings a potential global variable
+        /// </remarks>
+        /// <returns></returns>
+        public static XmlController GetXmlController()
+        {
+            if (_xmlController != null)
+                return _xmlController;
+            throw new XmlNotInstantiatedWithSettings();
+        }
+
+        /// <summary>
         ///     Add an anime instance to the current anime xml.
         /// </summary>
         /// <param name="anime"></param>
-        public void Add(Anime anime) {
+        public void Add(Anime anime)
+        {
             AnimeRoot.Add(anime.Root);
             if (AutoSave)
                 SaveAnime();
@@ -110,7 +114,8 @@ namespace anime_downloader.Classes.Xml {
         ///     Remove an already existing anime from the current anime xml.
         /// </summary>
         /// <param name="anime"></param>
-        public void Remove(Anime anime) {
+        public void Remove(Anime anime)
+        {
             AnimeRoot.Elements().FirstOrDefault(a => a.Element("name")?.Value.Equals(anime.Name) ?? false)?.Remove();
             if (AutoSave)
                 SaveAnime();
@@ -119,15 +124,20 @@ namespace anime_downloader.Classes.Xml {
         /// <summary>
         ///     Explicitly save the anime xml.
         /// </summary>
-        public void SaveAnime() {
+        public void SaveAnime()
+        {
             AnimeDocument.Save(_settings.AnimeXmlPath);
         }
 
         /// <summary>
         ///     Explicitly save the settings xml.
         /// </summary>
-        public void SaveSettings() {
+        public void SaveSettings()
+        {
             SettingsDocument.Save(_settings.SettingsXmlPath);
         }
+
+        public class XmlNotInstantiatedWithSettings : Exception
+        {}
     }
 }

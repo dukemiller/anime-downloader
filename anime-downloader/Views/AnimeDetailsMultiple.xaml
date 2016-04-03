@@ -1,49 +1,60 @@
 ﻿<UserControl x:Class="anime_downloader.Views.AnimeDetailsMultiple"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
              d:DesignHeight="330" d:DesignWidth="650">
     <Grid>
         <Grid.Background>White</Grid.Background>
 
-        <TextBlock x:Name="InfoTextBlock" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" FontSize="16" VerticalAlignment="Top">
+        <TextBlock x:Name="InfoTextBlock" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap"
+                   FontSize="16" VerticalAlignment="Top">
             Put each anime on own line, each will be added with the template chosen below.
         </TextBlock>
-        <TextBox x:Name="InputTextBox" HorizontalAlignment="Left" Height="174" Margin="10,36,0,0" FontSize="16" TextWrapping="Wrap" AcceptsReturn="True" VerticalAlignment="Top" Width="630"/>
+        <TextBox x:Name="InputTextBox" HorizontalAlignment="Left" Height="174" Margin="10,36,0,0" FontSize="16"
+                 TextWrapping="Wrap" AcceptsReturn="True" VerticalAlignment="Top" Width="630" />
         <Grid HorizontalAlignment="Left" Height="70" Margin="10,234,0,0" VerticalAlignment="Top" Width="465">
             <Grid.Background>PapayaWhip</Grid.Background>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100*"/>
-                <ColumnDefinition Width="180*"/>
-                <ColumnDefinition Width="100*"/>
-                <ColumnDefinition Width="180*"/>
+                <ColumnDefinition Width="100*" />
+                <ColumnDefinition Width="180*" />
+                <ColumnDefinition Width="100*" />
+                <ColumnDefinition Width="180*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="60*"/>
-                <RowDefinition Height="60*"/>
+                <RowDefinition Height="60*" />
+                <RowDefinition Height="60*" />
             </Grid.RowDefinitions>
             <Label x:Name="EpisodeLabel" Content="Episode" FontSize="16" HorizontalAlignment="Center" />
-            <TextBox x:Name="EpisodeTextBox" FontSize="16" Text="00"  TextWrapping="Wrap" Grid.Row="0" Grid.Column="1" Height="25" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" GotFocus="EpisodeTextBox_GotFocus" PreviewTextInput="EpisodeTextBox_PreviewTextInput" />
-            <Label x:Name="AiringLabel" Content="Airing" FontSize="16" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalContentAlignment="Center" />
-            <CheckBox x:Name="AiringCheckBox" IsChecked="True" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
-            <Label x:Name="ResolutionLabel" Content="Resolution" FontSize="16" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Center" VerticalContentAlignment="Center" />
-            <ComboBox x:Name="ResolutionComboBox" Grid.Column="3" Grid.Row="0" VerticalContentAlignment="Center" Height="20" >
+            <TextBox x:Name="EpisodeTextBox" FontSize="16" Text="00" TextWrapping="Wrap" Grid.Row="0" Grid.Column="1"
+                     Height="25" HorizontalContentAlignment="Left" VerticalContentAlignment="Center"
+                     GotFocus="EpisodeTextBox_GotFocus" PreviewTextInput="EpisodeTextBox_PreviewTextInput" />
+            <Label x:Name="AiringLabel" Content="Airing" FontSize="16" Grid.Row="1" Grid.Column="0"
+                   HorizontalAlignment="Center" VerticalContentAlignment="Center" />
+            <CheckBox x:Name="AiringCheckBox" IsChecked="True" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left"
+                      VerticalContentAlignment="Center" />
+            <Label x:Name="ResolutionLabel" Content="Resolution" FontSize="16" Grid.Row="0" Grid.Column="2"
+                   HorizontalAlignment="Center" VerticalContentAlignment="Center" />
+            <ComboBox x:Name="ResolutionComboBox" Grid.Column="3" Grid.Row="0" VerticalContentAlignment="Center"
+                      Height="20">
                 <ComboBoxItem Content="" />
                 <ComboBoxItem Content="480" />
                 <ComboBoxItem IsSelected="True" Content="720" />
                 <ComboBoxItem Content="1080" />
             </ComboBox>
-            <Label x:Name="StatusLabel" Content="Status" Grid.Row="1" FontSize="16" Grid.Column="2" HorizontalAlignment="Center" VerticalContentAlignment="Center" />
-            <ComboBox x:Name="StatusComboBox" Grid.Column="3" Grid.Row="1" VerticalContentAlignment="Center" Height="20" >
+            <Label x:Name="StatusLabel" Content="Status" Grid.Row="1" FontSize="16" Grid.Column="2"
+                   HorizontalAlignment="Center" VerticalContentAlignment="Center" />
+            <ComboBox x:Name="StatusComboBox" Grid.Column="3" Grid.Row="1" VerticalContentAlignment="Center"
+                      Height="20">
                 <ComboBoxItem IsSelected="True" Content="Watching" />
                 <ComboBoxItem Content="Finished" />
                 <ComboBoxItem Content="On Hold" />
             </ComboBox>
-            
+
         </Grid>
-        <Button x:Name="SubmitButton" Content="Submit" HorizontalAlignment="Left" Margin="565,284,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button x:Name="SubmitButton" Content="Submit" HorizontalAlignment="Left" Margin="565,284,0,0"
+                VerticalAlignment="Top" Width="75" />
 
 
     </Grid>
