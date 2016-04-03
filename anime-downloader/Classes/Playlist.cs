@@ -26,8 +26,7 @@ namespace anime_downloader.Classes
         public void Refresh()
         {
             _episodes = _settings.EpisodePaths()
-                .SelectMany(Directory.GetFiles)
-                .Where(f => !IsFragmentedVideo(f));
+                .SelectMany(Directory.GetFiles);
         }
 
         /// <summary>
@@ -69,38 +68,6 @@ namespace anime_downloader.Classes
             }
 
             _episodes = sortedEpisodes;
-        }
-
-        /// <summary>
-        ///     Check if the file is fragmented by some byte guesswork.
-        /// </summary>
-        /// <param name="fullFilepath">Full path to the file.</param>
-        /// <returns></returns>
-        private static bool IsFragmentedVideo(string fullFilepath)
-        {
-            byte currentByte;
-            var counter = 0;
-
-            try
-            {
-                using (var reader = new BinaryReader(System.IO.File.Open(fullFilepath, FileMode.Open)))
-                {
-                    currentByte = reader.ReadByte();
-                    while (currentByte == 0)
-                    {
-                        if (++counter > 10)
-                            break;
-                        currentByte = reader.ReadByte();
-                    }
-                }
-            }
-
-            catch (IOException)
-            {
-                return true;
-            }
-
-            return !(currentByte > 10);
         }
 
         /// <summary>

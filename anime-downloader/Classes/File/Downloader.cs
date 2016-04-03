@@ -58,7 +58,6 @@ namespace anime_downloader.Classes.File
         /// </summary>
         /// <param name="animes">The collection of anime to try and get new episodes from.</param>
         /// <param name="textbox">The output box to display results to.</param>
-        /// <param name="logger"></param>
         public async Task<int> Download(IEnumerable<Anime> animes, TextBox textbox)
         {
             var downloaded = 0;

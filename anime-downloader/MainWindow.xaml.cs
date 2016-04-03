@@ -43,6 +43,9 @@ namespace anime_downloader
         /// </summary>
         private Downloader _downloader;
 
+        /// <summary>
+        ///     Handles tracking/managing files.
+        /// </summary>
         private FileHandler _filehandler;
 
         /// <summary>
@@ -50,6 +53,9 @@ namespace anime_downloader
         /// </summary>
         private Logger _logger;
 
+        /// <summary>
+        ///     The system tray icon.
+        /// </summary>
         private System.Windows.Forms.NotifyIcon _notifyIcon;
 
         /// <summary>
@@ -69,12 +75,36 @@ namespace anime_downloader
 
         public MainWindow()
         {
+            CheckIfAlreadyOpen();
             InitializeComponent();
             InitializeSettings();
             InitializeTray();
         }
 
         // Helper functions
+
+        private void CheckIfAlreadyOpen()
+        {
+            // All same exact processes
+            var processes = Process.GetProcessesByName(
+                Path.GetFileNameWithoutExtension(Assembly
+                    .GetEntryAssembly()
+                    .Location));
+
+            // If more than one window open
+            if (processes.Length > 1)
+            {
+                // As to not spam the popup box more than once if attempting to open
+                // multiple times
+                if (processes.Length == 2)
+                {
+                    MessageBox.Show("Anime downloader already open.");
+                }
+
+                // Kill
+                Process.GetCurrentProcess().Kill();
+            }
+        }
 
         /// <summary>
         ///     Initialize and set the settings object.
@@ -140,7 +170,9 @@ namespace anime_downloader
         ///     get a variable as the current views type for modifying
         ///     it's elements.
         /// </remarks>
-        /// <typeparam name="TView">A name of a class in the Views folders</typeparam>
+        /// <typeparam name="TView">
+        ///     A name of a class in the Views folders
+        /// </typeparam>
         /// <returns>
         ///     A an instantiated view of type TView
         /// </returns>

@@ -7,9 +7,9 @@ namespace anime_downloader.Classes.File
 {
     public class FileHandler
     {
-        public readonly Downloader _downloader;
+        private readonly Downloader _downloader;
 
-        public readonly Settings _settings;
+        private readonly Settings _settings;
 
         public FileHandler(Settings settings, Downloader downloader)
         {
@@ -90,11 +90,10 @@ namespace anime_downloader.Classes.File
         ///     Get every anime not in the watched folder.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<AnimeEpisode> UnwatchedAnime()
+        private IEnumerable<AnimeEpisode> UnwatchedAnime()
         {
             return _settings.EpisodePaths()
                 .SelectMany(Directory.GetFiles)
-                //.Where(file => !IsFragmentedVideo(file))
                 .Select(filePath => new AnimeEpisode(filePath))
                 .OrderBy(animeFile => animeFile.Name)
                 .ThenBy(animeFile => animeFile.IntEpisode);
@@ -104,10 +103,9 @@ namespace anime_downloader.Classes.File
         ///     Get every anime in the watched folder.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<AnimeEpisode> WatchedAnime()
+        private IEnumerable<AnimeEpisode> WatchedAnime()
         {
             return Directory.GetFiles(_settings.WatchedPath)
-                //.Where(file => !IsFragmentedVideo(file))
                 .Select(filePath => new AnimeEpisode(filePath))
                 .OrderBy(animeFile => animeFile.Name)
                 .ThenBy(animeFile => animeFile.IntEpisode);
@@ -117,11 +115,10 @@ namespace anime_downloader.Classes.File
         ///     Get every anime in every folder.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<AnimeEpisode> AllAnime()
+        private IEnumerable<AnimeEpisode> AllAnime()
         {
             return _settings.EpisodePaths(true)
                 .SelectMany(Directory.GetFiles)
-                //.Where(file => !IsFragmentedVideo(file))
                 .Select(filePath => new AnimeEpisode(filePath))
                 .OrderBy(animeFile => animeFile.Name)
                 .ThenBy(animeFile => animeFile.IntEpisode);
@@ -132,7 +129,7 @@ namespace anime_downloader.Classes.File
         /// </summary>
         /// <param name="animes"></param>
         /// <returns></returns>
-        public static IEnumerable<AnimeEpisode> LastEpisodes(IEnumerable<AnimeEpisode> animes)
+        private static IEnumerable<AnimeEpisode> LastEpisodes(IEnumerable<AnimeEpisode> animes)
         {
             var latest = new List<AnimeEpisode>();
             var reversed = animes.OrderByDescending(animeFile => animeFile.IntEpisode);
@@ -146,41 +143,13 @@ namespace anime_downloader.Classes.File
         /// </summary>
         /// <param name="animes"></param>
         /// <returns></returns>
-        public static IEnumerable<AnimeEpisode> FirstEpisodes(IEnumerable<AnimeEpisode> animes)
+        private static IEnumerable<AnimeEpisode> FirstEpisodes(IEnumerable<AnimeEpisode> animes)
         {
             var earliest = new List<AnimeEpisode>();
             foreach (var anime in animes.Where(anime => !earliest.Any(af => af.Name.Equals(anime.Name))))
                 earliest.Add(anime);
             return earliest.OrderBy(af => af.Name);
         }
-
-        /*
-        /// <summary>
-        ///     Check if the file is fragmented by some byte guesswork.
-        /// </summary>
-        /// <param name="fullFilepath">Full path to the file.</param>
-        /// <returns></returns>
-        private static bool IsFragmentedVideo(string fullFilepath) {
-            byte currentByte;
-            short counter = 0;
-
-            try {
-                using (var reader = new BinaryReader(System.IO.File.Open(fullFilepath, FileMode.Open))) {
-                    currentByte = reader.ReadByte();
-                    while (currentByte == 0) {
-                        if (++counter > 10)
-                            break;
-                        currentByte = reader.ReadByte();
-                    }
-                }
-            }
-
-            catch (IOException) {
-                return true;
-            }
-
-            return !(currentByte > 10);
-        }
-        */
+        
     }
 }

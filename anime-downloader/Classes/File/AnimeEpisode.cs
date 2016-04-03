@@ -24,8 +24,8 @@ namespace anime_downloader.Classes.File
             get
             {
                 return string.Join("-",
-                    Stripped.Split('-')
-                        .Take(Stripped.Count(x => x == '-')))
+                    StrippedFilename.Split('-')
+                        .Take(StrippedFilename.Count(x => x == '-')))
                     .Trim();
             }
         }
@@ -39,7 +39,7 @@ namespace anime_downloader.Classes.File
             get
             {
                 var number =
-                    int.Parse(string.Join("", Stripped.Split(new[] {" - "}, StringSplitOptions.RemoveEmptyEntries)
+                    int.Parse(string.Join("", StrippedFilename.Split(new[] {" - "}, StringSplitOptions.RemoveEmptyEntries)
                         .Last().TakeWhile(char.IsNumber)));
                 return $"{number:00}";
             }
@@ -53,7 +53,7 @@ namespace anime_downloader.Classes.File
         /// <summary>
         ///     The meta information stripped filename (no seeders, subgroups, etc)
         /// </summary>
-        private string Stripped => Strip(FileName);
+        private string StrippedFilename => Strip(FileName);
 
         /// <summary>
         ///     The path's filename, e.g. "C:/.../.../{anime.mp4}".
