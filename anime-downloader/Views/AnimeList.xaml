@@ -6,6 +6,7 @@
              mc:Ignorable="d"
              d:DesignHeight="330" d:DesignWidth="650">
     <Grid>
+        <Grid.Background>White</Grid.Background>
         <DataGrid x:Name="DataGrid"
                   AutoGenerateColumns="False"
                   CanUserResizeRows="False"
@@ -16,6 +17,15 @@
                   RowHeaderWidth="0"
                   HorizontalContentAlignment="Center"
                   GridLinesVisibility="None" BorderThickness="0" FontSize="16">
+            <DataGrid.Resources>
+                <Style TargetType="{x:Type DataGridColumnHeader}">
+                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                </Style>
+                <Style TargetType="{x:Type DataGridCell}" x:Key="CenterStyle" >
+                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                    <Setter Property="TextBlock.TextAlignment" Value="Center"/>
+                </Style>
+            </DataGrid.Resources>
             <DataGrid.ContextMenu>
                 <ContextMenu Name="AnimeContextMenu">
                     <MenuItem Name="Add" Header="Add Single ..." />
@@ -25,11 +35,14 @@
                 </ContextMenu>
             </DataGrid.ContextMenu>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Name" Width="350" Binding="{Binding Path=Title}" />
-                <DataGridTextColumn Header="Episode" Binding="{Binding Path=Episode}" />
-                <DataGridTextColumn Header="Status" Width="80" Binding="{Binding Path=Status}" />
-                <DataGridTextColumn Header="Airing" Width="auto" Binding="{Binding Path=Airing}" />
+                <DataGridTextColumn Header="Name" Width="300" Binding="{Binding Path=Title}" />
+                <DataGridTextColumn Header="Episode" CellStyle="{StaticResource CenterStyle}" Width="80" Binding="{Binding Path=Episode}"/>
+                <DataGridTextColumn Header="Status" CellStyle="{StaticResource CenterStyle}" Width="auto" Binding="{Binding Path=Status}" />
+                <DataGridTextColumn Header="Airing" CellStyle="{StaticResource CenterStyle}" Width="auto" Binding="{Binding Path=Airing}" />
+                <DataGridTextColumn Header="Rating" CellStyle="{StaticResource CenterStyle}" Width="auto" Binding="{Binding Path=Rating}" 
+                                    SortMemberPath="SortedRating" />
             </DataGrid.Columns>
+            
         </DataGrid>
     </Grid>
 </UserControl>

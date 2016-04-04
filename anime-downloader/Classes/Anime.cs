@@ -7,12 +7,13 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using anime_downloader.Classes.Web;
 using anime_downloader.Classes.Xml;
-using HtmlAgilityPack;
+using HtmlDocument = HtmlAgilityPack.HtmlDocument;
 
 namespace anime_downloader.Classes
 {
     public class Anime
     {
+
         private readonly XmlController _xml;
 
         /// <summary>
@@ -147,6 +148,42 @@ namespace anime_downloader.Classes
                 Save();
             }
         }
+
+        /// <summary>
+        ///     The personal rating given for the series.
+        /// </summary>
+        public string Rating
+        {
+            get { return Root.Element("rating")?.Value ?? ""; }
+            set
+            {
+                if (value.Equals(Rating))
+                    return;
+                if (!value.All(char.IsNumber) && !value.Equals(""))
+                    return;
+                Root.Element("rating")?.SetValue(value);
+                Save();
+            }
+        }
+
+        /// <summary>
+        ///     A property used for sorting the rating in the datagrid
+        /// </summary>
+        public int SortedRating 
+        {
+            get
+            {
+                int val;
+                if (int.TryParse(Rating, out val))
+                    return val;
+                return (13 * SortedRateFlag) - 2;
+            }
+        }
+
+        /// <summary>
+        ///     A variable used sort of like a bit flag for sorting in the data grid.
+        /// </summary>
+        public static int SortedRateFlag;
 
         /// <summary>
         ///     Proper title name of anime.

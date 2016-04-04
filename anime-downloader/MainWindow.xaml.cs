@@ -14,7 +14,7 @@ using anime_downloader.Classes.Web;
 using anime_downloader.Classes.Xml;
 using anime_downloader.Views;
 using Settings = anime_downloader.Classes.Settings;
-using TextBox = System.Windows.Controls.TextBox;
+using UserControl = System.Windows.Controls.UserControl;
 
 namespace anime_downloader
 {
@@ -152,7 +152,6 @@ namespace anime_downloader
             _notifyIcon = new System.Windows.Forms.NotifyIcon
             {
                 Icon = icon
-                // Icon = new System.Drawing.Icon(image)
             };
 
             _notifyIcon.Click += delegate
@@ -343,6 +342,18 @@ namespace anime_downloader
             display.AddMultiple.Click += AnimeListAddMultiple_Click;
             display.DataGrid.PreviewKeyDown += AnimeListDelete_KeyDown;
             display.DataGrid.MouseDoubleClick += AnimeList_MouseDoubleClick;
+            display.DataGrid.Sorting += (o, args) =>
+            {
+                // there's some problem with sorting the rating, this fixes it
+                var col = args.Column;
+                if (col.Header.Equals("Rating"))
+                {
+                    if (col.SortDirection == null)
+                        Anime.SortedRateFlag = 1;
+                    else
+                        Anime.SortedRateFlag ^= 1;
+                }
+            };
 
             Grid.KeyDown += (o, keyEventArgs) =>
             {
@@ -352,7 +363,7 @@ namespace anime_downloader
                 }
             };
         }
-
+        
         /// <summary>
         ///     Event: Submit -> Anime list (delete)
         /// </summary>
@@ -532,7 +543,8 @@ namespace anime_downloader
                     Resolution = display.ResolutionCombobox.Text,
                     Airing = display.AiringCheckbox.IsChecked ?? false,
                     NameStrict = display.NameStrictCheckbox.IsChecked ?? false,
-                    PreferredSubgroup = subgroup
+                    PreferredSubgroup = subgroup,
+                    Rating = display.RatingTextbox.Text
                 });
 
                 ButtonList.Press();
@@ -585,8 +597,7 @@ namespace anime_downloader
                 }
             };
 
-            display.NameTextbox.KeyDown += enterApply;
-            display.EpisodeTextbox.KeyDown += enterApply;
+            display.GetAll<TextBox>().ForEach(tb => tb.KeyDown += enterApply);
 
             display.NameTextbox.Text = anime.Name;
             display.EpisodeTextbox.Text = anime.Episode;
@@ -594,6 +605,7 @@ namespace anime_downloader
             display.StatusCombobox.Text = anime.Status;
             display.AiringCheckbox.IsChecked = anime.Airing;
             display.NameStrictCheckbox.IsChecked = anime.NameStrict;
+            display.RatingTextbox.Text = anime.Rating;
 
             _settings.Subgroups.ToList().ForEach(s => display.SubgroupComboBox.Items.Add(s));
             var subgroup = anime.PreferredSubgroup;
@@ -626,6 +638,7 @@ namespace anime_downloader
                 anime.Airing = display.AiringCheckbox.IsChecked ?? false;
                 anime.NameStrict = display.NameStrictCheckbox.IsChecked ?? false;
                 anime.PreferredSubgroup = subgroup.Equals("(None)") ? "" : subgroup;
+                anime.Rating = display.RatingTextbox.Text;
                 ButtonList.Press();
             }
         }

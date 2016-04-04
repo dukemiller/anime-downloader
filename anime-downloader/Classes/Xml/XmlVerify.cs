@@ -24,9 +24,6 @@ namespace anime_downloader.Classes.Xml
         /// </summary>
         public void SettingsSchema()
         {
-            // var document = XDocument.Load(_settings.SettingsXmlPath);
-            // var root = document.Root;
-
             var root = _controller.SettingsRoot;
 
             if (root?.Element("sortBy") == null)
@@ -47,9 +44,16 @@ namespace anime_downloader.Classes.Xml
 
             if (root != null)
             {
-                foreach (var anime in root.Elements().Where(anime => anime.Element("preferredSubgroup") == null))
+                foreach (var anime in root.Elements())
                 {
-                    anime.Add(new XElement("preferredSubgroup", ""));
+                    if (anime.Element("preferredSubgroup") == null)
+                    {
+                        anime.Add(new XElement("preferredSubgroup", ""));
+                    }
+                    if (anime.Element("rating") == null)
+                    {
+                        anime.Add(new XElement("rating", ""));
+                    }
                 }
             }
 

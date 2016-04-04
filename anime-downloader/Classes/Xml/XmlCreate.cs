@@ -46,7 +46,8 @@ namespace anime_downloader.Classes.Xml
                 new XElement("updated", false),
                 new XElement("name-strict", false),
                 new XElement("preferredSubgroup"),
-                new XElement("last-downloaded", "2016-02-04")
+                new XElement("last-downloaded", "2016-02-04"),
+                new XElement("rating", "")
                 );
             return node;
         }

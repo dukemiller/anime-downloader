@@ -23,10 +23,10 @@
 
         <TextBox x:Name="NameTextbox" Grid.Column="1" Grid.Row="0" Height="27"
                  TextWrapping="Wrap" Text="" VerticalAlignment="Center" FontSize="18.667" Margin="0,10"
-                 GotFocus="name_textbox_GotFocus" />
+                 GotFocus="NameTextbox_GotFocus" />
         <TextBox x:Name="EpisodeTextbox" Grid.Column="1" Grid.Row="1" Height="27"
                  TextWrapping="Wrap" Text="00" VerticalAlignment="Center" FontSize="18.667" Margin="0,10"
-                 GotFocus="episode_textbox_GotFocus" PreviewTextInput="episode_textbox_PreviewTextInput" />
+                 GotFocus="EpisodeTextbox_GotFocus" PreviewTextInput="EpisodeTextbox_PreviewTextInput" />
         <ComboBox x:Name="ResolutionCombobox" Grid.Column="1" HorizontalAlignment="Left" Margin="0,15,0,0"
                   Grid.Row="2" VerticalAlignment="Top" Width="120">
             <ComboBoxItem Content="" />
@@ -93,7 +93,13 @@
                       Grid.Row="0" VerticalAlignment="Top" Width="90" Height="22">
                 <ComboBoxItem IsSelected="True" Content="(None)" />
             </ComboBox>
-
+            <Label x:Name="RatingLabel" Content="Rating: " VerticalAlignment="Center" HorizontalAlignment="Center"
+            	FontSize="16"
+            	ToolTip="What you would rate the show (out of 10?)"
+            	Grid.Column="0" Grid.Row="1" Margin="0,10,182,5" />
+            <TextBox x:Name="RatingTextbox" Grid.Row="1" Height="27"
+            	Text="" VerticalAlignment="Center" FontSize="18.667" Margin="5,9,32,10"
+            	GotFocus="EpisodeTextbox_GotFocus" PreviewTextInput="RatingTextbox_PreviewTextInput" Grid.Column="1" />
 
         </Grid>
 
