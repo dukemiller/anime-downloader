@@ -1,0 +1,36 @@
+﻿<UserControl x:Class="anime_downloader.Views.DownloadOptions"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" 
+             d:DesignHeight="330" d:DesignWidth="650">
+    <Grid>
+        <Grid.Background>White</Grid.Background>
+        <GroupBox x:Name="DownloadGroupBox" FontSize="16" Header="Download Options" HorizontalAlignment="Left" Margin="10,10,0,0"
+                  VerticalAlignment="Top" Height="auto" Width="auto" Grid.Column="0">
+            <StackPanel>
+                <RadioButton x:Name="CheckForLatestRadio" IsChecked="True" Margin="5"
+                             ToolTip="Default windows style sort" >
+                    <TextBlock TextWrapping="Wrap">
+                        Check for and download the latest episode of every airing anime
+                    </TextBlock>
+                </RadioButton>
+                <RadioButton x:Name="GetUpToDateRadio" Margin="5"
+                             ToolTip="A more rigorous episode number check so that episodes are in order">
+                    <TextBlock TextWrapping="Wrap">
+                        Check for and download episodes of every series continually until no more are found
+                        (good for getting up to date)</TextBlock>
+                </RadioButton>
+                <RadioButton x:Name="GetMissingRadio" Margin="5"
+                             ToolTip="When the file was created" >
+                    <TextBlock TextWrapping="Wrap">
+                        Find and download any missing episodes between first known and last known episodes
+                    </TextBlock>
+                </RadioButton>
+            </StackPanel>
+        </GroupBox>
+
+        <Button x:Name="SearchButton" Width="120" Height="30" Margin="520,290,10,10" Content="Search"></Button>
+    </Grid>
+</UserControl>

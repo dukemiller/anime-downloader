@@ -6,8 +6,9 @@
              mc:Ignorable="d"
              d:DesignHeight="330" d:DesignWidth="650">
     <Grid>
-        <Button x:Name="CreateButton" Content="Create" HorizontalAlignment="Left" Margin="533,285,0,0" Width="107"
-                Height="35" VerticalAlignment="Top" />
+        <Grid.Background>White</Grid.Background>
+        <Button x:Name="CreateButton" Content="Create" HorizontalAlignment="Left" Margin="520,290,0,0"
+                 Width="120" Height="30" VerticalAlignment="Top" />
 
         <GroupBox x:Name="SortGroupBox" FontSize="16" Header="Sort by" HorizontalAlignment="Left" Margin="10,71,0,0"
                   VerticalAlignment="Top" Height="auto" Width="197" Grid.Column="0">
@@ -29,7 +30,7 @@
             </StackPanel>
         </GroupBox>
         <TextBlock x:Name="TextBlock" Margin="15,11,16,277" TextWrapping="Wrap" FontSize="16" TextAlignment="Justify"
-                   Text="Create a playlist from all completed video files inside the base folder path (excluding files in a 'finished' folder) as the filename 'playlist.m3u'."
+                   Text="Create a playlist from all completed video files inside the base folder path (excluding files in the 'Watched' folder) as the filename 'playlist.m3u'."
                    VerticalAlignment="Center" RenderTransformOrigin="-0.503,0" HorizontalAlignment="Center" Width="619" />
 
 

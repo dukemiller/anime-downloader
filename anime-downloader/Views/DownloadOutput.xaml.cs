@@ -1,11 +1,11 @@
 ﻿namespace anime_downloader.Views
 {
     /// <summary>
-    ///     Interaction logic for Download.xaml
+    ///     Interaction logic for DownloadOutput.xaml
     /// </summary>
-    public partial class Download
+    public partial class DownloadOutput
     {
-        public Download()
+        public DownloadOutput()
         {
             InitializeComponent();
         }

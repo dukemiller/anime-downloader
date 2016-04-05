@@ -13,20 +13,21 @@
                 HorizontalAlignment="Left" Margin="10,10,0,0" FontSize="24"
                 VerticalAlignment="Top" Width="226" Click="ButtonHome_Click" Height="43" />
         <Button x:Name="ButtonList"
-                Content="Anime List"
+                Content="Anime"
                 HorizontalAlignment="Left" Margin="10,66,0,0"
                 VerticalAlignment="Top" Width="226" Height="43" FontSize="24" Click="ButtonList_Click" />
         <Button x:Name="ButtonSettings"
-                Content="Settings &amp; Options"
+                Content="Settings"
                 HorizontalAlignment="Left"
                 Margin="10,119,0,0" VerticalAlignment="Top" Width="226" Height="43" FontSize="24"
                 Click="ButtonSettings_Click" />
-        <Button x:Name="ButtonCheck"
-                Content="Check for latest"
+        <Button x:Name="ButtonDownload"
+                Content="Download"
                 HorizontalAlignment="Left" Margin="10,173,0,0"
-                VerticalAlignment="Top" Width="226" Height="43" FontSize="24" Click="ButtonCheck_Click" />
+                VerticalAlignment="Top" Width="226" Height="43" FontSize="24" 
+                Click="ButtonDownload_Click" />
         <Button x:Name="ButtonPlaylist"
-                Content="Playlist Creator"
+                Content="Playlists"
                 HorizontalAlignment="Left" Margin="10,226,0,0"
                 FontSize="16" VerticalAlignment="Top" Width="110" Click="ButtonPlaylist_Click" Height="34" />
 

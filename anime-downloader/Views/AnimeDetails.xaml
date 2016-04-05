@@ -69,8 +69,8 @@
                HorizontalAlignment="Center" FontSize="16"
                ToolTip="Whether searching for this anime should match exactly what the name is instead of picking up partial matches."
                Grid.Column="0" Grid.Row="5" />
-        <Button x:Name="AddButton" Content="Add" Grid.Column="1" HorizontalAlignment="Left" Margin="447,17,0,0"
-                Grid.Row="6" VerticalAlignment="Top" Width="75" />
+        <Button x:Name="AddButton" Content="Add" Grid.Column="1" HorizontalAlignment="Left" Margin="402,7,0,0"
+                Grid.Row="6" VerticalAlignment="Top"  Width="120" Height="30" />
 
         <Grid Grid.Column="1" HorizontalAlignment="Left" Height="189" Margin="162,0,0,0"
               Grid.Row="2" Grid.RowSpan="4" VerticalAlignment="Top" Width="370">

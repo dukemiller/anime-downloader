@@ -5,6 +5,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -47,11 +48,6 @@ namespace anime_downloader
         ///     Handles tracking/managing files.
         /// </summary>
         private FileHandler _filehandler;
-
-        /// <summary>
-        ///     Handles file logging operations.
-        /// </summary>
-        private Logger _logger;
 
         /// <summary>
         ///     The system tray icon.
@@ -114,8 +110,7 @@ namespace anime_downloader
             _settings = new Settings();
             _playlist = new Playlist(_settings);
             _xml = new Xml(_settings);
-            _logger = new Logger(_settings);
-            _downloader = new Downloader(_settings, _logger);
+            _downloader = new Downloader(_settings);
             _filehandler = new FileHandler(_settings, _downloader);
 
             if (!Directory.Exists(_settings.ApplicationPath))
@@ -146,7 +141,7 @@ namespace anime_downloader
             // get the image from the program
             var assembly = Assembly.GetExecutingAssembly();
             var stream = assembly.GetManifestResourceStream("anime_downloader.ad3.ico");
-            Debug.Assert(stream != null, "myStream != null");
+            Debug.Assert(stream != null, "stream != null");
             var icon = new Icon(stream);
 
             _notifyIcon = new System.Windows.Forms.NotifyIcon
@@ -740,11 +735,62 @@ namespace anime_downloader
         // 
 
         /// <summary>
-        ///     View: Download anime
+        ///     View: DownloadOptions
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void ButtonCheck_Click(object sender, RoutedEventArgs e)
+        private void ButtonDownload_Click(object sender, RoutedEventArgs e)
+        {
+            var display = ChangeDisplay<DownloadOptions>();
+
+            display.SearchButton.Click += async delegate
+            {
+                if (display.GetUpToDateRadio.IsChecked ?? false)
+                {
+                    var response =
+                    MessageBox.Show(
+                        "Please don't do this often, it expends a lot of requests. Are you sure you want to?",
+                        "Confirmation", MessageBoxButton.YesNo);
+
+                    if (response == MessageBoxResult.Yes)
+                    {
+                        var downloadDisplay = ChangeDisplay<DownloadOutput>();
+                        var textBox = downloadDisplay.TextBox;
+                        int result;
+                        var total = 0;
+
+                        textBox.Text = ">> Attempting to catch up on airing anime episodes ...\n";
+
+                        do
+                        {
+                            result = await _downloader.Download(_xml.Controller.AiringAnimes, textBox);
+                            total += result;
+                        } while (result != 0);
+
+                        textBox.AppendText(total > 0
+                            ? $">> Found {total} anime downloads."
+                            : ">> No new anime found.");
+                        textBox.ScrollDown();
+                    }
+                }
+
+                else if (display.CheckForLatestRadio.IsChecked ?? false)
+                {
+                    await CheckForLatest();
+                }
+                    
+                else if (display.GetMissingRadio.IsChecked ?? false)
+                {
+                    var count = await _filehandler.DownloadMissing(_allAnime.Watching());
+                    MessageBox.Show($"Downloaded {count} episodes.");
+                }
+            };
+        }
+
+        /// <summary>
+        ///     View: DownloadOutput (Check for latest anime)
+        /// </summary>
+        private async Task CheckForLatest()
         {
             if (!Directory.Exists(_settings.BaseFolderPath))
                 MessageBox.Show("Your base folder doesn't seem to exist.");
@@ -757,7 +803,7 @@ namespace anime_downloader
                 if (!Directory.Exists(_settings.TorrentFilesPath))
                     Directory.CreateDirectory(_settings.TorrentFilesPath);
 
-                var downloadDisplay = ChangeDisplay<Download>();
+                var downloadDisplay = ChangeDisplay<DownloadOutput>();
                 var textBox = downloadDisplay.TextBox;
                 this.ToggleButtons();
 
@@ -804,42 +850,7 @@ namespace anime_downloader
 
             var display = (Misc) _currentDisplay;
 
-            if (display.RadioDownload.IsChecked ?? false)
-            {
-                var count = await _filehandler.DownloadMissing(_allAnime.Watching());
-                MessageBox.Show($"Downloaded {count} episodes.");
-            }
-
-            else if (display.RadioCatchUp.IsChecked ?? false)
-            {
-                var response =
-                    MessageBox.Show(
-                        "Please don't do this often, it expends a lot of requests. Are you sure you want to?",
-                        "Confirmation", MessageBoxButton.YesNo);
-
-                if (response == MessageBoxResult.Yes)
-                {
-                    var downloadDisplay = ChangeDisplay<Download>();
-                    var textBox = downloadDisplay.TextBox;
-                    int result;
-                    var total = 0;
-
-                    textBox.Text = ">> Attempting to catch up on airing anime episodes ...\n";
-
-                    do
-                    {
-                        result = await _downloader.Download(_xml.Controller.AiringAnimes, textBox);
-                        total += result;
-                    } while (result != 0);
-
-                    textBox.AppendText(total > 0
-                        ? $">> Found {total} anime downloads."
-                        : ">> No new anime found.");
-                    textBox.ScrollDown();
-                }
-            }
-
-            else if (display.RadioDuplicates.IsChecked ?? false)
+            if (display.RadioDuplicates.IsChecked ?? false)
             {
                 var count = await _filehandler.MoveDuplicates();
                 MessageBox.Show($"Moved {count} files to duplicate folder.");

@@ -45,6 +45,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -84,8 +85,11 @@
     <Compile Include="Views\AnimeList.xaml.cs">
       <DependentUpon>AnimeList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Download.xaml.cs">
-      <DependentUpon>Download.xaml</DependentUpon>
+    <Compile Include="Views\DownloadOptions.xaml.cs">
+      <DependentUpon>DownloadOptions.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DownloadOutput.xaml.cs">
+      <DependentUpon>DownloadOutput.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Home.xaml.cs">
       <DependentUpon>Home.xaml</DependentUpon>
@@ -123,7 +127,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Download.xaml">
+    <Page Include="Views\DownloadOptions.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DownloadOutput.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

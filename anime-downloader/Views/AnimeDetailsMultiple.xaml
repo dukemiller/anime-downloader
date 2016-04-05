@@ -53,8 +53,8 @@
             </ComboBox>
 
         </Grid>
-        <Button x:Name="SubmitButton" Content="Submit" HorizontalAlignment="Left" Margin="565,284,0,0"
-                VerticalAlignment="Top" Width="75" />
+        <Button x:Name="SubmitButton" Content="Submit" HorizontalAlignment="Left" Margin="520,290,0,0"
+                VerticalAlignment="Top"  Width="120" Height="30" />
 
 
     </Grid>

@@ -176,7 +176,7 @@ namespace anime_downloader.Classes
                 int val;
                 if (int.TryParse(Rating, out val))
                     return val;
-                return (13 * SortedRateFlag) - 2;
+                return 13 * SortedRateFlag - 2;
             }
         }
 

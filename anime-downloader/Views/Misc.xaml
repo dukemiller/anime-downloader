@@ -10,12 +10,6 @@
         <GroupBox x:Name="GroupBox" Header="Miscellaneous options" FontSize="16" HorizontalAlignment="Left"
                   VerticalAlignment="Top">
             <StackPanel Margin="10">
-                <RadioButton Name="RadioDownload" VerticalContentAlignment="Center">
-                    <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Find and download any missing episodes between known starting episode and known last episode (Useful for retrieving somehow missed episodes)</TextBlock>
-                </RadioButton>
-                <RadioButton Name="RadioCatchUp" VerticalContentAlignment="Center">
-                    <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Continually download from now until no more episodes are found for each airing series (Useful for catching up).</TextBlock>
-                </RadioButton>
                 <RadioButton Name="RadioDuplicates" VerticalContentAlignment="Center">
                     <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Move duplicates to a "Duplicates" folder to be handled by user</TextBlock>
                 </RadioButton>
@@ -33,8 +27,8 @@
                 </RadioButton>
             </StackPanel>
         </GroupBox>
-        <Button x:Name="ButtonSubmit" Content="Submit" HorizontalAlignment="Left" Margin="565,300,0,0"
-                VerticalAlignment="Top" Width="75" />
+        <Button x:Name="ButtonSubmit" Content="Submit" HorizontalAlignment="Left" Margin="520,290,0,0"
+                VerticalAlignment="Top"  Width="120" Height="30" />
 
 
     </Grid>

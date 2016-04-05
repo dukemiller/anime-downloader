@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -14,29 +15,24 @@ namespace anime_downloader.Classes.File
     public class Downloader
     {
         private readonly WebClient _client;
-        private readonly DownloadQueue _downloadQueue;
         private readonly Logger _logger;
         private readonly Settings _settings;
 
-        public Downloader(Settings settings, Logger logger)
+        public Downloader(Settings settings)
         {
             _settings = settings;
-            _logger = logger;
+            _logger = new Logger(settings);
             _client = new WebClient();
-            _downloadQueue = new DownloadQueue();
         }
 
         private bool CanDownload(Nyaa nyaa, Anime anime)
         {
-            if (nyaa == null)
-                return false;
-
             // Most likely wrong torrent
             if (anime.NameStrict && !anime.Name.Equals(nyaa.StrippedName(true)))
                 return false;
 
             // Not the right subgroup
-            if (!anime.PreferredSubgroup.Equals("") & !nyaa.Subgroup().Contains(anime.PreferredSubgroup))
+            if (anime.PreferredSubgroup != null && (!anime.PreferredSubgroup?.Equals("") & !nyaa.Subgroup()?.Contains(anime.PreferredSubgroup) ?? true))
                 return false;
 
             if (_settings.OnlyWhitelisted)
@@ -46,7 +42,7 @@ namespace anime_downloader.Classes.File
                     return false;
 
                 // Nyaa listing with wrong subgroup
-                if (!_settings.Subgroups.Contains(nyaa.Subgroup()))
+                if (!_settings.Subgroups?.Contains(nyaa.Subgroup()) ?? true)
                     return false;
             }
 
@@ -69,17 +65,22 @@ namespace anime_downloader.Classes.File
                 if (nyaaLinks == null)
                     continue;
 
-                foreach (var nyaa in nyaaLinks.Where(nyaa => CanDownload(nyaa, anime)))
+                foreach (var nyaa in nyaaLinks.Where(nyaa => nyaa != null && CanDownload(nyaa, anime)))
                 {
                     textbox.AppendText($"Downloading '{anime.Title}' episode '{anime.NextEpisode()}'.\n");
                     textbox.ScrollDown();
-
-                    _downloadQueue.Enqueue(() => StartDownload(nyaa));
-                    if (_logger.IsEnabled)
-                        await _logger.WriteLine($"Downloaded '{anime.Title}' episode {anime.NextEpisode()}.");
-                    anime.Episode = anime.NextEpisode();
-                    downloaded++;
-                    break;
+                    if (await DownloadFile(nyaa))
+                    {
+                        if (_logger.IsEnabled)
+                            await _logger.WriteLine($"Downloaded '{anime.Title}' episode {anime.NextEpisode()}.");
+                        anime.Episode = anime.NextEpisode();
+                        downloaded++;
+                        break;
+                    }
+                    else
+                    {
+                        textbox.AppendText($"Download of '{anime.Title} failed.\n");
+                    }
                 }
             }
 
@@ -117,45 +118,55 @@ namespace anime_downloader.Classes.File
 
                     foreach (var nyaa in nyaaLinks.Where(nyaa => CanDownload(nyaa, anime)))
                     {
-                        _downloadQueue.Enqueue(() => StartDownload(nyaa));
-                        if (_logger.IsEnabled)
-                            await _logger.WriteLine($"Downloaded '{anime.Title}' episode {anime.NextEpisode()}.");
-                        downloaded++;
-                        break;
+                        //_downloadQueue.Enqueue(() => StartDownload(nyaa));
+                        var downloadSuccessful = await DownloadFile(nyaa);
+                        if (downloadSuccessful)
+                        {
+                            if (_logger.IsEnabled)
+                                await _logger.WriteLine($"Downloaded '{anime.Title}' episode {anime.NextEpisode()}.");
+                            downloaded++;
+                            break;
+                        }
+                        else
+                        {
+                            
+                        }
                     }
                 }
             }
             return downloaded;
         }
 
-        private void StartDownload(Nyaa nyaa)
+        private async Task<bool> DownloadFile(Nyaa nyaa)
         {
-            var filePath = DownloadTorrent(nyaa);
-            StartTorrent(filePath);
-        }
-
-        private string DownloadTorrent(Nyaa nyaa)
-        {
-            if (_settings == null)
-                return null;
-
-            var filePath = Path.Combine(_settings.TorrentFilesPath, nyaa.TorrentName());
-
-            if (!System.IO.File.Exists(filePath))
-                _client.DownloadFile(nyaa.Link, filePath);
-
-            return filePath;
-        }
-
-        private void StartTorrent(string filePath)
-        {
+            var torrentName = nyaa.TorrentName();
+            if (torrentName == null)
+                return false;
+            var filePath = Path.Combine(_settings.TorrentFilesPath, torrentName);
             var fileDirectory = _settings.GetEpisodeFolder();
+            var command = $"/DIRECTORY \"{fileDirectory}\" \"{filePath}\"";
+
+            _client.DownloadFileCompleted += delegate
+            {
+                CallCommand(_settings.UtorrentPath, command);
+            };
+
             if (!Directory.Exists(fileDirectory))
                 Directory.CreateDirectory(fileDirectory);
 
-            var command = $"/DIRECTORY \"{fileDirectory}\" \"{filePath}\"";
-            CallCommand(_settings.UtorrentPath, command);
+            if (!System.IO.File.Exists(filePath))
+            {
+                await _client.DownloadFileTaskAsync(nyaa.Link, filePath);
+                return true;
+            }
+
+            else
+            {
+                CallCommand(_settings.UtorrentPath, command);
+                return true;
+            }
         }
+
 
         /// <summary>
         ///     Execute new process with given parameters.
