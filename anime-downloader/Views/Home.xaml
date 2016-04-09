@@ -4,8 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
-             d:DesignHeight="330" d:DesignWidth="650">
+             d:DesignHeight="340" d:DesignWidth="660">
     <Grid>
+        <Grid.Background>White</Grid.Background>
         <Label x:Name="LabelHome" Content="The home tab." HorizontalAlignment="Center" Margin="11,3,156,0"
                VerticalAlignment="Top" FontSize="18.667" Height="44" Width="483" />
         <Label x:Name="LabelCheck" Content="Search for a single episode for every airing anime.&#xD;&#xA;"

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
@@ -40,19 +39,28 @@ namespace anime_downloader.Classes.Xml
             => _settingsDocument ?? (_settingsDocument = XDocument.Load(_settings.SettingsXmlPath));
 
         /// <summary>
-        ///     Retrieve a static collection of the anime currently in the anime xml as Anime objects.
+        ///     Retrieve a collection of the anime currently in the anime xml as Anime objects.
         /// </summary>
-        public IEnumerable<Anime> Animes => from anime in AnimeRoot.Elements()
+        public IEnumerable<Anime> Animes =>
+            from anime in AnimeRoot.Elements()
             select new Anime(anime, this);
-
+        
+        // TODO: i have a headache this is the easiest way i can think of
         /// <summary>
-        ///     Retrieve a static and settings-defined sorted collection of the anime currently in the
-        ///     anime xml as Anime objects.
+        ///     Retrieve settings-defined filtered and sorted collection of the anime 
+        ///     currently in the anime xml as Anime objects.
         /// </summary>
-        public IEnumerable<Anime> SortedAnimes => Animes.SortedWith(_settings.SortBy);
+        /// <returns></returns>
+        public IEnumerable<Anime> FilteredSortedAnimes()
+        {
+            var filters = _settings.FilterBy.Split('/');
+            return Animes
+                .Where(a => _settings.FilterBy.Equals("") || filters.Any(f => f.Equals(a.Status)))
+                .SortedWith(_settings.SortBy);
+        } 
 
         /// <summary>
-        ///     Retrieve a static collection of the anime that is both airing and being watched from the
+        ///     Retrieve collection of the anime that is both airing and being watched from the
         ///     anime xml as Anime objects.
         /// </summary>
         public IEnumerable<Anime> AiringAnimes => Animes.Where(a => a.Airing && a.Status == "Watching");
@@ -83,22 +91,7 @@ namespace anime_downloader.Classes.Xml
         {
             return _xmlController ?? (_xmlController = new XmlController(settings));
         }
-
-        /// <summary>
-        ///     Singleton instance grabber with no _settings, only use this in the case where
-        ///     you know you have already instantiated XMLController atleast once
-        /// </summary>
-        /// <remarks>
-        ///     I guess this is almost sort of just making _settings a potential global variable
-        /// </remarks>
-        /// <returns></returns>
-        public static XmlController GetXmlController()
-        {
-            if (_xmlController != null)
-                return _xmlController;
-            throw new XmlNotInstantiatedWithSettings();
-        }
-
+        
         /// <summary>
         ///     Add an anime instance to the current anime xml.
         /// </summary>
@@ -136,8 +129,6 @@ namespace anime_downloader.Classes.Xml
         {
             SettingsDocument.Save(_settings.SettingsXmlPath);
         }
-
-        public class XmlNotInstantiatedWithSettings : Exception
-        {}
+        
     }
 }

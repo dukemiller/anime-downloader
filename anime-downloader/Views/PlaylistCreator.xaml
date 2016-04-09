@@ -4,10 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
-             d:DesignHeight="330" d:DesignWidth="650">
+             d:DesignHeight="340" d:DesignWidth="660">
     <Grid>
         <Grid.Background>White</Grid.Background>
-        <Button x:Name="CreateButton" Content="Create" HorizontalAlignment="Left" Margin="520,290,0,0"
+        <Button x:Name="CreateButton" Content="Create" HorizontalAlignment="Left" Margin="530,300,0,0"
                  Width="120" Height="30" VerticalAlignment="Top" />
 
         <GroupBox x:Name="SortGroupBox" FontSize="16" Header="Sort by" HorizontalAlignment="Left" Margin="10,71,0,0"

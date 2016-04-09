@@ -83,6 +83,8 @@ namespace anime_downloader.Classes
             }
         }
 
+        // public string BackupPath => Path.Combine(ApplicationPath, "Backup");
+
         /// <summary>
         ///     The user preferred anime list sort method.
         /// </summary>
@@ -92,6 +94,16 @@ namespace anime_downloader.Classes
             set
             {
                 Root.Element("sortBy")?.SetValue(value);
+                Save();
+            }
+        }
+
+        public string FilterBy
+        {
+            get { return Root.Element("filterBy")?.Value; }
+            set
+            {
+                Root.Element("filterBy")?.SetValue(value);
                 Save();
             }
         }
@@ -147,6 +159,11 @@ namespace anime_downloader.Classes
             if (!Xml.AutoSave)
                 return;
             Xml.SaveSettings();
+        }
+
+        private void Backup()
+        {
+            
         }
 
         /// <summary>

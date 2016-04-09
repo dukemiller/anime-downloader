@@ -31,7 +31,7 @@
                 HorizontalAlignment="Left" Margin="10,226,0,0"
                 FontSize="16" VerticalAlignment="Top" Width="110" Click="ButtonPlaylist_Click" Height="34" />
 
-        <Grid x:Name="Display" Width="650" Height="330" HorizontalAlignment="Left" Margin="241,10,0,0"
+        <Grid x:Name="Display" Width="660" Height="340" HorizontalAlignment="Left" Margin="241,10,0,0"
               VerticalAlignment="Top" />
 
         <GroupBox x:Name="GroupBox" Header="Directories" HorizontalAlignment="Left" Width="auto" Height="auto"

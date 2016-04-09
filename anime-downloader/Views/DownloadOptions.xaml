@@ -4,26 +4,23 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d" 
-             d:DesignHeight="330" d:DesignWidth="650">
+             d:DesignHeight="340" d:DesignWidth="660">
     <Grid>
         <Grid.Background>White</Grid.Background>
         <GroupBox x:Name="DownloadGroupBox" FontSize="16" Header="Download Options" HorizontalAlignment="Left" Margin="10,10,0,0"
                   VerticalAlignment="Top" Height="auto" Width="auto" Grid.Column="0">
             <StackPanel>
-                <RadioButton x:Name="CheckForLatestRadio" IsChecked="True" Margin="5"
-                             ToolTip="Default windows style sort" >
+                <RadioButton x:Name="CheckForLatestRadio" IsChecked="True" Margin="5">
                     <TextBlock TextWrapping="Wrap">
                         Check for and download the latest episode of every airing anime
                     </TextBlock>
                 </RadioButton>
-                <RadioButton x:Name="GetUpToDateRadio" Margin="5"
-                             ToolTip="A more rigorous episode number check so that episodes are in order">
+                <RadioButton x:Name="GetUpToDateRadio" Margin="5">
                     <TextBlock TextWrapping="Wrap">
                         Check for and download episodes of every series continually until no more are found
                         (good for getting up to date)</TextBlock>
                 </RadioButton>
-                <RadioButton x:Name="GetMissingRadio" Margin="5"
-                             ToolTip="When the file was created" >
+                <RadioButton x:Name="GetMissingRadio" Margin="5">
                     <TextBlock TextWrapping="Wrap">
                         Find and download any missing episodes between first known and last known episodes
                     </TextBlock>
@@ -31,6 +28,6 @@
             </StackPanel>
         </GroupBox>
 
-        <Button x:Name="SearchButton" Width="120" Height="30" Margin="520,290,10,10" Content="Search"></Button>
+        <Button x:Name="SearchButton" Width="120" Height="30" Margin="530,300,10,10" Content="Search"></Button>
     </Grid>
 </UserControl>

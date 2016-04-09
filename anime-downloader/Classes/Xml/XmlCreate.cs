@@ -74,7 +74,8 @@ namespace anime_downloader.Classes.Xml
                             new XElement("only-whitelisted-subs"),
                             new XElement("use-logging")
                             ),
-                        new XElement("sortBy")
+                        new XElement("sortBy"),
+                        new XElement("filterBy")
                         )
                     );
             return document;

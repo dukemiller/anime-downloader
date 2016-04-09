@@ -17,7 +17,7 @@ namespace anime_downloader.Classes
 
         public async Task WriteLine(string message)
         {
-            var timestamp = $"{DateTime.Now:[yyyy/MM/d @ hh:mm:ss tt]}";
+            var timestamp = $"{DateTime.Now:[M/d/yyyy @ hh:mm:ss tt]}";
 
             using (var streamWriter = new StreamWriter(_settings.LogPath, true))
             {

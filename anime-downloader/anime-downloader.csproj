@@ -72,6 +72,7 @@
     <Compile Include="Classes\Web\Nyaa.cs" />
     <Compile Include="Classes\Playlist.cs" />
     <Compile Include="Classes\Settings.cs" />
+    <Compile Include="Classes\Web\TorrentProvider.cs" />
     <Compile Include="Classes\Xml\Xml.cs" />
     <Compile Include="Classes\Xml\XmlController.cs" />
     <Compile Include="Classes\Xml\XmlCreate.cs" />

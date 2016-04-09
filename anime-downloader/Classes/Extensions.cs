@@ -4,6 +4,8 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using anime_downloader.Classes.Xml;
+using anime_downloader.Views;
 
 namespace anime_downloader.Classes
 {
@@ -26,7 +28,14 @@ namespace anime_downloader.Classes
         }
 
         public static IEnumerable<Anime> Watching(this IEnumerable<Anime> animes)
-            => animes.Where(a => a.Status.Equals("Watching"));
+        {
+            return animes.Where(a => a.Status.Equals("Watching"));
+        }
+
+        public static IEnumerable<Anime> Airing(this IEnumerable<Anime> animes)
+        {
+            return animes.Where(a => a.Airing && a.Status == "Watching");
+        } 
 
         public static Anime Get(this IEnumerable<Anime> animes, string name)
         {
@@ -35,14 +44,20 @@ namespace anime_downloader.Classes
                 : animes.FirstOrDefault(anime => anime.Name.ToLower().Contains(name.ToLower()));
         }
 
+        // TODO: Hey turn this into a real data binding instead of a fake one
         /// <summary>
         ///     "Refresh" the datacontext on the UI.
         /// </summary>
-        /// <param name="dataGrid"></param>
-        /// <param name="data"></param>
-        public static void Refresh(this DataGrid dataGrid, IEnumerable<Anime> data)
+        /// <param name="animeList"></param>
+        /// <param name="controller"></param>
+        public static void Refresh(this AnimeList animeList, XmlController controller)
         {
-            dataGrid.ItemsSource = data;
+            var anime = controller.Animes.ToList();
+            animeList.DataGrid.ItemsSource = controller.FilteredSortedAnimes();
+            animeList.StatsLabel.Content = $"{anime.Count} total animes. " +
+                                           $"{anime.Count(a => a.Airing)} airing or watching, " +
+                                           $"{anime.Count(a => a.Status.Equals("Finished"))} finished, " +
+                                           $"{anime.Count(a => a.Status.Equals("Dropped"))} dropped.";
         }
 
         /// <summary>
@@ -50,10 +65,7 @@ namespace anime_downloader.Classes
         /// </summary>
         /// <param name="textbox"></param>
         /// <returns></returns>
-        public static bool Empty(this TextBox textbox)
-        {
-            return textbox.Text.Equals("");
-        }
+        public static bool Empty(this TextBox textbox) => textbox.Text.Equals("");
 
         /// <summary>
         ///     Scroll to the bottom.
@@ -66,14 +78,17 @@ namespace anime_downloader.Classes
             textbox.ScrollToEnd();
         }
 
+        public static void WriteLine(this TextBox textbox, string text)
+        {
+            textbox.AppendText(text + "\n");
+            textbox.ScrollDown();
+        }
+
         /// <summary>
         ///     Simulate a button press.
         /// </summary>
         /// <param name="button"></param>
-        public static void Press(this IInputElement button)
-        {
-            button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
-        }
+        public static void Press(this IInputElement button) => button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
 
         /// <summary>
         ///     Toggle opacity and visibility of a ButtonSubmit between two states.

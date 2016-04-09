@@ -119,6 +119,8 @@ namespace anime_downloader.Classes
             }
         }
 
+        public string AiringSymbol => Airing ? "✓" : "";
+
         /// <summary>
         ///     if searching for the anime should contain exclusively it's own name with no fragments.
         /// </summary>
@@ -265,25 +267,12 @@ namespace anime_downloader.Classes
 
         public async Task<IEnumerable<Nyaa>> GetLinksToEpisode(string episode)
         {
-            var url = new Uri("https://www.nyaa.se/?page=rss&cats=1_37&term=" + ToRss(episode) + "&sort=2");
-            var client = new WebClient();
-            var document = new HtmlDocument();
-            var html = await Task.Run(() => client.DownloadString(url));
-            document.LoadHtml(html);
-            var itemNodes = document.DocumentNode.SelectNodes("//item");
-
-            var result = itemNodes?.Select(n => new Nyaa(n))
-                .Where(n => n.Measurement.Equals("MiB") &&
-                            n.Size > 10 &&
-                            n.StrippedName().Contains(episode) &&
-                            n.Seeders > 0);
-
-            return result;
+            return await Nyaa.GetTorrentsFor(this, episode);
         }
 
         public async Task<IEnumerable<Nyaa>> GetLinksToCurrentEpisode()
         {
-            return await GetLinksToEpisode(Episode);
+            return await Nyaa.GetTorrentsFor(this, Episode);
         }
 
         /// <summary>
@@ -292,7 +281,9 @@ namespace anime_downloader.Classes
         /// <returns>A Nyaa object containing information about the file download.</returns>
         public async Task<IEnumerable<Nyaa>> GetLinksToNextEpisode()
         {
-            return await GetLinksToEpisode(NextEpisode());
+            return await Nyaa.GetTorrentsFor(this, NextEpisode());
         }
+        
     }
+    
 }

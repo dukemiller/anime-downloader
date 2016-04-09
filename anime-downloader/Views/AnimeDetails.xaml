@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
-             d:DesignHeight="330" d:DesignWidth="650">
+             d:DesignHeight="340" d:DesignWidth="660">
     <Grid>
         <Grid.Background>White</Grid.Background>
         <Grid.ColumnDefinitions>
@@ -39,6 +39,7 @@
             <ComboBoxItem IsSelected="True" Content="Watching" />
             <ComboBoxItem Content="Finished" />
             <ComboBoxItem Content="On Hold" />
+            <ComboBoxItem Content="Dropped" />
         </ComboBox>
         <CheckBox x:Name="AiringCheckbox" IsChecked="True" Content="" Grid.Column="1" HorizontalAlignment="Left"
                   Margin="0,18,0,0" Grid.Row="4" VerticalAlignment="Top" />
@@ -69,7 +70,7 @@
                HorizontalAlignment="Center" FontSize="16"
                ToolTip="Whether searching for this anime should match exactly what the name is instead of picking up partial matches."
                Grid.Column="0" Grid.Row="5" />
-        <Button x:Name="AddButton" Content="Add" Grid.Column="1" HorizontalAlignment="Left" Margin="402,7,0,0"
+        <Button x:Name="AddButton" Content="Add" Grid.Column="1" HorizontalAlignment="Left" Margin="410,9,0,0"
                 Grid.Row="6" VerticalAlignment="Top"  Width="120" Height="30" />
 
         <Grid Grid.Column="1" HorizontalAlignment="Left" Height="189" Margin="162,0,0,0"

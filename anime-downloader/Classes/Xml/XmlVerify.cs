@@ -10,6 +10,7 @@ namespace anime_downloader.Classes.Xml
     public class XmlVerify
     {
         private readonly XmlController _controller;
+
         private readonly Settings _settings;
 
         public XmlVerify(Settings settings, XmlController controller)
@@ -27,6 +28,9 @@ namespace anime_downloader.Classes.Xml
 
             if (root?.Element("sortBy") == null)
                 root?.Add(new XElement("sortBy", "name"));
+
+            if (root?.Element("filterBy") == null)
+                root?.Add(new XElement("filterBy"));
 
             if (root?.Element("flag")?.Element("use-logging") == null)
                 root?.Element("flag")?.Add(new XElement("use-logging", false));

@@ -42,7 +42,7 @@ namespace anime_downloader.Views
                 e.Handled = true;
             }
 
-            if (!RatingTextbox.SelectionLength.Equals(2) && int.TryParse(RatingTextbox.Text, out total) && int.TryParse(e.Text, out toAdd))
+            if (RatingTextbox.SelectedText.Length == 0 && !RatingTextbox.SelectionLength.Equals(2) && int.TryParse(RatingTextbox.Text, out total) && int.TryParse(e.Text, out toAdd))
             {
                 toAdd *= (int) Math.Pow(10, RatingTextbox.Text.Length + 1);
                 if (total + toAdd > 10 || toAdd == 0)
