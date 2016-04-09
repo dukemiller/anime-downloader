@@ -480,8 +480,16 @@ namespace anime_downloader
 
             display.NameTextbox.Text = anime.Name;
             display.EpisodeTextbox.Text = anime.Episode;
-            display.ResolutionCombobox.Text = anime.Resolution;
-            display.StatusCombobox.Text = anime.Status;
+
+            display.ResolutionContainerGrid.GetAll<RadioButton>()
+                .First(radio => radio.Content.Equals(anime.Resolution))
+                .IsChecked = true;
+
+            display
+                .StatusContainerGrid.GetAll<RadioButton>()
+                .First(radio => radio.Content.Equals(anime.Status))
+                .IsChecked = true;
+
             display.AiringCheckbox.IsChecked = anime.Airing;
             display.NameStrictCheckbox.IsChecked = anime.NameStrict;
             display.RatingTextbox.Text = anime.Rating;
@@ -700,13 +708,23 @@ namespace anime_downloader
                 var subgroup = display.SubgroupComboBox.Text;
                 if (subgroup.Equals("(None)"))
                     subgroup = "";
+                
+                var status = display
+                    .StatusContainerGrid.GetAll<RadioButton>()
+                    .First(radio => radio.IsChecked != null && radio.IsChecked.Value)
+                    .Content.ToString();
+
+                var resolution = display
+                    .ResolutionContainerGrid.GetAll<RadioButton>()
+                    .First(radio => radio.IsChecked != null && radio.IsChecked.Value)
+                    .Content.ToString();
 
                 _xml.Controller.Add(new Anime
                 {
                     Name = display.NameTextbox.Text,
                     Episode = $"{int.Parse(display.EpisodeTextbox.Text):D2}",
-                    Status = display.StatusCombobox.Text,
-                    Resolution = display.ResolutionCombobox.Text,
+                    Status = status,
+                    Resolution = resolution,
                     Airing = display.AiringCheckbox.IsChecked ?? false,
                     NameStrict = display.NameStrictCheckbox.IsChecked ?? false,
                     PreferredSubgroup = subgroup,
@@ -732,10 +750,21 @@ namespace anime_downloader
             else
             {
                 var subgroup = display.SubgroupComboBox.Text;
+
+                var status = display
+                    .StatusContainerGrid.GetAll<RadioButton>()
+                    .First(radio => radio.IsChecked != null && radio.IsChecked.Value)
+                    .Content.ToString();
+
+                var resolution = display
+                    .ResolutionContainerGrid.GetAll<RadioButton>()
+                    .First(radio => radio.IsChecked != null && radio.IsChecked.Value)
+                    .Content.ToString();
+
                 _currentlyEditedAnime.Name = display.NameTextbox.Text;
                 _currentlyEditedAnime.Episode = $"{int.Parse(display.EpisodeTextbox.Text):D2}";
-                _currentlyEditedAnime.Status = display.StatusCombobox.Text;
-                _currentlyEditedAnime.Resolution = display.ResolutionCombobox.Text;
+                _currentlyEditedAnime.Status = status;
+                _currentlyEditedAnime.Resolution = resolution;
                 _currentlyEditedAnime.Airing = display.AiringCheckbox.IsChecked ?? false;
                 _currentlyEditedAnime.NameStrict = display.NameStrictCheckbox.IsChecked ?? false;
                 _currentlyEditedAnime.PreferredSubgroup = subgroup.Equals("(None)") ? "" : subgroup;

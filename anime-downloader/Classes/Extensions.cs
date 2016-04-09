@@ -111,6 +111,11 @@ namespace anime_downloader.Classes
                 button.Toggle();
         }
 
+        public static List<T> GetAll<T>(this Grid grid) where T : DependencyObject
+        {
+            return GetDependencyObject<T>(grid);
+        } 
+
         public static List<T> GetAll<T>(this Window window) where T : DependencyObject
         {
             return GetDependencyObject<T>(window);

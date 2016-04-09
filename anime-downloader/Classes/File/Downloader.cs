@@ -164,10 +164,14 @@ namespace anime_downloader.Classes.File
                     // ignored
                     return false;
                 }
-                
+
             }
 
-            CallCommand(_settings.UtorrentPath, command);
+            else
+            {
+                CallCommand(_settings.UtorrentPath, command);
+            }
+
             return true;
         }
 

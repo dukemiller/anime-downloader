@@ -7,32 +7,29 @@
              d:DesignHeight="340" d:DesignWidth="660">
     <Grid>
         <Grid.Background>White</Grid.Background>
-        <Button x:Name="CreateButton" Content="Create" HorizontalAlignment="Left" Margin="530,300,0,0"
-                 Width="120" Height="30" VerticalAlignment="Top" />
-
-        <GroupBox x:Name="SortGroupBox" FontSize="16" Header="Sort by" HorizontalAlignment="Left" Margin="10,71,0,0"
-                  VerticalAlignment="Top" Height="auto" Width="197" Grid.Column="0">
-            <StackPanel>
-                <RadioButton x:Name="DefaultRadio" Content="Default file listing" Margin="5"
-                             ToolTip="Default windows style sort" />
-                <RadioButton x:Name="EpisodeRadio" Content="Episode number" Margin="5" IsChecked="True"
-                             ToolTip="A more rigorous episode number check so that episodes are in order" />
-                <RadioButton x:Name="MomentRadio" Content="Date downloaded" Margin="5"
-                             ToolTip="When the file was created" />
-            </StackPanel>
-        </GroupBox>
-
-        <GroupBox x:Name="OptionsGroupBox" FontSize="16" Header="Options" HorizontalAlignment="Left"
-                  Margin="212,71,0,0" VerticalAlignment="Top" Height="92" Width="197" Grid.Column="0">
-            <StackPanel>
-                <CheckBox x:Name="SeperateCheckBox" Content="Separate show order" Margin="5"
-                          ToolTip="Distribute the show order so that you don't watch the same show twice in a row." />
-            </StackPanel>
-        </GroupBox>
-        <TextBlock x:Name="TextBlock" Margin="15,11,16,277" TextWrapping="Wrap" FontSize="16" TextAlignment="Justify"
+        <StackPanel>
+            <TextBlock x:Name="TextBlock" TextWrapping="Wrap" FontSize="16" TextAlignment="Justify"
                    Text="Create a playlist from all completed video files inside the base folder path (excluding files in the 'Watched' folder) as the filename 'playlist.m3u'."
-                   VerticalAlignment="Center" RenderTransformOrigin="-0.503,0" HorizontalAlignment="Center" Width="619" />
-
-
+                   VerticalAlignment="Center" HorizontalAlignment="Center" />
+            <DockPanel>
+                <GroupBox x:Name="SortGroupBox" FontSize="16" Header="Sort by" HorizontalAlignment="Left" VerticalAlignment="Top" >
+                    <StackPanel>
+                        <RadioButton x:Name="DefaultRadio" Content="Default file listing" Margin="5"
+                                 ToolTip="Default windows style sort" />
+                        <RadioButton x:Name="EpisodeRadio" Content="Episode number" Margin="5" IsChecked="True"
+                                 ToolTip="A more rigorous episode number check so that episodes are in order" />
+                        <RadioButton x:Name="MomentRadio" Content="Date downloaded" Margin="5"
+                                 ToolTip="When the file was created" />
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox x:Name="OptionsGroupBox" FontSize="16" Header="Options" HorizontalAlignment="Left" VerticalAlignment="Top" >
+                <StackPanel>
+                    <CheckBox x:Name="SeperateCheckBox" Content="Separate show order" Margin="5"
+                          ToolTip="Distribute the show order so that you don't watch the same show twice in a row." />
+                </StackPanel>
+            </GroupBox>
+            </DockPanel>
+        </StackPanel>
+        <Button x:Name="CreateButton" Content="Create" HorizontalAlignment="Left" Margin="530,300,0,0" Width="120" Height="30" VerticalAlignment="Top" />
     </Grid>
 </UserControl>
