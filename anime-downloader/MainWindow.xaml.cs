@@ -615,7 +615,7 @@ namespace anime_downloader
                 Name = "FindBox",
                 Width = 400,
                 Height = 30,
-                Margin = new Thickness(470, 290, 0, 0),
+                Margin = new Thickness(450, 250, 0, 0),
                 FontSize = 18
             };
 
@@ -623,14 +623,14 @@ namespace anime_downloader
             RoutedEventHandler closeFindWindow = delegate
             {
                 Grid.Children.Remove(findWindow);
-                display.DataGrid.ItemsSource = _allAnime;
+                display.DataGrid.ItemsSource = _xml.Controller.FilteredSortedAnimes();
                 display.DataGrid.Focus();
             };
 
             MouseButtonEventHandler closeFindWindowMouse = delegate
             {
                 Grid.Children.Remove(findWindow);
-                display.DataGrid.ItemsSource = _allAnime;
+                display.DataGrid.ItemsSource = _xml.Controller.FilteredSortedAnimes();
                 display.DataGrid.Focus();
             };
 
@@ -658,7 +658,7 @@ namespace anime_downloader
             findWindow.KeyUp += delegate
             {
                 var text = findWindow.Text.ToLower().Trim();
-                var copy = _allAnime.Where(a => a.Name.ToLower().Contains(text));
+                var copy = _xml.Controller.FilteredSortedAnimes().Where(a => a.Name.ToLower().Contains(text));
                 display.DataGrid.ItemsSource = copy;
             };
 
