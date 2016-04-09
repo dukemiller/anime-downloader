@@ -78,10 +78,10 @@ namespace anime_downloader.Classes.File
             return _downloaded;
         }
 
-        private bool CanDownload(TorrentProvider torrent, Anime anime)
+        public bool CanDownload(TorrentProvider torrent, Anime anime)
         {
             // Most likely wrong torrent
-            if (anime.NameStrict && !anime.Name.Equals(torrent.StrippedName(true)))
+            if (anime.NameStrict && !anime.Name.ToLower().Equals(torrent.StrippedName(true).ToLower()))
                 return false;
 
             // Not the right subgroup
@@ -100,7 +100,7 @@ namespace anime_downloader.Classes.File
                     return false;
 
                 // Nyaa listing with wrong subgroup
-                if (!_settings.Subgroups?.Contains(torrent.Subgroup()) ?? true)
+                if (!_settings.Subgroups.Contains(torrent.Subgroup()))
                     return false;
             }
 
