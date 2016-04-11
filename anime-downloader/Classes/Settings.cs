@@ -83,6 +83,11 @@ namespace anime_downloader.Classes
             }
         }
 
+        /// <summary>
+        ///     A path to where the playlist will be created.
+        /// </summary>
+        public string LoggingPath => Path.Combine(BaseFolderPath, "playlist.m3u");
+
         // public string BackupPath => Path.Combine(ApplicationPath, "Backup");
 
         /// <summary>

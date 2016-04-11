@@ -39,8 +39,9 @@ namespace anime_downloader.Classes.File
             get
             {
                 var number =
-                    int.Parse(string.Join("", StrippedFilename.Split(new[] {" - "}, StringSplitOptions.RemoveEmptyEntries)
-                        .Last().TakeWhile(char.IsNumber)));
+                    int.Parse(string.Join("",
+                        StrippedFilename.Split(new[] {" - "}, StringSplitOptions.RemoveEmptyEntries)
+                            .Last().TakeWhile(char.IsNumber)));
                 return $"{number:00}";
             }
         }

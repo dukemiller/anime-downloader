@@ -31,22 +31,20 @@ namespace anime_downloader.Classes.File
         /// </summary>
         /// <param name="animes">The collection of anime to try and get new episodes from.</param>
         /// <param name="textbox">The output box to display results to.</param>
-        public async Task<int> Download(List<Anime> animes, TextBox textbox)
+        public async Task<int> DownloadAsync(List<Anime> animes, TextBox textbox)
         {
             _downloaded = 0;
 
             foreach (var anime in animes)
-            {
-                await DownloadEpisode(await anime.GetLinksToNextEpisode(), anime, textbox);
-            }
+                await DownloadEpisodeAsync(await anime.GetLinksToNextEpisode(), anime, textbox);
 
             return _downloaded;
         }
         
-        public async Task<int> Download(IEnumerable<Anime> animes,
-            IEnumerable<AnimeEpisodeDelta> animeEpisodeDeltas,
-            IEnumerable<AnimeEpisode> allEpisodes,
-            TextBox textbox)
+        public async Task<int> DownloadAsync(IEnumerable<Anime> animes,
+                                             IEnumerable<AnimeEpisodeDelta> animeEpisodeDeltas,
+                                             IEnumerable<AnimeEpisode> allEpisodes,
+                                             TextBox textbox)
         {
             _downloaded = 0;
             var animeList = animes.ToList();
@@ -71,14 +69,14 @@ namespace anime_downloader.Classes.File
                         NameStrict = animeBase.NameStrict
                     };
 
-                    await DownloadEpisode(await anime.GetLinksToNextEpisode(), anime, textbox);
+                    await DownloadEpisodeAsync(await anime.GetLinksToNextEpisode(), anime, textbox);
                 }
             }
 
             return _downloaded;
         }
 
-        public bool CanDownload(TorrentProvider torrent, Anime anime)
+        private bool CanDownload(TorrentProvider torrent, Anime anime)
         {
             // Most likely wrong torrent
             if (anime.NameStrict && !anime.Name.ToLower().Equals(torrent.StrippedName(true).ToLower()))
@@ -107,64 +105,70 @@ namespace anime_downloader.Classes.File
             return true;
         }
 
-        private async Task<bool> DownloadTorrent(TorrentProvider torrent, Anime anime, TextBox textbox)
+        private async Task DownloadEpisodeAsync(IEnumerable<TorrentProvider> torrentLinks, Anime anime, TextBox textbox)
+        {
+            if (torrentLinks == null)
+                return;
+
+            foreach (var torrent in torrentLinks.Where(torrent => CanDownload(torrent, anime)))
+                if (await DownloadTorrentAsync(torrent, anime, textbox))
+                    break;
+        }
+
+        private async Task<bool> DownloadTorrentAsync(TorrentProvider torrent, Anime anime, TextBox textbox)
         {
             textbox.WriteLine($"Downloading '{anime.Title}' episode '{anime.NextEpisode()}'.");
-            if (await DownloadFile(torrent))
+            var downloadedFile = await DownloadFileAsync(torrent);
+
+            if (downloadedFile)
             {
                 if (_logger.IsEnabled)
                     await _logger.WriteLine($"Downloaded '{anime.Title}' episode {anime.NextEpisode()}.");
                 anime.Episode = anime.NextEpisode();
                 _downloaded++;
-                return true;
             }
-            textbox.WriteLine($"Download of '{anime.Title} failed.");
-            return false;
+
+            else
+            {
+                textbox.WriteLine($"Download of '{anime.Title}' failed.");
+            }
+            
+            return downloadedFile;
         }
 
-        private async Task DownloadEpisode(IEnumerable<TorrentProvider> torrentLinks, Anime anime, TextBox textbox)
+        private async Task<bool> DownloadFileAsync(TorrentProvider torrent)
         {
-            if (torrentLinks == null)
-                return;
-
-            foreach (var nyaa in torrentLinks.Where(nyaa => CanDownload(nyaa, anime)))
-                if (await DownloadTorrent(nyaa, anime, textbox))
-                    break;
-        }
-
-        private async Task<bool> DownloadFile(TorrentProvider nyaa)
-        {
-
-            var torrentName = nyaa.TorrentName();
+            var torrentName = torrent.TorrentName();
             if (torrentName == null)
                 return false;
             var filePath = Path.Combine(_settings.TorrentFilesPath, torrentName);
             var fileDirectory = _settings.GetEpisodeFolder();
             var command = $"/DIRECTORY \"{fileDirectory}\" \"{filePath}\"";
 
-            _client.DownloadFileCompleted += delegate
-            {
-                CallCommand(_settings.UtorrentPath, command);
-            };
-
+            // Create directory
             if (!Directory.Exists(fileDirectory))
                 Directory.CreateDirectory(fileDirectory);
 
+            // Download file and call utorrent
             if (!System.IO.File.Exists(filePath))
             {
-                try
+                return await Task.Run(() =>
                 {
-                    await _client.DownloadFileTaskAsync(nyaa.Link, filePath);
+                    try
+                    {
+                        _client.DownloadFile(torrent.Link, filePath);
+                    }
+
+                    // TODO: heh heh heh
+                    catch (Exception)
+                    {
+                        // ignored
+                        return false;
+                    }
+
+                    CallCommand(_settings.UtorrentPath, command);
                     return true;
-                }
-
-                // TODO: heh heh heh
-                catch (Exception)
-                {
-                    // ignored
-                    return false;
-                }
-
+                });
             }
 
             else

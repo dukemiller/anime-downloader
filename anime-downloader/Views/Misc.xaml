@@ -7,8 +7,9 @@
              d:DesignHeight="340" d:DesignWidth="660">
     <Grid>
         <Grid.Background>White</Grid.Background>
-        <GroupBox x:Name="GroupBox" Header="Miscellaneous options" FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Top">
-            <StackPanel Margin="10">
+        <StackPanel>
+            <GroupBox x:Name="GroupBox" Header="Miscellaneous options" FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Top">
+                <StackPanel Margin="10">
                 <RadioButton Name="RadioDuplicates" VerticalContentAlignment="Center">
                     <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Move duplicates to a "Duplicates" folder to be handled by user</TextBlock>
                 </RadioButton>
@@ -25,7 +26,16 @@
                     <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode counts of watched shows to zero</TextBlock>
                 </RadioButton>
             </StackPanel>
-        </GroupBox>
+            </GroupBox>
+            <GroupBox x:Name="WebButtonsGroupBox" Header="Websites" FontSize="16" HorizontalAlignment="Left">
+                <DockPanel HorizontalAlignment="Left" >
+                    <Button x:Name="AnichartButton" Margin="5"><TextBlock Margin="5">Anichart</TextBlock></Button>
+                    <Button x:Name="MyanimelistButton" Margin="5"><TextBlock Margin="5">MyAnimeList</TextBlock></Button>
+                    <Button x:Name="AnidbButton" Margin="5"><TextBlock Margin="5">aniDB</TextBlock></Button>
+                    <Button x:Name="NyaaButton" Margin="5"><TextBlock Margin="5">Nyaa</TextBlock></Button>
+                </DockPanel>
+            </GroupBox>
+        </StackPanel>
         <Button x:Name="ButtonSubmit" Content="Submit" HorizontalAlignment="Left" Margin="530,300,0,0"
                 VerticalAlignment="Top"  Width="120" Height="30" />
 

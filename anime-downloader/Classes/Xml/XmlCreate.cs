@@ -35,7 +35,7 @@ namespace anime_downloader.Classes.Xml
         ///     Create an anime node.
         /// </summary>
         /// <returns></returns>
-        public static XContainer AnimeNode()
+        public static XElement AnimeNode()
         {
             var node = new XElement("show",
                 new XElement("name"),
@@ -76,6 +76,7 @@ namespace anime_downloader.Classes.Xml
                             ),
                         new XElement("sortBy"),
                         new XElement("filterBy")
+                        // ,new XElement("idont")
                         )
                     );
             return document;

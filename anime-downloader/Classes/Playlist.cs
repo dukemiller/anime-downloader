@@ -16,11 +16,6 @@ namespace anime_downloader.Classes
         }
 
         /// <summary>
-        ///     A path to where the playlist will be created.
-        /// </summary>
-        private string Path => System.IO.Path.Combine(_settings.BaseFolderPath, "playlist.m3u");
-
-        /// <summary>
         ///     Re-initialize the collection of episodes from the folders.
         /// </summary>
         public void Refresh()
@@ -98,7 +93,7 @@ namespace anime_downloader.Classes
         /// </summary>
         public async void Save()
         {
-            using (var writer = new StreamWriter(Path, false))
+            using (var writer = new StreamWriter(_settings.LoggingPath, false))
             {
                 foreach (var episode in _episodes)
                     await writer.WriteLineAsync(episode);
