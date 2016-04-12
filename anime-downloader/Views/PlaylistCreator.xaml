@@ -31,5 +31,6 @@
             </DockPanel>
         </StackPanel>
         <Button x:Name="CreateButton" Content="Create" HorizontalAlignment="Left" Margin="530,300,0,0" Width="120" Height="30" VerticalAlignment="Top" />
+        <Button x:Name="OpenButton" Content="Open Playlist" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="120" Height="30" Margin="10,0,0,10" />
     </Grid>
 </UserControl>

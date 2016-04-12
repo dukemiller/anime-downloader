@@ -264,6 +264,18 @@ namespace anime_downloader
             if (playlistDisplay == null)
                 return;
 
+            var path = Path.Combine(_settings.BaseFolderPath, "playlist.m3u");
+
+            playlistDisplay.OpenButton.Click += delegate
+            {
+                Process.Start(path);
+            };
+
+            if (!File.Exists(path))
+            {
+                playlistDisplay.OpenButton.Toggle();
+            }
+
             playlistDisplay.CreateButton.Click += PlaylistCreateButton_Click;
         }
 
@@ -300,6 +312,9 @@ namespace anime_downloader
                 _playlist.Save();
 
                 Alert("Playlist created.");
+
+                ButtonHome.Press();
+                ButtonPlaylist.Press();
             }
         }
 
