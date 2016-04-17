@@ -69,6 +69,7 @@
     <Compile Include="Classes\File\Downloader.cs" />
     <Compile Include="Classes\Extensions.cs" />
     <Compile Include="Classes\Logger.cs" />
+    <Compile Include="Classes\OperatingSystemApi.cs" />
     <Compile Include="Classes\Web\Nyaa.cs" />
     <Compile Include="Classes\Playlist.cs" />
     <Compile Include="Classes\Settings.cs" />

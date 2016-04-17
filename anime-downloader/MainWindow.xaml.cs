@@ -1,10 +1,12 @@
-﻿using System;
+﻿#define WINDOWS
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,6 +16,7 @@ using anime_downloader.Classes.File;
 using anime_downloader.Classes.Web;
 using anime_downloader.Classes.Xml;
 using anime_downloader.Views;
+using static anime_downloader.Classes.OperatingSystemApi;
 using Settings = anime_downloader.Classes.Settings;
 using UserControl = System.Windows.Controls.UserControl;
 
@@ -81,6 +84,8 @@ namespace anime_downloader
 
         private static void CheckIfAlreadyOpen()
         {
+            const int swRestore = 9;
+
             // All same exact processes
             var processes = Process.GetProcessesByName(
                 Path.GetFileNameWithoutExtension(Assembly
@@ -90,14 +95,9 @@ namespace anime_downloader
             // If more than one window open
             if (processes.Length > 1)
             {
-                // As to not spam the popup box more than once if attempting to open
-                // multiple times
-                if (processes.Length == 2)
-                {
-                    Alert("Anime downloader already open.");
-                }
-
-                // Kill
+                var hwnd = FindWindow(null, "Anime Downloader");
+                ShowWindow(hwnd, swRestore);
+                SetForegroundWindow(hwnd);
                 Process.GetCurrentProcess().Kill();
             }
         }
@@ -192,6 +192,7 @@ namespace anime_downloader
             }
             else if (WindowState == WindowState.Normal)
             {
+                Show();
                 _notifyIcon.Visible = false;
             }
         }
