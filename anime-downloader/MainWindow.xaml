@@ -5,48 +5,49 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         ResizeMode="CanMinimize"
-        Title="Anime Downloader" Height="386" Width="918" StateChanged="Window_StateChanged">
+        Title="Anime Downloader" Height="386" Width="918" 
+        StateChanged="Window_StateChanged" Closing="MainWindow_OnClosing">
 
+    <Window.Resources>
+        <Style x:Key="MainButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="FontSize" Value="24" />
+            <Setter Property="Width" Value="226" />
+            <Setter Property="Height" Value="43" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+        </Style>
+        <Style x:Key="MiniButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="Width" Value="110" />
+            <Setter Property="Height" Value="34" />
+            <Setter Property="FontSize" Value="16" />
+        </Style>
+        <Style x:Key="DirectoryButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Width" Value="70" />
+        </Style>
+    </Window.Resources>
     <Grid x:Name="Grid">
-        <Button x:Name="ButtonHome"
-                Content="Home"
-                HorizontalAlignment="Left" Margin="10,10,0,0" FontSize="24"
-                VerticalAlignment="Top" Width="226" Click="ButtonHome_Click" Height="43" />
-        <Button x:Name="ButtonList"
-                Content="Anime"
-                HorizontalAlignment="Left" Margin="10,66,0,0"
-                VerticalAlignment="Top" Width="226" Height="43" FontSize="24" Click="ButtonList_Click" />
-        <Button x:Name="ButtonSettings"
-                Content="Settings"
-                HorizontalAlignment="Left"
-                Margin="10,119,0,0" VerticalAlignment="Top" Width="226" Height="43" FontSize="24"
-                Click="ButtonSettings_Click" />
-        <Button x:Name="ButtonDownload"
-                Content="Download"
-                HorizontalAlignment="Left" Margin="10,173,0,0"
-                VerticalAlignment="Top" Width="226" Height="43" FontSize="24" 
-                Click="ButtonDownload_Click" />
-        <Button x:Name="ButtonPlaylist"
-                Content="Playlists"
-                HorizontalAlignment="Left" Margin="10,226,0,0"
-                FontSize="16" VerticalAlignment="Top" Width="110" Click="ButtonPlaylist_Click" Height="34" />
+        <Button x:Name="ButtonHome" Content="Home" Style="{DynamicResource MainButtonStyle}" Margin="10,10,0,0" Click="ButtonHome_Click"  />
+        <Button x:Name="ButtonList" Content="Anime" Style="{DynamicResource MainButtonStyle}" Margin="10,66,0,0" Click="ButtonList_Click" /> 
+        <Button x:Name="ButtonSettings" Content="Settings" Style="{DynamicResource MainButtonStyle}" Margin="10,119,0,0" Click="ButtonSettings_Click" />
+        <Button x:Name="ButtonDownload" Content="Download" Style="{DynamicResource MainButtonStyle}" Margin="10,173,0,0" Click="ButtonDownload_Click" />
+        <Button x:Name="ButtonPlaylist" Content="Playlists" Style="{DynamicResource MiniButtonStyle}" Margin="10,226,0,0" Click="ButtonPlaylist_Click" />
+        <Button x:Name="ButtonMisc" Content="Misc" Style="{DynamicResource MiniButtonStyle}" Margin="126,226,0,0" Click="ButtonMisc_Click" />
+        
+        <Grid x:Name="Display" Width="660" Height="340" HorizontalAlignment="Left" Margin="241,10,0,0" VerticalAlignment="Top" />
 
-        <Grid x:Name="Display" Width="660" Height="340" HorizontalAlignment="Left" Margin="241,10,0,0"
-              VerticalAlignment="Top" />
-
-        <GroupBox x:Name="GroupBox" Header="Directories" HorizontalAlignment="Left" Width="auto" Height="auto"
-                  Margin="10,267,0,0" VerticalAlignment="Top">
+        <GroupBox x:Name="GroupBox" Header="Directories" HorizontalAlignment="Left" Width="auto" Height="auto" Margin="10,267,0,0" VerticalAlignment="Top">
             <StackPanel>
-                <Button x:Name="ButtonFolder" Content="Base" HorizontalAlignment="Left" VerticalAlignment="Top"
-                        Width="70" Margin="5" Click="ButtonFolder_Click" />
-                <Button x:Name="ButtonOpenExecuting" Content="Settings" HorizontalAlignment="Left"
-                        VerticalAlignment="Top" Margin="5" Width="70" Click="ButtonOpenExecuting_Click" />
+                <Button x:Name="ButtonFolder" Content="Base" Style="{DynamicResource DirectoryButtonStyle}" Click="ButtonFolder_Click" />
+                <Button x:Name="ButtonOpenExecuting" Content="Settings" Style="{DynamicResource DirectoryButtonStyle}" Click="ButtonOpenExecuting_Click" />
             </StackPanel>
         </GroupBox>
-        <Button x:Name="ButtonMisc"
-                Content="Misc"
-                HorizontalAlignment="Left" Margin="126,226,0,0"
-                FontSize="16" VerticalAlignment="Top" Width="110" Click="ButtonMisc_Click" Height="34" />
+        
+        
     </Grid>
 
 </Window>

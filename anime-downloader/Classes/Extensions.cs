@@ -35,7 +35,7 @@ namespace anime_downloader.Classes
         public static IEnumerable<Anime> Airing(this IEnumerable<Anime> animes)
         {
             return animes.Where(a => a.Airing && a.Status == "Watching");
-        } 
+        }
 
         public static Anime Get(this IEnumerable<Anime> animes, string name)
         {
@@ -88,7 +88,8 @@ namespace anime_downloader.Classes
         ///     Simulate a button press.
         /// </summary>
         /// <param name="button"></param>
-        public static void Press(this IInputElement button) => button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+        public static void Press(this IInputElement button)
+            => button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
 
         /// <summary>
         ///     Toggle opacity and visibility of a ButtonSubmit between two states.
@@ -114,7 +115,7 @@ namespace anime_downloader.Classes
         public static List<T> GetAll<T>(this Grid grid) where T : DependencyObject
         {
             return GetDependencyObject<T>(grid);
-        } 
+        }
 
         public static List<T> GetAll<T>(this Window window) where T : DependencyObject
         {

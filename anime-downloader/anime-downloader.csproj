@@ -37,7 +37,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>ad3.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\Icon\icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="HtmlAgilityPack, Version=1.4.9.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
@@ -45,8 +45,8 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
@@ -68,15 +68,15 @@
     <Compile Include="Classes\File\FileHandler.cs" />
     <Compile Include="Classes\File\Downloader.cs" />
     <Compile Include="Classes\Extensions.cs" />
-    <Compile Include="Classes\Logger.cs" />
+    <Compile Include="Classes\File\Logger.cs" />
     <Compile Include="Classes\OperatingSystemApi.cs" />
     <Compile Include="Classes\Web\Nyaa.cs" />
-    <Compile Include="Classes\Playlist.cs" />
+    <Compile Include="Classes\File\Playlist.cs" />
     <Compile Include="Classes\Settings.cs" />
     <Compile Include="Classes\Web\TorrentProvider.cs" />
     <Compile Include="Classes\Xml\Xml.cs" />
     <Compile Include="Classes\Xml\XmlController.cs" />
-    <Compile Include="Classes\Xml\XmlCreate.cs" />
+    <Compile Include="Classes\Xml\XmlSchema.cs" />
     <Compile Include="Classes\Xml\XmlVerify.cs" />
     <Compile Include="Views\AnimeDetails.xaml.cs">
       <DependentUpon>AnimeDetails.xaml</DependentUpon>
@@ -186,7 +186,7 @@
     <Resource Include="FodyWeavers.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ad3.ico" />
+    <EmbeddedResource Include="Resources\Icon\icon.ico" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

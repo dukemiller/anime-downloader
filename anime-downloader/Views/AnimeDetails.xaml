@@ -7,26 +7,26 @@
              d:DesignHeight="340" d:DesignWidth="660">
     <UserControl.Resources>
         <Style x:Key="RadioStyle" TargetType="{x:Type RadioButton}">
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
         </Style>
         <Style x:Key="LabelStyle" TargetType="{x:Type Label}">
-            <Setter Property="HorizontalAlignment" Value="Left"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="16" />
         </Style>
         <Style x:Key="ValueStyle" TargetType="Control">
-            <Setter Property="HorizontalAlignment" Value="Left"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.Background>White</Grid.Background>
         <Grid.RowDefinitions>
-            <RowDefinition Height="2*" />
-            <RowDefinition Height="6*"/>
-            <RowDefinition Height="2*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="3*" />
+            <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
         <Grid x:Name="TextboxGrid" Grid.Row="0">
             <Grid.RowDefinitions>
@@ -38,19 +38,23 @@
                 <ColumnDefinition Width="11*" />
             </Grid.ColumnDefinitions>
 
-            <Label x:Name="NameLabel" Grid.Row="0"  Grid.Column="0" Content="Name: " VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="16"
-                   ToolTip="A hopefully close approximation to the name of the show."/>
-            <TextBox x:Name="NameTextbox" Grid.Column="1" Grid.Row="0" Height="27" TextWrapping="Wrap" Text="" VerticalAlignment="Center" FontSize="18.667" GotFocus="NameTextbox_GotFocus" />
+            <Label x:Name="NameLabel" Grid.Row="0" Grid.Column="0" Content="Name: " VerticalAlignment="Center"
+                   HorizontalAlignment="Left" FontSize="16"
+                   ToolTip="A hopefully close approximation to the name of the show." />
+            <TextBox x:Name="NameTextbox" Grid.Column="1" Grid.Row="0" Height="27" TextWrapping="Wrap" Text=""
+                     VerticalAlignment="Center" FontSize="18.667" GotFocus="NameTextbox_GotFocus" />
             <Label x:Name="EpisodeLabel" Content="Episode: " VerticalAlignment="Center" HorizontalAlignment="Left"
                    FontSize="16"
                    ToolTip="The last episode you've watched."
                    Grid.Column="0" Grid.Row="1" />
-            <TextBox x:Name="EpisodeTextbox" Grid.Column="1" Grid.Row="1" Height="27" TextWrapping="Wrap" Text="00" VerticalAlignment="Center" FontSize="18.667" GotFocus="EpisodeTextbox_GotFocus" PreviewTextInput="EpisodeTextbox_PreviewTextInput" />
+            <TextBox x:Name="EpisodeTextbox" Grid.Column="1" Grid.Row="1" Height="27" TextWrapping="Wrap" Text="00"
+                     VerticalAlignment="Center" FontSize="18.667" GotFocus="EpisodeTextbox_GotFocus"
+                     PreviewTextInput="EpisodeTextbox_PreviewTextInput" />
         </Grid>
         <Grid x:Name="CheckboxContainerGrid" Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="10*"/>
-                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="10*" />
+                <ColumnDefinition Width="3*" />
             </Grid.ColumnDefinitions>
 
             <Grid x:Name="CheckboxGridLeft" Grid.Column="0">
@@ -68,50 +72,71 @@
                 </Grid.RowDefinitions>
 
                 <!-- Status -->
-                <Label x:Name="StatusLabel" Grid.Row="0" Grid.Column="0" Content="Status: " Style="{DynamicResource LabelStyle}" ToolTip="What state you're currently at in regards to watching the show."/>
-                <Grid x:Name="StatusContainerGrid" Grid.Row="0" Grid.Column="1" >
+                <Label x:Name="StatusLabel" Grid.Row="0" Grid.Column="0" Content="Status: "
+                       Style="{DynamicResource LabelStyle}"
+                       ToolTip="What state you're currently at in regards to watching the show." />
+                <Grid x:Name="StatusContainerGrid" Grid.Row="0" Grid.Column="1">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*"></ColumnDefinition>
-                        <ColumnDefinition Width="1*"></ColumnDefinition>
-                        <ColumnDefinition Width="1*"></ColumnDefinition>
-                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
-                    <RadioButton x:Name="StatusFinishedRadio" Grid.Column="0" Content="Finished" Style="{DynamicResource RadioStyle}"/>
-                    <RadioButton x:Name="StatusWatchingRadio" Grid.Column="1" Content="Watching" Style="{DynamicResource RadioStyle}" IsChecked="True" />
-                    <RadioButton x:Name="StatusOnHoldRadio"   Grid.Column="2" Content="On Hold"  Style="{DynamicResource RadioStyle}"/>
-                    <RadioButton x:Name="StatusDroppedRadio"  Grid.Column="3" Content="Dropped"  Style="{DynamicResource RadioStyle}"/>
+                    <RadioButton x:Name="StatusFinishedRadio" Grid.Column="0" Content="Finished"
+                                 Style="{DynamicResource RadioStyle}" />
+                    <RadioButton x:Name="StatusWatchingRadio" Grid.Column="1" Content="Watching"
+                                 Style="{DynamicResource RadioStyle}" IsChecked="True" />
+                    <RadioButton x:Name="StatusOnHoldRadio" Grid.Column="2" Content="On Hold"
+                                 Style="{DynamicResource RadioStyle}" />
+                    <RadioButton x:Name="StatusDroppedRadio" Grid.Column="3" Content="Dropped"
+                                 Style="{DynamicResource RadioStyle}" />
                 </Grid>
 
                 <!-- Resolution -->
-                <Label Grid.Row="1" Grid.Column="0" x:Name="ResolutionLabel" Content="Resolution: " Style="{DynamicResource LabelStyle}" ToolTip="The quality that will be downloaded."/>
+                <Label Grid.Row="1" Grid.Column="0" x:Name="ResolutionLabel" Content="Resolution: "
+                       Style="{DynamicResource LabelStyle}" ToolTip="The quality that will be downloaded." />
                 <Grid Grid.Column="1" Grid.Row="1" x:Name="ResolutionContainerGrid">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*"></ColumnDefinition>
-                        <ColumnDefinition Width="1*"></ColumnDefinition>
-                        <ColumnDefinition Width="1*"></ColumnDefinition>
-                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
-                    <RadioButton x:Name="Resolution480"   Grid.Column="0"   Content="480"   Style="{DynamicResource RadioStyle}"/>
-                    <RadioButton x:Name="Resolution780"   Grid.Column="1"   Content="720"   Style="{DynamicResource RadioStyle}" IsChecked="True"/>
-                    <RadioButton x:Name="Resolution1080"  Grid.Column="2"   Content="1080"  Style="{DynamicResource RadioStyle}"/>
+                    <RadioButton x:Name="Resolution480" Grid.Column="0" Content="480"
+                                 Style="{DynamicResource RadioStyle}" />
+                    <RadioButton x:Name="Resolution780" Grid.Column="1" Content="720"
+                                 Style="{DynamicResource RadioStyle}" IsChecked="True" />
+                    <RadioButton x:Name="Resolution1080" Grid.Column="2" Content="1080"
+                                 Style="{DynamicResource RadioStyle}" />
                 </Grid>
 
                 <!-- Subgroup -->
-                <Label x:Name="SubgroupLabel" Grid.Row="2" Grid.Column="0" Content="Only from:"  Style="{DynamicResource LabelStyle}" ToolTip="Only download from animes that have this subgroup." />
-                <ComboBox x:Name="SubgroupComboBox" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Width="90" Height="25">
+                <Label x:Name="SubgroupLabel" Grid.Row="2" Grid.Column="0" Content="Only from:"
+                       Style="{DynamicResource LabelStyle}"
+                       ToolTip="Only download from animes that have this subgroup." />
+                <ComboBox x:Name="SubgroupComboBox" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left"
+                          VerticalAlignment="Center" Width="90" Height="25">
                     <ComboBoxItem IsSelected="True" Content="(None)" />
                 </ComboBox>
 
                 <!-- Rating -->
-                <Label x:Name="RatingLabel" Grid.Row="3" Grid.Column="0"  Content="Rating: " Style="{DynamicResource LabelStyle}" ToolTip="What you would rate the show (out of 10?)"/>
-                <TextBox x:Name="RatingTextbox" Grid.Row="3" Grid.Column="1" Height="25" Width="60" HorizontalAlignment="Left" FontSize="18.667" GotFocus="EpisodeTextbox_GotFocus" PreviewTextInput="RatingTextbox_PreviewTextInput"  />
+                <Label x:Name="RatingLabel" Grid.Row="3" Grid.Column="0" Content="Rating: "
+                       Style="{DynamicResource LabelStyle}" ToolTip="What you would rate the show (out of 10?)" />
+                <TextBox x:Name="RatingTextbox" Grid.Row="3" Grid.Column="1" Height="25" Width="60"
+                         HorizontalAlignment="Left" FontSize="18.667" GotFocus="EpisodeTextbox_GotFocus"
+                         PreviewTextInput="RatingTextbox_PreviewTextInput" />
 
                 <!-- Airing -->
-                <Label x:Name="AiringLabel" Grid.Row="4" Grid.Column="0" Content="Airing: " Style="{DynamicResource LabelStyle}" ToolTip="Whether the anime is currently airing and will be included on the search for new episodes."/>
-                <CheckBox x:Name="AiringCheckbox" Grid.Row="4" Grid.Column="1" Style="{DynamicResource ValueStyle}"  IsChecked="True" />
+                <Label x:Name="AiringLabel" Grid.Row="4" Grid.Column="0" Content="Airing: "
+                       Style="{DynamicResource LabelStyle}"
+                       ToolTip="Whether the anime is currently airing and will be included on the search for new episodes." />
+                <CheckBox x:Name="AiringCheckbox" Grid.Row="4" Grid.Column="1" Style="{DynamicResource ValueStyle}"
+                          IsChecked="True" />
 
                 <!-- Name Strict -->
-                <Label x:Name="NameStrictLabel" Grid.Row="5" Grid.Column="0" Content="Name Strict: " Style="{DynamicResource LabelStyle}" ToolTip="Whether searching for this anime should match exactly what the name is instead of picking up partial matches."/>
+                <Label x:Name="NameStrictLabel" Grid.Row="5" Grid.Column="0" Content="Name Strict: "
+                       Style="{DynamicResource LabelStyle}"
+                       ToolTip="Whether searching for this anime should match exactly what the name is instead of picking up partial matches." />
                 <CheckBox x:Name="NameStrictCheckbox" Grid.Row="5" Grid.Column="1" Style="{DynamicResource ValueStyle}" />
 
             </Grid>
@@ -132,6 +157,8 @@
                 -->
             </Grid>
         </Grid>
+        <Button x:Name="OpenLastButton" Grid.Row="2" Content="Open last episode" Width="120" Height="30"
+                Margin="10,28,530,10" />
         <Button x:Name="AddButton" Grid.Row="2" Content="Add" Width="120" Height="30" Margin="530,28,10,10" />
     </Grid>
 </UserControl>

@@ -2,7 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 
-namespace anime_downloader.Classes
+namespace anime_downloader.Classes.File
 {
     public class Logger
     {
@@ -15,11 +15,11 @@ namespace anime_downloader.Classes
 
         public bool IsEnabled => _settings.UseLogging;
 
-        public async Task WriteLine(string message)
+        public async Task WriteLineAsync(string message)
         {
             var timestamp = $"{DateTime.Now:[M/d/yyyy @ hh:mm:ss tt]}";
 
-            using (var streamWriter = new StreamWriter(_settings.LogPath, true))
+            using (var streamWriter = new StreamWriter(_settings.LoggingFile, true))
             {
                 await streamWriter.WriteLineAsync($"{timestamp} - {message}");
                 streamWriter.Close();

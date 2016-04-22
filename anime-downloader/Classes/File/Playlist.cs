@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace anime_downloader.Classes
+namespace anime_downloader.Classes.File
 {
     public class Playlist
     {
@@ -20,7 +20,7 @@ namespace anime_downloader.Classes
         /// </summary>
         public void Refresh()
         {
-            _episodes = _settings.EpisodePaths()
+            _episodes = _settings.EpisodeDirectories()
                 .SelectMany(Directory.GetFiles);
         }
 
@@ -29,7 +29,7 @@ namespace anime_downloader.Classes
         /// </summary>
         public void ByEpisodeNumber()
         {
-            _episodes = _episodes.OrderBy(f => Strip(System.IO.Path.GetFileName(f)));
+            _episodes = _episodes.OrderBy(f => Strip(Path.GetFileName(f)));
         }
 
         /// <summary>
@@ -38,6 +38,11 @@ namespace anime_downloader.Classes
         public void ByDate()
         {
             _episodes = _episodes.OrderBy(System.IO.File.GetCreationTime);
+        }
+
+        public void Reverse()
+        {
+            _episodes = _episodes.Reverse();
         }
 
         /// <summary>
@@ -54,7 +59,7 @@ namespace anime_downloader.Classes
                 var addedShows = new List<string>();
                 foreach (var episode in currentEpisodes)
                 {
-                    var show = Strip(System.IO.Path.GetFileName(episode), true);
+                    var show = Strip(Path.GetFileName(episode), true);
                     if (addedShows.Contains(show))
                         continue;
                     sortedEpisodes.Add(episode);
@@ -93,7 +98,7 @@ namespace anime_downloader.Classes
         /// </summary>
         public async void Save()
         {
-            using (var writer = new StreamWriter(_settings.LoggingPath, false))
+            using (var writer = new StreamWriter(_settings.PlaylistFile, false))
             {
                 foreach (var episode in _episodes)
                     await writer.WriteLineAsync(episode);

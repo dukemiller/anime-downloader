@@ -7,10 +7,10 @@
              d:DesignHeight="340" d:DesignWidth="660">
     <UserControl.Resources>
         <Style x:Key="LabelStyle" TargetType="{x:Type Label}">
-            <Setter Property="HorizontalAlignment" Value="Left"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
         <Style x:Key="TextboxStyle" TargetType="{x:Type TextBox}">
             <Setter Property="Height" Value="33" />
@@ -22,8 +22,8 @@
     <Grid>
         <Grid.Background>White</Grid.Background>
         <Grid.RowDefinitions>
-            <RowDefinition Height="5*"></RowDefinition>
-            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="4*" />
+            <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
         <Grid x:Name="FormGrid">
             <Grid.ColumnDefinitions>
@@ -31,29 +31,64 @@
                 <ColumnDefinition Width="3*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="12*" />
-                <RowDefinition Height="12*" />
-                <RowDefinition Height="12*" />
-                <RowDefinition Height="12*" />
-                <RowDefinition Height="12*" />
-                <RowDefinition Height="12*" />
-                <RowDefinition Height="12*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
 
-            <Label x:Name="BaseLabel" Grid.Row="0" Grid.Column="0" Content="Base Path: " Style="{DynamicResource LabelStyle}" ToolTip="Path to the base path for the application."/>
-            <Label x:Name="TorrentLabel" Content="Torrent path: " Style="{DynamicResource LabelStyle}" ToolTip="Path to the folder that all .torrent files will be downloaded into." Grid.Row="1" Grid.Column="0" />
-            <Label x:Name="DownloadLabel" Content="uTorrent path: " Style="{DynamicResource LabelStyle}" ToolTip="Path to uTorrent.exe." Grid.Row="2" Grid.Column="0" />
-            <Label x:Name="WhitelistLabel" Content="Whitelist subgroups: " Style="{DynamicResource LabelStyle}" ToolTip="A comma + space (', ') separated list of preferred subgroups." Grid.Row="3" Grid.Column="0" />
-            <Label x:Name="OnlyWhitelistedLabel" Grid.Column="0" Grid.Row="4" Content="Only whitelisted subs: " Style="{DynamicResource LabelStyle}" ToolTip="Whether or not to only download from subgroups that are on the whitelisted subgroups list."/>
-            <Label x:Name="UseLogger" Grid.Row="5" Grid.Column="0" Content="Enabler Logger" Style="{DynamicResource LabelStyle}" ToolTip="Create a text file that will record all the files you downloaded."/>
-
+            <!-- Base path -->
+            <Label x:Name="BaseLabel" Grid.Row="0" Grid.Column="0" Content="Base Path: " Style="{DynamicResource LabelStyle}" 
+                   ToolTip="Path to the base path for the application." />
             <TextBox x:Name="BaseTextbox" Grid.Row="0" Grid.Column="1" Style="{DynamicResource TextboxStyle}" />
+
+            <!-- Torrent -->
+            <Label x:Name="TorrentLabel"  Grid.Row="1" Grid.Column="0" Content="Torrent path: " Style="{DynamicResource LabelStyle}"
+                   ToolTip="Path to the folder that all .torrent files will be downloaded into."/>
             <TextBox x:Name="TorrentTextbox" Grid.Row="1" Grid.Column="1" Style="{DynamicResource TextboxStyle}" />
+
+            <!-- Download -->
+            <Label x:Name="DownloadLabel" Grid.Row="2" Grid.Column="0" Content="uTorrent path: " Style="{DynamicResource LabelStyle}"
+                   ToolTip="Path to uTorrent.exe."  />
             <TextBox x:Name="DownloadTextbox" Grid.Row="2" Grid.Column="1" Style="{DynamicResource TextboxStyle}" />
-            <TextBox x:Name="SubgroupsTextbox" Grid.Row="3" Grid.Column="1" Style="{DynamicResource TextboxStyle}" FontSize="18.667" />
-            <CheckBox x:Name="OnlyWhitelistedCheckbox" Grid.Row="4" Content="" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" />
-            <CheckBox x:Name="UseLoggerCheckbox" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" />
+
+            <!-- Subgroups -->
+            <Label x:Name="SubgroupsLabel" Grid.Row="3" Grid.Column="0" Content="Whitelist subgroups: " Style="{DynamicResource LabelStyle}"
+                   ToolTip="A comma + space (', ') separated list of preferred subgroups, e.g. '{subgroup1}, {subgroup2}, {subgroup3}'"  />
+            <TextBox x:Name="SubgroupsTextbox" Grid.Row="3" Grid.Column="1" Style="{DynamicResource TextboxStyle}" />
+
+            <!-- Whitelisted -->
+            <Label x:Name="OnlyWhitelistedLabel" Grid.Column="0" Grid.Row="4" Content="Only whitelisted subs: " Style="{DynamicResource LabelStyle}"
+                   ToolTip="Whether or not to only download from subgroups that are on the whitelisted subgroups list." />
+            <CheckBox x:Name="OnlyWhitelistedCheckbox" Grid.Row="4" Content="" Grid.Column="1"
+                      HorizontalAlignment="Left" VerticalAlignment="Center" />
+
+            <!-- Logger -->
+            <Label x:Name="UseLogger" Grid.Row="5" Grid.Column="0" Content="Enabler Logger" Style="{DynamicResource LabelStyle}"
+                   ToolTip="Create a text file that will record all the files you downloaded." />
+            <CheckBox x:Name="UseLoggerCheckbox" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left"
+                      VerticalAlignment="Center" />
+
+            <!-- Exit -->
+            <Label x:Name="ExitLabel" Grid.Row="6" Grid.Column="0" Content="Exit to tray" Style="{DynamicResource LabelStyle}"
+                   ToolTip="Instead of closing the program on exit, it is brought to the tray." />
+            <CheckBox x:Name="TrayExitCheckbox" Grid.Row="6" Grid.Column="1" HorizontalAlignment="Left"
+                      VerticalAlignment="Center" />
+
+            <!-- Exit -->
+            <Label x:Name="AlwaysTrayLabel" Grid.Row="7" Grid.Column="0" Content="Keep tray open" Style="{DynamicResource LabelStyle}"
+                   ToolTip="Always have the tray enabled." />
+            <CheckBox x:Name="AlwaysTrayCheckbox" Grid.Row="7" Grid.Column="1" HorizontalAlignment="Left"
+                      VerticalAlignment="Center" />
+
         </Grid>
-        <Button x:Name="ApplyChangesButton" Content="Apply Changes" Width="120" Height="30" HorizontalAlignment="Right"  Grid.Row="1" Margin="0,17,10,10" />
+        
+        <Button x:Name="ApplyChangesButton" Content="Apply Changes" Width="120" Height="30" 
+                HorizontalAlignment="Right" VerticalContentAlignment="Center"
+                Grid.Row="1" Margin="0,28,10,10" />
     </Grid>
 </UserControl>

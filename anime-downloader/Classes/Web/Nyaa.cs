@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
 
@@ -35,13 +34,10 @@ namespace anime_downloader.Classes.Web
                     .Split(new[] {"]]>"}, StringSplitOptions.None)[0];
             Seeders = int.Parse(Description.Split(new[] {" seeder"}, StringSplitOptions.None)[0]);
             Measurement = ToMegabyte.First(d => Description.Contains(d.Key)).Key;
-            Size =
-                Math.Round(double.Parse(Description.Split(new[] {$" {Measurement}"}, StringSplitOptions.None)[0]
-                    .Split(new[] {" - "}, StringSplitOptions.None)[1])
-                           *ToMegabyte[Measurement],
-                    2);
+            Size = Math.Round(double.Parse(Description.Split(new[] {$" {Measurement}"}, StringSplitOptions.None)[0]
+                .Split(new[] {" - "}, StringSplitOptions.None)[1])*ToMegabyte[Measurement], 2);
         }
-        
+
         /// <summary>
         ///     Check if Nyaa.se is online within 1.0 seconds so not to hang when entering download view.
         /// </summary>
@@ -65,16 +61,20 @@ namespace anime_downloader.Classes.Web
             }
         }
 
-        public static async Task<IEnumerable<Nyaa>> GetTorrentsFor(Anime anime, string episode)
+        public static async Task<IEnumerable<TorrentProvider>> GetTorrentsFor(Anime anime, string episode)
         {
-            var url = new Uri("https://www.nyaa.se/?page=rss&cats=1_37&term=" + anime.ToRss(episode) + "&sort=2");
-            var client = new WebClient();
+            var url = new Uri($"https://www.nyaa.se/?page=rss&cats=1_37&term={anime.ToRss(episode)}&sort=2");
             var document = new HtmlDocument();
-            var html = await client.DownloadStringTaskAsync(url);
-            document.LoadHtml(html);
-            var itemNodes = document.DocumentNode.SelectNodes("//item");
 
-            var result = itemNodes?.Select(n => new Nyaa(n))
+            using (var client = new WebClient())
+            {
+                var html = await client.DownloadStringTaskAsync(url);
+                document.LoadHtml(html);
+            }
+
+            var result = document.DocumentNode?
+                .SelectNodes("//item")?
+                .Select(n => new Nyaa(n))
                 .Where(n => n.Measurement.Equals("MiB") &&
                             n.Size > 10 &&
                             n.StrippedName().Contains(episode) &&

@@ -2,17 +2,11 @@
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
-using HtmlAgilityPack;
 
 namespace anime_downloader.Classes.Web
 {
     public abstract class TorrentProvider
     {
-        /// <summary>
-        ///     The TorrentProvider's parsed filename.
-        /// </summary>
-        public string Name;
-
         /// <summary>
         ///     The description containing seeder & measurement information.
         /// </summary>
@@ -27,6 +21,11 @@ namespace anime_downloader.Classes.Web
         ///     The unit of measurement used in size.
         /// </summary>
         public string Measurement;
+
+        /// <summary>
+        ///     The TorrentProvider's parsed filename.
+        /// </summary>
+        public string Name;
 
         /// <summary>
         ///     The amount of people seeding the torrent.
@@ -59,7 +58,7 @@ namespace anime_downloader.Classes.Web
                 response.GetResponseStream();
                 var disposition = response.Headers["content-disposition"];
                 var filename =
-                    disposition?.Split(new[] { "filename=\"" }, StringSplitOptions.None)[1].Split('"')[0];
+                    disposition?.Split(new[] {"filename=\""}, StringSplitOptions.None)[1].Split('"')[0];
                 return filename;
             }
 
@@ -84,7 +83,7 @@ namespace anime_downloader.Classes.Web
             var text = Name;
 
             var phrases = (from Match match in Regex.Matches(text, @"\s?\[(.*?)\]|\((.*?)\)\s*")
-                           select match.Groups[0].Value).ToList();
+                select match.Groups[0].Value).ToList();
 
             phrases.ForEach(p => text = text.Replace(p, ""));
 
@@ -101,7 +100,7 @@ namespace anime_downloader.Classes.Web
         public string Subgroup()
         {
             return (from Match match in Regex.Matches(Name, @"\[([A-Za-z0-9_µ\-]+)\]+")
-                    select match.Groups[1].Value).FirstOrDefault(result => result.All(c => !char.IsNumber(c)));
+                select match.Groups[1].Value).FirstOrDefault(result => result.All(c => !char.IsNumber(c)));
         }
 
         /// <summary>
@@ -109,7 +108,7 @@ namespace anime_downloader.Classes.Web
         /// </summary>
         /// <returns>If a subgroup exists.</returns>
         public bool HasSubgroup() => Subgroup() != null;
-        
+
         // public abstract Task<IEnumerable<TorrentProvider>> GetTorrentsFor(Anime anime, string episode);
     }
 }

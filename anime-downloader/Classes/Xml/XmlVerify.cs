@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Windows.Markup;
+﻿using System.Linq;
 using System.Xml.Linq;
 
 namespace anime_downloader.Classes.Xml
@@ -24,49 +21,29 @@ namespace anime_downloader.Classes.Xml
         }
 
         /// <summary>
-        ///     Compares the current schema to the default schema and adds any elements (up to depth level 2)
+        ///     Compares the current schema to the default schema and adds any elements
         /// </summary>
-        /// <param name="currentSchema"></param>
-        /// <param name="defaultSchema"></param>
-        /// <param name="defaultValues">A dictionary of default values for keys</param>
-        private static void Compare(XContainer currentSchema, XContainer defaultSchema, Dictionary<string, string> defaultValues)
+        private static void Compare(XContainer current, 
+                                    XContainer schema)
         {
-            
-            if (currentSchema == null || defaultSchema == null)
+            if (current == null || schema == null)
                 return;
 
             // add
-            foreach (var element in defaultSchema.Elements())
+            foreach (var element in schema.Elements())
             {
-                if (!currentSchema?.Elements().Any(e => e.Name.Equals(element.Name)) == true)
-                {
-                    if (defaultValues.Keys.Any(key => key.Equals(element.Name.ToString())))
-                        currentSchema?.Add(new XElement(element.Name), defaultValues[element.Name.ToString()]);
-                    else
-                        currentSchema?.Add(new XElement(element.Name));
+                if (!current.Elements().Any(e => e.Name.Equals(element.Name)))
+                    current.Add(new XElement(element.Name, element.Value));
 
-                    if (element.HasElements)
-                    {
-                        // TODO: make this recursive
-                        foreach (var childElement in element.Elements())
-                        {
-                            currentSchema?.Element(element.Name)?
-                                .Add(defaultValues.Keys.Any(key => key.Equals(childElement.Name.ToString()))
-                                    ? new XElement(childElement.Name, defaultValues[childElement.Name.ToString()])
-                                    : new XElement(childElement.Name));
-                        }
-                    }
-                }
+                if (element.HasElements)
+                    Compare(current.Element(element.Name.ToString()), element);
             }
 
             // remove
-            foreach (var element in currentSchema.Elements())
+            foreach (var element in current.Elements())
             {
-                if (!defaultSchema.Elements().Any(e => e.Name.Equals(element.Name)))
-                {
+                if (!schema.Elements().Any(e => e.Name.Equals(element.Name)))
                     element.Remove();
-                }
-                // TODO: make another sub element maybe recursive check here too
             }
         }
 
@@ -75,9 +52,8 @@ namespace anime_downloader.Classes.Xml
         /// </summary>
         public void SettingsSchema()
         {
-            Compare(_controller.SettingsRoot, XmlCreate.SettingsXml().Root,
-                new Dictionary<string, string> {{"sortBy", "name"}, {"use-logging", "false"}});
-            _controller.SettingsDocument.Save(_settings.SettingsXmlPath);
+            Compare(_controller.SettingsRoot, XmlSchema.SettingsXml().Root);
+            _controller.SettingsDocument.Save(_settings.SettingsXml);
         }
 
         /// <summary>
@@ -86,8 +62,8 @@ namespace anime_downloader.Classes.Xml
         public void AnimeSchema()
         {
             foreach (var anime in _controller.AnimeRoot.Elements())
-                Compare(anime, XmlCreate.AnimeNode(), null);
-            _controller.AnimeDocument.Save(_settings.AnimeXmlPath);
+                Compare(anime, XmlSchema.AnimeNode());
+            _controller.AnimeDocument.Save(_settings.AnimeXml);
         }
     }
 }

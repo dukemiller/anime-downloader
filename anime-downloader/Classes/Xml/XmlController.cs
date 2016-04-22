@@ -30,13 +30,13 @@ namespace anime_downloader.Classes.Xml
         /// <summary>
         ///     The document object for the anime xml.
         /// </summary>
-        public XDocument AnimeDocument => _animeDocument ?? (_animeDocument = XDocument.Load(_settings.AnimeXmlPath));
+        public XDocument AnimeDocument => _animeDocument ?? (_animeDocument = XDocument.Load(_settings.AnimeXml));
 
         /// <summary>
         ///     The document object for the settings xml.
         /// </summary>
         public XDocument SettingsDocument
-            => _settingsDocument ?? (_settingsDocument = XDocument.Load(_settings.SettingsXmlPath));
+            => _settingsDocument ?? (_settingsDocument = XDocument.Load(_settings.SettingsXml));
 
         /// <summary>
         ///     Retrieve a collection of the anime currently in the anime xml as Anime objects.
@@ -44,20 +44,6 @@ namespace anime_downloader.Classes.Xml
         public IEnumerable<Anime> Animes =>
             from anime in AnimeRoot.Elements()
             select new Anime(anime, this);
-        
-        // TODO: i have a headache this is the easiest way i can think of
-        /// <summary>
-        ///     Retrieve settings-defined filtered and sorted collection of the anime 
-        ///     currently in the anime xml as Anime objects.
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerable<Anime> FilteredSortedAnimes()
-        {
-            var filters = _settings.FilterBy.Split('/');
-            return Animes
-                .Where(a => _settings.FilterBy.Equals("") || filters.Any(f => f.Equals(a.Status)))
-                .SortedWith(_settings.SortBy);
-        } 
 
         /// <summary>
         ///     Retrieve collection of the anime that is both airing and being watched from the
@@ -82,6 +68,20 @@ namespace anime_downloader.Classes.Xml
         /// <returns></returns>
         public XElement AnimeRoot => AnimeDocument.Root;
 
+        // TODO: i have a headache this is the easiest way i can think of
+        /// <summary>
+        ///     Retrieve settings-defined filtered and sorted collection of the anime
+        ///     currently in the anime xml as Anime objects.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<Anime> FilteredSortedAnimes()
+        {
+            var filters = _settings.FilterBy.Split('/');
+            return Animes
+                .Where(a => _settings.FilterBy.Equals("") || filters.Any(f => f.Equals(a.Status)))
+                .SortedWith(_settings.SortBy);
+        }
+
         /// <summary>
         ///     Singleton static constructor for retrieving the same instance on any class.
         /// </summary>
@@ -91,7 +91,7 @@ namespace anime_downloader.Classes.Xml
         {
             return _xmlController ?? (_xmlController = new XmlController(settings));
         }
-        
+
         /// <summary>
         ///     Add an anime instance to the current anime xml.
         /// </summary>
@@ -119,7 +119,7 @@ namespace anime_downloader.Classes.Xml
         /// </summary>
         public void SaveAnime()
         {
-            AnimeDocument.Save(_settings.AnimeXmlPath);
+            AnimeDocument.Save(_settings.AnimeXml);
         }
 
         /// <summary>
@@ -127,8 +127,7 @@ namespace anime_downloader.Classes.Xml
         /// </summary>
         public void SaveSettings()
         {
-            SettingsDocument.Save(_settings.SettingsXmlPath);
+            SettingsDocument.Save(_settings.SettingsXml);
         }
-        
     }
 }

@@ -7,11 +7,11 @@ namespace anime_downloader.Classes.Xml
     ///     The purpose of this class is to keep the schema for any nodes or documents
     ///     in one location.
     /// </summary>
-    public class XmlCreate
+    public class XmlSchema
     {
         private readonly Settings _settings;
 
-        public XmlCreate(Settings settings)
+        public XmlSchema(Settings settings)
         {
             _settings = settings;
         }
@@ -19,7 +19,6 @@ namespace anime_downloader.Classes.Xml
         /// <summary>
         ///     Create the anime xml file with initial nodes.
         /// </summary>
-        /// <returns></returns>
         public static XDocument AnimeXml()
         {
             var document =
@@ -34,7 +33,6 @@ namespace anime_downloader.Classes.Xml
         /// <summary>
         ///     Create an anime node.
         /// </summary>
-        /// <returns></returns>
         public static XElement AnimeNode()
         {
             var node = new XElement("show",
@@ -43,11 +41,9 @@ namespace anime_downloader.Classes.Xml
                 new XElement("status", "Watching"),
                 new XElement("resolution", "720"),
                 new XElement("airing", false),
-                new XElement("updated", false),
                 new XElement("name-strict", false),
                 new XElement("preferredSubgroup"),
-                new XElement("last-downloaded", "2016-02-04"),
-                new XElement("rating", "")
+                new XElement("rating")
                 );
             return node;
         }
@@ -55,7 +51,6 @@ namespace anime_downloader.Classes.Xml
         /// <summary>
         ///     Create the settings xml file with initial nodes.
         /// </summary>
-        /// <returns></returns>
         public static XDocument SettingsXml()
         {
             var document =
@@ -72,9 +67,11 @@ namespace anime_downloader.Classes.Xml
                         new XElement("subgroup"),
                         new XElement("flag",
                             new XElement("only-whitelisted-subs"),
-                            new XElement("use-logging")
+                            new XElement("use-logging", false),
+                            new XElement("exitOnClose", true),
+                            new XElement("alwaysShowTray", false)
                             ),
-                        new XElement("sortBy"),
+                        new XElement("sortBy", "name"),
                         new XElement("filterBy")
                         // ,new XElement("idont")
                         )
@@ -88,7 +85,7 @@ namespace anime_downloader.Classes.Xml
         public void SettingsXmlAndSave()
         {
             var document = SettingsXml();
-            document.Save(_settings.SettingsXmlPath);
+            document.Save(_settings.SettingsXml);
         }
 
         /// <summary>
@@ -97,7 +94,7 @@ namespace anime_downloader.Classes.Xml
         public void AnimeXmlAndSave()
         {
             var document = AnimeXml();
-            document.Save(_settings.AnimeXmlPath);
+            document.Save(_settings.AnimeXml);
         }
     }
 }

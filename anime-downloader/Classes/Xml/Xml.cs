@@ -10,7 +10,7 @@
         /// <summary>
         ///     The XML file creator class.
         /// </summary>
-        public XmlCreate Create;
+        public XmlSchema Schema;
 
         /// <summary>
         ///     The XML file schema verifier class.
@@ -20,7 +20,7 @@
         public Xml(Settings settings)
         {
             Controller = XmlController.GetXmlController(settings);
-            Create = new XmlCreate(settings);
+            Schema = new XmlSchema(settings);
             Verify = new XmlVerify(settings, Controller);
         }
     }

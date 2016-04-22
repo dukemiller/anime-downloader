@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -14,9 +12,9 @@ namespace anime_downloader.Classes.File
 {
     public class Downloader
     {
-        private readonly Settings _settings;
         private readonly WebClient _client;
         private readonly Logger _logger;
+        private readonly Settings _settings;
         private int _downloaded;
 
         public Downloader(Settings settings)
@@ -40,11 +38,11 @@ namespace anime_downloader.Classes.File
 
             return _downloaded;
         }
-        
+
         public async Task<int> DownloadAsync(IEnumerable<Anime> animes,
-                                             IEnumerable<AnimeEpisodeDelta> animeEpisodeDeltas,
-                                             IEnumerable<AnimeEpisode> allEpisodes,
-                                             TextBox textbox)
+            IEnumerable<AnimeEpisodeDelta> animeEpisodeDeltas,
+            IEnumerable<AnimeEpisode> allEpisodes,
+            TextBox textbox)
         {
             _downloaded = 0;
             var animeList = animes.ToList();
@@ -105,14 +103,16 @@ namespace anime_downloader.Classes.File
             return true;
         }
 
-        private async Task DownloadEpisodeAsync(IEnumerable<TorrentProvider> torrentLinks, Anime anime, TextBox textbox)
+        public async Task<bool> DownloadEpisodeAsync(IEnumerable<TorrentProvider> torrentLinks, Anime anime, TextBox textbox)
         {
-            if (torrentLinks == null)
-                return;
+            if (torrentLinks == null || anime == null)
+                return false;
 
             foreach (var torrent in torrentLinks.Where(torrent => CanDownload(torrent, anime)))
                 if (await DownloadTorrentAsync(torrent, anime, textbox))
-                    break;
+                    return true;
+
+            return false;
         }
 
         private async Task<bool> DownloadTorrentAsync(TorrentProvider torrent, Anime anime, TextBox textbox)
@@ -123,7 +123,7 @@ namespace anime_downloader.Classes.File
             if (downloadedFile)
             {
                 if (_logger.IsEnabled)
-                    await _logger.WriteLine($"Downloaded '{anime.Title}' episode {anime.NextEpisode()}.");
+                    await _logger.WriteLineAsync($"Downloaded '{anime.Title}' episode {anime.NextEpisode()}.");
                 anime.Episode = anime.NextEpisode();
                 _downloaded++;
             }
@@ -132,7 +132,7 @@ namespace anime_downloader.Classes.File
             {
                 textbox.WriteLine($"Download of '{anime.Title}' failed.");
             }
-            
+
             return downloadedFile;
         }
 
@@ -141,7 +141,7 @@ namespace anime_downloader.Classes.File
             var torrentName = torrent.TorrentName();
             if (torrentName == null)
                 return false;
-            var filePath = Path.Combine(_settings.TorrentFilesPath, torrentName);
+            var filePath = Path.Combine(_settings.TorrentFilesDirectory, torrentName);
             var fileDirectory = _settings.GetEpisodeFolder();
             var command = $"/DIRECTORY \"{fileDirectory}\" \"{filePath}\"";
 
@@ -159,22 +159,19 @@ namespace anime_downloader.Classes.File
                         _client.DownloadFile(torrent.Link, filePath);
                     }
 
-                    // TODO: heh heh heh
+                        // TODO: heh heh heh
                     catch (Exception)
                     {
                         // ignored
                         return false;
                     }
 
-                    CallCommand(_settings.UtorrentPath, command);
+                    CallCommand(_settings.UtorrentFile, command);
                     return true;
                 });
             }
 
-            else
-            {
-                CallCommand(_settings.UtorrentPath, command);
-            }
+            CallCommand(_settings.UtorrentFile, command);
 
             return true;
         }

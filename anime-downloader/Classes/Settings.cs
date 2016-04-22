@@ -9,6 +9,8 @@ namespace anime_downloader.Classes
 {
     public class Settings
     {
+        public bool Loaded { get; set; } = false;
+
         private XmlController _xml;
 
         private XContainer Root => Xml.SettingsRoot;
@@ -18,39 +20,44 @@ namespace anime_downloader.Classes
         /// <summary>
         ///     Where all XML files are stored.
         /// </summary>
-        public string ApplicationPath
+        public string ApplicationDirectory
             => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "anime-downloader");
+                            "anime-downloader");
 
         /// <summary>
         ///     The path of the settings XML file.
         /// </summary>
-        public string SettingsXmlPath => Path.Combine(ApplicationPath, "settings.xml");
+        public string SettingsXml => Path.Combine(ApplicationDirectory, "settings.xml");
 
         /// <summary>
         ///     The path of the anime XML file.
         /// </summary>
-        public string AnimeXmlPath => Path.Combine(ApplicationPath, "anime.xml");
+        public string AnimeXml => Path.Combine(ApplicationDirectory, "anime.xml");
 
         /// <summary>
         ///     The path of watched files.
         /// </summary>
-        public string WatchedPath => Path.Combine(BaseFolderPath, "Watched");
+        public string WatchedDirectory => Path.Combine(BaseDirectory, "Watched");
 
         /// <summary>
         ///     The path of duplicate files.
         /// </summary>
-        public string DuplicatesPath => Path.Combine(BaseFolderPath, "Duplicates");
+        public string DuplicatesDirectory => Path.Combine(BaseDirectory, "Duplicates");
+
+        /// <summary>
+        ///     A path to where the playlist will be created.
+        /// </summary>
+        public string PlaylistFile => Path.Combine(BaseDirectory, "playlist.m3u");
 
         /// <summary>
         ///     The path of base downloading folder.
         /// </summary>
-        public string BaseFolderPath
+        public string BaseDirectory
         {
             get { return Root.Element("path")?.Element("base")?.Value; }
             set
             {
-                if (value.Equals(BaseFolderPath))
+                if (value.Equals(BaseDirectory))
                     return;
                 Root.Element("path")?.Element("base")?.SetValue(value);
                 Save();
@@ -60,7 +67,7 @@ namespace anime_downloader.Classes
         /// <summary>
         ///     The path where all .torrent files will be downloaded to.
         /// </summary>
-        public string TorrentFilesPath
+        public string TorrentFilesDirectory
         {
             get { return Root.Element("path")?.Element("torrents")?.Value; }
             set
@@ -73,7 +80,7 @@ namespace anime_downloader.Classes
         /// <summary>
         ///     The path to the utorrent executable.
         /// </summary>
-        public string UtorrentPath
+        public string UtorrentFile
         {
             get { return Root.Element("path")?.Element("utorrent")?.Value; }
             set
@@ -83,10 +90,7 @@ namespace anime_downloader.Classes
             }
         }
 
-        /// <summary>
-        ///     A path to where the playlist will be created.
-        /// </summary>
-        public string LoggingPath => Path.Combine(BaseFolderPath, "playlist.m3u");
+        public string LoggingFile => Path.Combine(BaseDirectory, "log.txt");
 
         // public string BackupPath => Path.Combine(ApplicationPath, "Backup");
 
@@ -157,7 +161,25 @@ namespace anime_downloader.Classes
             }
         }
 
-        public string LogPath => Path.Combine(BaseFolderPath, "log.txt");
+        public bool ExitOnClose
+        {
+            get { return bool.Parse(Root.Element("flag")?.Element("exitOnClose")?.Value ?? "false"); }
+            set
+            {
+                Root.Element("flag")?.Element("exitOnClose")?.SetValue(value);
+                Save();
+            }
+        }
+
+        public bool AlwaysShowTray
+        {
+            get { return bool.Parse(Root.Element("flag")?.Element("alwaysShowTray")?.Value ?? "false"); }
+            set
+            {
+                Root.Element("flag")?.Element("alwaysShowTray")?.SetValue(value);
+                Save();
+            }
+        }
 
         private void Save()
         {
@@ -167,9 +189,7 @@ namespace anime_downloader.Classes
         }
 
         private void Backup()
-        {
-            
-        }
+        {}
 
         /// <summary>
         ///     The paths where the episodes are stored.
@@ -179,8 +199,8 @@ namespace anime_downloader.Classes
         ///     so this will need updating in about 984 years or any time named directories change.
         /// </remarks>
         /// <returns></returns>
-        public IEnumerable<string> EpisodePaths(bool includeWatched = false) => Directory
-            .GetDirectories(BaseFolderPath)
+        public IEnumerable<string> EpisodeDirectories(bool includeWatched = false) => Directory
+            .GetDirectories(BaseDirectory)
             .Where(folder =>
             {
                 var path = Path.GetFileName(folder);
@@ -200,7 +220,7 @@ namespace anime_downloader.Classes
             var date = DateTime.Now;
             var week = Math.Floor(Convert.ToDouble(date.DayOfYear)/7);
             var folder = $"{date.Year} - Week {week} - {date.ToString("MMMM")}";
-            var path = Path.Combine(BaseFolderPath, folder);
+            var path = Path.Combine(BaseDirectory, folder);
             return path;
         }
     }
