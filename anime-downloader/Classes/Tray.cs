@@ -1,10 +1,9 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Drawing;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Forms;
-using System.Windows.Media.Imaging;
+using Application = System.Windows.Application;
 
 namespace anime_downloader.Classes
 {
@@ -35,8 +34,9 @@ namespace anime_downloader.Classes
         {
             _mainWindow = mainWindow;
             _settings = settings;
+            InitializeSystemTray();
         }
-
+        
         private void CreateTray()
         {
             // get the image from the program
@@ -50,13 +50,25 @@ namespace anime_downloader.Classes
                 Icon = new Icon(stream)
             };
 
-            _trayIcon.Click += delegate
+            _trayIcon.MouseClick += (sender, args) =>
             {
-                _mainWindow.Show();
-                _mainWindow.WindowState = WindowState.Normal;
+                if (args.Button == MouseButtons.Left)
+                {
+                    if (_mainWindow.WindowState == WindowState.Minimized)
+                    {
+                        _mainWindow.Show();
+                        _mainWindow.WindowState = WindowState.Normal;
+                    }
+
+                    else if (_mainWindow.WindowState == WindowState.Normal)
+                    {
+                        _mainWindow.WindowState = WindowState.Minimized;
+                    }
+                    
+                }
             };
 
-            // stream.Close();
+            stream.Close();
         }
 
         private void CreateContextMenu()
@@ -81,7 +93,7 @@ namespace anime_downloader.Classes
                 new MenuItem("Exit", (sender, args) =>
                 {
                     _trayIcon.Visible = false;
-                    System.Windows.Application.Current.Shutdown();
+                    Application.Current.Shutdown();
                 }));
 
             _trayIcon.ContextMenu = _trayContextMenu;
@@ -90,7 +102,7 @@ namespace anime_downloader.Classes
         /// <summary>
         ///     Create the tray and tray context menu.
         /// </summary>
-        public void InitializeSystemTray()
+        private void InitializeSystemTray()
         {
             CreateTray();
             CreateContextMenu();
@@ -100,25 +112,23 @@ namespace anime_downloader.Classes
 
         public void CheckVisibility()
         {
-            if (_settings.AlwaysShowTray && !Visible)
-                Visible = true;
-            if (!_settings.AlwaysShowTray && Visible)
-                Visible = false;
-        }
 
-        public void CheckAlwaysVisibility()
-        {
-            if (_mainWindow.WindowState == WindowState.Minimized)
+            if (_settings.AlwaysShowTray)
             {
-                Visible = true;
+                if (!Visible)
+                    Visible = true;
             }
 
-            else if (_mainWindow.WindowState == WindowState.Normal)
+            else if (!_settings.AlwaysShowTray)
             {
-                if (!_settings.AlwaysShowTray)
-                {
-                    Visible = false;
-                }
+                if (_mainWindow.WindowState == WindowState.Minimized)
+                    Visible = true;
+                else if (_mainWindow.WindowState == WindowState.Normal)
+                    if (Visible)
+                    {
+                        Visible = false;
+                    }
+                        
             }
         }
 

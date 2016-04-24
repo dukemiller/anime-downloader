@@ -42,16 +42,11 @@
                 </ContextMenu>
             </DataGrid.ContextMenu>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Name" Width="300"
-                                    Binding="{Binding Path=Title}" />
-                <DataGridTextColumn Header="Episode" CellStyle="{StaticResource CenterStyle}" Width="65"
-                                    Binding="{Binding Path=Episode}" />
-                <DataGridTextColumn Header="Status" CellStyle="{StaticResource CenterStyle}" Width="auto"
-                                    Binding="{Binding Path=Status}" />
-                <DataGridTextColumn Header="Airing" CellStyle="{StaticResource CenterStyle}" Width="auto"
-                                    Binding="{Binding Path=AiringSymbol}" SortMemberPath="AiringSymbol" />
-                <DataGridTextColumn Header="Rating" CellStyle="{StaticResource CenterStyle}" Width="auto"
-                                    Binding="{Binding Path=Rating}" SortMemberPath="SortedRating" />
+                <DataGridTextColumn Header="Name" Width="300" Binding="{Binding Path=Title}" />
+                <DataGridTextColumn Header="Episode" CellStyle="{StaticResource CenterStyle}" Width="65" Binding="{Binding Path=Episode}" />
+                <DataGridTextColumn Header="Status" CellStyle="{StaticResource CenterStyle}" Width="auto" Binding="{Binding Path=Status}" />
+                <DataGridTextColumn Header="Airing" CellStyle="{StaticResource CenterStyle}" Width="auto" Binding="{Binding Path=AiringSymbol}" SortMemberPath="AiringSymbol" />
+                <DataGridTextColumn Header="Rating" CellStyle="{StaticResource CenterStyle}" Width="auto" Binding="{Binding Path=Rating}" SortMemberPath="SortedRating" />
             </DataGrid.Columns>
         </DataGrid>
         <Grid Grid.Row="1">
@@ -61,7 +56,8 @@
             </Grid.ColumnDefinitions>
             <Label Grid.Column="0" x:Name="StatsLabel" HorizontalAlignment="Left" Margin="0" FontSize="16" />
             <Rectangle Grid.Column="1" x:Name="FindRectangle" HorizontalAlignment="Left" Height="25" Stroke="Gray" Margin="-30,6,0,0"
-                   StrokeThickness="0.5" Width="25" RadiusX="25" RadiusY="25">
+                   StrokeThickness="0.5" Width="25" RadiusX="25" RadiusY="25" 
+                       MouseEnter="FindRectangle_OnMouseEnter" MouseLeave="FindRectangle_OnMouseLeave">
                 <Rectangle.Fill>
                     <ImageBrush ImageSource="../Resources/Images/find.png" />
                 </Rectangle.Fill>

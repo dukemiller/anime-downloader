@@ -1,4 +1,5 @@
 ﻿using System.Windows.Controls;
+using System.Windows.Input;
 using anime_downloader.Classes;
 
 namespace anime_downloader.Views
@@ -25,5 +26,16 @@ namespace anime_downloader.Views
                     Anime.SortedRateFlag ^= 1;
             }
         }
+
+        private void FindRectangle_OnMouseEnter(object sender, MouseEventArgs e)
+        {
+            FindRectangle.Opacity = 0.8;
+        }
+
+        private void FindRectangle_OnMouseLeave(object sender, MouseEventArgs e)
+        {
+            FindRectangle.Opacity = 1.0;
+        }
+        
     }
 }

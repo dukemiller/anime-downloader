@@ -11,37 +11,9 @@ namespace anime_downloader.Classes
 {
     public static class Extensions
     {
-        /// <summary>
-        ///     Sort the animes with the specified property name of the anime type
-        /// </summary>
-        /// <param name="animes"></param>
-        /// <param name="sort"></param>
-        /// <returns></returns>
-        /// <remarks>
-        ///     The sort has to be a property of Anime, or else this will fail. This was the
-        ///     only way I could dynamically change the property of the sort
-        /// </remarks>
-        public static IEnumerable<Anime> SortedWith(this IEnumerable<Anime> animes, string sort)
+        public static IEnumerable<Anime> AiringAndWatching(this IEnumerable<Anime> animes)
         {
-            var prop = TypeDescriptor.GetProperties(typeof (Anime)).Find(sort, true);
-            return animes.OrderBy(x => prop.GetValue(x));
-        }
-
-        public static IEnumerable<Anime> Watching(this IEnumerable<Anime> animes)
-        {
-            return animes.Where(a => a.Status.Equals("Watching"));
-        }
-
-        public static IEnumerable<Anime> Airing(this IEnumerable<Anime> animes)
-        {
-            return animes.Where(a => a.Airing && a.Status == "Watching");
-        }
-
-        public static Anime Get(this IEnumerable<Anime> animes, string name)
-        {
-            return name.Split(' ').Length == 0
-                ? animes.FirstOrDefault(anime => anime.Name.ToLower().Equals(name.ToLower()))
-                : animes.FirstOrDefault(anime => anime.Name.ToLower().Contains(name.ToLower()));
+            return animes.Where(a => a.Airing && a.Status.Equals("Watching"));
         }
 
         // TODO: Hey turn this into a real data binding instead of a fake one
@@ -67,29 +39,19 @@ namespace anime_downloader.Classes
         /// <returns></returns>
         public static bool Empty(this TextBox textbox) => textbox.Text.Equals("");
 
-        /// <summary>
-        ///     Scroll to the bottom.
-        /// </summary>
-        /// <param name="textbox"></param>
-        public static void ScrollDown(this TextBox textbox)
-        {
-            textbox.Focus();
-            textbox.CaretIndex = textbox.Text.Length;
-            textbox.ScrollToEnd();
-        }
-
         public static void WriteLine(this TextBox textbox, string text)
         {
             textbox.AppendText(text + "\n");
-            textbox.ScrollDown();
+            textbox.Focus();
+            textbox.CaretIndex = textbox.Text.Length;
+            textbox.ScrollToEnd();
         }
 
         /// <summary>
         ///     Simulate a button press.
         /// </summary>
         /// <param name="button"></param>
-        public static void Press(this IInputElement button)
-            => button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+        public static void Press(this IInputElement button) => button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
 
         /// <summary>
         ///     Toggle opacity and visibility of a ButtonSubmit between two states.
@@ -107,34 +69,18 @@ namespace anime_downloader.Classes
         /// <param name="mainWindow"></param>
         public static void ToggleButtons(this MainWindow mainWindow)
         {
-            var buttons = GetDependencyObject<Button>(mainWindow);
-            foreach (var button in buttons)
+            foreach (var button in GetAll<Button>(mainWindow))
                 button.Toggle();
         }
-
-        public static List<T> GetAll<T>(this Grid grid) where T : DependencyObject
-        {
-            return GetDependencyObject<T>(grid);
-        }
-
-        public static List<T> GetAll<T>(this Window window) where T : DependencyObject
-        {
-            return GetDependencyObject<T>(window);
-        }
-
-        public static List<T> GetAll<T>(this UserControl userControl) where T : DependencyObject
-        {
-            return GetDependencyObject<T>(userControl);
-        }
-
-        private static List<T> GetDependencyObject<T>(object parent) where T : DependencyObject
+        
+        public static List<T> GetAll<T>(this object parent) where T : DependencyObject
         {
             var logicalCollection = new List<T>();
-            GetDependencyObject(parent as DependencyObject, logicalCollection);
+            GetAll(parent as DependencyObject, logicalCollection);
             return logicalCollection;
         }
 
-        private static void GetDependencyObject<T>(DependencyObject parent, ICollection<T> logicalCollection)
+        private static void GetAll<T>(DependencyObject parent, ICollection<T> collection)
             where T : DependencyObject
         {
             var children = LogicalTreeHelper.GetChildren(parent);
@@ -144,8 +90,8 @@ namespace anime_downloader.Classes
                     continue;
                 var dependencyObject = child as DependencyObject;
                 if (child is T)
-                    logicalCollection.Add(child as T);
-                GetDependencyObject(dependencyObject, logicalCollection);
+                    collection.Add(child as T);
+                GetAll(dependencyObject, collection);
             }
         }
     }

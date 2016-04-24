@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Xml.Linq;
 
@@ -73,20 +74,20 @@ namespace anime_downloader.Classes.Xml
         ///     Retrieve settings-defined filtered and sorted collection of the anime
         ///     currently in the anime xml as Anime objects.
         /// </summary>
-        /// <returns></returns>
         public IEnumerable<Anime> FilteredSortedAnimes()
         {
             var filters = _settings.FilterBy.Split('/');
+            var propertyDescriptor = TypeDescriptor
+                .GetProperties(typeof(Anime))
+                .Find(_settings.SortBy, true);
             return Animes
                 .Where(a => _settings.FilterBy.Equals("") || filters.Any(f => f.Equals(a.Status)))
-                .SortedWith(_settings.SortBy);
+                .OrderBy(x => propertyDescriptor.GetValue(x));
         }
 
         /// <summary>
         ///     Singleton static constructor for retrieving the same instance on any class.
         /// </summary>
-        /// <param name="settings"></param>
-        /// <returns></returns>
         public static XmlController GetXmlController(Settings settings)
         {
             return _xmlController ?? (_xmlController = new XmlController(settings));
@@ -95,7 +96,6 @@ namespace anime_downloader.Classes.Xml
         /// <summary>
         ///     Add an anime instance to the current anime xml.
         /// </summary>
-        /// <param name="anime"></param>
         public void Add(Anime anime)
         {
             AnimeRoot.Add(anime.Root);
@@ -106,7 +106,6 @@ namespace anime_downloader.Classes.Xml
         /// <summary>
         ///     Remove an already existing anime from the current anime xml.
         /// </summary>
-        /// <param name="anime"></param>
         public void Remove(Anime anime)
         {
             AnimeRoot.Elements().FirstOrDefault(a => a.Element("name")?.Value.Equals(anime.Name) ?? false)?.Remove();
