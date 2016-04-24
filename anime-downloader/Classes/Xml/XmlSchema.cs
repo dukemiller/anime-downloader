@@ -66,14 +66,15 @@ namespace anime_downloader.Classes.Xml
                             ),
                         new XElement("subgroup"),
                         new XElement("flag",
-                            new XElement("only-whitelisted-subs"),
+                            new XElement("individualShowFolders", false),
+                            new XElement("only-whitelisted-subs", false),
                             new XElement("use-logging", false),
                             new XElement("exitOnClose", true),
                             new XElement("alwaysShowTray", false)
                             ),
+                        new XElement("groupDownloadBy", "PerWeek"),
                         new XElement("sortBy", "name"),
                         new XElement("filterBy")
-                        // ,new XElement("idont")
                         )
                     );
             return document;

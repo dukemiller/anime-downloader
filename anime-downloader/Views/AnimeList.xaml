@@ -60,6 +60,13 @@
                 <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
             <Label Grid.Column="0" x:Name="StatsLabel" HorizontalAlignment="Left" Margin="0" FontSize="16" />
+            <Rectangle Grid.Column="1" x:Name="FindRectangle" HorizontalAlignment="Left" Height="25" Stroke="Gray" Margin="-30,6,0,0"
+                   StrokeThickness="0.5" Width="25" RadiusX="25" RadiusY="25">
+                <Rectangle.Fill>
+                    <ImageBrush ImageSource="../Resources/Images/find.png" />
+                </Rectangle.Fill>
+            </Rectangle>
+            
             <ComboBox x:Name="FilterComboBox" Grid.Column="1" MouseWheel="OnContentChanged" Height="25"
                       Margin="0,0,0,-5" HorizontalContentAlignment="Center">
                 <ComboBoxItem Content="" IsSelected="True" />
@@ -68,6 +75,7 @@
                 <ComboBoxItem Content="Dropped" />
             </ComboBox>
         </Grid>
+        
 
     </Grid>
 </UserControl>

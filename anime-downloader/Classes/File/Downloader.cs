@@ -118,7 +118,7 @@ namespace anime_downloader.Classes.File
         private async Task<bool> DownloadTorrentAsync(TorrentProvider torrent, Anime anime, TextBox textbox)
         {
             textbox.WriteLine($"Downloading '{anime.Title}' episode '{anime.NextEpisode()}'.");
-            var downloadedFile = await DownloadFileAsync(torrent);
+            var downloadedFile = await DownloadFileAsync(torrent, anime);
 
             if (downloadedFile)
             {
@@ -136,13 +136,17 @@ namespace anime_downloader.Classes.File
             return downloadedFile;
         }
 
-        private async Task<bool> DownloadFileAsync(TorrentProvider torrent)
+        private async Task<bool> DownloadFileAsync(TorrentProvider torrent, Anime anime)
         {
             var torrentName = torrent.TorrentName();
             if (torrentName == null)
                 return false;
             var filePath = Path.Combine(_settings.TorrentFilesDirectory, torrentName);
-            var fileDirectory = _settings.GetEpisodeFolder();
+            var fileDirectory = _settings.GetDownloadFolder();
+
+            if (_settings.IndividualShowFolders)
+                fileDirectory = Path.Combine(fileDirectory, anime.Title);
+
             var command = $"/DIRECTORY \"{fileDirectory}\" \"{filePath}\"";
 
             // Create directory

@@ -10,6 +10,7 @@
 
     <Window.Resources>
         <Style x:Key="MainButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
             <Setter Property="FontSize" Value="24" />
             <Setter Property="Width" Value="226" />
             <Setter Property="Height" Value="43" />
@@ -17,6 +18,7 @@
             <Setter Property="VerticalAlignment" Value="Top" />
         </Style>
         <Style x:Key="MiniButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="VerticalAlignment" Value="Top" />
             <Setter Property="Width" Value="110" />
@@ -24,29 +26,30 @@
             <Setter Property="FontSize" Value="16" />
         </Style>
         <Style x:Key="DirectoryButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="VerticalAlignment" Value="Top" />
             <Setter Property="Margin" Value="5"/>
             <Setter Property="Width" Value="70" />
         </Style>
     </Window.Resources>
+    
     <Grid x:Name="Grid">
-        <Button x:Name="ButtonHome" Content="Home" Style="{DynamicResource MainButtonStyle}" Margin="10,10,0,0" Click="ButtonHome_Click"  />
-        <Button x:Name="ButtonList" Content="Anime" Style="{DynamicResource MainButtonStyle}" Margin="10,66,0,0" Click="ButtonList_Click" /> 
-        <Button x:Name="ButtonSettings" Content="Settings" Style="{DynamicResource MainButtonStyle}" Margin="10,119,0,0" Click="ButtonSettings_Click" />
-        <Button x:Name="ButtonDownload" Content="Download" Style="{DynamicResource MainButtonStyle}" Margin="10,173,0,0" Click="ButtonDownload_Click" />
-        <Button x:Name="ButtonPlaylist" Content="Playlists" Style="{DynamicResource MiniButtonStyle}" Margin="10,226,0,0" Click="ButtonPlaylist_Click" />
-        <Button x:Name="ButtonMisc" Content="Misc" Style="{DynamicResource MiniButtonStyle}" Margin="126,226,0,0" Click="ButtonMisc_Click" />
+        <Button x:Name="HomeButton" Content="Home" Style="{DynamicResource MainButtonStyle}" Margin="10,10,0,0" Click="HomeButton_Click"  />
+        <Button x:Name="AnimeListButton" Content="Anime" Style="{DynamicResource MainButtonStyle}" Margin="10,66,0,0" Click="AnimeListButton_Click" /> 
+        <Button x:Name="SettingsButton" Content="Settings" Style="{DynamicResource MainButtonStyle}" Margin="10,119,0,0" Click="SettingsButton_Click" />
+        <Button x:Name="DownloadButton" Content="Download" Style="{DynamicResource MainButtonStyle}" Margin="10,173,0,0" Click="DownloadButton_Click" />
+        <Button x:Name="PlaylistsButton" Content="Playlists" Style="{DynamicResource MiniButtonStyle}" Margin="10,226,0,0" Click="PlaylistsButton_Click" />
+        <Button x:Name="MiscButton" Content="Misc" Style="{DynamicResource MiniButtonStyle}" Margin="126,226,0,0" Click="MiscButton_Click" />
         
         <Grid x:Name="Display" Width="660" Height="340" HorizontalAlignment="Left" Margin="241,10,0,0" VerticalAlignment="Top" />
 
         <GroupBox x:Name="GroupBox" Header="Directories" HorizontalAlignment="Left" Width="auto" Height="auto" Margin="10,267,0,0" VerticalAlignment="Top">
             <StackPanel>
-                <Button x:Name="ButtonFolder" Content="Base" Style="{DynamicResource DirectoryButtonStyle}" Click="ButtonFolder_Click" />
-                <Button x:Name="ButtonOpenExecuting" Content="Settings" Style="{DynamicResource DirectoryButtonStyle}" Click="ButtonOpenExecuting_Click" />
+                <Button x:Name="BaseFolderButton" Content="Base" Style="{DynamicResource DirectoryButtonStyle}" Click="BaseFolderButton_Click" />
+                <Button x:Name="SettingsFolderButton" Content="Settings" Style="{DynamicResource DirectoryButtonStyle}" Click="SettingsFolderButton_Click" />
             </StackPanel>
         </GroupBox>
-        
         
     </Grid>
 

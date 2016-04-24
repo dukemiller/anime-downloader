@@ -5,16 +5,23 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
              d:DesignHeight="340" d:DesignWidth="660">
+    <UserControl.Resources>
+        <Style x:Key="LabelStyle" TargetType="{x:Type Label}">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="FontSize" Value="18.667"/>
+            <Setter Property="Height" Value="45"/>
+        </Style>
+    </UserControl.Resources>
     <Grid>
         <Grid.Background>White</Grid.Background>
-        <Label x:Name="LabelHome" Content="The home tab." HorizontalAlignment="Center" Margin="11,3,156,0"
-               VerticalAlignment="Top" FontSize="18.667" Height="44" Width="483" />
-        <Label x:Name="LabelCheck" Content="Search for a single episode for every airing anime.&#xD;&#xA;"
-               HorizontalAlignment="Center" Margin="11,165,156,0" VerticalAlignment="Top" FontSize="18.667" Height="44"
-               Width="483" />
-        <Label x:Name="LabelList" Content="View and modify the anime list.&#xA;" HorizontalAlignment="Center"
-               Margin="11,59,371,0" VerticalAlignment="Top" FontSize="18.667" Height="43" />
-        <Label x:Name="LabelSettings" Content="Change and modify profile settings.&#xA;" HorizontalAlignment="Center"
-               Margin="11,112,336,0" VerticalAlignment="Top" FontSize="18.667" Height="42" />
+        <Label x:Name="HomeLabel" Margin="11,3,510,0" Style="{DynamicResource LabelStyle}"
+               Content="The home tab."/>
+        <Label x:Name="ListLabel" Style="{DynamicResource LabelStyle}"  Margin="11,59,371,0"
+               Content="View and modify the anime list."/>
+        <Label x:Name="SettingsLabel" Style="{DynamicResource LabelStyle}" Margin="11,112,336,0" 
+                Content="Change and modify profile settings."/>
+        <Label x:Name="DownloadLabel" Style="{DynamicResource LabelStyle}" Margin="11,165,156,0" 
+               Content="Download anime with a few options." Width="483" />
     </Grid>
 </UserControl>

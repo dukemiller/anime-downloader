@@ -159,6 +159,6 @@
         </Grid>
         <Button x:Name="OpenLastButton" Grid.Row="2" Content="Open last episode" Width="120" Height="30"
                 Margin="10,28,530,10" />
-        <Button x:Name="AddButton" Grid.Row="2" Content="Add" Width="120" Height="30" Margin="530,28,10,10" />
+        <Button x:Name="AddAnimeButton" Grid.Row="2" Content="Add" Width="120" Height="30" Margin="530,28,10,10" />
     </Grid>
 </UserControl>

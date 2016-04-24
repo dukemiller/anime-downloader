@@ -181,6 +181,31 @@ namespace anime_downloader.Classes
             }
         }
 
+        public bool IndividualShowFolders
+        {
+            get
+            {
+                bool result;
+                var value = Root.Element("flag")?.Element("individualShowFolders")?.Value;
+                return bool.TryParse(value, out result) && result;
+            }
+            set
+            {
+                Root.Element("flag")?.Element("individualShowFolders")?.SetValue(value);
+                Save();
+            }
+        }
+
+        public string GroupDownloadBy
+        {
+            get { return Root.Element("groupDownloadBy")?.Value ?? "PerWeek"; }
+            set
+            {
+                Root.Element("groupDownloadBy")?.SetValue(value);
+                Save();
+            }
+        }
+
         private void Save()
         {
             if (!Xml.AutoSave)
@@ -215,13 +240,21 @@ namespace anime_downloader.Classes
         ///     Create and return the path to a folder based on a timestamp of the current moment.
         /// </summary>
         /// <returns>A path used to download into.</returns>
-        public string GetEpisodeFolder()
+        public string GetDownloadFolder()
         {
-            var date = DateTime.Now;
-            var week = Math.Floor(Convert.ToDouble(date.DayOfYear)/7);
-            var folder = $"{date.Year} - Week {week} - {date.ToString("MMMM")}";
-            var path = Path.Combine(BaseDirectory, folder);
-            return path;
+            if (GroupDownloadBy.Equals("PerWeek"))
+            {
+                var date = DateTime.Now;
+                var week = Math.Floor(Convert.ToDouble(date.DayOfYear)/7);
+                var folder = $"{date.Year} - Week {week} - {date.ToString("MMMM")}";
+                var path = Path.Combine(BaseDirectory, folder);
+                return path;
+            }
+
+            else
+            {
+                return Path.Combine(BaseDirectory, "Shows");
+            }
         }
     }
 }

@@ -228,7 +228,8 @@ namespace anime_downloader.Classes
         /// <returns></returns>
         public static Anime ClosestTo(IEnumerable<Anime> animes, string name)
         {
-            return animes.Select(a => new {Anime = a, Distance = LevenshteinDistance(a.Name, name)})
+            return animes
+                .Select(a => new {Anime = a, Distance = LevenshteinDistance(a.Name, name)})
                 .OrderBy(ap => ap.Distance)
                 .First()
                 .Anime;
@@ -236,7 +237,8 @@ namespace anime_downloader.Classes
 
         public static AnimeEpisode ClosestTo(IEnumerable<AnimeEpisode> animeEpisodes, string name)
         {
-            return animeEpisodes.Select(a => new {Anime = a, Distance = LevenshteinDistance(a.Name, name)})
+            return animeEpisodes
+                .Select(a => new {Anime = a, Distance = LevenshteinDistance(a.Name, name)})
                 .OrderBy(ap => ap.Distance)
                 .First()
                 .Anime;
@@ -244,7 +246,8 @@ namespace anime_downloader.Classes
 
         public static string ClosestTo(IEnumerable<string> animeEpisodeFileNames, string name)
         {
-            return animeEpisodeFileNames.Select(a => new {Anime = a, Distance = LevenshteinDistance(a, name)})
+            return animeEpisodeFileNames
+                .Select(a => new {Anime = a, Distance = LevenshteinDistance(a, name)})
                 .OrderBy(ap => ap.Distance)
                 .First()
                 .Anime;

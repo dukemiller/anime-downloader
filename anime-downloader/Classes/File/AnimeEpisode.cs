@@ -17,7 +17,7 @@ namespace anime_downloader.Classes.File
         }
 
         /// <summary>
-        ///     The anime name gathered from the filename.
+        ///     The anime name gathered from the filename, e.g. "{Show} - 01.mp4"
         /// </summary>
         public string Name
         {
@@ -32,7 +32,7 @@ namespace anime_downloader.Classes.File
 
         // TODO: man wow
         /// <summary>
-        ///     The episode gathered from the filename.
+        ///     The episode gathered from the filename, e.g. "Show - {01}.mp4".
         /// </summary>
         public string Episode
         {
@@ -62,7 +62,7 @@ namespace anime_downloader.Classes.File
         public string FileName => Path.GetFileName(FilePath);
 
         /// <summary>
-        ///     The full path filename.
+        ///     The full path filename, e.g. "{C:/.../.../anime.mp4}".
         /// </summary>
         public string FilePath { get; }
 

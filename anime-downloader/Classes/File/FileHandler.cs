@@ -72,7 +72,6 @@ namespace anime_downloader.Classes.File
         /// <summary>
         ///     Get every anime not in the watched folder.
         /// </summary>
-        /// <returns></returns>
         public IEnumerable<AnimeEpisode> UnwatchedAnimeEpisodes()
         {
             return _settings.EpisodeDirectories()
@@ -85,7 +84,6 @@ namespace anime_downloader.Classes.File
         /// <summary>
         ///     Get every anime in the watched folder.
         /// </summary>
-        /// <returns></returns>
         public IEnumerable<AnimeEpisode> WatchedAnimeEpisodes()
         {
             return Directory.GetFiles(_settings.WatchedDirectory)
@@ -97,7 +95,6 @@ namespace anime_downloader.Classes.File
         /// <summary>
         ///     Get every anime in every folder.
         /// </summary>
-        /// <returns></returns>
         public IEnumerable<AnimeEpisode> AllAnimeEpisodes()
         {
             return _settings.EpisodeDirectories(true)
@@ -108,41 +105,37 @@ namespace anime_downloader.Classes.File
         }
 
         /// <summary>
-        ///     Get the last known episode of every anime of collection animes
+        ///     Get the last known episode of every anime in an AnimeEpisode collection.
         /// </summary>
-        /// <param name="animes"></param>
-        /// <returns></returns>
-        public IEnumerable<AnimeEpisode> LastEpisodesOf(IEnumerable<AnimeEpisode> animes)
+        public IEnumerable<AnimeEpisode> LastEpisodesOf(IEnumerable<AnimeEpisode> episodes)
         {
             var latest = new List<AnimeEpisode>();
-            var reversed = animes.OrderByDescending(animeFile => animeFile.IntEpisode);
+            var reversed = episodes.OrderByDescending(animeFile => animeFile.IntEpisode);
             foreach (var anime in reversed.Where(anime => !latest.Any(af => af.Name.Equals(anime.Name))))
                 latest.Add(anime);
             return latest.OrderBy(af => af.Name);
         }
 
         /// <summary>
-        ///     Get the first known episode of every anime of collection animes.
+        ///     Get the first known episode of every anime in an AnimeEpisode collection.
         /// </summary>
-        /// <param name="animes"></param>
-        /// <returns></returns>
-        public IEnumerable<AnimeEpisode> FirstEpisodesOf(IEnumerable<AnimeEpisode> animes)
+        public IEnumerable<AnimeEpisode> FirstEpisodesOf(IEnumerable<AnimeEpisode> episodes)
         {
             var earliest = new List<AnimeEpisode>();
-            foreach (var anime in animes.Where(anime => !earliest.Any(af => af.Name.Equals(anime.Name))))
+            foreach (var anime in episodes.Where(anime => !earliest.Any(af => af.Name.Equals(anime.Name))))
                 earliest.Add(anime);
             return earliest.OrderBy(af => af.Name);
         }
 
         public AnimeEpisode LastEpisodeOf(Anime anime)
         {
-            var episodeFileName = Anime.ClosestTo(AllAnimeEpisodes().Select(a => a.Name).Distinct(), anime.Name);
-            return
-                AllAnimeEpisodes()
-                    .FirstOrDefault(ae => ae.Name.Equals(episodeFileName) && ae.Episode.Equals(anime.Episode));
+            var allAnime = AllAnimeEpisodes().ToList();
+            var episodeFileName = Anime.ClosestTo(allAnime.Select(a => a.Name).Distinct(), anime.Name);
+            return allAnime.FirstOrDefault(ae => ae.Name.Equals(episodeFileName) && 
+                                                 ae.Episode.Equals(anime.Episode));
         }
 
-        public AnimeEpisode GetEpisode(Anime anime, int episode)
+        public AnimeEpisode GetAnimeEpisode(Anime anime, int episode)
         {
             var episodeFileName = Anime.ClosestTo(AllAnimeEpisodes().Select(a => a.Name).Distinct(), anime.Name);
             return AllAnimeEpisodes().First(ae => ae.Name.Equals(episodeFileName) && ae.Episode.Equals($"{episode:D1}"));
