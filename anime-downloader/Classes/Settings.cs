@@ -228,12 +228,11 @@ namespace anime_downloader.Classes
             .GetDirectories(BaseDirectory)
             .Where(folder =>
             {
-                var path = Path.GetFileName(folder);
+                var path = Path.GetFileName(folder)?.ToLower();
                 return path != null &&
-                       (path.StartsWith("2") ||
-                        !path.ToLower().Equals("torrents") &&
-                        (includeWatched & path.ToLower().Equals("watched")) &&
-                        !path.ToLower().Equals("duplicates"));
+                       !path.Equals("torrents") &&
+                       !path.Equals("duplicates") &&
+                       (includeWatched || !path.Equals("watched"));
             });
 
         /// <summary>
