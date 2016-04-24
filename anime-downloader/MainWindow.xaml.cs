@@ -167,7 +167,13 @@ namespace anime_downloader
         {
             if (_settings.Loaded)
             {
-                if (WindowState == WindowState.Minimized) // && (_settings.ToTrayOnMinimize))
+                // Necessary for bringing focus from another application
+                if (WindowState == WindowState.Normal)
+                {
+                    Show();
+                }
+
+                else if (WindowState == WindowState.Minimized) // && (_settings.ToTrayOnMinimize))
                 {
                     Hide();
                 }
