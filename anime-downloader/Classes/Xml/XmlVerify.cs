@@ -47,6 +47,12 @@ namespace anime_downloader.Classes.Xml
             }
         }
 
+        public void Schema()
+        {
+            SettingsSchema();
+            AnimeSchema();
+        }
+
         /// <summary>
         ///     Check the settings xml file for any inconsistencies in schema.
         /// </summary>

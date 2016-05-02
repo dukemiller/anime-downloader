@@ -74,7 +74,7 @@ namespace anime_downloader.Classes.File
             return _downloaded;
         }
 
-        private bool CanDownload(TorrentProvider torrent, Anime anime)
+        public bool CanDownload(TorrentProvider torrent, Anime anime)
         {
             // Most likely wrong torrent
             if (anime.NameStrict && !anime.Name.ToLower().Equals(torrent.StrippedName(true).ToLower()))
@@ -91,11 +91,11 @@ namespace anime_downloader.Classes.File
 
             if (_settings.OnlyWhitelisted)
             {
-                // Nyaa listing with no subgroup in the title
+                // Torrent listing with no subgroup in the title
                 if (!torrent.HasSubgroup())
                     return false;
 
-                // Nyaa listing with wrong subgroup
+                // Torrent listing with wrong subgroup
                 if (!_settings.Subgroups.Contains(torrent.Subgroup()))
                     return false;
             }
@@ -115,7 +115,7 @@ namespace anime_downloader.Classes.File
             return false;
         }
 
-        private async Task<bool> DownloadTorrentAsync(TorrentProvider torrent, Anime anime, TextBox textbox)
+        public async Task<bool> DownloadTorrentAsync(TorrentProvider torrent, Anime anime, TextBox textbox)
         {
             textbox.WriteLine($"Downloading '{anime.Title}' episode '{anime.NextEpisode()}'.");
             var downloadedFile = await DownloadFileAsync(torrent, anime);
@@ -136,7 +136,7 @@ namespace anime_downloader.Classes.File
             return downloadedFile;
         }
 
-        private async Task<bool> DownloadFileAsync(TorrentProvider torrent, Anime anime)
+        public async Task<bool> DownloadFileAsync(TorrentProvider torrent, Anime anime)
         {
             var torrentName = torrent.TorrentName();
             if (torrentName == null)
@@ -163,7 +163,7 @@ namespace anime_downloader.Classes.File
                         _client.DownloadFile(torrent.Link, filePath);
                     }
 
-                        // TODO: heh heh heh
+                    // TODO: heh heh heh
                     catch (Exception)
                     {
                         // ignored
@@ -176,7 +176,6 @@ namespace anime_downloader.Classes.File
             }
 
             CallCommand(_settings.UtorrentFile, command);
-
             return true;
         }
 

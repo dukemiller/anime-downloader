@@ -18,7 +18,7 @@ namespace anime_downloader.Classes
         private XmlController Xml => _xml ?? (_xml = XmlController.GetXmlController(this));
 
         /// <summary>
-        ///     Where all XML files are stored.
+        ///     Where all XML and settings files are stored.
         /// </summary>
         public string ApplicationDirectory
             => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -43,11 +43,6 @@ namespace anime_downloader.Classes
         ///     The path of duplicate files.
         /// </summary>
         public string DuplicatesDirectory => Path.Combine(BaseDirectory, "Duplicates");
-
-        /// <summary>
-        ///     A path to where the playlist will be created.
-        /// </summary>
-        public string PlaylistFile => Path.Combine(BaseDirectory, "playlist.m3u");
 
         /// <summary>
         ///     The path of base downloading folder.
@@ -76,6 +71,11 @@ namespace anime_downloader.Classes
                 Save();
             }
         }
+
+        /// <summary>
+        ///     A path to where the playlist will be created.
+        /// </summary>
+        public string PlaylistFile => Path.Combine(BaseDirectory, "playlist.m3u");
 
         /// <summary>
         ///     The path to the utorrent executable.

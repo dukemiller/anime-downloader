@@ -86,6 +86,8 @@ namespace anime_downloader.Classes.Web
                 select match.Groups[0].Value).ToList();
 
             phrases.ForEach(p => text = text.Replace(p, ""));
+            text = text.Replace("_", " ");
+            text = new[] {".mkv", ".mp4", ".avi"}.Aggregate(text, (current, s) => current.Replace(s, ""));
 
             if (removeEpisode)
                 text = string.Join("-", text.Split('-').Take(text.Split('-').Length - 1).ToArray());
@@ -99,7 +101,7 @@ namespace anime_downloader.Classes.Web
         /// <returns>The subgroup of the file.</returns>
         public string Subgroup()
         {
-            return (from Match match in Regex.Matches(Name, @"\[([A-Za-z0-9_µ\-]+)\]+")
+            return (from Match match in Regex.Matches(Name, @"\[([A-Za-z0-9_µ\s\-]+)\]+")
                 select match.Groups[1].Value).FirstOrDefault(result => result.All(c => !char.IsNumber(c)));
         }
 

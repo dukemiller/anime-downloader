@@ -1,11 +1,14 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
+using System.Windows.Forms;
 using anime_downloader.Classes.Xml;
 using anime_downloader.Views;
+using Button = System.Windows.Controls.Button;
+using ButtonBase = System.Windows.Controls.Primitives.ButtonBase;
+using RadioButton = System.Windows.Controls.RadioButton;
+using TextBox = System.Windows.Controls.TextBox;
 
 namespace anime_downloader.Classes
 {
@@ -51,7 +54,11 @@ namespace anime_downloader.Classes
         ///     Simulate a button press.
         /// </summary>
         /// <param name="button"></param>
-        public static void Press(this IInputElement button) => button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+        public static void Press(this Button button) 
+        {
+            if (button.IsHitTestVisible)
+                button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));   
+        }
 
         /// <summary>
         ///     Toggle opacity and visibility of a ButtonSubmit between two states.
@@ -73,6 +80,14 @@ namespace anime_downloader.Classes
                 button.Toggle();
         }
         
+        /* --WIP
+        public static void Assign(this List<RadioButton> parent, Action function)
+        {
+            foreach (var item in parent)
+                item.KeyDown += delegate { function(); };
+        }
+        */
+
         public static List<T> GetAll<T>(this object parent) where T : DependencyObject
         {
             var logicalCollection = new List<T>();

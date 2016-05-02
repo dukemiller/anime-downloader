@@ -284,12 +284,12 @@ namespace anime_downloader.Classes
 
         public async Task<IEnumerable<TorrentProvider>> GetLinksToEpisode(string episode)
         {
-            return await Nyaa.GetTorrentsFor(this, episode);
+            return await Nyaa.GetTorrentsForAsync(this, episode);
         }
 
         public async Task<IEnumerable<TorrentProvider>> GetLinksToCurrentEpisode()
         {
-            return await Nyaa.GetTorrentsFor(this, Episode);
+            return await Nyaa.GetTorrentsForAsync(this, Episode);
         }
 
         /// <summary>
@@ -298,7 +298,7 @@ namespace anime_downloader.Classes
         /// <returns>A Nyaa object containing information about the file download.</returns>
         public async Task<IEnumerable<TorrentProvider>> GetLinksToNextEpisode()
         {
-            return await Nyaa.GetTorrentsFor(this, NextEpisode());
+            return await Nyaa.GetTorrentsForAsync(this, NextEpisode());
         }
     }
 }

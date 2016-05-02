@@ -39,20 +39,22 @@ namespace anime_downloader.Classes.Web
         }
 
         /// <summary>
-        ///     Check if Nyaa.se is online within 1.0 seconds so not to hang when entering download view.
+        ///     Check if Nyaa.se is online within 3.0 seconds so not to hang when entering download view.
         /// </summary>
-        /// <returns></returns>
-        public static async Task<bool> IsOnline()
+        public static async Task<bool> IsOnlineAsync()
         {
-            var httpWebRequest = (HttpWebRequest) WebRequest.Create("https://www.nyaa.se/");
-            httpWebRequest.Timeout = 3000;
-            httpWebRequest.AllowAutoRedirect = false;
-
             try
             {
-                var httpWebResponse = (HttpWebResponse) await httpWebRequest.GetResponseAsync();
-                httpWebResponse.Close();
-                return httpWebResponse.StatusCode == HttpStatusCode.OK;
+                const string link = "https://files.nyaa.se/topbar.png"; // "https://www.nyaa.se/"
+
+                var request = (HttpWebRequest) WebRequest.Create(link);
+                request.Timeout = 3000;
+                request.AllowAutoRedirect = false;
+
+                var response = (HttpWebResponse) await request.GetResponseAsync();
+                response.Close();
+
+                return response.StatusCode == HttpStatusCode.OK;
             }
 
             catch
@@ -61,7 +63,7 @@ namespace anime_downloader.Classes.Web
             }
         }
 
-        public static async Task<IEnumerable<TorrentProvider>> GetTorrentsFor(Anime anime, string episode)
+        public static async Task<IEnumerable<TorrentProvider>> GetTorrentsForAsync(Anime anime, string episode)
         {
             var url = new Uri($"https://www.nyaa.se/?page=rss&cats=1_37&term={anime.ToRss(episode)}&sort=2");
             var document = new HtmlDocument();

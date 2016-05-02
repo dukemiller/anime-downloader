@@ -10,6 +10,8 @@ namespace anime_downloader.Classes.File
         private readonly Settings _settings;
         private IEnumerable<string> _episodes;
 
+        public int Length => _episodes.Count();
+
         public Playlist(Settings settings)
         {
             _settings = settings;

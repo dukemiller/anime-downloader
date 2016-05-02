@@ -31,23 +31,23 @@
                     </Button>
                 </Grid>
             </GroupBox>
-            <GroupBox x:Name="GroupBox" Header="Miscellaneous options" Style="{DynamicResource BoxStyle}"
+            <GroupBox x:Name="GroupBox" Header="Miscellaneous options (for 'Airing' and 'Watching' shows)" Style="{DynamicResource BoxStyle}"
                       VerticalAlignment="Top">
                 <StackPanel Margin="10">
                     <RadioButton Name="RadioDuplicates" VerticalContentAlignment="Center">
-                        <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Move duplicates to a "Duplicates" folder to be handled by user</TextBlock>
+                        <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Move duplicates to a "Duplicates" folder</TextBlock>
                     </RadioButton>
                     <RadioButton Name="RadioIndexLastWatched" VerticalContentAlignment="Center">
-                        <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode counts of watched shows to last episode number in "watched" folder</TextBlock>
+                        <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode count to last episode number in "watched" folder</TextBlock>
                     </RadioButton>
                     <RadioButton Name="RadioIndexLastUnwatched" VerticalContentAlignment="Center">
-                        <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode counts of watched shows to last episode number in episode folders</TextBlock>
+                        <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode count to last episode number in episode folders</TextBlock>
                     </RadioButton>
                     <RadioButton Name="RadioIndexFirstWatched" VerticalContentAlignment="Center">
-                        <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode counts of watched shows to first known episode value</TextBlock>
+                        <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode count to first known episode value</TextBlock>
                     </RadioButton>
                     <RadioButton Name="RadioIndexZero" VerticalContentAlignment="Center">
-                        <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode counts of watched shows to zero</TextBlock>
+                        <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode count to zero</TextBlock>
                     </RadioButton>
                 </StackPanel>
             </GroupBox>

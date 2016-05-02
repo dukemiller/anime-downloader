@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Forms;
+using anime_downloader.Views;
 using Application = System.Windows.Application;
 
 namespace anime_downloader.Classes
@@ -34,9 +35,16 @@ namespace anime_downloader.Classes
         {
             _mainWindow = mainWindow;
             _settings = settings;
-            InitializeSystemTray();
         }
-        
+
+        public void Initialize()
+        {
+            CreateTray();
+            CreateContextMenu();
+            if (_settings.AlwaysShowTray)
+                Visible = true;
+        }
+
         private void CreateTray()
         {
             // get the image from the program
@@ -74,22 +82,36 @@ namespace anime_downloader.Classes
         private void CreateContextMenu()
         {
             _trayContextMenu = new ContextMenu();
-
-            _trayContextMenu.MenuItems.Add(0,
-                new MenuItem("Open base folder", (sender, args) =>
+            
+            _trayContextMenu.MenuItems.Add(
+                new MenuItem("Open base folder ...", (sender, args) =>
                 {
                     if (_settings.Loaded)
                         Process.Start(_settings.BaseDirectory);
                 }));
 
-            _trayContextMenu.MenuItems.Add(1,
+            _trayContextMenu.MenuItems.Add(
+                new MenuItem("Download latest ...", (sender, args) =>
+                {
+                    if (_mainWindow.WindowState == WindowState.Minimized)
+                    {
+                        _mainWindow.Show();
+                        _mainWindow.WindowState = WindowState.Normal;
+                    }
+                    _mainWindow.DownloadButton.Press();
+                    ((DownloadOptions) _mainWindow.CurrentDisplay).SearchButton.Press();
+                }));
+
+            _trayContextMenu.MenuItems.Add("-");
+
+            _trayContextMenu.MenuItems.Add(
                 new MenuItem("Restore", (sender, args) =>
                 {
                     _mainWindow.Show();
                     _mainWindow.WindowState = WindowState.Normal;
                 }));
 
-            _trayContextMenu.MenuItems.Add(2,
+            _trayContextMenu.MenuItems.Add(
                 new MenuItem("Exit", (sender, args) =>
                 {
                     _trayIcon.Visible = false;
@@ -98,18 +120,7 @@ namespace anime_downloader.Classes
 
             _trayIcon.ContextMenu = _trayContextMenu;
         }
-
-        /// <summary>
-        ///     Create the tray and tray context menu.
-        /// </summary>
-        private void InitializeSystemTray()
-        {
-            CreateTray();
-            CreateContextMenu();
-            if (_settings.AlwaysShowTray)
-                _trayIcon.Visible = true;
-        }
-
+        
         public void CheckVisibility()
         {
 

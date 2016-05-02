@@ -129,12 +129,12 @@
                         </TextBlock>
                     </Label>
                     <StackPanel Grid.Row="0" Grid.Column="1" VerticalAlignment="Center">
-                        <RadioButton x:Name="PerWeekRadio" Style="{DynamicResource RadioStyle}" IsChecked="True">
+                        <RadioButton x:Name="PerWeekRadio" Style="{DynamicResource RadioStyle}" >
                             <TextBlock TextWrapping="Wrap" >
                                 Per week folders
                             </TextBlock>
                         </RadioButton>
-                        <RadioButton x:Name="SingleFolderRadio" Content="A single folder" Style="{DynamicResource RadioStyle}" />
+                        <RadioButton x:Name="SingleFolderRadio" Content="A single folder" Style="{DynamicResource RadioStyle}" IsChecked="True" />
                     </StackPanel>
 
                     <!-- Named folders -->
