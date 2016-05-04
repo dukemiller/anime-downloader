@@ -1,6 +1,6 @@
-﻿using System.Windows.Controls;
+﻿using anime_downloader.Classes;
+using System.Windows.Controls;
 using System.Windows.Input;
-using anime_downloader.Classes;
 
 namespace anime_downloader.Views
 {
@@ -36,6 +36,5 @@ namespace anime_downloader.Views
         {
             FindRectangle.Opacity = 1.0;
         }
-        
     }
 }

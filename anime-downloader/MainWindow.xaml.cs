@@ -1,4 +1,10 @@
-﻿using System;
+﻿using anime_downloader.Classes;
+using anime_downloader.Classes.File;
+using anime_downloader.Classes.Web;
+using anime_downloader.Classes.Xml;
+using anime_downloader.Views;
+using HtmlAgilityPack;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -9,25 +15,10 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Web;
 using System.Windows;
-using System.Windows.Forms;
+using System.Windows.Controls;
 using System.Windows.Input;
-using anime_downloader.Classes;
-using anime_downloader.Classes.File;
-using anime_downloader.Classes.Web;
-using anime_downloader.Classes.Xml;
-using anime_downloader.Views;
 using static anime_downloader.Classes.OperatingSystemApi;
-using Application = System.Windows.Application;
-using Button = System.Windows.Controls.Button;
-using HtmlDocument = HtmlAgilityPack.HtmlDocument;
-using KeyEventArgs = System.Windows.Input.KeyEventArgs;
-using KeyEventHandler = System.Windows.Input.KeyEventHandler;
-using MessageBox = System.Windows.MessageBox;
-using MouseEventArgs = System.Windows.Input.MouseEventArgs;
-using RadioButton = System.Windows.Controls.RadioButton;
 using Settings = anime_downloader.Classes.Settings;
-using TextBox = System.Windows.Controls.TextBox;
-using UserControl = System.Windows.Controls.UserControl;
 
 namespace anime_downloader
 {
@@ -40,11 +31,6 @@ namespace anime_downloader
         ///     A collection of all the anime.
         /// </summary>
         private List<Anime> _allAnime;
-
-        /// <summary>
-        ///     The current display on the right window pane.
-        /// </summary>
-        public UserControl CurrentDisplay { get; private set; }
 
         /// <summary>
         ///     A helper for modifying anime.
@@ -87,6 +73,11 @@ namespace anime_downloader
             InitializeComponent();
             InitializeSettings();
         }
+
+        /// <summary>
+        ///     The current display on the right window pane.
+        /// </summary>
+        public UserControl CurrentDisplay { get; private set; }
 
         /* Initializations  */
 
@@ -132,7 +123,6 @@ namespace anime_downloader
             // Create new settings xml or edit the schema and load anime
             if (!File.Exists(_settings.SettingsXml))
                 CreateNewSettings();
-
             else
                 InitialState();
         }
@@ -145,7 +135,7 @@ namespace anime_downloader
             _tray.Initialize();
             ChangeDisplay<Home>();
 
-            // 
+            //
             KeyDown += (o, e) =>
             {
                 if (e.Key == Key.D1 || e.Key == Key.NumPad1)
@@ -180,7 +170,7 @@ namespace anime_downloader
         private TView ChangeDisplay<TView>() where TView : UserControl, new()
         {
             // Don't reload the same view
-            if (CurrentDisplay != null && CurrentDisplay.GetType() == typeof (TView))
+            if (CurrentDisplay != null && CurrentDisplay.GetType() == typeof(TView))
                 return (TView) CurrentDisplay;
             CurrentDisplay = new TView();
             Display.Children.Clear();
@@ -197,7 +187,6 @@ namespace anime_downloader
                 {
                     Show();
                 }
-
                 else if (WindowState == WindowState.Minimized) // && (_settings.ToTrayOnMinimize))
                 {
                     Hide();
@@ -213,7 +202,6 @@ namespace anime_downloader
             {
                 if (_settings.ExitOnClose)
                     _tray.Visible = false;
-
                 else
                 {
                     WindowState = WindowState.Minimized;
@@ -312,20 +300,18 @@ namespace anime_downloader
                 {
                     Alert("No playlist created (no files were found in the episode folders).");
                 }
-
                 else
                 {
                     var display = (PlaylistCreator) CurrentDisplay;
 
                     if (display.EpisodeRadio.IsChecked == true)
                         _playlist.ByEpisodeNumber();
-
                     else if (display.MomentRadio.IsChecked == true)
                         _playlist.ByDate();
 
                     // else pass
 
-                    if (display.SeperateCheckBox.IsChecked == true)
+                    if (display.SeparateCheckBox.IsChecked == true)
                         _playlist.SeparateShowOrder();
 
                     if (display.ReverseCheckbox.IsChecked == true)
@@ -566,8 +552,8 @@ namespace anime_downloader
 
                 if (keyEventArgs.Key == Key.Escape)
                     CloseAnimeFindPopup();
-
-                else if (keyEventArgs.Key == Key.F && (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
+                else if (keyEventArgs.Key == Key.F &&
+                         (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
                 {
                     if (findWindow.IsSelectionActive)
                         CloseAnimeFindPopup();
@@ -740,7 +726,6 @@ namespace anime_downloader
 
             if (display.NameTextbox.Empty())
                 Alert("There needs to be a name.");
-
             else
             {
                 var subgroup = display.SubgroupComboBox.Text;
@@ -786,7 +771,6 @@ namespace anime_downloader
 
             if (display.NameTextbox.Empty())
                 Alert("There needs to be a name.");
-
             else
             {
                 var subgroup = display.SubgroupComboBox.Text;
@@ -856,10 +840,9 @@ namespace anime_downloader
 
             if (display.BaseTextbox.Empty() || display.TorrentTextbox.Empty() || display.DownloadTextbox.Empty())
                 Alert("You must enter in Base, Torrent or Utorrent Path Boxes.");
-
             else
             {
-                _settings.Subgroups = display.SubgroupsTextbox.Text.Split(new[] {", "},
+                _settings.Subgroups = display.SubgroupsTextbox.Text.Split(new[] { ", " },
                     StringSplitOptions.RemoveEmptyEntries);
                 _settings.BaseDirectory = display.BaseTextbox.Text;
                 _settings.UtorrentFile = display.DownloadTextbox.Text;
@@ -899,7 +882,6 @@ namespace anime_downloader
             {
                 if (display.BaseTextbox.Empty() || display.TorrentTextbox.Empty() || display.DownloadTextbox.Empty())
                     Alert("You must enter in Base, Torrent or Utorrent Path Boxes.");
-
                 else
                 {
                     _xml.Schema.SettingsXmlAndSave();
@@ -907,7 +889,7 @@ namespace anime_downloader
                     _settings.BaseDirectory = display.BaseTextbox.Text;
                     _settings.TorrentFilesDirectory = display.TorrentTextbox.Text;
                     _settings.UtorrentFile = display.DownloadTextbox.Text;
-                    _settings.Subgroups = display.SubgroupsTextbox.Text.Split(new[] {" "},
+                    _settings.Subgroups = display.SubgroupsTextbox.Text.Split(new[] { " " },
                         StringSplitOptions.RemoveEmptyEntries);
                     _settings.OnlyWhitelisted = display.OnlyWhitelistedCheckbox.IsChecked ?? false;
                     _settings.UseLogging = display.UseLoggerCheckbox.IsChecked ?? false;
@@ -936,10 +918,8 @@ namespace anime_downloader
 
                 if (display.CheckForLatestRadio.IsChecked == true)
                     await CheckForLatestAsync();
-
                 else if (display.GetUpToDateRadio.IsChecked == true)
                     await GetUpToDateAsync();
-
                 else if (display.GetMissingRadio.IsChecked == true)
                     await GetMissingEpisodesAsync();
 
@@ -954,7 +934,7 @@ namespace anime_downloader
                     display.SearchButton.Press();
                 }
             };
-    }
+        }
 
         /// <summary>
         ///     View: DownloadOutput (Check for latest anime)
@@ -971,7 +951,6 @@ namespace anime_downloader
 
                 if (!await Nyaa.IsOnlineAsync())
                     textbox.WriteLine(">> Nyaa is currently offline. Try checking later.");
-
                 else
                 {
                     textbox.WriteLine(">> Searching for currently airing anime episodes ...");
@@ -1114,7 +1093,6 @@ namespace anime_downloader
                     {
                         Process.Start(link.Attributes["href"].Value);
                     }
-
                     else
                     {
                         Alert("No results found.");
@@ -1139,25 +1117,21 @@ namespace anime_downloader
                 var count = await _filehandler.MoveDuplicatesAsync();
                 Alert($"Moved {count} files to duplicate folder.");
             }
-
             else if (display.RadioIndexLastWatched.IsChecked == true)
             {
                 _filehandler.AnimeEpisodesToLastEpisode_Watched(_allAnime.AiringAndWatching());
                 Alert("Reset episode order to last known in Watched folder.");
             }
-
             else if (display.RadioIndexLastUnwatched.IsChecked == true)
             {
                 _filehandler.AnimeEpisodesToLastEpisode_Unwatched(_allAnime.AiringAndWatching());
                 Alert("Reset episode order to last known in any folder.");
             }
-
             else if (display.RadioIndexFirstWatched.IsChecked == true)
             {
                 _filehandler.AnimeEpisodesToBeginningEpisode_All(_allAnime.AiringAndWatching());
                 Alert("Reset episode count to first known episode.");
             }
-
             else if (display.RadioIndexZero.IsChecked == true)
             {
                 foreach (var anime in _allAnime.AiringAndWatching())

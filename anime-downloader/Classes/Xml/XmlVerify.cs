@@ -23,8 +23,8 @@ namespace anime_downloader.Classes.Xml
         /// <summary>
         ///     Compares the current schema to the default schema and adds any elements
         /// </summary>
-        private static void Compare(XContainer current, 
-                                    XContainer schema)
+        private static void Compare(XContainer current,
+            XContainer schema)
         {
             if (current == null || schema == null)
                 return;

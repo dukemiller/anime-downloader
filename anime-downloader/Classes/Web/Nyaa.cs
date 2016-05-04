@@ -1,9 +1,9 @@
-﻿using System;
+﻿using HtmlAgilityPack;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using HtmlAgilityPack;
 
 namespace anime_downloader.Classes.Web
 {
@@ -30,12 +30,12 @@ namespace anime_downloader.Classes.Web
             Description = node.Element("description").InnerText;
             if (Description.Contains("CDATA"))
                 Description = Description
-                    .Split(new[] {"<![CDATA["}, StringSplitOptions.None)[1]
-                    .Split(new[] {"]]>"}, StringSplitOptions.None)[0];
-            Seeders = int.Parse(Description.Split(new[] {" seeder"}, StringSplitOptions.None)[0]);
+                    .Split(new[] { "<![CDATA[" }, StringSplitOptions.None)[1]
+                    .Split(new[] { "]]>" }, StringSplitOptions.None)[0];
+            Seeders = int.Parse(Description.Split(new[] { " seeder" }, StringSplitOptions.None)[0]);
             Measurement = ToMegabyte.First(d => Description.Contains(d.Key)).Key;
-            Size = Math.Round(double.Parse(Description.Split(new[] {$" {Measurement}"}, StringSplitOptions.None)[0]
-                .Split(new[] {" - "}, StringSplitOptions.None)[1])*ToMegabyte[Measurement], 2);
+            Size = Math.Round(double.Parse(Description.Split(new[] { $" {Measurement}" }, StringSplitOptions.None)[0]
+                .Split(new[] { " - " }, StringSplitOptions.None)[1]) * ToMegabyte[Measurement], 2);
         }
 
         /// <summary>
@@ -56,7 +56,6 @@ namespace anime_downloader.Classes.Web
 
                 return response.StatusCode == HttpStatusCode.OK;
             }
-
             catch
             {
                 return false;

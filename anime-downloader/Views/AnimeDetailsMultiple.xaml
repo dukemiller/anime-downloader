@@ -51,13 +51,9 @@
                 <ComboBoxItem Content="Finished" />
                 <ComboBoxItem Content="On Hold" />
                 <ComboBoxItem Content="Dropped" />
-
             </ComboBox>
-
         </Grid>
         <Button x:Name="SubmitButton" Content="Submit" HorizontalAlignment="Left" Margin="530,300,0,0"
                 VerticalAlignment="Top" Width="120" Height="30" />
-
-
     </Grid>
 </UserControl>

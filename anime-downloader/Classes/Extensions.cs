@@ -1,14 +1,10 @@
-﻿using System;
+﻿using anime_downloader.Classes.Xml;
+using anime_downloader.Views;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using System.Windows.Forms;
-using anime_downloader.Classes.Xml;
-using anime_downloader.Views;
-using Button = System.Windows.Controls.Button;
-using ButtonBase = System.Windows.Controls.Primitives.ButtonBase;
-using RadioButton = System.Windows.Controls.RadioButton;
-using TextBox = System.Windows.Controls.TextBox;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 
 namespace anime_downloader.Classes
 {
@@ -54,10 +50,10 @@ namespace anime_downloader.Classes
         ///     Simulate a button press.
         /// </summary>
         /// <param name="button"></param>
-        public static void Press(this Button button) 
+        public static void Press(this Button button)
         {
             if (button.IsHitTestVisible)
-                button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));   
+                button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
         }
 
         /// <summary>
@@ -79,7 +75,7 @@ namespace anime_downloader.Classes
             foreach (var button in GetAll<Button>(mainWindow))
                 button.Toggle();
         }
-        
+
         /* --WIP
         public static void Assign(this List<RadioButton> parent, Action function)
         {

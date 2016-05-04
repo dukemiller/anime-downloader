@@ -10,12 +10,12 @@ namespace anime_downloader.Classes.File
         private readonly Settings _settings;
         private IEnumerable<string> _episodes;
 
-        public int Length => _episodes.Count();
-
         public Playlist(Settings settings)
         {
             _settings = settings;
         }
+
+        public int Length => _episodes.Count();
 
         /// <summary>
         ///     Re-initialize the collection of episodes from the folders.
@@ -83,9 +83,9 @@ namespace anime_downloader.Classes.File
             var text = fileName;
 
             var phrases = (from Match match in Regex.Matches(text, @"\s?\[(.*?)\]|\((.*?)\)\s*")
-                select match.Groups[0].Value).ToList();
+                           select match.Groups[0].Value).ToList();
 
-            new[] {"_", ".mp4", ".mkv", ".avi"}.ToList().ForEach(p => phrases.Add(p));
+            new[] { "_", ".mp4", ".mkv", ".avi" }.ToList().ForEach(p => phrases.Add(p));
 
             phrases.ForEach(p => text = text.Replace(p, ""));
 

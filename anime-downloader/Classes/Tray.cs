@@ -1,15 +1,19 @@
-﻿using System.Diagnostics;
+﻿using anime_downloader.Views;
+using System.Diagnostics;
 using System.Drawing;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Forms;
-using anime_downloader.Views;
 using Application = System.Windows.Application;
 
 namespace anime_downloader.Classes
 {
     public class Tray
     {
+        private readonly MainWindow _mainWindow;
+
+        private readonly Settings _settings;
+
         /// <summary>
         ///     The menu for the system tray.
         /// </summary>
@@ -20,21 +24,17 @@ namespace anime_downloader.Classes
         /// </summary>
         private NotifyIcon _trayIcon;
 
-        private readonly MainWindow _mainWindow;
-
-        private readonly Settings _settings;
+        public Tray(MainWindow mainWindow, Settings settings)
+        {
+            _mainWindow = mainWindow;
+            _settings = settings;
+        }
 
         public bool Visible
         {
             get { return _trayIcon.Visible; }
 
             set { _trayIcon.Visible = value; }
-        }
-
-        public Tray(MainWindow mainWindow, Settings settings)
-        {
-            _mainWindow = mainWindow;
-            _settings = settings;
         }
 
         public void Initialize()
@@ -67,12 +67,10 @@ namespace anime_downloader.Classes
                         _mainWindow.Show();
                         _mainWindow.WindowState = WindowState.Normal;
                     }
-
                     else if (_mainWindow.WindowState == WindowState.Normal)
                     {
                         _mainWindow.WindowState = WindowState.Minimized;
                     }
-                    
                 }
             };
 
@@ -82,7 +80,7 @@ namespace anime_downloader.Classes
         private void CreateContextMenu()
         {
             _trayContextMenu = new ContextMenu();
-            
+
             _trayContextMenu.MenuItems.Add(
                 new MenuItem("Open base folder ...", (sender, args) =>
                 {
@@ -120,16 +118,14 @@ namespace anime_downloader.Classes
 
             _trayIcon.ContextMenu = _trayContextMenu;
         }
-        
+
         public void CheckVisibility()
         {
-
             if (_settings.AlwaysShowTray)
             {
                 if (!Visible)
                     Visible = true;
             }
-
             else if (!_settings.AlwaysShowTray)
             {
                 if (_mainWindow.WindowState == WindowState.Minimized)
@@ -139,9 +135,7 @@ namespace anime_downloader.Classes
                     {
                         Visible = false;
                     }
-                        
             }
         }
-
     }
 }

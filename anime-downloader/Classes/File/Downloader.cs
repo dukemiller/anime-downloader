@@ -1,4 +1,5 @@
-﻿using System;
+﻿using anime_downloader.Classes.Web;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -6,7 +7,6 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Controls;
-using anime_downloader.Classes.Web;
 
 namespace anime_downloader.Classes.File
 {
@@ -103,7 +103,8 @@ namespace anime_downloader.Classes.File
             return true;
         }
 
-        public async Task<bool> DownloadEpisodeAsync(IEnumerable<TorrentProvider> torrentLinks, Anime anime, TextBox textbox)
+        public async Task<bool> DownloadEpisodeAsync(IEnumerable<TorrentProvider> torrentLinks, Anime anime,
+            TextBox textbox)
         {
             if (torrentLinks == null || anime == null)
                 return false;
@@ -127,7 +128,6 @@ namespace anime_downloader.Classes.File
                 anime.Episode = anime.NextEpisode();
                 _downloaded++;
             }
-
             else
             {
                 textbox.WriteLine($"Download of '{anime.Title}' failed.");

@@ -6,9 +6,9 @@
              mc:Ignorable="d"
              d:DesignHeight="340" d:DesignWidth="660">
     <UserControl.Resources>
-        <Style x:Key="BoxStyle" TargetType="{x:Type GroupBox}" >
+        <Style x:Key="BoxStyle" TargetType="{x:Type GroupBox}">
             <Setter Property="FontSize" Value="16" />
-            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="HorizontalAlignment" Value="Left" />
         </Style>
     </UserControl.Resources>
     <Grid>
@@ -31,7 +31,8 @@
                     </Button>
                 </Grid>
             </GroupBox>
-            <GroupBox x:Name="GroupBox" Header="Miscellaneous options (for 'Airing' and 'Watching' shows)" Style="{DynamicResource BoxStyle}"
+            <GroupBox x:Name="GroupBox" Header="Miscellaneous options (for 'Airing' and 'Watching' shows)"
+                      Style="{DynamicResource BoxStyle}"
                       VerticalAlignment="Top">
                 <StackPanel Margin="10">
                     <RadioButton Name="RadioDuplicates" VerticalContentAlignment="Center">
@@ -70,6 +71,5 @@
         </StackPanel>
         <Button x:Name="ButtonSubmit" Content="Submit" HorizontalAlignment="Left" Margin="530,300,0,0"
                 VerticalAlignment="Top" Width="120" Height="30" />
-
     </Grid>
 </UserControl>

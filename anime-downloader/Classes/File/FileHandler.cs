@@ -63,7 +63,8 @@ namespace anime_downloader.Classes.File
                     Directory.CreateDirectory(_settings.DuplicatesDirectory);
 
                 foreach (var duplicate in duplicates)
-                    System.IO.File.Move(duplicate.FilePath, Path.Combine(_settings.DuplicatesDirectory, duplicate.FileName));
+                    System.IO.File.Move(duplicate.FilePath,
+                        Path.Combine(_settings.DuplicatesDirectory, duplicate.FileName));
             }
 
             return duplicates.Count;
@@ -131,7 +132,7 @@ namespace anime_downloader.Classes.File
         {
             var allAnime = AllAnimeEpisodes().ToList();
             var episodeFileName = Anime.ClosestTo(allAnime.Select(a => a.Name).Distinct(), anime.Name);
-            return allAnime.FirstOrDefault(ae => ae.Name.Equals(episodeFileName) && 
+            return allAnime.FirstOrDefault(ae => ae.Name.Equals(episodeFileName) &&
                                                  ae.Episode.Equals(anime.Episode));
         }
 

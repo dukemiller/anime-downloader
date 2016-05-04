@@ -1,17 +1,16 @@
-﻿using System;
+﻿using anime_downloader.Classes.Xml;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using anime_downloader.Classes.Xml;
 
 namespace anime_downloader.Classes
 {
     public class Settings
     {
-        public bool Loaded { get; set; } = false;
-
         private XmlController _xml;
+        public bool Loaded { get; set; } = false;
 
         private XContainer Root => Xml.SettingsRoot;
 
@@ -22,7 +21,7 @@ namespace anime_downloader.Classes
         /// </summary>
         public string ApplicationDirectory
             => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                            "anime-downloader");
+                "anime-downloader");
 
         /// <summary>
         ///     The path of the settings XML file.
@@ -213,8 +212,7 @@ namespace anime_downloader.Classes
             Xml.SaveSettings();
         }
 
-        private void Backup()
-        {}
+        // private void Backup(){}
 
         /// <summary>
         ///     The paths where the episodes are stored.
@@ -244,16 +242,13 @@ namespace anime_downloader.Classes
             if (GroupDownloadBy.Equals("PerWeek"))
             {
                 var date = DateTime.Now;
-                var week = Math.Floor(Convert.ToDouble(date.DayOfYear)/7);
+                var week = Math.Floor(Convert.ToDouble(date.DayOfYear) / 7);
                 var folder = $"{date.Year} - Week {week} - {date.ToString("MMMM")}";
                 var path = Path.Combine(BaseDirectory, folder);
                 return path;
             }
 
-            else
-            {
-                return Path.Combine(BaseDirectory, "Shows");
-            }
+            return Path.Combine(BaseDirectory, "Shows");
         }
     }
 }
