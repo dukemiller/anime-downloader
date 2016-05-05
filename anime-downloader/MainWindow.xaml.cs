@@ -339,18 +339,17 @@ namespace anime_downloader
                 var display = ChangeDisplay<AnimeList>();
                 display.Refresh(_xml.Controller);
                 display.FilterComboBox.Text = _settings.FilterBy;
-
                 display.FilterComboBox.DropDownClosed += delegate
                 {
                     _settings.FilterBy = display.FilterComboBox.Text;
                     display.Refresh(_xml.Controller);
                     CloseAnimeFindPopup();
                 };
-
                 display.Add.Click += AnimeList_Context_Add_Click;
                 display.Edit.Click += AnimeListEdit;
                 display.Delete.Click += AnimeList_Context_Delete_Click;
                 display.AddMultiple.Click += AnimeList_Context_AddMultiple_Click;
+                display.Search.Click += AnimeList_Context_Search_Click;
                 display.DataGrid.PreviewKeyDown += AnimeList_KeyDown;
                 display.DataGrid.MouseDoubleClick += AnimeList_MouseDoubleClick;
                 display.FindRectangle.MouseDown += delegate
@@ -374,6 +373,12 @@ namespace anime_downloader
                     }
                 };
             }
+        }
+
+        public async void AnimeList_Context_Search_Click(object sender, RoutedEventArgs e)
+        {
+            var display = (AnimeList) CurrentDisplay;
+            await SearchOnNyaa(((Anime) display.DataGrid.SelectedCells.First().Item).Name);
         }
 
         /// <summary>
@@ -410,7 +415,7 @@ namespace anime_downloader
         {
             var display = ChangeDisplay<AnimeDetailsMultiple>();
 
-            display.InputTextBox.Loaded += delegate { display.InputTextBox.Focus(); };
+            display.InputTextBox.Loaded += delegate { ((AnimeDetailsMultiple) CurrentDisplay).InputTextBox.Focus(); };
 
             display.SubmitButton.Click += delegate
             {
@@ -552,8 +557,7 @@ namespace anime_downloader
 
                 if (keyEventArgs.Key == Key.Escape)
                     CloseAnimeFindPopup();
-                else if (keyEventArgs.Key == Key.F &&
-                         (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
+                else if (keyEventArgs.Key == Key.F && Keyboard.IsKeyDown(Key.LeftCtrl))
                 {
                     if (findWindow.IsSelectionActive)
                         CloseAnimeFindPopup();
@@ -925,13 +929,13 @@ namespace anime_downloader
 
                 this.ToggleButtons();
             };
-            display.Loaded += (o, args) => display.SearchButton.Focus();
+            display.Loaded += (o, args) => ((DownloadOptions) CurrentDisplay).SearchButton.Focus();
             display.KeyDown += (o, args) =>
             {
                 if (args.Key == Key.Enter)
                 {
-                    display.SearchButton.Focus();
-                    display.SearchButton.Press();
+                    ((DownloadOptions) CurrentDisplay).SearchButton.Focus();
+                    ((DownloadOptions) CurrentDisplay).SearchButton.Press();
                 }
             };
         }
@@ -1010,17 +1014,15 @@ namespace anime_downloader
             var textBox = display.TextBox;
             textBox.WriteLine(">> Finding all missing episodes ...");
             var allEpisodeFiles = await Task.Run(() => _filehandler.AllAnimeEpisodes().ToList());
-            var animeFileDeltas =
-                await
-                    Task.Run(
-                        () =>
-                            _filehandler.FirstEpisodesOf(allEpisodeFiles)
-                                .OrderBy(a => a.Name)
-                                .Zip(_filehandler.LastEpisodesOf(allEpisodeFiles).OrderBy(a => a.Name),
-                                    (a, b) => new AnimeEpisodeDelta(a, b)));
-            var total =
-                await
-                    _downloader.DownloadAsync(_allAnime.AiringAndWatching(), animeFileDeltas, allEpisodeFiles, textBox);
+            var animeFileDeltas = await Task.Run(() =>
+                _filehandler.FirstEpisodesOf(allEpisodeFiles)
+                    .OrderBy(a => a.Name)
+                    .Zip(
+                        _filehandler.LastEpisodesOf(allEpisodeFiles).OrderBy(a => a.Name),
+                        (a, b) => new AnimeEpisodeDelta(a, b))
+                );
+            var total = await _downloader.DownloadAsync(_allAnime.AiringAndWatching(),
+                animeFileDeltas, allEpisodeFiles, textBox);
 
             textBox.WriteLine(total > 0 ? $">> Found {total} anime downloads." : ">> No new anime found.");
         }
@@ -1053,12 +1055,12 @@ namespace anime_downloader
             display.SearchTextBox.KeyDown += (o, args) =>
             {
                 if (args.Key == Key.Enter)
-                    display.SearchButton.Press();
+                    ((Misc) CurrentDisplay).SearchButton.Press();
             };
 
             display.SearchButton.Click += delegate
             {
-                var text = display.SearchTextBox.Text.Trim();
+                var text = ((Misc) CurrentDisplay).SearchTextBox.Text.Trim();
                 if (text.Length > 0)
                 {
                     var q = HttpUtility.ParseQueryString(text);
@@ -1071,36 +1073,41 @@ namespace anime_downloader
                 var text = display.SearchTextBox.Text.Trim();
                 if (text.Length > 0)
                 {
-                    this.ToggleButtons();
-
-                    var q = HttpUtility.ParseQueryString(text);
-                    var document = new HtmlDocument();
-
-                    using (var client = new WebClient())
-                    {
-                        var html =
-                            await client.DownloadStringTaskAsync(new Uri($"http://myanimelist.net/anime.php?q={q}"));
-                        document.LoadHtml(html);
-                    }
-
-                    var link =
-                        document.DocumentNode?.SelectSingleNode(
-                            "//div[@class=\"js-categories-seasonal js-block-list list\"]/table/tr[2]/td[1]")?
-                            .Descendants("a")?
-                            .FirstOrDefault();
-
-                    if (link != null)
-                    {
-                        Process.Start(link.Attributes["href"].Value);
-                    }
-                    else
-                    {
-                        Alert("No results found.");
-                    }
-
-                    this.ToggleButtons();
+                    await SearchOnNyaa(text);
                 }
             };
+        }
+
+        public async Task SearchOnNyaa(string text)
+        {
+            this.ToggleButtons();
+
+            var q = HttpUtility.ParseQueryString(text);
+            var document = new HtmlDocument();
+
+            using (var client = new WebClient())
+            {
+                var html =
+                    await client.DownloadStringTaskAsync(new Uri($"http://myanimelist.net/anime.php?q={q}"));
+                document.LoadHtml(html);
+            }
+
+            var link =
+                document.DocumentNode?.SelectSingleNode(
+                    "//div[@class=\"js-categories-seasonal js-block-list list\"]/table/tr[2]/td[1]")?
+                    .Descendants("a")?
+                    .FirstOrDefault();
+
+            if (link != null)
+            {
+                Process.Start(link.Attributes["href"].Value);
+            }
+            else
+            {
+                Alert("No results found.");
+            }
+
+            this.ToggleButtons();
         }
 
         /// <summary>

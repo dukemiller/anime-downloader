@@ -77,7 +77,7 @@ namespace anime_downloader.Classes.Web
                 .SelectNodes("//item")?
                 .Select(n => new Nyaa(n))
                 .Where(n => n.Measurement.Equals("MiB") &&
-                            n.Size > 10 &&
+                            n.Size > 5 &&
                             n.StrippedName().Contains(episode) &&
                             n.Seeders > 0);
 

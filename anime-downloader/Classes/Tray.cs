@@ -126,15 +126,22 @@ namespace anime_downloader.Classes
                 if (!Visible)
                     Visible = true;
             }
+
             else if (!_settings.AlwaysShowTray)
             {
+
                 if (_mainWindow.WindowState == WindowState.Minimized)
+                {
                     Visible = true;
+                }
+
                 else if (_mainWindow.WindowState == WindowState.Normal)
+                {
                     if (Visible)
                     {
                         Visible = false;
                     }
+                }
             }
         }
     }

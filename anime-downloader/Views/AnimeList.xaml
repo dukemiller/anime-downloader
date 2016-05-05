@@ -40,6 +40,7 @@
                     <MenuItem Name="AddMultiple" Header="Add (Multiple) ..." />
                     <MenuItem Name="Edit" Header="Edit ..." />
                     <MenuItem Name="Delete" Header="Delete ..." />
+                    <MenuItem Name="Search" Header="Search on Nyaa ..." />
                 </ContextMenu>
             </DataGrid.ContextMenu>
             <DataGrid.Columns>

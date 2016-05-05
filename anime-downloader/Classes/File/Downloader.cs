@@ -96,7 +96,7 @@ namespace anime_downloader.Classes.File
                     return false;
 
                 // Torrent listing with wrong subgroup
-                if (!_settings.Subgroups.Contains(torrent.Subgroup()))
+                if (!_settings.Subgroups.Select(s => s.ToLower()).Contains(torrent.Subgroup().ToLower()))
                     return false;
             }
 
