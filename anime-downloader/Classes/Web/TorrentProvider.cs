@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace anime_downloader.Classes.Web
 {
@@ -40,31 +41,38 @@ namespace anime_downloader.Classes.Web
         /// <summary>
         ///     A simple representation of the important attribes of a Nyaa object.
         /// </summary>
-        /// <returns>summary of nyaa values</returns>
+        /// <returns>
+        ///     Summary of torrent providers' values
+        /// </returns>
         public override string ToString() => $"{GetType().Name}<name={Name}, link={Link}, size={Size} MB>";
 
         /// <summary>
         ///     Gathers the torrent's filename from it's meta-data.
         /// </summary>
-        /// <returns>A valid filename for the torrent.</returns>
-        public string TorrentName()
+        /// <returns>
+        ///     A valid filename for the torrent.
+        /// </returns>
+        /// <remarks>
+        ///     This is only known to be the case for Nyaa.EU's torrents
+        /// </remarks>
+        public async Task<string> GetTorrentNameAsync()
         {
             var request = (HttpWebRequest) WebRequest.Create(Link);
             HttpWebResponse response = null;
 
             try
             {
-                response = (HttpWebResponse) request.GetResponse();
-                response.GetResponseStream();
+                response = (HttpWebResponse) await request.GetResponseAsync();
                 var disposition = response.Headers["content-disposition"];
-                var filename =
-                    disposition?.Split(new[] { "filename=\"" }, StringSplitOptions.None)[1].Split('"')[0];
+                var filename = disposition?.Split(new[] { "filename=\"" }, StringSplitOptions.None)[1].Split('"')[0];
                 return filename;
             }
+
             catch (Exception ex) when (ex is WebException || ex is InvalidOperationException)
             {
                 return null;
             }
+
             finally
             {
                 response?.Close();

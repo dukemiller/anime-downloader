@@ -45,18 +45,20 @@ namespace anime_downloader.Classes.Web
         {
             try
             {
-                const string link = "https://files.nyaa.se/topbar.png"; // "https://www.nyaa.se/"
+                const string link = "https://www.nyaa.se/";
 
                 var request = (HttpWebRequest) WebRequest.Create(link);
                 request.Timeout = 3000;
                 request.AllowAutoRedirect = false;
+                request.Method = "HEAD";
 
-                var response = (HttpWebResponse) await request.GetResponseAsync();
-                response.Close();
-
-                return response.StatusCode == HttpStatusCode.OK;
+                using (var response = await request.GetResponseAsync())
+                {
+                    return true;
+                }
             }
-            catch
+
+            catch (Exception)
             {
                 return false;
             }

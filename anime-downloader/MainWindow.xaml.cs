@@ -127,6 +127,15 @@ namespace anime_downloader
                 InitialState();
         }
 
+        /// <summary>
+        ///     To "refresh" views by rapidly cycling from home to button b.
+        /// </summary>
+        public void HomeCycle(Button b)
+        {
+            HomeButton.Press();
+            b.Press();
+        }
+
         private void InitialState()
         {
             _xml.Verify.Schema();
@@ -134,20 +143,23 @@ namespace anime_downloader
             _settings.Loaded = true;
             _tray.Initialize();
             ChangeDisplay<Home>();
-
-            //
+            
             KeyDown += (o, e) =>
             {
-                if (e.Key == Key.D1 || e.Key == Key.NumPad1)
-                    HomeButton.Press();
-                else if (e.Key == Key.D2 || e.Key == Key.NumPad2)
-                    AnimeListButton.Press();
-                else if (e.Key == Key.D3 || e.Key == Key.NumPad3)
-                    SettingsButton.Press();
-                else if (e.Key == Key.D4 || e.Key == Key.NumPad4)
-                    DownloadButton.Press();
-                else if (e.Key == Key.D5 || e.Key == Key.NumPad5)
-                    PlaylistsButton.Press();
+                // So you can type without changing the view
+                if (!this.GetAll<TextBox>().Any(t => t.IsFocused))
+                {
+                    if (e.Key == Key.D1 || e.Key == Key.NumPad1)
+                        HomeButton.Press();
+                    else if (e.Key == Key.D2 || e.Key == Key.NumPad2)
+                        HomeCycle(AnimeListButton);
+                    else if (e.Key == Key.D3 || e.Key == Key.NumPad3)
+                        HomeCycle(SettingsButton);
+                    else if (e.Key == Key.D4 || e.Key == Key.NumPad4)
+                        HomeCycle(DownloadButton);
+                    else if (e.Key == Key.D5 || e.Key == Key.NumPad5)
+                        HomeCycle(PlaylistsButton);
+                }
             };
         }
 
@@ -184,13 +196,9 @@ namespace anime_downloader
             {
                 // Necessary for bringing focus from another application
                 if (WindowState == WindowState.Normal)
-                {
                     Show();
-                }
                 else if (WindowState == WindowState.Minimized) // && (_settings.ToTrayOnMinimize))
-                {
                     Hide();
-                }
 
                 _tray.CheckVisibility();
             }
@@ -322,8 +330,7 @@ namespace anime_downloader
                     Alert("Playlist created.");
                 }
 
-                HomeButton.Press();
-                PlaylistsButton.Press();
+                HomeCycle(PlaylistsButton);
             }
         }
 
@@ -334,45 +341,52 @@ namespace anime_downloader
         /// </summary>
         private void AnimeListButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!(CurrentDisplay is AnimeList))
+            if (CurrentDisplay is AnimeList)
+                return;
+
+            var display = ChangeDisplay<AnimeList>();
+
+            display.Loaded += delegate
             {
-                var display = ChangeDisplay<AnimeList>();
+                ((AnimeList) CurrentDisplay).DataGrid.Focus();
+            };
+
+            display.Refresh(_xml.Controller);
+            display.FilterComboBox.Text = _settings.FilterBy;
+            display.FilterComboBox.DropDownClosed += delegate
+            {
+                _settings.FilterBy = display.FilterComboBox.Text;
                 display.Refresh(_xml.Controller);
-                display.FilterComboBox.Text = _settings.FilterBy;
-                display.FilterComboBox.DropDownClosed += delegate
-                {
-                    _settings.FilterBy = display.FilterComboBox.Text;
-                    display.Refresh(_xml.Controller);
+                CloseAnimeFindPopup();
+            };
+
+            display.Add.Click += AnimeList_Context_Add_Click;
+            display.Edit.Click += AnimeListEdit;
+            display.Delete.Click += AnimeList_Context_Delete_Click;
+            display.AddMultiple.Click += AnimeList_Context_AddMultiple_Click;
+            display.Search.Click += AnimeList_Context_Search_Click;
+            display.DataGrid.PreviewKeyDown += AnimeList_KeyDown;
+            display.DataGrid.MouseDoubleClick += AnimeList_MouseDoubleClick;
+            display.FindRectangle.MouseDown += delegate
+            {
+                var findBox = MainGrid.Children.OfType<TextBox>().FirstOrDefault(t => t.Name.Equals("FindBox"));
+                if (findBox == null)
+                    CreateAnimeFindPopup();
+                else
                     CloseAnimeFindPopup();
-                };
-                display.Add.Click += AnimeList_Context_Add_Click;
-                display.Edit.Click += AnimeListEdit;
-                display.Delete.Click += AnimeList_Context_Delete_Click;
-                display.AddMultiple.Click += AnimeList_Context_AddMultiple_Click;
-                display.Search.Click += AnimeList_Context_Search_Click;
-                display.DataGrid.PreviewKeyDown += AnimeList_KeyDown;
-                display.DataGrid.MouseDoubleClick += AnimeList_MouseDoubleClick;
-                display.FindRectangle.MouseDown += delegate
-                {
-                    var findBox = Grid.Children.OfType<TextBox>().FirstOrDefault(t => t.Name.Equals("FindBox"));
-                    if (findBox == null)
-                        CreateAnimeFindPopup();
-                    else
-                        CloseAnimeFindPopup();
-                };
+            };
 
-                Grid.KeyDown += (o, keyEventArgs) =>
-                {
-                    if (!(CurrentDisplay is AnimeList))
-                        return;
+            MainGrid.KeyDown += (o, keyEventArgs) =>
+            {
+                if (!(CurrentDisplay is AnimeList))
+                    return;
 
-                    if (keyEventArgs.Key == Key.F &&
-                        (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
-                    {
-                        CreateAnimeFindPopup();
-                    }
-                };
-            }
+                if (keyEventArgs.Key == Key.F &&
+                    (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
+                {
+                    CreateAnimeFindPopup();
+                }
+            };
         }
 
         public async void AnimeList_Context_Search_Click(object sender, RoutedEventArgs e)
@@ -399,7 +413,7 @@ namespace anime_downloader
                 display.AddAnimeButton.Press();
             };
 
-            // Focus the name textbox on load
+            // Focus the name textBox on load
             display.NameTextbox.Loaded += delegate { display.NameTextbox.Focus(); };
 
             display.NameTextbox.KeyUp += enterToAdd;
@@ -414,6 +428,8 @@ namespace anime_downloader
         private void AnimeList_Context_AddMultiple_Click(object sender, RoutedEventArgs e)
         {
             var display = ChangeDisplay<AnimeDetailsMultiple>();
+            display.RatingTextBox.IsHitTestVisible = false;
+            display.RatingTextBox.Opacity = 0.40;
 
             display.InputTextBox.Loaded += delegate { ((AnimeDetailsMultiple) CurrentDisplay).InputTextBox.Focus(); };
 
@@ -509,10 +525,10 @@ namespace anime_downloader
 
         private void CloseAnimeFindPopup()
         {
-            var findWindow = Grid.Children.OfType<TextBox>().FirstOrDefault(t => t.Name.Equals("FindBox"));
+            var findWindow = MainGrid.Children.OfType<TextBox>().FirstOrDefault(t => t.Name.Equals("FindBox"));
 
             if (findWindow != null)
-                Grid.Children.Remove(findWindow);
+                MainGrid.Children.Remove(findWindow);
 
             var display = CurrentDisplay as AnimeList;
 
@@ -531,7 +547,7 @@ namespace anime_downloader
             var display = (AnimeList) CurrentDisplay;
 
             // Don't recreate it again
-            if (Grid.Children.OfType<TextBox>().Any(t => t.Name.Equals("FindBox")))
+            if (MainGrid.Children.OfType<TextBox>().Any(t => t.Name.Equals("FindBox")))
                 return;
 
             var findWindow = new TextBox
@@ -550,7 +566,7 @@ namespace anime_downloader
             display.DataGrid.MouseDoubleClick += (sender, args) => CloseAnimeFindPopup();
 
             // CTRL-F again or Escape also close find
-            Grid.KeyDown += (sender, keyEventArgs) =>
+            MainGrid.KeyDown += (sender, keyEventArgs) =>
             {
                 if (!(CurrentDisplay is AnimeList))
                     return;
@@ -574,7 +590,7 @@ namespace anime_downloader
                 display.DataGrid.ItemsSource = result;
             };
 
-            Grid.Children.Add(findWindow);
+            MainGrid.Children.Add(findWindow);
             findWindow.Focus();
         }
 
@@ -609,8 +625,7 @@ namespace anime_downloader
                 var key = keyEventArgs.Key;
                 if (key == Key.Escape || key == Key.BrowserBack)
                 {
-                    HomeButton.Press();
-                    AnimeListButton.Press();
+                    HomeCycle(AnimeListButton);
                 }
             };
 
@@ -619,8 +634,7 @@ namespace anime_downloader
             {
                 if (buttonEventArgs.ChangedButton.Equals(MouseButton.XButton1))
                 {
-                    HomeButton.Press();
-                    AnimeListButton.Press();
+                    HomeCycle(AnimeListButton);
                 }
             };
 
@@ -665,6 +679,7 @@ namespace anime_downloader
             var tableDisplay = (AnimeList) CurrentDisplay;
             var animes = tableDisplay.DataGrid.SelectedCells.Select(a => a.Item as Anime).Distinct().ToList();
             var display = ChangeDisplay<AnimeDetailsMultiple>();
+            display.EpisodeTextBox.Text = "";
 
             // get the most used resolution, status, and airing from the selection,
             // then make them the value in the boxes
@@ -679,40 +694,15 @@ namespace anime_downloader
             display.InfoTextBlock.Text = "Make the same change to the following list of anime: ";
             display.InputTextBox.Text = string.Join("\n", animes.Select(a => a.Name));
             display.InputTextBox.IsReadOnly = true;
-
-            // Turn the episode box into a rating box
-            display.EpisodeLabel.Content = "Rating";
-            display.EpisodeTextBox.Text = "";
-            display.EpisodeTextBox.PreviewTextInput += (sender, e) =>
-            {
-                int total;
-                int toAdd;
-
-                // Only numbers allowed
-                if (display.EpisodeTextBox.Text.Any(c => !char.IsDigit(c)) || e.Text.Any(c => !char.IsDigit(c)))
-                {
-                    e.Handled = true;
-                }
-
-                if (!display.EpisodeTextBox.SelectionLength.Equals(2) &&
-                    int.TryParse(display.EpisodeTextBox.Text, out total) && int.TryParse(e.Text, out toAdd))
-                {
-                    toAdd *= (int) Math.Pow(10, display.EpisodeTextBox.Text.Length + 1);
-                    if (total + toAdd > 10 || toAdd == 0)
-                    {
-                        display.EpisodeTextBox.Text = "10";
-                        e.Handled = true;
-                        display.EpisodeTextBox.Select(0, 2);
-                    }
-                }
-            };
-
+            
             display.SubmitButton.Click += delegate
             {
                 foreach (var anime in animes)
                 {
+                    if (!display.RatingTextBox.Text.Equals(""))
+                        anime.Rating = display.RatingTextBox.Text;
                     if (!display.EpisodeTextBox.Text.Equals(""))
-                        anime.Rating = display.EpisodeTextBox.Text;
+                        anime.Episode = display.EpisodeTextBox.Text;
                     anime.Status = display.StatusComboBox.Text;
                     anime.Airing = display.AiringCheckBox.IsChecked == true;
                     anime.Resolution = display.ResolutionComboBox.Text;
@@ -916,19 +906,7 @@ namespace anime_downloader
         {
             var display = ChangeDisplay<DownloadOptions>();
 
-            display.SearchButton.Click += async delegate
-            {
-                this.ToggleButtons();
-
-                if (display.CheckForLatestRadio.IsChecked == true)
-                    await CheckForLatestAsync();
-                else if (display.GetUpToDateRadio.IsChecked == true)
-                    await GetUpToDateAsync();
-                else if (display.GetMissingRadio.IsChecked == true)
-                    await GetMissingEpisodesAsync();
-
-                this.ToggleButtons();
-            };
+            display.SearchButton.Click += DownloadOutputHandler;
             display.Loaded += (o, args) => ((DownloadOptions) CurrentDisplay).SearchButton.Focus();
             display.KeyDown += (o, args) =>
             {
@@ -941,57 +919,89 @@ namespace anime_downloader
         }
 
         /// <summary>
-        ///     View: DownloadOutput (Check for latest anime)
+        ///     View: DownloadOutput
         /// </summary>
-        private async Task CheckForLatestAsync()
+        public async void DownloadOutputHandler(object sender, RoutedEventArgs e)
+        {
+            this.ToggleButtons();
+
+            var display = (DownloadOptions) CurrentDisplay;
+
+            if (display.GetAll<RadioButton>().Any(r => r.IsChecked == true))
+            {
+                var downloadDisplay = ChangeDisplay<DownloadOutput>();
+                var textBox = downloadDisplay.TextBox;
+
+                if (await Nyaa.IsOnlineAsync())
+                {
+                    try
+                    {
+                        if (display.CheckForLatestRadio.IsChecked == true)
+                            await CheckForLatestAsync(textBox);
+
+                        else if (display.GetUpToDateRadio.IsChecked == true)
+                            await GetUpToDateAsync(textBox);
+
+                        else if (display.GetMissingRadio.IsChecked == true)
+                            await GetMissingEpisodesAsync(textBox);
+                    }
+
+                    catch (Exception)
+                    {
+                        textBox.WriteLine(">> An error occured while attempting to download, try again.");
+                    }
+                }
+
+                else
+                {
+                    textBox.WriteLine(">> Nyaa is currently offline. Try checking later.");
+                }
+            }
+
+            this.ToggleButtons();
+        }
+
+        /// <summary>
+        ///     DownloadOutput (Check for latest anime)
+        /// </summary>
+        private async Task CheckForLatestAsync(TextBox textBox)
         {
             if (CrucialDirectoriesExist())
             {
                 if (!Directory.Exists(_settings.TorrentFilesDirectory))
                     Directory.CreateDirectory(_settings.TorrentFilesDirectory);
 
-                var downloadDisplay = ChangeDisplay<DownloadOutput>();
-                var textbox = downloadDisplay.TextBox;
-
-                if (!await Nyaa.IsOnlineAsync())
-                    textbox.WriteLine(">> Nyaa is currently offline. Try checking later.");
-                else
-                {
-                    textbox.WriteLine(">> Searching for currently airing anime episodes ...");
-                    var downloaded = await _downloader.DownloadAsync(_xml.Controller.AiringAnimes.ToList(), textbox);
-                    textbox.WriteLine(downloaded > 0
-                        ? $">> Found {downloaded} anime downloads."
-                        : ">> No new anime found.");
-                }
+                textBox.WriteLine(">> Searching for currently airing anime episodes ...");
+                var downloaded = await _downloader.DownloadAsync(_xml.Controller.AiringAnimes.ToList(), textBox);
+                textBox.WriteLine(downloaded > 0
+                    ? $">> Found {downloaded} anime downloads."
+                    : ">> No new anime found.");
             }
         }
 
         /// <summary>
-        ///     View: DownloadOutput (Get up to date)
+        ///     DownloadOutput (Get up to date)
         /// </summary>
-        private async Task GetUpToDateAsync()
+        private async Task GetUpToDateAsync(TextBox textBox)
         {
             var response =
                 MessageBox.Show(
                     "Don't do this often, it might use a lot of requests. You could also potentially download " +
                     "the wrong series if the intended series isn't found by your anime name and settings. \n\n" +
-                    "Are you sure you want to?", "Confirmation", MessageBoxButton.YesNo);
+                    "Are you sure you want to?", 
+                    "Confirmation", 
+                    MessageBoxButton.YesNo);
 
             if (response == MessageBoxResult.Yes)
             {
-                var display = ChangeDisplay<DownloadOutput>();
-                var textBox = display.TextBox;
                 var total = 0;
-
                 textBox.WriteLine(">> Attempting to catch up on airing anime episodes ...");
-
                 foreach (var anime in _xml.Controller.AiringAnimes.ToList())
                 {
                     bool downloaded;
                     do
                     {
-                        downloaded =
-                            await _downloader.DownloadEpisodeAsync(await anime.GetLinksToNextEpisode(), anime, textBox);
+                        downloaded = await _downloader.DownloadEpisodeAsync(await anime.GetLinksToNextEpisode(), anime, textBox);
                         if (downloaded)
                             total++;
                     } while (downloaded);
@@ -999,19 +1009,24 @@ namespace anime_downloader
 
                 textBox.WriteLine(total > 0 ? $">> Found {total} anime downloads." : ">> No new anime found.");
             }
+
+            else if (response == MessageBoxResult.No)
+            {
+                this.ToggleButtons();
+                DownloadButton.Press();
+                this.ToggleButtons();
+            }
         }
 
         /// <summary>
-        ///     View: DownloadOutput (Download missing episodes)
+        ///     DownloadOutput (Download missing episodes)
         /// </summary>
         /// <remarks>
         ///     Find and download any episodes in collection anime that are between the range
         ///     start.episode and last.episode
         /// </remarks>
-        private async Task GetMissingEpisodesAsync()
+        private async Task GetMissingEpisodesAsync(TextBox textBox)
         {
-            var display = ChangeDisplay<DownloadOutput>();
-            var textBox = display.TextBox;
             textBox.WriteLine(">> Finding all missing episodes ...");
             var allEpisodeFiles = await Task.Run(() => _filehandler.AllAnimeEpisodes().ToList());
             var animeFileDeltas = await Task.Run(() =>
@@ -1087,8 +1102,7 @@ namespace anime_downloader
 
             using (var client = new WebClient())
             {
-                var html =
-                    await client.DownloadStringTaskAsync(new Uri($"http://myanimelist.net/anime.php?q={q}"));
+                var html = await client.DownloadStringTaskAsync(new Uri($"http://myanimelist.net/anime.php?q={q}"));
                 document.LoadHtml(html);
             }
 

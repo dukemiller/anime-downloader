@@ -138,7 +138,7 @@ namespace anime_downloader.Classes.File
 
         public async Task<bool> DownloadFileAsync(TorrentProvider torrent, Anime anime)
         {
-            var torrentName = torrent.TorrentName();
+            var torrentName = await torrent.GetTorrentNameAsync();
             if (torrentName == null)
                 return false;
             var filePath = Path.Combine(_settings.TorrentFilesDirectory, torrentName);

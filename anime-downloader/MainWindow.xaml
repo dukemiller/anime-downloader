@@ -34,7 +34,7 @@
         </Style>
     </Window.Resources>
 
-    <Grid x:Name="Grid">
+    <Grid x:Name="MainGrid">
         <Button x:Name="HomeButton" Content="Home" Style="{DynamicResource MainButtonStyle}" Margin="10,10,0,0"
                 Click="HomeButton_Click" />
         <Button x:Name="AnimeListButton" Content="Anime" Style="{DynamicResource MainButtonStyle}" Margin="10,66,0,0"
