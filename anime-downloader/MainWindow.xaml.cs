@@ -5,6 +5,7 @@ using anime_downloader.Classes.Xml;
 using anime_downloader.Views;
 using HtmlAgilityPack;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -235,7 +236,7 @@ namespace anime_downloader
         }
 
         private static void Alert(string msg = "") => MessageBox.Show(msg);
-
+        
         /* Event Handling */
 
         /* --Home */
@@ -807,7 +808,7 @@ namespace anime_downloader
                 if (k.Key == Key.Enter)
                     display.ApplyChangesButton.Press();
             });
-
+            
             display.BaseTextbox.Text = _settings.BaseDirectory;
             display.SubgroupsTextbox.Text = string.Join(", ", _settings.Subgroups);
             display.DownloadTextbox.Text = _settings.UtorrentFile;

@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using Application = System.Windows.Application;
@@ -110,9 +111,11 @@ namespace anime_downloader.Classes
                 }));
 
             _trayContextMenu.MenuItems.Add(
-                new MenuItem("Exit", (sender, args) =>
+                new MenuItem("Exit", async (sender, args) =>
                 {
-                    _trayIcon.Visible = false;
+                    Visible = false;
+                    while (Visible)
+                        await Task.Delay(100);
                     Application.Current.Shutdown();
                 }));
 

@@ -57,8 +57,12 @@ namespace anime_downloader.Classes.Web
         /// </remarks>
         public async Task<string> GetTorrentNameAsync()
         {
-            var request = (HttpWebRequest) WebRequest.Create(Link);
             HttpWebResponse response = null;
+
+            var request = (HttpWebRequest) WebRequest.Create(Link);
+            request.Timeout = 3000;
+            request.AllowAutoRedirect = false;
+            request.Method = "HEAD";
 
             try
             {
