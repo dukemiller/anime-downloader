@@ -52,7 +52,7 @@ namespace anime_downloader.Classes
         ///     Simulate a button press.
         /// </summary>
         /// <param name="button"></param>
-        public static void Press(this Button button)
+        public static void Press(this Control button)
         {
             if (button.IsHitTestVisible)
                 button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
@@ -62,7 +62,7 @@ namespace anime_downloader.Classes
         ///     Toggle opacity and visibility of a ButtonSubmit between two states.
         /// </summary>
         /// <param name="button"></param>
-        public static void Toggle(this Button button)
+        public static void Toggle(this Control button)
         {
             button.Opacity = button.IsHitTestVisible ? 0.4 : 1.0;
             button.IsHitTestVisible ^= true;
@@ -74,7 +74,7 @@ namespace anime_downloader.Classes
         /// <param name="mainWindow"></param>
         public static void ToggleButtons(this MainWindow mainWindow)
         {
-            foreach (var button in GetAll<Button>(mainWindow))
+            foreach (var button in GetAll<ToggleButton>(mainWindow))
                 button.Toggle();
         }
         

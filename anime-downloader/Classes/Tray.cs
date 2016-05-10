@@ -83,13 +83,6 @@ namespace anime_downloader.Classes
             _trayContextMenu = new ContextMenu();
 
             _trayContextMenu.MenuItems.Add(
-                new MenuItem("Open base folder ...", (sender, args) =>
-                {
-                    if (_settings.Loaded)
-                        Process.Start(_settings.BaseDirectory);
-                }));
-
-            _trayContextMenu.MenuItems.Add(
                 new MenuItem("Download latest ...", (sender, args) =>
                 {
                     if (_mainWindow.WindowState == WindowState.Minimized)
@@ -101,7 +94,27 @@ namespace anime_downloader.Classes
                     ((DownloadOptions) _mainWindow.CurrentDisplay).SearchButton.Press();
                 }));
 
+            //
             _trayContextMenu.MenuItems.Add("-");
+            // 
+
+            _trayContextMenu.MenuItems.Add(
+                new MenuItem("Open base folder ...", (sender, args) =>
+                {
+                    if (_settings.Loaded)
+                        Process.Start(_settings.BaseDirectory);
+                }));
+
+            _trayContextMenu.MenuItems.Add(
+                new MenuItem("Open settings folder ...", (sender, args) =>
+                {
+                    if (_settings.Loaded)
+                        Process.Start(_settings.ApplicationDirectory);
+                }));
+
+            //
+            _trayContextMenu.MenuItems.Add("-");
+            // 
 
             _trayContextMenu.MenuItems.Add(
                 new MenuItem("Restore", (sender, args) =>

@@ -56,11 +56,13 @@ namespace anime_downloader.Classes.File
                                                                   a.Episode.Equals(episode))))
                         continue;
 
+                    var previousEpisode = $"{int.Parse(episode) - 1:D2}";
+
                     // TODO: make a copy constructor?
                     var anime = new Anime
                     {
                         Name = animeEpisode.Name,
-                        Episode = episode,
+                        Episode = previousEpisode,
                         Airing = animeBase.Airing,
                         Resolution = animeBase.Resolution,
                         PreferredSubgroup = animeBase.PreferredSubgroup,

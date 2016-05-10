@@ -4,24 +4,35 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
-             d:DesignHeight="340" d:DesignWidth="660">
+             d:DesignHeight="360" d:DesignWidth="680">
     <UserControl.Resources>
         <Style x:Key="LabelStyle" TargetType="{x:Type Label}">
-            <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="FontSize" Value="18.667" />
-            <Setter Property="Height" Value="45" />
+            <Setter Property="FontFamily" Value="Yu Gothic"/>
         </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.Background>White</Grid.Background>
-        <Label x:Name="HomeLabel" Margin="11,3,510,0" Style="{DynamicResource LabelStyle}"
-               Content="The home tab." />
-        <Label x:Name="ListLabel" Style="{DynamicResource LabelStyle}" Margin="11,59,371,0"
-               Content="View and modify the anime list." />
-        <Label x:Name="SettingsLabel" Style="{DynamicResource LabelStyle}" Margin="11,112,336,0"
-               Content="Change and modify profile settings." />
-        <Label x:Name="DownloadLabel" Style="{DynamicResource LabelStyle}" Margin="11,165,156,0"
-               Content="Download anime with a few options." Width="483" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <Label x:Name="HomeLabel" Style="{DynamicResource LabelStyle}" Grid.Row="0" Content="The home tab." />
+        <Label x:Name="ListLabel" Style="{DynamicResource LabelStyle}" Grid.Row="1" Content="The main list where you add and edit anime." />
+        <Label x:Name="SettingsLabel" Style="{DynamicResource LabelStyle}" Grid.Row="2" Content="Change and modify profile settings." />
+        <Label x:Name="DownloadLabel" Style="{DynamicResource LabelStyle}" Grid.Row="3" Content="Download anime from the anime list with a few options." />
+        <Label x:Name="PlaylistLabel" Style="{DynamicResource LabelStyle}" Grid.Row="4" Content="Create a basic playlist." />
+        <Label x:Name="WebLabel" Style="{DynamicResource LabelStyle}" Grid.Row="5" Content="Some helpful internet links and buttons." />
+        <Label x:Name="MiscLabel" Style="{DynamicResource LabelStyle}" Grid.Row="6" Content="Other options and features." />
     </Grid>
 </UserControl>

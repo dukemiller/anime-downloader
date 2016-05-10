@@ -5,12 +5,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:classes="clr-namespace:anime_downloader.Classes"
              mc:Ignorable="d"
-             d:DesignHeight="340" d:DesignWidth="660">
+             d:DesignHeight="360" d:DesignWidth="680">
     <Grid>
         <Grid.Background>White</Grid.Background>
         <Grid.RowDefinitions>
-            <RowDefinition Height="10*" />
-            <RowDefinition Height="1*" />
+            <RowDefinition Height="15*" />
+            <RowDefinition Height="2*" />
         </Grid.RowDefinitions>
         <DataGrid x:Name="DataGrid"
                   Grid.Row="0"
@@ -60,9 +60,8 @@
                 <ColumnDefinition Width="9*" />
                 <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
-            <Label Grid.Column="0" x:Name="StatsLabel" HorizontalAlignment="Left" Margin="0" FontSize="16" />
-            <Rectangle Grid.Column="1" x:Name="FindRectangle" HorizontalAlignment="Left" Height="25" Stroke="Gray"
-                       Margin="-30,6,0,0"
+            <Label Grid.Column="0" x:Name="StatsLabel" HorizontalAlignment="Left" FontSize="16" FontFamily="Yu Gothic" VerticalContentAlignment="Center" />
+            <Rectangle Grid.Column="0" x:Name="FindRectangle" HorizontalAlignment="Right" Height="25" Stroke="Gray" Margin="0, 0, 10, 0"
                        StrokeThickness="0.5" Width="25" RadiusX="25" RadiusY="25"
                        MouseEnter="FindRectangle_OnMouseEnter" MouseLeave="FindRectangle_OnMouseLeave">
                 <Rectangle.Fill>
@@ -70,8 +69,7 @@
                 </Rectangle.Fill>
             </Rectangle>
 
-            <ComboBox x:Name="FilterComboBox" Grid.Column="1" MouseWheel="OnContentChanged" Height="25"
-                      Margin="0,0,0,-5" HorizontalContentAlignment="Center">
+            <ComboBox x:Name="FilterComboBox" MouseWheel="OnContentChanged" Height="25" HorizontalContentAlignment="Center" Grid.Column="1">
                 <ComboBoxItem Content="" IsSelected="True" />
                 <ComboBoxItem Content="Airing/Watching" />
                 <ComboBoxItem Content="Finished" />

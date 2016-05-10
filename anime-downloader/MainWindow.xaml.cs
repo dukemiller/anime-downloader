@@ -17,7 +17,9 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
 using static anime_downloader.Classes.OperatingSystemApi;
 using Settings = anime_downloader.Classes.Settings;
 
@@ -131,10 +133,11 @@ namespace anime_downloader
         /// <summary>
         ///     To "refresh" views by rapidly cycling from home to button b.
         /// </summary>
-        public void HomeCycle(Button b)
+        public void HomeCycle(ToggleButton b)
         {
             HomeButton.Press();
             b.Press();
+            b.IsChecked = true;
         }
 
         private void InitialState()
@@ -151,7 +154,7 @@ namespace anime_downloader
                 if (!this.GetAll<TextBox>().Any(t => t.IsFocused))
                 {
                     if (e.Key == Key.D1 || e.Key == Key.NumPad1)
-                        HomeButton.Press();
+                        HomeCycle(HomeButton);
                     else if (e.Key == Key.D2 || e.Key == Key.NumPad2)
                         HomeCycle(AnimeListButton);
                     else if (e.Key == Key.D3 || e.Key == Key.NumPad3)
@@ -160,6 +163,10 @@ namespace anime_downloader
                         HomeCycle(DownloadButton);
                     else if (e.Key == Key.D5 || e.Key == Key.NumPad5)
                         HomeCycle(PlaylistsButton);
+                    else if (e.Key == Key.D6 || e.Key == Key.NumPad6)
+                        HomeCycle(WebButton);
+                    else if (e.Key == Key.D7 || e.Key == Key.NumPad7)
+                        HomeCycle(MiscButton);
                 }
             };
         }
@@ -247,25 +254,6 @@ namespace anime_downloader
         private void HomeButton_Click(object sender, RoutedEventArgs e)
         {
             ChangeDisplay<Home>();
-        }
-
-        /// <summary>
-        ///     Event: Open base folder
-        /// </summary>
-        private void BaseFolderButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (Directory.Exists(_settings.BaseDirectory))
-                Process.Start(_settings.BaseDirectory);
-            else
-                Alert("Your base folder doesn't seem to exist.");
-        }
-
-        /// <summary>
-        ///     Event: Open settings folder
-        /// </summary>
-        private void SettingsFolderButton_Click(object sender, RoutedEventArgs e)
-        {
-            Process.Start(_settings.ApplicationDirectory);
         }
 
         /* --Playlist Creator */
@@ -370,7 +358,7 @@ namespace anime_downloader
             display.DataGrid.MouseDoubleClick += AnimeList_MouseDoubleClick;
             display.FindRectangle.MouseDown += delegate
             {
-                var findBox = MainGrid.Children.OfType<TextBox>().FirstOrDefault(t => t.Name.Equals("FindBox"));
+                var findBox = Display.Children.OfType<TextBox>().FirstOrDefault(t => t.Name.Equals("FindBox"));
                 if (findBox == null)
                     CreateAnimeFindPopup();
                 else
@@ -526,10 +514,10 @@ namespace anime_downloader
 
         private void CloseAnimeFindPopup()
         {
-            var findWindow = MainGrid.Children.OfType<TextBox>().FirstOrDefault(t => t.Name.Equals("FindBox"));
+            var findWindow = Display.Children.OfType<TextBox>().FirstOrDefault(t => t.Name.Equals("FindBox"));
 
             if (findWindow != null)
-                MainGrid.Children.Remove(findWindow);
+                Display.Children.Remove(findWindow);
 
             var display = CurrentDisplay as AnimeList;
 
@@ -548,15 +536,15 @@ namespace anime_downloader
             var display = (AnimeList) CurrentDisplay;
 
             // Don't recreate it again
-            if (MainGrid.Children.OfType<TextBox>().Any(t => t.Name.Equals("FindBox")))
+            if (Display.Children.OfType<TextBox>().Any(t => t.Name.Equals("FindBox")))
                 return;
 
-            var findWindow = new TextBox
+            var find = new TextBox
             {
                 Name = "FindBox",
                 Width = 400,
                 Height = 30,
-                Margin = new Thickness(450, 250, 0, 0),
+                Margin = new Thickness(270, 270, 0, 0),
                 FontSize = 18,
                 VerticalContentAlignment = VerticalAlignment.Center
             };
@@ -567,7 +555,7 @@ namespace anime_downloader
             display.DataGrid.MouseDoubleClick += (sender, args) => CloseAnimeFindPopup();
 
             // CTRL-F again or Escape also close find
-            MainGrid.KeyDown += (sender, keyEventArgs) =>
+            Display.KeyDown += (sender, keyEventArgs) =>
             {
                 if (!(CurrentDisplay is AnimeList))
                     return;
@@ -576,23 +564,23 @@ namespace anime_downloader
                     CloseAnimeFindPopup();
                 else if (keyEventArgs.Key == Key.F && Keyboard.IsKeyDown(Key.LeftCtrl))
                 {
-                    if (findWindow.IsSelectionActive)
+                    if (find.IsSelectionActive)
                         CloseAnimeFindPopup();
                     else
-                        findWindow.Focus();
+                        find.Focus();
                 }
             };
 
             // --> The actual functionality
-            findWindow.KeyUp += delegate
+            find.KeyUp += delegate
             {
-                var q = findWindow.Text.ToLower().Trim();
+                var q = find.Text.ToLower().Trim();
                 var result = _xml.Controller.FilteredSortedAnimes().Where(a => a.Name.ToLower().Contains(q));
                 display.DataGrid.ItemsSource = result;
             };
 
-            MainGrid.Children.Add(findWindow);
-            findWindow.Focus();
+            Display.Children.Add(find);
+            find.Focus();
         }
 
         /* --AnimeDetails & AnimeDetailsMultiple */
@@ -945,6 +933,7 @@ namespace anime_downloader
 
                         else if (display.GetMissingRadio.IsChecked == true)
                             await GetMissingEpisodesAsync(textBox);
+
                     }
 
                     catch (Exception)
@@ -957,6 +946,7 @@ namespace anime_downloader
                 {
                     textBox.WriteLine(">> Nyaa is currently offline. Try checking later.");
                 }
+                
             }
 
             this.ToggleButtons();
@@ -1043,6 +1033,46 @@ namespace anime_downloader
             textBox.WriteLine(total > 0 ? $">> Found {total} anime downloads." : ">> No new anime found.");
         }
 
+        /* */
+
+        private void WebButton_Click(object sender, RoutedEventArgs e)
+        {
+            var display = ChangeDisplay<Web>();
+
+            display.AnidbButton.Click += delegate { Process.Start("https://anidb.net/"); };
+
+            display.AnichartButton.Click += delegate { Process.Start("http://anichart.net/"); };
+
+            display.MyanimelistButton.Click += delegate { Process.Start("http://myanimelist.net/"); };
+
+            display.NyaaButton.Click += delegate { Process.Start("https://www.nyaa.se/"); };
+
+            display.SearchTextBox.KeyDown += (o, args) =>
+            {
+                if (args.Key == Key.Enter)
+                    ((Web) CurrentDisplay).SearchButton.Press();
+            };
+
+            display.SearchButton.Click += delegate
+            {
+                var text = ((Web) CurrentDisplay).SearchTextBox.Text.Trim();
+                if (text.Length > 0)
+                {
+                    var q = HttpUtility.ParseQueryString(text);
+                    Process.Start($"http://myanimelist.net/anime.php?q={q}");
+                }
+            };
+
+            display.FirstResultButton.Click += async delegate
+            {
+                var text = display.SearchTextBox.Text.Trim();
+                if (text.Length > 0)
+                {
+                    await SearchOnNyaa(text);
+                }
+            };
+        }
+
         /* --Misc */
 
         /// <summary>
@@ -1059,39 +1089,7 @@ namespace anime_downloader
             });
 
             display.ButtonSubmit.Click += Misc_ButtonMisc_Submit;
-
-            display.AnidbButton.Click += delegate { Process.Start("https://anidb.net/"); };
-
-            display.AnichartButton.Click += delegate { Process.Start("http://anichart.net/"); };
-
-            display.MyanimelistButton.Click += delegate { Process.Start("http://myanimelist.net/"); };
-
-            display.NyaaButton.Click += delegate { Process.Start("https://www.nyaa.se/"); };
-
-            display.SearchTextBox.KeyDown += (o, args) =>
-            {
-                if (args.Key == Key.Enter)
-                    ((Misc) CurrentDisplay).SearchButton.Press();
-            };
-
-            display.SearchButton.Click += delegate
-            {
-                var text = ((Misc) CurrentDisplay).SearchTextBox.Text.Trim();
-                if (text.Length > 0)
-                {
-                    var q = HttpUtility.ParseQueryString(text);
-                    Process.Start($"http://myanimelist.net/anime.php?q={q}");
-                }
-            };
-
-            display.FirstResultButton.Click += async delegate
-            {
-                var text = display.SearchTextBox.Text.Trim();
-                if (text.Length > 0)
-                {
-                    await SearchOnNyaa(text);
-                }
-            };
+           
         }
 
         public async Task SearchOnNyaa(string text)

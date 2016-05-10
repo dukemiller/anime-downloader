@@ -4,72 +4,45 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
-             d:DesignHeight="340" d:DesignWidth="660">
+             d:DesignHeight="360" d:DesignWidth="680">
     <UserControl.Resources>
         <Style x:Key="BoxStyle" TargetType="{x:Type GroupBox}">
             <Setter Property="FontSize" Value="16" />
             <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="FontFamily" Value="Yu Gothic"/>
         </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.Background>White</Grid.Background>
-        <StackPanel>
-            <GroupBox x:Name="SearchGroupBox" Header="Search on MyAnimeList: " Style="{DynamicResource BoxStyle}">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="4*" />
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                    </Grid.ColumnDefinitions>
-                    <TextBox x:Name="SearchTextBox" Width="300" Grid.Column="0" Margin="5"
-                             VerticalContentAlignment="Center" />
-                    <Button x:Name="SearchButton" Grid.Column="1" Margin="5">
-                        <TextBlock Margin="5">Search</TextBlock>
-                    </Button>
-                    <Button x:Name="FirstResultButton" Grid.Column="2" Margin="5">
-                        <TextBlock Margin="5">First Result</TextBlock>
-                    </Button>
-                </Grid>
-            </GroupBox>
-            <GroupBox x:Name="GroupBox" Header="Miscellaneous options (for 'Airing' and 'Watching' shows)"
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="5*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0">
+                <GroupBox x:Name="GroupBox" Header="Indexing options (for 'Airing' and 'Watching' shows)"
                       Style="{DynamicResource BoxStyle}"
                       VerticalAlignment="Top">
-                <StackPanel Margin="10">
-                    <RadioButton Name="RadioDuplicates" VerticalContentAlignment="Center">
-                        <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Move duplicates to a "Duplicates" folder</TextBlock>
-                    </RadioButton>
-                    <RadioButton Name="RadioIndexLastWatched" VerticalContentAlignment="Center">
-                        <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode count to last episode number in "watched" folder</TextBlock>
-                    </RadioButton>
-                    <RadioButton Name="RadioIndexLastUnwatched" VerticalContentAlignment="Center">
-                        <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode count to last episode number in episode folders</TextBlock>
-                    </RadioButton>
-                    <RadioButton Name="RadioIndexFirstWatched" VerticalContentAlignment="Center">
-                        <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode count to first known episode value</TextBlock>
-                    </RadioButton>
-                    <RadioButton Name="RadioIndexZero" VerticalContentAlignment="Center">
-                        <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode count to zero</TextBlock>
-                    </RadioButton>
-                </StackPanel>
-            </GroupBox>
-            <GroupBox x:Name="WebButtonsGroupBox" Header="Websites" Style="{DynamicResource BoxStyle}">
-                <DockPanel HorizontalAlignment="Left">
-                    <Button x:Name="AnichartButton" Margin="5">
-                        <TextBlock Margin="5">Anichart</TextBlock>
-                    </Button>
-                    <Button x:Name="MyanimelistButton" Margin="5">
-                        <TextBlock Margin="5">MyAnimeList</TextBlock>
-                    </Button>
-                    <Button x:Name="AnidbButton" Margin="5">
-                        <TextBlock Margin="5">aniDB</TextBlock>
-                    </Button>
-                    <Button x:Name="NyaaButton" Margin="5">
-                        <TextBlock Margin="5">Nyaa</TextBlock>
-                    </Button>
-                </DockPanel>
-            </GroupBox>
-        </StackPanel>
-        <Button x:Name="ButtonSubmit" Content="Submit" HorizontalAlignment="Left" Margin="530,300,0,0"
-                VerticalAlignment="Top" Width="120" Height="30" />
+                    <StackPanel Margin="5">
+                        <RadioButton Name="RadioDuplicates" VerticalContentAlignment="Center">
+                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Move duplicates to a "Duplicates" folder</TextBlock>
+                        </RadioButton>
+                        <RadioButton Name="RadioIndexLastWatched" VerticalContentAlignment="Center">
+                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode count to last episode number in "watched" folder</TextBlock>
+                        </RadioButton>
+                        <RadioButton Name="RadioIndexLastUnwatched" VerticalContentAlignment="Center">
+                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode count to last episode number in episode folders</TextBlock>
+                        </RadioButton>
+                        <RadioButton Name="RadioIndexFirstWatched" VerticalContentAlignment="Center">
+                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode count to first known episode value</TextBlock>
+                        </RadioButton>
+                        <RadioButton Name="RadioIndexZero" VerticalContentAlignment="Center">
+                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode count to zero</TextBlock>
+                        </RadioButton>
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+            <Button x:Name="ButtonSubmit" Grid.Row="1" Content="Submit" Style="{DynamicResource ConfirmationButtonStyle}" HorizontalAlignment="Right" />
+        </Grid>
     </Grid>
 </UserControl>

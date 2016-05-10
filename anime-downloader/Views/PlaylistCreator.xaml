@@ -4,27 +4,34 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
-             d:DesignHeight="340" d:DesignWidth="660">
+             d:DesignHeight="360" d:DesignWidth="680">
+    <UserControl.Resources>
+        <Style x:Key="FontStyle">
+            <Setter Property="RadioButton.FontFamily" Value="Yu Gothic"/>
+        </Style>
+    </UserControl.Resources>
     <Grid>
         <Grid.Background>White</Grid.Background>
-        <StackPanel>
-            <TextBlock x:Name="TextBlock" TextWrapping="Wrap" FontSize="16" TextAlignment="Justify"
-                       Text="Create a playlist from all completed video files inside the base folder path (excluding files in the 'Watched' folder) as the filename 'playlist.m3u'."
-                       VerticalAlignment="Center" HorizontalAlignment="Center" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="4*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" x:Name="TextBlock" TextWrapping="Wrap" FontSize="16" TextAlignment="Justify" Style="{DynamicResource FontStyle}"
+                       Text="Create a playlist from all completed video files inside the base folder path (excluding files in the 'Watched' folder) as the filename 'playlist.m3u'."/>
+        <StackPanel Grid.Row="1">
             <DockPanel>
-                <GroupBox x:Name="SortGroupBox" FontSize="16" Header="Sort by" HorizontalAlignment="Left"
-                          VerticalAlignment="Top">
-                    <StackPanel>
-                        <RadioButton x:Name="DefaultRadio" Content="Default file listing" Margin="5"
+                <GroupBox x:Name="SortGroupBox" FontSize="16" Header="Sort by" HorizontalAlignment="Left" VerticalAlignment="Top" Style="{DynamicResource FontStyle}">
+                    <StackPanel >
+                        <RadioButton x:Name="DefaultRadio" Content="Default file listing" Margin="5" 
                                      ToolTip="Default windows lexical filename sort" />
-                        <RadioButton x:Name="EpisodeRadio" Content="Episode number" Margin="5" IsChecked="True"
+                        <RadioButton x:Name="EpisodeRadio" Content="Episode number" Margin="5" IsChecked="True" 
                                      ToolTip="A more rigorous episode number check so that episodes are in order" />
-                        <RadioButton x:Name="MomentRadio" Content="Date downloaded" Margin="5"
+                        <RadioButton x:Name="MomentRadio" Content="Date downloaded" Margin="5" 
                                      ToolTip="When the file was created" />
                     </StackPanel>
                 </GroupBox>
-                <GroupBox x:Name="OptionsGroupBox" FontSize="16" Header="Options" HorizontalAlignment="Left"
-                          VerticalAlignment="Top">
+                <GroupBox x:Name="OptionsGroupBox" FontSize="16" Header="Options" HorizontalAlignment="Left" Style="{DynamicResource FontStyle}" VerticalAlignment="Top">
                     <StackPanel>
                         <CheckBox x:Name="SeparateCheckBox" Content="Separate show order" Margin="5"
                                   ToolTip="Distribute the show order so that you don't watch the same show twice in a row." />
@@ -34,9 +41,7 @@
                 </GroupBox>
             </DockPanel>
         </StackPanel>
-        <Button x:Name="CreateButton" Content="Create" HorizontalAlignment="Left" Margin="530,300,0,0" Width="120"
-                Height="30" VerticalAlignment="Top" />
-        <Button x:Name="OpenButton" Content="Open Playlist" HorizontalAlignment="Left" VerticalAlignment="Bottom"
-                Width="120" Height="30" Margin="10,0,0,10" />
+        <Button x:Name="CreateButton" Content="Create" Style="{DynamicResource ConfirmationButtonStyle}" HorizontalAlignment="Right" Grid.Row="2"  />
+        <Button x:Name="OpenButton"  Content="Open" Style="{DynamicResource ConfirmationButtonStyle}" HorizontalAlignment="Left" Grid.Row="2" />
     </Grid>
 </UserControl>

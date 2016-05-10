@@ -4,9 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
-             d:DesignHeight="340" d:DesignWidth="660">
-    <Grid>
-        <TextBox x:Name="TextBox" TextWrapping="Wrap" FontSize="16" IsReadOnly="True"
-                 VerticalScrollBarVisibility="Auto" />
+             d:DesignHeight="360" d:DesignWidth="680">
+    <Grid x:Name="OutputGrid">
+        <TextBox x:Name="TextBox" TextWrapping="Wrap" FontSize="20" IsReadOnly="True" Background="#ECECEC" 
+                 VerticalScrollBarVisibility="Auto" BorderThickness="0" FontFamily="Segoe UI Light" />
     </Grid>
 </UserControl>

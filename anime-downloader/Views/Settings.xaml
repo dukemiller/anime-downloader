@@ -4,19 +4,20 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
-             d:DesignHeight="340" d:DesignWidth="660">
+             d:DesignHeight="360" d:DesignWidth="680">
     <UserControl.Resources>
         <Style x:Key="LabelStyle" TargetType="{x:Type Label}">
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontFamily" Value="Yu Gothic"/>
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
         <Style x:Key="TextboxStyle" TargetType="{x:Type TextBox}">
             <Setter Property="Height" Value="33" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="FontSize" Value="15" />
+            <Setter Property="FontSize" Value="16" />
         </Style>
         <Style x:Key="CheckboxStyle" TargetType="{x:Type CheckBox}">
             <Setter Property="HorizontalAlignment" Value="Left" />
@@ -25,14 +26,15 @@
         <Style x:Key="RadioStyle" TargetType="{x:Type RadioButton}">
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontFamily" Value="Yu Gothic"/>
             <Setter Property="Margin" Value="0,5,0,0" />
         </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.Background>White</Grid.Background>
         <Grid.RowDefinitions>
-            <RowDefinition Height="4*" />
+            <RowDefinition Height="5*" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
         <Grid>
@@ -162,8 +164,6 @@
                 </Grid>
             </Grid>
         </Grid>
-        <Button x:Name="ApplyChangesButton" Content="Apply Changes" Width="120" Height="30"
-                HorizontalAlignment="Right" VerticalContentAlignment="Center"
-                Grid.Row="1" Margin="0,28,10,10" />
+        <Button x:Name="ApplyChangesButton" Content="Apply" Style="{DynamicResource ConfirmationButtonStyle}" HorizontalAlignment="Right" Grid.Row="1" />
     </Grid>
 </UserControl>

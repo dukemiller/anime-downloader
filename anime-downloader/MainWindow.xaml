@@ -5,26 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         ResizeMode="CanMinimize"
-        Title="Anime Downloader" Height="386" Width="918"
+        Title="Anime Downloader" Height="400" Width="920"
         StateChanged="Window_StateChanged" Closing="MainWindow_OnClosing">
 
     <Window.Resources>
-        <Style x:Key="MainButtonStyle" TargetType="{x:Type Button}">
-            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-            <Setter Property="FontSize" Value="24" />
-            <Setter Property="Width" Value="226" />
-            <Setter Property="Height" Value="43" />
-            <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="VerticalAlignment" Value="Top" />
-        </Style>
-        <Style x:Key="MiniButtonStyle" TargetType="{x:Type Button}">
-            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-            <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="VerticalAlignment" Value="Top" />
-            <Setter Property="Width" Value="110" />
-            <Setter Property="Height" Value="34" />
-            <Setter Property="FontSize" Value="16" />
-        </Style>
         <Style x:Key="DirectoryButtonStyle" TargetType="{x:Type Button}">
             <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             <Setter Property="HorizontalAlignment" Value="Left" />
@@ -33,32 +17,43 @@
             <Setter Property="Width" Value="70" />
         </Style>
     </Window.Resources>
-
+    
     <Grid x:Name="MainGrid">
-        <Button x:Name="HomeButton" Content="Home" Style="{DynamicResource MainButtonStyle}" Margin="10,10,0,0"
-                Click="HomeButton_Click" />
-        <Button x:Name="AnimeListButton" Content="Anime" Style="{DynamicResource MainButtonStyle}" Margin="10,66,0,0"
-                Click="AnimeListButton_Click" />
-        <Button x:Name="SettingsButton" Content="Settings" Style="{DynamicResource MainButtonStyle}"
-                Margin="10,119,0,0" Click="SettingsButton_Click" />
-        <Button x:Name="DownloadButton" Content="Download" Style="{DynamicResource MainButtonStyle}"
-                Margin="10,173,0,0" Click="DownloadButton_Click" />
-        <Button x:Name="PlaylistsButton" Content="Playlists" Style="{DynamicResource MiniButtonStyle}"
-                Margin="10,226,0,0" Click="PlaylistsButton_Click" />
-        <Button x:Name="MiscButton" Content="Misc" Style="{DynamicResource MiniButtonStyle}" Margin="126,226,0,0"
-                Click="MiscButton_Click" />
+        <Grid.Background>White</Grid.Background>
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="9*"/>
+        </Grid.ColumnDefinitions>
+        
+        <Grid x:Name="ButtonContainerGrid" Column="0">
+            <Grid.Background>#FF7FCEE4</Grid.Background>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <RadioButton x:Name="HomeButton" Grid.Row="0" Style="{DynamicResource LargeButtonStyle}" Content="Home" Click="HomeButton_Click" IsChecked="True"/>
+                <RadioButton x:Name="AnimeListButton" Grid.Row="1" Style="{DynamicResource LargeButtonStyle}" Content="Anime" Click="AnimeListButton_Click"/>
+                <RadioButton x:Name="SettingsButton" Grid.Row="2" Style="{DynamicResource LargeButtonStyle}" Content="Settings" Click="SettingsButton_Click"/>
+                <RadioButton x:Name="DownloadButton" Grid.Row="3" Style="{DynamicResource LargeButtonStyle}" Content="Download" Click="DownloadButton_Click"/>
+                <RadioButton x:Name="PlaylistsButton" Grid.Row="4" Style="{DynamicResource LargeButtonStyle}" Content="Playlists" Click="PlaylistsButton_Click"/>
+                <RadioButton x:Name="WebButton" Grid.Row="5" Style="{DynamicResource LargeButtonStyle}" Content="Web" Click="WebButton_Click"/>
+                <RadioButton x:Name="MiscButton" Grid.Row="6" Style="{DynamicResource LargeButtonStyle}" Content="Misc" Click="MiscButton_Click"/>
+            </Grid>
+        </Grid>
 
-        <Grid x:Name="Display" Width="660" Height="340" HorizontalAlignment="Left" Margin="241,10,0,0"
-              VerticalAlignment="Top" />
-
-        <GroupBox x:Name="GroupBox" Header="Directories" HorizontalAlignment="Left" Width="auto" Height="auto"
-                  Margin="10,267,0,0" VerticalAlignment="Top">
-            <StackPanel>
-                <Button x:Name="BaseFolderButton" Content="Base" Style="{DynamicResource DirectoryButtonStyle}"
-                        Click="BaseFolderButton_Click" />
-                <Button x:Name="SettingsFolderButton" Content="Settings" Style="{DynamicResource DirectoryButtonStyle}"
-                        Click="SettingsFolderButton_Click" />
-            </StackPanel>
-        </GroupBox>
+        <Grid x:Name="Display" Margin="20,0,20,0" Column="1">
+            <Grid.Background>White</Grid.Background>
+        </Grid>
     </Grid>
+    
 </Window>
