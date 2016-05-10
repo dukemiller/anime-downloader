@@ -10,7 +10,7 @@
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="FontSize" Value="18.667" />
-            <Setter Property="FontFamily" Value="Yu Gothic"/>
+            <Setter Property="FontFamily" Value="{StaticResource MainFont}"/>
         </Style>
     </UserControl.Resources>
     <Grid>

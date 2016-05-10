@@ -858,7 +858,7 @@ namespace anime_downloader
             display.BaseTextbox.Text = Directory.GetCurrentDirectory();
             display.TorrentTextbox.Text = Path.Combine(display.BaseTextbox.Text, "Torrents");
             display.DownloadTextbox.Text = @"C:\Program Files (x86)\uTorrent\uTorrent.exe";
-            display.ApplyChangesButton.Content = "Create Profile";
+            display.ApplyChangesButton.Content = "Create";
             display.UseLoggerCheckbox.IsChecked = true;
 
             display.ApplyChangesButton.Click += (obj, ev) =>
@@ -1033,7 +1033,7 @@ namespace anime_downloader
             textBox.WriteLine(total > 0 ? $">> Found {total} anime downloads." : ">> No new anime found.");
         }
 
-        /* */
+        /* --Web */
 
         private void WebButton_Click(object sender, RoutedEventArgs e)
         {

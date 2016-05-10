@@ -7,7 +7,7 @@
              d:DesignHeight="360" d:DesignWidth="680">
     <UserControl.Resources>
         <Style x:Key="ItemStyle">
-            <Setter Property="RadioButton.FontFamily" Value="Yu Gothic"/>
+            <Setter Property="RadioButton.FontFamily" Value="{StaticResource MainFont}"/>
         </Style>
     </UserControl.Resources>
     <Grid>

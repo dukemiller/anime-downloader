@@ -4,6 +4,19 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
 
+        <!-- Brush Colors -->
+        <SolidColorBrush x:Key="BackgroundColor" Color="#FF7FCEE4" />
+        <SolidColorBrush x:Key="MouseOverColor" Color="#4D9BFF" />
+        <SolidColorBrush x:Key="SelectedColor" Color="#348DFF" />
+        <SolidColorBrush x:Key="PressedDownColor" Color="#3F92FE" />
+        <SolidColorBrush x:Key="BorderColor" Color="#A1CAFF" />
+        
+        <!-- Fonts -->
+        <FontFamily x:Key="LargeButtonFont">Segoe UI Light</FontFamily>
+        <FontFamily x:Key="MediumButtonFont">Segoe WP SemiLight</FontFamily>
+        <FontFamily x:Key="MainFont">Yu Gothic</FontFamily>
+
+        <!-- Button Styles -->
         <Style x:Key="LargeButtonStyle" TargetType="{x:Type ToggleButton}">
             <Setter Property="Template">
                 <Setter.Value>
@@ -14,8 +27,8 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-            <Setter Property="Background" Value="#FF7FCEE4"/>
-            <Setter Property="FontFamily" Value="Segoe UI Light"/>
+            <Setter Property="Background" Value="{StaticResource BackgroundColor}"/>
+            <Setter Property="FontFamily" Value="{StaticResource LargeButtonFont}"/>
             <Setter Property="FontSize" Value="28"/>
             <Setter Property="BorderBrush" Value="{x:Null}"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -23,7 +36,7 @@
             <Style.Triggers>
                 <Trigger Property="IsChecked" Value="True">
                     <Setter Property="Foreground" Value="White"/>
-                    <Setter Property="Background" Value="#348DFF"/>
+                    <Setter Property="Background" Value="{StaticResource SelectedColor}"/>
                 </Trigger>
                 <MultiTrigger>
                     <MultiTrigger.Conditions>
@@ -31,27 +44,27 @@
                         <Condition Property="IsChecked" Value="False"/>
                     </MultiTrigger.Conditions>
                     <Setter Property="Foreground" Value="White"/>
-                    <Setter Property="Background" Value="#4D9BFF"/>
+                    <Setter Property="Background" Value="{StaticResource MouseOverColor}"/>
                 </MultiTrigger>
                 <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Background" Value="#3F92FE"/>
+                    <Setter Property="Background" Value="{StaticResource PressedDownColor}"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
-        
         <Style x:Key="ConfirmationButtonStyle" TargetType="{x:Type Button}">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
-                        <Border BorderBrush="#A1CAFF" BorderThickness="2" Background="{TemplateBinding Background}" >
+                        <Border BorderBrush="{StaticResource BorderColor}" BorderThickness="2" 
+                                Background="{TemplateBinding Background}" >
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
             <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-            <Setter Property="Background" Value="#FF7FCEE4"/>
-            <Setter Property="FontFamily" Value="Segoe WP SemiLight"/>
+            <Setter Property="Background" Value="{StaticResource BackgroundColor}"/>
+            <Setter Property="FontFamily" Value="{StaticResource MediumButtonFont}"/>
             <Setter Property="FontSize" Value="18"/>
             <Setter Property="Foreground" Value="Black"/>
             <Setter Property="Width" Value="80"/>
@@ -59,27 +72,26 @@
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Foreground" Value="White"/>
-                    <Setter Property="Background" Value="#4D9BFF"/>
+                    <Setter Property="Background" Value="{StaticResource MouseOverColor}"/>
                 </Trigger>
                 <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Background" Value="#3F92FE"/>
+                    <Setter Property="Background" Value="{StaticResource PressedDownColor}"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
-
         <Style x:Key="FeatureButtonStyle" TargetType="{x:Type Button}">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
-                        <Border BorderBrush="#A1CAFF" BorderThickness="2" Background="{TemplateBinding Background}" >
+                        <Border BorderBrush="{StaticResource BorderColor}" BorderThickness="2" Background="{TemplateBinding Background}" >
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
             <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-            <Setter Property="Background" Value="#FF7FCEE4" />
-            <Setter Property="FontFamily" Value="Segoe WP SemiLight"/>
+            <Setter Property="Background" Value="{StaticResource BackgroundColor}" />
+            <Setter Property="FontFamily" Value="{StaticResource MediumButtonFont}"/>
             <Setter Property="FontSize" Value="18"/>
             <Setter Property="Foreground" Value="Black"/>
             <Setter Property="Width" Value="auto"/>
@@ -87,10 +99,10 @@
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Foreground" Value="White"/>
-                    <Setter Property="Background" Value="#4D9BFF"/>
+                    <Setter Property="Background" Value="{StaticResource MouseOverColor}"/>
                 </Trigger>
                 <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Background" Value="#3F92FE"/>
+                    <Setter Property="Background" Value="{StaticResource PressedDownColor}"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
