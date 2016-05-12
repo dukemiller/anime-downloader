@@ -5,7 +5,6 @@ using anime_downloader.Classes.Xml;
 using anime_downloader.Views;
 using HtmlAgilityPack;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -19,7 +18,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using System.Windows.Media;
 using static anime_downloader.Classes.OperatingSystemApi;
 using Settings = anime_downloader.Classes.Settings;
 
@@ -110,14 +108,17 @@ namespace anime_downloader
         private void InitializeSettings()
         {
             _settings = new Settings();
-            _playlist = new Playlist(_settings);
             _xml = new Xml(_settings);
-            _downloader = new Downloader(_settings);
             _filehandler = new FileHandler(_settings);
+            _playlist = new Playlist(_settings, _filehandler);
+            _downloader = new Downloader(_settings);
             _tray = new Tray(this, _settings);
 
             if (!Directory.Exists(_settings.ApplicationDirectory))
                 Directory.CreateDirectory(_settings.ApplicationDirectory);
+
+            if (!Directory.Exists(_settings.WatchedDirectory))
+                Directory.CreateDirectory(_settings.WatchedDirectory);
 
             // Create new anime xml
             if (!File.Exists(_settings.AnimeXml))
@@ -147,11 +148,11 @@ namespace anime_downloader
             _settings.Loaded = true;
             _tray.Initialize();
             ChangeDisplay<Home>();
-            
+
             KeyDown += (o, e) =>
             {
                 // So you can type without changing the view
-                if (!this.GetAll<TextBox>().Any(t => t.IsFocused))
+                if (!(Keyboard.FocusedElement is TextBox))
                 {
                     if (e.Key == Key.D1 || e.Key == Key.NumPad1)
                         HomeCycle(HomeButton);
@@ -162,10 +163,12 @@ namespace anime_downloader
                     else if (e.Key == Key.D4 || e.Key == Key.NumPad4)
                         HomeCycle(DownloadButton);
                     else if (e.Key == Key.D5 || e.Key == Key.NumPad5)
-                        HomeCycle(PlaylistsButton);
+                        HomeCycle(ManageButton);
                     else if (e.Key == Key.D6 || e.Key == Key.NumPad6)
-                        HomeCycle(WebButton);
+                        HomeCycle(PlaylistsButton);
                     else if (e.Key == Key.D7 || e.Key == Key.NumPad7)
+                        HomeCycle(WebButton);
+                    else if (e.Key == Key.D8 || e.Key == Key.NumPad8)
                         HomeCycle(MiscButton);
                 }
             };
@@ -381,7 +384,7 @@ namespace anime_downloader
         public async void AnimeList_Context_Search_Click(object sender, RoutedEventArgs e)
         {
             var display = (AnimeList) CurrentDisplay;
-            await SearchOnNyaa(((Anime) display.DataGrid.SelectedCells.First().Item).Name);
+            await SearchOnMyAnimeList(((Anime) display.DataGrid.SelectedCells.First().Item).Name);
         }
 
         /// <summary>
@@ -417,8 +420,7 @@ namespace anime_downloader
         private void AnimeList_Context_AddMultiple_Click(object sender, RoutedEventArgs e)
         {
             var display = ChangeDisplay<AnimeDetailsMultiple>();
-            display.RatingTextBox.IsHitTestVisible = false;
-            display.RatingTextBox.Opacity = 0.40;
+            display.RatingTextBox.Toggle();
 
             display.InputTextBox.Loaded += delegate { ((AnimeDetailsMultiple) CurrentDisplay).InputTextBox.Focus(); };
 
@@ -439,7 +441,7 @@ namespace anime_downloader
                         {
                             Name = name,
                             Airing = display.AiringCheckBox.IsChecked ?? false,
-                            Episode = display.EpisodeTextBox.Text,
+                            Episode = $"{int.Parse(display.EpisodeTextBox.Text):D2}",
                             Status = display.StatusComboBox.Text,
                             Resolution = display.ResolutionComboBox.Text
                         });
@@ -933,7 +935,6 @@ namespace anime_downloader
 
                         else if (display.GetMissingRadio.IsChecked == true)
                             await GetMissingEpisodesAsync(textBox);
-
                     }
 
                     catch (Exception)
@@ -948,7 +949,6 @@ namespace anime_downloader
                 }
                 
             }
-
             this.ToggleButtons();
         }
 
@@ -1033,6 +1033,60 @@ namespace anime_downloader
             textBox.WriteLine(total > 0 ? $">> Found {total} anime downloads." : ">> No new anime found.");
         }
 
+        /* --Manage */
+
+        /// <summary>
+        ///     View: Manage
+        /// </summary>
+        private void ManageButton_Click(object sender, RoutedEventArgs e)
+        {
+            var display = ChangeDisplay<Manage>();
+
+            if (!Directory.Exists(_settings.WatchedDirectory))
+                Directory.CreateDirectory(_settings.WatchedDirectory);
+
+            var unwatched = _filehandler.UnwatchedAnimeEpisodes().ToList();
+            var watched = _filehandler.WatchedAnimeEpisodes().ToList();
+
+            display.Playlist = _playlist;
+            display.Unwatched = unwatched;
+            display.Watched = watched;
+            display.UnwatchedList.ItemsSource = display.Unwatched;
+            display.WatchedList.ItemsSource = display.Watched;
+
+            display.UnwatchedMoveWatched.Click += delegate
+            {
+                var episodes = display.UnwatchedList.SelectedItems.Cast<AnimeEpisode>().ToList();
+                if (episodes.Count >= 1)
+                {
+                    _filehandler.MoveEpisodeToDestination(display.UnwatchedList, _settings.WatchedDirectory);
+                    HomeCycle(ManageButton);
+                }
+            };
+
+            display.MoveRight.MouseUp += delegate
+            {
+                _filehandler.MoveEpisodeToDestination(display.UnwatchedList, _settings.WatchedDirectory);
+                HomeCycle(ManageButton);
+            };
+
+            display.WatchedMoveUnwatched.Click += delegate
+            {
+                var episodes = display.WatchedList.SelectedItems.Cast<AnimeEpisode>().ToList();
+                if (episodes.Count >= 1)
+                {
+                    _filehandler.MoveEpisodeToDestination(display.WatchedList, _settings.GetDownloadFolder());
+                    HomeCycle(ManageButton);
+                }
+            };
+
+            display.MoveLeft.MouseUp += delegate
+            {
+                _filehandler.MoveEpisodeToDestination(display.WatchedList, _settings.GetDownloadFolder());
+                HomeCycle(ManageButton);
+            };
+        }
+        
         /* --Web */
 
         private void WebButton_Click(object sender, RoutedEventArgs e)
@@ -1068,7 +1122,7 @@ namespace anime_downloader
                 var text = display.SearchTextBox.Text.Trim();
                 if (text.Length > 0)
                 {
-                    await SearchOnNyaa(text);
+                    await SearchOnMyAnimeList(text);
                 }
             };
         }
@@ -1089,10 +1143,9 @@ namespace anime_downloader
             });
 
             display.ButtonSubmit.Click += Misc_ButtonMisc_Submit;
-           
         }
-
-        public async Task SearchOnNyaa(string text)
+        
+        public async Task SearchOnMyAnimeList(string text)
         {
             this.ToggleButtons();
 

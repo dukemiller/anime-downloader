@@ -1,18 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace anime_downloader.Classes.File
 {
     public class Playlist
     {
         private readonly Settings _settings;
-        private IEnumerable<string> _episodes;
+        private readonly FileHandler _fileHandler;
+        private IEnumerable<AnimeEpisode> _episodes;
 
-        public Playlist(Settings settings)
+        public string PlaylistFile => _settings.PlaylistFile;
+
+        public Playlist(Settings settings, FileHandler fileHandler)
         {
             _settings = settings;
+            _fileHandler = fileHandler;
         }
 
         public int Length => _episodes.Count();
@@ -22,8 +25,12 @@ namespace anime_downloader.Classes.File
         /// </summary>
         public void Refresh()
         {
-            _episodes = _settings.EpisodeDirectories()
-                .SelectMany(Directory.GetFiles);
+            _episodes = _fileHandler.UnwatchedAnimeEpisodes();
+        }
+
+        public void Refresh(IEnumerable<AnimeEpisode> episodes)
+        {
+            _episodes = episodes;
         }
 
         /// <summary>
@@ -31,7 +38,7 @@ namespace anime_downloader.Classes.File
         /// </summary>
         public void ByEpisodeNumber()
         {
-            _episodes = _episodes.OrderBy(f => Strip(Path.GetFileName(f)));
+            _episodes = _episodes.OrderBy(f => f.IntEpisode);
         }
 
         /// <summary>
@@ -39,7 +46,7 @@ namespace anime_downloader.Classes.File
         /// </summary>
         public void ByDate()
         {
-            _episodes = _episodes.OrderBy(System.IO.File.GetCreationTime);
+            _episodes = _episodes.OrderBy(e => System.IO.File.GetCreationTime(e.FilePath));
         }
 
         public void Reverse()
@@ -52,7 +59,7 @@ namespace anime_downloader.Classes.File
         /// </summary>
         public void SeparateShowOrder()
         {
-            var sortedEpisodes = new List<string>();
+            var sortedEpisodes = new List<AnimeEpisode>();
             var currentEpisodes = _episodes.ToList();
 
             while (currentEpisodes.Count > 0)
@@ -61,7 +68,7 @@ namespace anime_downloader.Classes.File
                 var addedShows = new List<string>();
                 foreach (var episode in currentEpisodes)
                 {
-                    var show = Strip(Path.GetFileName(episode), true);
+                    var show = episode.Name;
                     if (addedShows.Contains(show))
                         continue;
                     sortedEpisodes.Add(episode);
@@ -71,30 +78,7 @@ namespace anime_downloader.Classes.File
 
             _episodes = sortedEpisodes;
         }
-
-        /// <summary>
-        ///     Strip the entire path of extraneous information (subgroups, resolution, etc).
-        /// </summary>
-        /// <param name="fileName">A file name, not a filepath.</param>
-        /// <param name="removeEpisode">A flag to also optionally remove the episode number.</param>
-        /// <returns></returns>
-        private static string Strip(string fileName, bool removeEpisode = false)
-        {
-            var text = fileName;
-
-            var phrases = (from Match match in Regex.Matches(text, @"\s?\[(.*?)\]|\((.*?)\)\s*")
-                           select match.Groups[0].Value).ToList();
-
-            new[] { "_", ".mp4", ".mkv", ".avi" }.ToList().ForEach(p => phrases.Add(p));
-
-            phrases.ForEach(p => text = text.Replace(p, ""));
-
-            if (removeEpisode)
-                text = string.Join("-", text.Split('-').Take(text.Split('-').Length - 1).ToArray());
-
-            return Regex.Replace(text.Trim(), @"\s+", " ");
-        }
-
+        
         /// <summary>
         ///     Save and create the playlist.
         /// </summary>
@@ -103,7 +87,7 @@ namespace anime_downloader.Classes.File
             using (var writer = new StreamWriter(_settings.PlaylistFile, false))
             {
                 foreach (var episode in _episodes)
-                    await writer.WriteLineAsync(episode);
+                    await writer.WriteLineAsync(episode.FilePath);
             }
         }
     }

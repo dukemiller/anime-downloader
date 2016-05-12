@@ -127,6 +127,8 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
@@ -134,14 +136,13 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- Download style -->
-                    <Label x:Name="DownloadStyleLabel" Grid.Row="0" Grid.Column="0"
-                           Style="{DynamicResource LabelStyle}"
+                    <Label x:Name="DownloadStyleLabel" Grid.Row="0" Grid.Column="0" Style="{DynamicResource LabelStyle}"
                            ToolTip="Download the anime into either weekly named folders or a single folder">
                         <TextBlock TextWrapping="Wrap">
-                            Put all downloaded anime into:
+                            Put anime into:
                         </TextBlock>
                     </Label>
-                    <StackPanel Grid.Row="0" Grid.Column="1" VerticalAlignment="Center">
+                    <StackPanel Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Grid.RowSpan="2">
                         <RadioButton x:Name="PerWeekRadio" Style="{DynamicResource RadioStyle}">
                             <TextBlock TextWrapping="Wrap">
                                 Per week folders
@@ -152,14 +153,14 @@
                     </StackPanel>
 
                     <!-- Named folders -->
-                    <Label x:Name="IndividualShowLabel" Grid.Row="1" Grid.Column="0"
+                    <Label x:Name="IndividualShowLabel" Grid.Row="2" Grid.Column="0"
                            Style="{DynamicResource LabelStyle}" VerticalAlignment="Top"
                            ToolTip="Put each episode inside a folder named after the show">
                         <TextBlock TextWrapping="Wrap">
-                            Put each show into it's own folder:
+                            Show-named folders:
                         </TextBlock>
                     </Label>
-                    <CheckBox x:Name="IndividualShowCheckbox" Grid.Row="1" Grid.Column="1"
+                    <CheckBox x:Name="IndividualShowCheckbox" Grid.Row="2" Grid.Column="1"
                               Style="{DynamicResource CheckboxStyle}" />
                 </Grid>
             </Grid>

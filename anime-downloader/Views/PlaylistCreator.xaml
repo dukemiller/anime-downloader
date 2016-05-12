@@ -14,11 +14,11 @@
         <Grid.Background>White</Grid.Background>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
-            <RowDefinition Height="4*"/>
-            <RowDefinition Height="1*"/>
+            <RowDefinition Height="9*"/>
+            <RowDefinition Height="2*"/>
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" x:Name="TextBlock" TextWrapping="Wrap" FontSize="16" TextAlignment="Justify" Style="{DynamicResource FontStyle}"
-                       Text="Create a playlist from all completed video files inside the base folder path (excluding files in the 'Watched' folder) as the filename 'playlist.m3u'."/>
+                       Text="Create a playlist from all unwatched anime episodes as the filename 'playlist.m3u'."/>
         <StackPanel Grid.Row="1">
             <DockPanel>
                 <GroupBox x:Name="SortGroupBox" FontSize="16" Header="Sort by" HorizontalAlignment="Left" VerticalAlignment="Top" Style="{DynamicResource FontStyle}">

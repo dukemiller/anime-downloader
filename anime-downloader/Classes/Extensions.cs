@@ -49,7 +49,7 @@ namespace anime_downloader.Classes
         }
 
         /// <summary>
-        ///     Simulate a button press.
+        ///     Simulate a button press on a control.
         /// </summary>
         /// <param name="button"></param>
         public static void Press(this Control button)
@@ -59,7 +59,7 @@ namespace anime_downloader.Classes
         }
 
         /// <summary>
-        ///     Toggle opacity and visibility of a ButtonSubmit between two states.
+        ///     Toggle opacity and visibility of a Control between two states.
         /// </summary>
         /// <param name="button"></param>
         public static void Toggle(this Control button)

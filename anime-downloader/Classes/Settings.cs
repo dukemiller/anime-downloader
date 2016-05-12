@@ -218,8 +218,7 @@ namespace anime_downloader.Classes
         ///     The paths where the episodes are stored.
         /// </summary>
         /// <remarks>
-        ///     The path will always start with a "2" since it starts with the year,
-        ///     so this will need updating in about 984 years or any time named directories change.
+        ///     The path will always start with a "2" since it starts with the year.
         /// </remarks>
         /// <returns></returns>
         public IEnumerable<string> EpisodeDirectories(bool includeWatched = false) => Directory
@@ -228,13 +227,14 @@ namespace anime_downloader.Classes
             {
                 var path = Path.GetFileName(folder)?.ToLower();
                 return path != null &&
-                       !path.Equals("torrents") &&
-                       !path.Equals("duplicates") &&
+                       // !path.Equals("torrents") &&
+                       // !path.Equals("duplicates") &&
+                       (path.StartsWith("2") || path.Equals("shows")) && 
                        (includeWatched || !path.Equals("watched"));
             });
 
         /// <summary>
-        ///     Create and return the path to a folder based on a timestamp of the current moment.
+        ///     Get the user defined download folder.
         /// </summary>
         /// <returns>A path used to download into.</returns>
         public string GetDownloadFolder()

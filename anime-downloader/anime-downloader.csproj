@@ -98,6 +98,9 @@
     <Compile Include="Views\Home.xaml.cs">
       <DependentUpon>Home.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Manage.xaml.cs">
+      <DependentUpon>Manage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Misc.xaml.cs">
       <DependentUpon>Misc.xaml</DependentUpon>
     </Compile>
@@ -143,6 +146,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Home.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Manage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -197,7 +204,10 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\Icons\icon.ico" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\Images\left.png" />
+    <Resource Include="Resources\Images\right.png" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Images\find.png" />
   </ItemGroup>

@@ -44,9 +44,10 @@
                 <RadioButton x:Name="AnimeListButton" Grid.Row="1" Style="{DynamicResource LargeButtonStyle}" Content="Anime" Click="AnimeListButton_Click"/>
                 <RadioButton x:Name="SettingsButton" Grid.Row="2" Style="{DynamicResource LargeButtonStyle}" Content="Settings" Click="SettingsButton_Click"/>
                 <RadioButton x:Name="DownloadButton" Grid.Row="3" Style="{DynamicResource LargeButtonStyle}" Content="Download" Click="DownloadButton_Click"/>
-                <RadioButton x:Name="PlaylistsButton" Grid.Row="4" Style="{DynamicResource LargeButtonStyle}" Content="Playlists" Click="PlaylistsButton_Click"/>
-                <RadioButton x:Name="WebButton" Grid.Row="5" Style="{DynamicResource LargeButtonStyle}" Content="Web" Click="WebButton_Click"/>
-                <RadioButton x:Name="MiscButton" Grid.Row="6" Style="{DynamicResource LargeButtonStyle}" Content="Misc" Click="MiscButton_Click"/>
+                <RadioButton x:Name="ManageButton" Grid.Row="4" Style="{DynamicResource LargeButtonStyle}" Content="Manage" Click="ManageButton_Click"/>
+                <RadioButton x:Name="PlaylistsButton" Grid.Row="5" Style="{DynamicResource LargeButtonStyle}" Content="Playlists" Click="PlaylistsButton_Click"/>
+                <RadioButton x:Name="WebButton" Grid.Row="6" Style="{DynamicResource LargeButtonStyle}" Content="Web" Click="WebButton_Click"/>
+                <RadioButton x:Name="MiscButton" Grid.Row="7" Style="{DynamicResource LargeButtonStyle}" Content="Misc" Click="MiscButton_Click"/>
             </Grid>
         </Grid>
 

@@ -30,6 +30,7 @@
             <Setter Property="Background" Value="{StaticResource BackgroundColor}"/>
             <Setter Property="FontFamily" Value="{StaticResource LargeButtonFont}"/>
             <Setter Property="FontSize" Value="28"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
             <Setter Property="BorderBrush" Value="{x:Null}"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Foreground" Value="Black"/>

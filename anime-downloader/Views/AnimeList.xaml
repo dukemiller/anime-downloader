@@ -41,12 +41,13 @@
                     <MenuItem Name="AddMultiple" Header="Add (Multiple) ..." />
                     <MenuItem Name="Edit" Header="Edit ..." />
                     <MenuItem Name="Delete" Header="Delete ..." />
-                    <MenuItem Name="Search" Header="Search on Nyaa ..." />
+                    <MenuItem Name="Search" Header="Search on MyAnimeList ..." />
                 </ContextMenu>
             </DataGrid.ContextMenu>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Name" Width="300" Binding="{Binding Path=Title}" />
-                <DataGridTextColumn Header="Episode" CellStyle="{StaticResource CenterStyle}" Width="65"
+                <DataGridTextColumn Header="Name" Width="300" 
+                                    Binding="{Binding Path=Title}" />
+                <DataGridTextColumn Header="Episode" CellStyle="{StaticResource CenterStyle}" Width="auto"
                                     Binding="{Binding Path=Episode}" />
                 <DataGridTextColumn Header="Status" CellStyle="{StaticResource CenterStyle}" Width="auto"
                                     Binding="{Binding Path=Status}" />
