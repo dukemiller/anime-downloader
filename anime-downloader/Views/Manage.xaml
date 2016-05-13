@@ -45,6 +45,14 @@
             <Setter Property="FontSize" Value="18"/>
             <Setter Property="FontFamily" Value="Segoe UI Symbol"/>
         </Style>
+        <Style x:Key="DescriptionStyle" TargetType="Label">
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Opacity" Value="0.4"/>
+            <Setter Property="Foreground" Value="Gray"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontFamily" Value="Segoe UI Symbol"/>
+        </Style>
         <Style x:Key="ButtonStyle" TargetType="Rectangle">
             <Setter Property="Height" Value="25"/>
             <Setter Property="Width" Value="25"/>
@@ -79,7 +87,10 @@
                     <RowDefinition Height="2*"/>
                 </Grid.RowDefinitions>
 
-                <Label Grid.Column="0" Grid.Row="0" Style="{DynamicResource LabelStyle}" Content="Unwatched" />
+                <DockPanel Grid.Column="0" Grid.Row="0">
+                    <Label Style="{DynamicResource LabelStyle}" Content="Unwatched" />
+                    <Label x:Name="UnwatchedFilesLabel" Style="{DynamicResource DescriptionStyle}" />
+                </DockPanel>
                 <ListView x:Name="UnwatchedList" Grid.Row="1" Grid.Column="0" FontFamily="{StaticResource MainFont}" FontSize="16" MouseDoubleClick="UnwatchedList_MouseDoubleClick" >
                     <ListView.ContextMenu>
                         <ContextMenu Name="UnwatchedContextMenu">

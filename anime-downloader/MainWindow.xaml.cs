@@ -1055,6 +1055,7 @@ namespace anime_downloader
             var unwatched = _filehandler.UnwatchedAnimeEpisodes().ToList();
             var watched = _filehandler.WatchedAnimeEpisodes().ToList();
             display.Playlist = _playlist;
+            display.UnwatchedFilesLabel.Content = $"({unwatched.Count} files)";
 
             display.Unwatched = unwatched;
             display.UnwatchedList.ItemsSource = display.Unwatched;
