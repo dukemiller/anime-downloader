@@ -1,6 +1,7 @@
 ﻿using anime_downloader.Views;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
@@ -99,14 +100,21 @@ namespace anime_downloader.Classes
             // 
 
             _trayContextMenu.MenuItems.Add(
-                new MenuItem("Open base folder ...", (sender, args) =>
+                new MenuItem("Open episode folder ...", (sender, args) =>
                 {
-                    if (_settings.Loaded)
-                        Process.Start(_settings.BaseDirectory);
+                    if (_settings.Loaded && Directory.Exists(_settings.EpisodeDirectory))
+                        Process.Start(_settings.EpisodeDirectory);
                 }));
 
             _trayContextMenu.MenuItems.Add(
-                new MenuItem("Open settings folder ...", (sender, args) =>
+                new MenuItem("Open watched folder ...", (sender, args) =>
+                {
+                    if (_settings.Loaded && Directory.Exists(_settings.WatchedDirectory))
+                        Process.Start(_settings.WatchedDirectory);
+                }));
+
+            _trayContextMenu.MenuItems.Add(
+                new MenuItem("Open application folder ...", (sender, args) =>
                 {
                     if (_settings.Loaded)
                         Process.Start(_settings.ApplicationDirectory);

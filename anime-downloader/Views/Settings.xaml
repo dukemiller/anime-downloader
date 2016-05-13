@@ -9,7 +9,7 @@
         <Style x:Key="LabelStyle" TargetType="{x:Type Label}">
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontSize" Value="15" />
             <Setter Property="FontFamily" Value="{StaticResource MainFont}"/>
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
@@ -23,13 +23,6 @@
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
-        <Style x:Key="RadioStyle" TargetType="{x:Type RadioButton}">
-            <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="FontSize" Value="16" />
-            <Setter Property="FontFamily" Value="{StaticResource MainFont}"/>
-            <Setter Property="Margin" Value="0,5,0,0" />
-        </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.Background>White</Grid.Background>
@@ -39,7 +32,7 @@
         </Grid.RowDefinitions>
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="1*" />
+                <RowDefinition Height="2*" />
                 <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
             <Grid Name="TextboxGrid" Row="0">
@@ -52,31 +45,38 @@
                     <RowDefinition Height="1*" />
                     <RowDefinition Height="1*" />
                     <RowDefinition Height="1*" />
+                    <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
 
-                <!-- Base path -->
-                <Label x:Name="BaseLabel" Grid.Row="0" Grid.Column="0" Content="Base Path: "
+                <!-- Episode path -->
+                <Label x:Name="EpisodeLabel" Grid.Row="0" Grid.Column="0" Content="Episodes download to: "
                        Style="{DynamicResource LabelStyle}"
-                       ToolTip="Path to the base path for the application." />
-                <TextBox x:Name="BaseTextbox" Grid.Row="0" Grid.Column="1" Style="{DynamicResource TextboxStyle}" />
+                       ToolTip="Path to where episodes will be downloaded to." />
+                <TextBox x:Name="EpisodeTextbox" Grid.Row="0" Grid.Column="1" Style="{DynamicResource TextboxStyle}" />
+
+                <!-- Watched path -->
+                <Label x:Name="WatchedLabel" Grid.Row="1" Grid.Column="0" Content="Watched files go to: "
+                       Style="{DynamicResource LabelStyle}"
+                       ToolTip="Path where watched episodes will be moved to." />
+                <TextBox x:Name="WatchedTextbox" Grid.Row="1" Grid.Column="1" Style="{DynamicResource TextboxStyle}" />
 
                 <!-- Torrent -->
-                <Label x:Name="TorrentLabel" Grid.Row="1" Grid.Column="0" Content="Torrent path: "
+                <Label x:Name="TorrentLabel" Grid.Row="2" Grid.Column="0" Content="Torrents download to: "
                        Style="{DynamicResource LabelStyle}"
                        ToolTip="Path to the folder that all .torrent files will be downloaded into." />
-                <TextBox x:Name="TorrentTextbox" Grid.Row="1" Grid.Column="1" Style="{DynamicResource TextboxStyle}" />
+                <TextBox x:Name="TorrentTextbox" Grid.Row="2" Grid.Column="1" Style="{DynamicResource TextboxStyle}" />
 
                 <!-- Download -->
-                <Label x:Name="DownloadLabel" Grid.Row="2" Grid.Column="0" Content="uTorrent path: "
+                <Label x:Name="DownloadLabel" Grid.Row="3" Grid.Column="0" Content="uTorrent exe file: "
                        Style="{DynamicResource LabelStyle}"
                        ToolTip="Path to uTorrent.exe." />
-                <TextBox x:Name="DownloadTextbox" Grid.Row="2" Grid.Column="1" Style="{DynamicResource TextboxStyle}" />
+                <TextBox x:Name="DownloadTextbox" Grid.Row="3" Grid.Column="1" Style="{DynamicResource TextboxStyle}" />
 
                 <!-- Subgroups -->
-                <Label x:Name="SubgroupsLabel" Grid.Row="3" Grid.Column="0" Content="Whitelist subgroups: "
+                <Label x:Name="SubgroupsLabel" Grid.Row="4" Grid.Column="0" Content="Whitelist subgroups: "
                        Style="{DynamicResource LabelStyle}"
                        ToolTip="A comma + space (', ') separated list of preferred subgroups, e.g. '{subgroup1}, {subgroup2}, {subgroup3}'" />
-                <TextBox x:Name="SubgroupsTextbox" Grid.Row="3" Grid.Column="1" Style="{DynamicResource TextboxStyle}" />
+                <TextBox x:Name="SubgroupsTextbox" Grid.Row="4" Grid.Column="1" Style="{DynamicResource TextboxStyle}" />
             </Grid>
             <Grid Name="CheckboxGrid" Row="1">
                 <Grid.ColumnDefinitions>
@@ -92,40 +92,24 @@
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />
-                        <RowDefinition Height="1*" />
                     </Grid.RowDefinitions>
 
-                    <!-- Whitelisted -->
-                    <Label x:Name="OnlyWhitelistedLabel" Grid.Row="0" Grid.Column="0" Content="Only whitelisted subs: "
-                           Style="{DynamicResource LabelStyle}"
-                           ToolTip="Whether or not to only download from subgroups that are on the whitelisted subgroups list." />
-                    <CheckBox x:Name="OnlyWhitelistedCheckbox" Grid.Row="0" Content="" Grid.Column="1"
-                              Style="{DynamicResource CheckboxStyle}" />
-
-                    <!-- Logger -->
-                    <Label x:Name="UseLogger" Grid.Row="1" Grid.Column="0" Content="Log downloads:"
-                           Style="{DynamicResource LabelStyle}"
-                           ToolTip="Create a text file that will record all the files you downloaded." />
-                    <CheckBox x:Name="UseLoggerCheckbox" Grid.Row="1" Grid.Column="1"
-                              Style="{DynamicResource CheckboxStyle}" />
-
                     <!-- Exit -->
-                    <Label x:Name="ExitLabel" Grid.Row="2" Grid.Column="0" Content="Exit to tray:"
+                    <Label x:Name="ExitLabel" Grid.Row="0" Grid.Column="0" Content="Exit to tray:"
                            Style="{DynamicResource LabelStyle}"
                            ToolTip="Instead of closing the program on exit, it is brought to the tray." />
-                    <CheckBox x:Name="TrayExitCheckbox" Grid.Row="2" Grid.Column="1"
+                    <CheckBox x:Name="TrayExitCheckbox" Grid.Row="0" Grid.Column="1"
                               Style="{DynamicResource CheckboxStyle}" />
 
                     <!-- AlwaysTray -->
-                    <Label x:Name="AlwaysTrayLabel" Grid.Row="3" Grid.Column="0" Content="Keep tray open:"
+                    <Label x:Name="AlwaysTrayLabel" Grid.Row="1" Grid.Column="0" Content="Keep tray open:"
                            Style="{DynamicResource LabelStyle}"
                            ToolTip="Always have the tray enabled." />
-                    <CheckBox x:Name="AlwaysTrayCheckbox" Grid.Row="3" Grid.Column="1"
+                    <CheckBox x:Name="AlwaysTrayCheckbox" Grid.Row="1" Grid.Column="1"
                               Style="{DynamicResource CheckboxStyle}" />
                 </Grid>
                 <Grid Name="RightSide" Column="1">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />
@@ -135,32 +119,22 @@
                         <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
 
-                    <!-- Download style -->
-                    <Label x:Name="DownloadStyleLabel" Grid.Row="0" Grid.Column="0" Style="{DynamicResource LabelStyle}"
-                           ToolTip="Download the anime into either weekly named folders or a single folder">
-                        <TextBlock TextWrapping="Wrap">
-                            Put anime into:
-                        </TextBlock>
-                    </Label>
-                    <StackPanel Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Grid.RowSpan="2">
-                        <RadioButton x:Name="PerWeekRadio" Style="{DynamicResource RadioStyle}">
-                            <TextBlock TextWrapping="Wrap">
-                                Per week folders
-                            </TextBlock>
-                        </RadioButton>
-                        <RadioButton x:Name="SingleFolderRadio" Content="A single folder"
-                                     Style="{DynamicResource RadioStyle}" IsChecked="True" />
-                    </StackPanel>
-
+                    <!-- Whitelisted -->
+                    <Label x:Name="OnlyWhitelistedLabel" Grid.Row="0" Grid.Column="0" Content="Only whitelisted subs: "
+                           Style="{DynamicResource LabelStyle}"
+                           ToolTip="Whether or not to only download from subgroups that are on the whitelisted subgroups list." />
+                    <CheckBox x:Name="OnlyWhitelistedCheckbox" Grid.Row="0" Content="" Grid.Column="1"
+                              Style="{DynamicResource CheckboxStyle}" />
+                    
                     <!-- Named folders -->
-                    <Label x:Name="IndividualShowLabel" Grid.Row="2" Grid.Column="0"
+                    <Label x:Name="IndividualShowLabel" Grid.Row="1" Grid.Column="0"
                            Style="{DynamicResource LabelStyle}" VerticalAlignment="Top"
                            ToolTip="Put each episode inside a folder named after the show">
                         <TextBlock TextWrapping="Wrap">
                             Show-named folders:
                         </TextBlock>
                     </Label>
-                    <CheckBox x:Name="IndividualShowCheckbox" Grid.Row="2" Grid.Column="1"
+                    <CheckBox x:Name="IndividualShowCheckbox" Grid.Row="1" Grid.Column="1"
                               Style="{DynamicResource CheckboxStyle}" />
                 </Grid>
             </Grid>

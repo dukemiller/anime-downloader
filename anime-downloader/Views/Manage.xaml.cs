@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using anime_downloader.Classes.File;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -19,6 +18,10 @@ namespace anime_downloader.Views
         public IEnumerable<AnimeEpisode> Unwatched { get; set; }
 
         public IEnumerable<AnimeEpisode> Watched { get; set; }
+
+        public bool WatchedExists { get; set; }
+
+        public bool UnwatchedExists { get; set; }
 
         public Manage()
         {
@@ -89,32 +92,38 @@ namespace anime_downloader.Views
         {
             var episodes = WatchedList.SelectedItems.Cast<AnimeEpisode>().ToList();
 
-            var response =
-                MessageBox.Show(
-                    $"Files to be deleted: \n\n{string.Join("\n", episodes.Select(ep => ep.FilePath))}\n\n" +
-                    "Are you sure?",
-                    "Confirmation",
-                    MessageBoxButton.YesNo);
+            if (episodes.Count > 0)
+            {
+                var response =
+                    MessageBox.Show(
+                        $"Files to be deleted: \n\n{string.Join("\n", episodes.Select(ep => ep.FilePath))}\n\n" +
+                        "Are you sure?",
+                        "Confirmation",
+                        MessageBoxButton.YesNo);
 
-            if (response == MessageBoxResult.Yes)
-                foreach (var episode in episodes)
-                    File.Delete(episode.FilePath);
+                if (response == MessageBoxResult.Yes)
+                    foreach (var episode in episodes)
+                        File.Delete(episode.FilePath);
+            }
         }
 
         private void UnwatchedDelete_Click(object sender, RoutedEventArgs e)
         {
             var episodes = UnwatchedList.SelectedItems.Cast<AnimeEpisode>().ToList();
 
-            var response =
-                MessageBox.Show(
-                    $"Files to be deleted: \n\n{string.Join("\n", episodes.Select(ep => ep.FilePath))}\n\n" +
-                    "Are you sure?",
-                    "Confirmation",
-                    MessageBoxButton.YesNo);
+            if (episodes.Count > 0)
+            {
+                var response =
+                    MessageBox.Show(
+                        $"Files to be deleted: \n\n{string.Join("\n", episodes.Select(ep => ep.FilePath))}\n\n" +
+                        "Are you sure?",
+                        "Confirmation",
+                        MessageBoxButton.YesNo);
 
-            if (response == MessageBoxResult.Yes)
-                foreach (var episode in episodes)
-                    File.Delete(episode.FilePath);
+                if (response == MessageBoxResult.Yes)
+                    foreach (var episode in episodes)
+                        File.Delete(episode.FilePath);
+            }
         }
 
         private void MoveRight_MouseEnter(object sender, MouseEventArgs e)

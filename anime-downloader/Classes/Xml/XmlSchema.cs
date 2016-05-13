@@ -60,19 +60,18 @@ namespace anime_downloader.Classes.Xml
                     new XElement("settings",
                         new XElement("name", Environment.UserName),
                         new XElement("path",
-                            new XElement("base"),
                             new XElement("torrents"),
-                            new XElement("utorrent")
+                            new XElement("utorrent"),
+                            new XElement("watched"),
+                            new XElement("episode")
                             ),
                         new XElement("subgroup"),
                         new XElement("flag",
                             new XElement("individualShowFolders", false),
-                            new XElement("only-whitelisted-subs", false),
-                            new XElement("use-logging", false),
+                            new XElement("onlyWhitelistedSubs", false),
                             new XElement("exitOnClose", true),
                             new XElement("alwaysShowTray", false)
                             ),
-                        new XElement("groupDownloadBy", "PerWeek"),
                         new XElement("sortBy", "name"),
                         new XElement("filterBy")
                         )

@@ -40,8 +40,10 @@ namespace anime_downloader.Classes.File
             {
                 var number =
                     int.Parse(string.Join("",
-                        StrippedFilename.Split(new[] { " - " }, StringSplitOptions.RemoveEmptyEntries)
-                            .Last().TakeWhile(char.IsNumber)));
+                        StrippedFilename
+                        .Split(new[] { " - " }, StringSplitOptions.RemoveEmptyEntries)
+                        .Last(stripped => stripped.Any(char.IsNumber))
+                        .TakeWhile(char.IsNumber)));
                 return $"{number:00}";
             }
         }

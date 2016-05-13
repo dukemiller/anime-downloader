@@ -8,13 +8,17 @@ namespace anime_downloader.Classes.File
 {
     public class FileHandler
     {
+        private static readonly string[] FileExtensions = {
+            ".mkv", ".mp4", ".avi"
+        };
+
         private readonly Settings _settings;
 
         public FileHandler(Settings settings)
         {
             _settings = settings;
         }
-
+        
         /// <summary>
         ///     Set all anime episode counts in the anime list to their last known values from the "watched" folder.
         /// </summary>
@@ -50,57 +54,43 @@ namespace anime_downloader.Classes.File
         /// <remarks>
         ///     //TODO: this really needs to be redone
         /// </remarks>
-        public void MoveEpisodeToDestination(ListView list, string destinationDirectory)
+        public void MoveEpisodeToDestination(ListView list, string oldDirectory, string newDirectory)
         {
-            var episode = (AnimeEpisode) list.SelectedItem;
+            var episodes = list.SelectedItems.Cast<AnimeEpisode>().ToList();
 
-            // The full path of the file in the folder it's in, e.g. if folder is Watched,
-            // then -> "{C:\...\anime-downloader\Watched\AnimeSeries\AnimeEpisode.mkv}"
-            var episodePath = episode.FilePath;
-
-            // Get the contextual special folder for directory of folder, e.g. if folder is Watched,
-            // then -> "{C:\...\anime-downloader\Watched}\AnimeSeries\AnimeEpisode.mkv"
-            while (!Directory.GetParent(episodePath).FullName.Equals(_settings.BaseDirectory))
+            foreach (var episode in episodes)
             {
-                episodePath = Directory.GetParent(episodePath).FullName;
-            }
+                var fullPath = episode.FilePath.Replace(oldDirectory, "").Substring(1);
+                var fragments = fullPath.Split(Path.DirectorySeparatorChar);
 
-            // The path excluding the base path and contextual special folder, e.g. if folder is Watched,
-            // then -> "C:\...\anime-downloader\Watched\{AnimeSeriesName\AnimeEpisode.mkv}"
-            var folderPath = episode.FilePath.Replace(episodePath, "").Substring(1);
-            var fragments = folderPath.Split(Path.DirectorySeparatorChar);
+                var oldPath = oldDirectory;
+                var newPath = newDirectory;
 
-            // Move the files
-            var originalPath = episodePath;
-            var newPath = destinationDirectory;
-
-            foreach (var fragment in fragments)
-            {
-                originalPath = Path.Combine(originalPath, fragment);
-                newPath = Path.Combine(newPath, fragment);
-
-                if (Directory.Exists(originalPath))
+                // If file is a directory, create in new folder, else move file
+                foreach (var fragment in fragments)
                 {
-                    Directory.CreateDirectory(newPath);
+                    oldPath = Path.Combine(oldPath, fragment);
+                    newPath = Path.Combine(newPath, fragment);
+
+                    if (Directory.Exists(oldPath))
+                        Directory.CreateDirectory(newPath);
+                    else if (System.IO.File.Exists(oldPath))
+                        System.IO.File.Move(oldPath, newPath);
                 }
 
-                else if (System.IO.File.Exists(originalPath))
+                // Delete all old folders (this would only work on the latest one because it's the only
+                // path that would be empty, TODO: fix that
+                oldPath = oldDirectory;
+                foreach (var fragment in fragments)
                 {
-                    System.IO.File.Move(originalPath, newPath);
+                    oldPath = Path.Combine(oldPath, fragment);
+                    if (Directory.Exists(oldPath))
+                        if (Directory.GetFiles(oldPath).Length == 0)
+                        {
+                            Directory.Delete(oldPath);
+                            break;
+                        }
                 }
-            }
-
-            // TODO: ...
-            originalPath = episodePath;
-            foreach (var fragment in fragments)
-            {
-                originalPath = Path.Combine(originalPath, fragment);
-                if (Directory.Exists(originalPath))
-                    if (Directory.GetFiles(originalPath).Length == 0)
-                    {
-                        Directory.Delete(originalPath);
-                        break;
-                    }
             }
         }
 
@@ -120,9 +110,6 @@ namespace anime_downloader.Classes.File
 
             if (duplicates.Count > 0)
             {
-                if (!Directory.Exists(_settings.DuplicatesDirectory))
-                    Directory.CreateDirectory(_settings.DuplicatesDirectory);
-
                 foreach (var duplicate in duplicates)
                     System.IO.File.Move(duplicate.FilePath,
                         Path.Combine(_settings.DuplicatesDirectory, duplicate.FileName));
@@ -136,11 +123,19 @@ namespace anime_downloader.Classes.File
         /// </summary>
         public IEnumerable<AnimeEpisode> UnwatchedAnimeEpisodes()
         {
-            return _settings.EpisodeDirectories()
-                .SelectMany(path => Directory.GetFiles(path, "*", SearchOption.AllDirectories))
-                .Select(filePath => new AnimeEpisode(filePath))
-                .OrderBy(animeFile => animeFile.Name)
-                .ThenBy(animeFile => animeFile.IntEpisode);
+            try
+            {
+                return Directory.GetFiles(_settings.EpisodeDirectory, "*", SearchOption.AllDirectories)
+                    .Where(filePath => FileExtensions.Any(ext => filePath.ToLower().EndsWith(ext)))
+                    .Select(filePath => new AnimeEpisode(filePath))
+                    .OrderBy(animeFile => animeFile.Name)
+                    .ThenBy(animeFile => animeFile.IntEpisode);
+            }
+
+            catch (DirectoryNotFoundException)
+            {
+                return new List<AnimeEpisode>();
+            }
         }
 
         /// <summary>
@@ -148,10 +143,19 @@ namespace anime_downloader.Classes.File
         /// </summary>
         public IEnumerable<AnimeEpisode> WatchedAnimeEpisodes()
         {
-            return Directory.GetFiles(_settings.WatchedDirectory, "*", SearchOption.AllDirectories)
-                .Select(filePath => new AnimeEpisode(filePath))
-                .OrderBy(animeFile => animeFile.Name)
-                .ThenBy(animeFile => animeFile.IntEpisode);
+            try
+            {
+                return Directory.GetFiles(_settings.WatchedDirectory, "*", SearchOption.AllDirectories)
+                    .Where(filePath => FileExtensions.Any(ext => filePath.ToLower().EndsWith(ext)))
+                    .Select(filePath => new AnimeEpisode(filePath))
+                    .OrderBy(animeFile => animeFile.Name)
+                    .ThenBy(animeFile => animeFile.IntEpisode);
+            }
+
+            catch (DirectoryNotFoundException)
+            {
+                return new List<AnimeEpisode>();
+            }
         }
 
         /// <summary>
@@ -159,11 +163,20 @@ namespace anime_downloader.Classes.File
         /// </summary>
         public IEnumerable<AnimeEpisode> AllAnimeEpisodes()
         {
-            return _settings.EpisodeDirectories(true)
-                .SelectMany(path => Directory.GetFiles(path, "*", SearchOption.AllDirectories))
-                .Select(filePath => new AnimeEpisode(filePath))
-                .OrderBy(animeFile => animeFile.Name)
-                .ThenBy(animeFile => animeFile.IntEpisode);
+            try
+            {
+                return Directory.GetFiles(_settings.WatchedDirectory, "*", SearchOption.AllDirectories)
+                    .Union(Directory.GetFiles(_settings.EpisodeDirectory, "*", SearchOption.AllDirectories))
+                    .Where(filePath => FileExtensions.Any(ext => filePath.ToLower().EndsWith(ext)))
+                    .Select(filePath => new AnimeEpisode(filePath))
+                    .OrderBy(animeFile => animeFile.Name)
+                    .ThenBy(animeFile => animeFile.IntEpisode);
+            }
+
+            catch (DirectoryNotFoundException)
+            {
+                return new List<AnimeEpisode>();
+            }
         }
 
         /// <summary>
@@ -196,11 +209,6 @@ namespace anime_downloader.Classes.File
             return allAnime.FirstOrDefault(ae => ae.Name.Equals(episodeFileName) &&
                                                  ae.Episode.Equals(anime.Episode));
         }
-
-        public AnimeEpisode GetAnimeEpisode(Anime anime, int episode)
-        {
-            var episodeFileName = Anime.ClosestTo(AllAnimeEpisodes().Select(a => a.Name).Distinct(), anime.Name);
-            return AllAnimeEpisodes().First(ae => ae.Name.Equals(episodeFileName) && ae.Episode.Equals($"{episode:D1}"));
-        }
+        
     }
 }

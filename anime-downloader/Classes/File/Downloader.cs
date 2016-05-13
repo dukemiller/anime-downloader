@@ -125,8 +125,7 @@ namespace anime_downloader.Classes.File
 
             if (downloadedFile)
             {
-                if (_logger.IsEnabled)
-                    await _logger.WriteLineAsync($"Downloaded '{anime.Title}' episode {anime.NextEpisode()}.");
+                await _logger.WriteLineAsync($"Downloaded '{anime.Title}' episode {anime.NextEpisode()}.");
                 anime.Episode = anime.NextEpisode();
                 _downloaded++;
             }
@@ -144,7 +143,7 @@ namespace anime_downloader.Classes.File
             if (torrentName == null)
                 return false;
             var filePath = Path.Combine(_settings.TorrentFilesDirectory, torrentName);
-            var fileDirectory = _settings.GetDownloadFolder();
+            var fileDirectory = _settings.EpisodeDirectory;
 
             if (_settings.IndividualShowFolders)
                 fileDirectory = Path.Combine(fileDirectory, anime.Title);

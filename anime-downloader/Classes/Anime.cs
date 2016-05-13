@@ -220,6 +220,21 @@ namespace anime_downloader.Classes
             return d[n, m];
         }
 
+        public IEnumerable<AnimeEpisode> GetEpisodes(Settings settings)
+        {
+            var episodes = new FileHandler(settings).AllAnimeEpisodes().ToList();
+
+            var name = episodes
+                .Select(e => e.Name)
+                .Distinct()
+                .Select(e => new { Name = e, Distance = LevenshteinDistance(Name, e) })
+                .OrderBy(e => e.Distance)
+                .First()
+                .Name;
+
+            return episodes.Where(e => e.Name.Equals(name));
+        }
+
         /// <summary>
         ///     Gets the best guess to what the anime is based solely on name
         /// </summary>
@@ -228,6 +243,16 @@ namespace anime_downloader.Classes
         /// <returns></returns>
         public static Anime ClosestTo(IEnumerable<Anime> animes, string name)
         {
+            return animes
+                .Select(a => new { Anime = a, Distance = LevenshteinDistance(a.Name, name) })
+                .OrderBy(ap => ap.Distance)
+                .First()
+                .Anime;
+        }
+
+        public static Anime ClosestTo(Settings settings, string name)
+        {
+            var animes = XmlController.GetXmlController(settings).Animes;
             return animes
                 .Select(a => new { Anime = a, Distance = LevenshteinDistance(a.Name, name) })
                 .OrderBy(ap => ap.Distance)

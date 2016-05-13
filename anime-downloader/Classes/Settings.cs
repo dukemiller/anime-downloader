@@ -1,6 +1,5 @@
 ﻿using anime_downloader.Classes.Xml;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -36,28 +35,40 @@ namespace anime_downloader.Classes
         /// <summary>
         ///     The path of watched files.
         /// </summary>
-        public string WatchedDirectory => Path.Combine(BaseDirectory, "Watched");
-
-        /// <summary>
-        ///     The path of duplicate files.
-        /// </summary>
-        public string DuplicatesDirectory => Path.Combine(BaseDirectory, "Duplicates");
-
-        /// <summary>
-        ///     The path of base downloading folder.
-        /// </summary>
-        public string BaseDirectory
+        public string WatchedDirectory 
         {
-            get { return Root.Element("path")?.Element("base")?.Value; }
+            get { return Root.Element("path")?.Element("watched")?.Value; }
             set
             {
-                if (value.Equals(BaseDirectory))
+                if (value.Equals(WatchedDirectory))
                     return;
-                Root.Element("path")?.Element("base")?.SetValue(value);
+                Root.Element("path")?.Element("watched")?.SetValue(value);
                 Save();
             }
         }
 
+        /// <summary>
+        ///     Get the user defined download folder.
+        /// </summary>
+        /// <returns>A path used to download into.</returns>
+        public string EpisodeDirectory
+        {
+            get { return Root.Element("path")?.Element("episode")?.Value; }
+            set
+            {
+                if (value.Equals(EpisodeDirectory))
+                    return;
+                Root.Element("path")?.Element("episode")?.SetValue(value);
+                Save();
+            }
+        }
+
+        /// <summary>
+        ///     The path of duplicate files.
+        /// </summary>
+        public string DuplicatesDirectory
+            => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyVideos), "Duplicates");
+        
         /// <summary>
         ///     The path where all .torrent files will be downloaded to.
         /// </summary>
@@ -74,7 +85,7 @@ namespace anime_downloader.Classes
         /// <summary>
         ///     A path to where the playlist will be created.
         /// </summary>
-        public string PlaylistFile => Path.Combine(BaseDirectory, "playlist.m3u");
+        public string PlaylistFile => Path.Combine(ApplicationDirectory, "playlist.m3u");
 
         /// <summary>
         ///     The path to the utorrent executable.
@@ -89,10 +100,8 @@ namespace anime_downloader.Classes
             }
         }
 
-        public string LoggingFile => Path.Combine(BaseDirectory, "log.txt");
-
-        // public string BackupPath => Path.Combine(ApplicationPath, "Backup");
-
+        public string LoggingFile => Path.Combine(ApplicationDirectory, "log.txt");
+        
         /// <summary>
         ///     The user preferred anime list sort method.
         /// </summary>
@@ -121,10 +130,10 @@ namespace anime_downloader.Classes
         /// </summary>
         public bool OnlyWhitelisted
         {
-            get { return bool.Parse(Root.Element("flag")?.Element("only-whitelisted-subs")?.Value ?? "false"); }
+            get { return bool.Parse(Root.Element("flag")?.Element("onlyWhitelistedSubs")?.Value ?? "false"); }
             set
             {
-                Root.Element("flag")?.Element("only-whitelisted-subs")?.SetValue(value);
+                Root.Element("flag")?.Element("onlyWhitelistedSubs")?.SetValue(value);
                 Save();
             }
         }
@@ -145,21 +154,7 @@ namespace anime_downloader.Classes
                 Save();
             }
         }
-
-        /// <summary>
-        ///     The user preference if there should be a log file in the folder detailing
-        ///     when files are downloaded.
-        /// </summary>
-        public bool UseLogging
-        {
-            get { return bool.Parse(Root.Element("flag")?.Element("use-logging")?.Value ?? "false"); }
-            set
-            {
-                Root.Element("flag")?.Element("use-logging")?.SetValue(value);
-                Save();
-            }
-        }
-
+        
         public bool ExitOnClose
         {
             get { return bool.Parse(Root.Element("flag")?.Element("exitOnClose")?.Value ?? "false"); }
@@ -210,45 +205,6 @@ namespace anime_downloader.Classes
             if (!Xml.AutoSave)
                 return;
             Xml.SaveSettings();
-        }
-
-        // private void Backup(){}
-
-        /// <summary>
-        ///     The paths where the episodes are stored.
-        /// </summary>
-        /// <remarks>
-        ///     The path will always start with a "2" since it starts with the year.
-        /// </remarks>
-        /// <returns></returns>
-        public IEnumerable<string> EpisodeDirectories(bool includeWatched = false) => Directory
-            .GetDirectories(BaseDirectory)
-            .Where(folder =>
-            {
-                var path = Path.GetFileName(folder)?.ToLower();
-                return path != null &&
-                       // !path.Equals("torrents") &&
-                       // !path.Equals("duplicates") &&
-                       (path.StartsWith("2") || path.Equals("shows")) && 
-                       (includeWatched || !path.Equals("watched"));
-            });
-
-        /// <summary>
-        ///     Get the user defined download folder.
-        /// </summary>
-        /// <returns>A path used to download into.</returns>
-        public string GetDownloadFolder()
-        {
-            if (GroupDownloadBy.Equals("PerWeek"))
-            {
-                var date = DateTime.Now;
-                var week = Math.Floor(Convert.ToDouble(date.DayOfYear) / 7);
-                var folder = $"{date.Year} - Week {week} - {date.ToString("MMMM")}";
-                var path = Path.Combine(BaseDirectory, folder);
-                return path;
-            }
-
-            return Path.Combine(BaseDirectory, "Shows");
         }
     }
 }

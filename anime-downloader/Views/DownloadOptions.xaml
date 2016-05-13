@@ -40,6 +40,7 @@
                 </StackPanel>
             </GroupBox>
             <Button x:Name="SearchButton" Style="{DynamicResource ConfirmationButtonStyle}" HorizontalAlignment="Right" Content="Search" Grid.Row="1" />
+            <Button x:Name="LogButton" Style="{DynamicResource ConfirmationButtonStyle}" HorizontalAlignment="Left" Content="Log" Grid.Row="1" />
         </Grid>
     </Grid>
 </UserControl>

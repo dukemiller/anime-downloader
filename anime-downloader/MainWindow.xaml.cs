@@ -116,10 +116,7 @@ namespace anime_downloader
 
             if (!Directory.Exists(_settings.ApplicationDirectory))
                 Directory.CreateDirectory(_settings.ApplicationDirectory);
-
-            if (!Directory.Exists(_settings.WatchedDirectory))
-                Directory.CreateDirectory(_settings.WatchedDirectory);
-
+            
             // Create new anime xml
             if (!File.Exists(_settings.AnimeXml))
                 _xml.Schema.AnimeXmlAndSave();
@@ -233,8 +230,11 @@ namespace anime_downloader
         {
             var error = string.Empty;
 
-            if (!Directory.Exists(_settings.BaseDirectory))
-                error += "Your base folder doesn't seem to exist.\n";
+            if (!Directory.Exists(_settings.EpisodeDirectory))
+                error += "Your episode folder doesn't seem to exist.\n";
+
+            if (!Directory.Exists(_settings.WatchedDirectory))
+                error += "Your watched folder doesn't seem to exist.\n";
 
             if (!File.Exists(_settings.UtorrentFile) || !_settings.UtorrentFile.ToLower().EndsWith(".exe"))
                 error += "Your uTorrent.exe path seems to be wrong.";
@@ -798,22 +798,17 @@ namespace anime_downloader
                 if (k.Key == Key.Enter)
                     display.ApplyChangesButton.Press();
             });
-            
-            display.BaseTextbox.Text = _settings.BaseDirectory;
+
+            display.EpisodeTextbox.Text = _settings.EpisodeDirectory;
+            display.WatchedTextbox.Text = _settings.WatchedDirectory;
             display.SubgroupsTextbox.Text = string.Join(", ", _settings.Subgroups);
             display.DownloadTextbox.Text = _settings.UtorrentFile;
             display.TorrentTextbox.Text = _settings.TorrentFilesDirectory;
             display.ApplyChangesButton.Click += Settings_ApplySettingsButton_Click;
             display.OnlyWhitelistedCheckbox.IsChecked = _settings.OnlyWhitelisted;
-            display.UseLoggerCheckbox.IsChecked = _settings.UseLogging;
             display.TrayExitCheckbox.IsChecked = !_settings.ExitOnClose;
             display.AlwaysTrayCheckbox.IsChecked = _settings.AlwaysShowTray;
             display.IndividualShowCheckbox.IsChecked = _settings.IndividualShowFolders;
-
-            if (_settings.GroupDownloadBy.Equals("PerWeek"))
-                display.PerWeekRadio.IsChecked = true;
-            else
-                display.SingleFolderRadio.IsChecked = true;
         }
 
         /// <summary>
@@ -823,27 +818,22 @@ namespace anime_downloader
         {
             var display = (Views.Settings) CurrentDisplay;
 
-            if (display.BaseTextbox.Empty() || display.TorrentTextbox.Empty() || display.DownloadTextbox.Empty())
-                Alert("You must enter in Base, Torrent or Utorrent Path Boxes.");
+            if (display.EpisodeTextbox.Empty() || display.TorrentTextbox.Empty() || display.DownloadTextbox.Empty())
+                Alert("You must enter in the episode, torrent files and utorrent path information.");
             else
             {
-                _settings.Subgroups = display.SubgroupsTextbox.Text.Split(new[] { ", " },
+                _settings.EpisodeDirectory = display.EpisodeTextbox.Text;
+                _settings.WatchedDirectory = display.WatchedTextbox.Text;
+                _settings.Subgroups = display.SubgroupsTextbox.Text.Split(new[] {", "},
                     StringSplitOptions.RemoveEmptyEntries);
-                _settings.BaseDirectory = display.BaseTextbox.Text;
                 _settings.UtorrentFile = display.DownloadTextbox.Text;
                 _settings.TorrentFilesDirectory = display.TorrentTextbox.Text;
                 _settings.OnlyWhitelisted = display.OnlyWhitelistedCheckbox.IsChecked ?? false;
-                _settings.UseLogging = display.UseLoggerCheckbox.IsChecked ?? false;
                 _settings.ExitOnClose = !display.TrayExitCheckbox.IsChecked ?? false;
                 _settings.AlwaysShowTray = display.AlwaysTrayCheckbox.IsChecked ?? false;
 
                 _tray.CheckVisibility();
-
-                if (display.PerWeekRadio.IsChecked == true)
-                    _settings.GroupDownloadBy = "PerWeek";
-                else if (display.SingleFolderRadio.IsChecked == true)
-                    _settings.GroupDownloadBy = "Single";
-
+                
                 _settings.IndividualShowFolders = display.IndividualShowCheckbox.IsChecked ?? false;
             }
         }
@@ -856,28 +846,30 @@ namespace anime_downloader
             this.ToggleButtons();
             var display = ChangeDisplay<Views.Settings>();
 
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "anime-downloader");
+
             // Default guessed values
-            display.BaseTextbox.Text = Directory.GetCurrentDirectory();
-            display.TorrentTextbox.Text = Path.Combine(display.BaseTextbox.Text, "Torrents");
+            display.EpisodeTextbox.Text = Path.Combine(path, "Shows");
+            display.WatchedTextbox.Text = Path.Combine(path, "Watched");
+            display.TorrentTextbox.Text = Path.Combine(path, "Torrents");
             display.DownloadTextbox.Text = @"C:\Program Files (x86)\uTorrent\uTorrent.exe";
             display.ApplyChangesButton.Content = "Create";
-            display.UseLoggerCheckbox.IsChecked = true;
 
             display.ApplyChangesButton.Click += (obj, ev) =>
             {
-                if (display.BaseTextbox.Empty() || display.TorrentTextbox.Empty() || display.DownloadTextbox.Empty())
-                    Alert("You must enter in Base, Torrent or Utorrent Path Boxes.");
+                if (display.EpisodeTextbox.Empty() || display.TorrentTextbox.Empty() || display.DownloadTextbox.Empty())
+                    Alert("You must enter in the episode, torrent files and utorrent path information.");
                 else
                 {
                     _xml.Schema.SettingsXmlAndSave();
 
-                    _settings.BaseDirectory = display.BaseTextbox.Text;
+                    _settings.EpisodeDirectory = display.EpisodeTextbox.Text;
+                    _settings.WatchedDirectory = display.WatchedTextbox.Text;
                     _settings.TorrentFilesDirectory = display.TorrentTextbox.Text;
                     _settings.UtorrentFile = display.DownloadTextbox.Text;
                     _settings.Subgroups = display.SubgroupsTextbox.Text.Split(new[] { " " },
                         StringSplitOptions.RemoveEmptyEntries);
                     _settings.OnlyWhitelisted = display.OnlyWhitelistedCheckbox.IsChecked ?? false;
-                    _settings.UseLogging = display.UseLoggerCheckbox.IsChecked ?? false;
                     _settings.ExitOnClose = !display.TrayExitCheckbox.IsChecked ?? false;
                     _settings.AlwaysShowTray = display.AlwaysTrayCheckbox.IsChecked ?? false;
                     _settings.SortBy = "name"; // TODO
@@ -898,6 +890,7 @@ namespace anime_downloader
             var display = ChangeDisplay<DownloadOptions>();
 
             display.SearchButton.Click += DownloadOutputHandler;
+            display.LogButton.Click += LogHandler;
             display.Loaded += (o, args) => ((DownloadOptions) CurrentDisplay).SearchButton.Focus();
             display.KeyDown += (o, args) =>
             {
@@ -908,6 +901,23 @@ namespace anime_downloader
                 }
             };
         }
+
+        public async void LogHandler(object sender, RoutedEventArgs e)
+        {
+            var text = ">> No downloads have been logged so far.";
+
+            var display = ChangeDisplay<DownloadOutput>();
+            var textBox = display.TextBox;
+
+            if (File.Exists(_settings.LoggingFile))
+            {
+                using (var reader = new StreamReader(_settings.LoggingFile))
+                    text = await reader.ReadToEndAsync();
+
+                text = string.Join("\n", text.Split('\n').Reverse().Skip(1));
+            }
+            textBox.Text = text;
+        } 
 
         /// <summary>
         ///     View: DownloadOutput
@@ -1041,52 +1051,68 @@ namespace anime_downloader
         private void ManageButton_Click(object sender, RoutedEventArgs e)
         {
             var display = ChangeDisplay<Manage>();
-
-            if (!Directory.Exists(_settings.WatchedDirectory))
-                Directory.CreateDirectory(_settings.WatchedDirectory);
-
+            
             var unwatched = _filehandler.UnwatchedAnimeEpisodes().ToList();
             var watched = _filehandler.WatchedAnimeEpisodes().ToList();
-
             display.Playlist = _playlist;
-            display.Unwatched = unwatched;
-            display.Watched = watched;
-            display.UnwatchedList.ItemsSource = display.Unwatched;
-            display.WatchedList.ItemsSource = display.Watched;
 
+            display.Unwatched = unwatched;
+            display.UnwatchedList.ItemsSource = display.Unwatched;
+            display.UnwatchedExists = Directory.Exists(_settings.EpisodeDirectory);
             display.UnwatchedMoveWatched.Click += delegate
             {
-                var episodes = display.UnwatchedList.SelectedItems.Cast<AnimeEpisode>().ToList();
-                if (episodes.Count >= 1)
+                if (display.WatchedExists)
                 {
-                    _filehandler.MoveEpisodeToDestination(display.UnwatchedList, _settings.WatchedDirectory);
-                    HomeCycle(ManageButton);
+                    var episodes = display.UnwatchedList.SelectedItems.Cast<AnimeEpisode>().ToList();
+                    if (episodes.Count >= 1)
+                    {
+                        _filehandler.MoveEpisodeToDestination(display.UnwatchedList, _settings.EpisodeDirectory,
+                            _settings.WatchedDirectory);
+
+                        HomeCycle(ManageButton);
+                    }
                 }
             };
-
             display.MoveRight.MouseUp += delegate
             {
-                _filehandler.MoveEpisodeToDestination(display.UnwatchedList, _settings.WatchedDirectory);
-                HomeCycle(ManageButton);
-            };
-
-            display.WatchedMoveUnwatched.Click += delegate
-            {
-                var episodes = display.WatchedList.SelectedItems.Cast<AnimeEpisode>().ToList();
-                if (episodes.Count >= 1)
+                if (display.WatchedExists)
                 {
-                    _filehandler.MoveEpisodeToDestination(display.WatchedList, _settings.GetDownloadFolder());
+                    _filehandler.MoveEpisodeToDestination(display.UnwatchedList, _settings.EpisodeDirectory,
+                        _settings.WatchedDirectory);
                     HomeCycle(ManageButton);
                 }
             };
+            display.UnwatchedDelete.Click += delegate { HomeCycle(ManageButton); };
 
+            display.Watched = watched;
+            display.WatchedList.ItemsSource = display.Watched;
+            display.WatchedExists = Directory.Exists(_settings.WatchedDirectory);
+            display.WatchedMoveUnwatched.Click += delegate
+            {
+                if (display.UnwatchedExists)
+                {
+                    var episodes = display.WatchedList.SelectedItems.Cast<AnimeEpisode>().ToList();
+                    if (episodes.Count >= 1)
+                    {
+                        _filehandler.MoveEpisodeToDestination(display.WatchedList, _settings.WatchedDirectory,
+                            _settings.EpisodeDirectory);
+                        HomeCycle(ManageButton);
+                    }
+                }
+            };
             display.MoveLeft.MouseUp += delegate
             {
-                _filehandler.MoveEpisodeToDestination(display.WatchedList, _settings.GetDownloadFolder());
-                HomeCycle(ManageButton);
+                if (display.UnwatchedExists)
+                {
+                    _filehandler.MoveEpisodeToDestination(display.WatchedList, _settings.WatchedDirectory,
+                        _settings.EpisodeDirectory);
+                    HomeCycle(ManageButton);
+                }
             };
+            display.WatchedDelete.Click += delegate { HomeCycle(ManageButton); };
+
         }
-        
+
         /* --Web */
 
         private void WebButton_Click(object sender, RoutedEventArgs e)

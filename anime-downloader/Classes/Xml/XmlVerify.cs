@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace anime_downloader.Classes.Xml
@@ -23,11 +24,14 @@ namespace anime_downloader.Classes.Xml
         /// <summary>
         ///     Compares the current schema to the default schema and adds any elements
         /// </summary>
-        private static void Compare(XContainer current,
+        private static void Compare(
+            XContainer current,
             XContainer schema)
         {
             if (current == null || schema == null)
                 return;
+
+            var remove = new List<XElement>();
 
             // add
             foreach (var element in schema.Elements())
@@ -43,8 +47,10 @@ namespace anime_downloader.Classes.Xml
             foreach (var element in current.Elements())
             {
                 if (!schema.Elements().Any(e => e.Name.Equals(element.Name)))
-                    element.Remove();
+                    remove.Add(element);
             }
+
+            remove.ForEach(e => e.Remove());
         }
 
         public void Schema()
