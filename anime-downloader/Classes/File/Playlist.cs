@@ -6,17 +6,17 @@ namespace anime_downloader.Classes.File
 {
     public class Playlist
     {
-        private readonly Settings _settings;
         private readonly FileHandler _fileHandler;
+        private readonly Settings _settings;
         private IEnumerable<AnimeEpisode> _episodes;
-
-        public string PlaylistFile => _settings.PlaylistFile;
 
         public Playlist(Settings settings, FileHandler fileHandler)
         {
             _settings = settings;
             _fileHandler = fileHandler;
         }
+
+        public string PlaylistFile => _settings.PlaylistFile;
 
         public int Length => _episodes.Count();
 
@@ -78,7 +78,7 @@ namespace anime_downloader.Classes.File
 
             _episodes = sortedEpisodes;
         }
-        
+
         /// <summary>
         ///     Save and create the playlist.
         /// </summary>

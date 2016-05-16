@@ -3,14 +3,19 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:classes="clr-namespace:anime_downloader.Classes"
+             xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
              mc:Ignorable="d"
              d:DesignHeight="360" d:DesignWidth="680">
     <UserControl.Resources>
+        <xaml:StringJoinConverter x:Key="Converter" />
+        <xaml:NotConverter x:Key="NotConverter" />
+
         <Style x:Key="LabelStyle" TargetType="{x:Type Label}">
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="FontSize" Value="15" />
-            <Setter Property="FontFamily" Value="{StaticResource MainFont}"/>
+            <Setter Property="FontFamily" Value="{StaticResource MainFont}" />
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
         <Style x:Key="TextboxStyle" TargetType="{x:Type TextBox}">
@@ -30,7 +35,7 @@
             <RowDefinition Height="5*" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
-        <Grid>
+        <Grid x:Name="SettingsGrid" d:DataContext="{d:DesignInstance Type=classes:Settings}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="2*" />
                 <RowDefinition Height="1*" />
@@ -52,31 +57,38 @@
                 <Label x:Name="EpisodeLabel" Grid.Row="0" Grid.Column="0" Content="Episodes download to: "
                        Style="{DynamicResource LabelStyle}"
                        ToolTip="Path to where episodes will be downloaded to." />
-                <TextBox x:Name="EpisodeTextbox" Grid.Row="0" Grid.Column="1" Style="{DynamicResource TextboxStyle}" />
+                <TextBox x:Name="EpisodeTextbox" Text="{Binding EpisodeDirectory}" Grid.Row="0" Grid.Column="1"
+                         Style="{DynamicResource TextboxStyle}" KeyDown="Textbox_KeyDown" />
 
                 <!-- Watched path -->
                 <Label x:Name="WatchedLabel" Grid.Row="1" Grid.Column="0" Content="Watched files go to: "
                        Style="{DynamicResource LabelStyle}"
                        ToolTip="Path where watched episodes will be moved to." />
-                <TextBox x:Name="WatchedTextbox" Grid.Row="1" Grid.Column="1" Style="{DynamicResource TextboxStyle}" />
+                <TextBox x:Name="WatchedTextbox" Text="{Binding WatchedDirectory}" Grid.Row="1" Grid.Column="1"
+                         Style="{DynamicResource TextboxStyle}" KeyDown="Textbox_KeyDown" />
 
                 <!-- Torrent -->
                 <Label x:Name="TorrentLabel" Grid.Row="2" Grid.Column="0" Content="Torrents download to: "
                        Style="{DynamicResource LabelStyle}"
                        ToolTip="Path to the folder that all .torrent files will be downloaded into." />
-                <TextBox x:Name="TorrentTextbox" Grid.Row="2" Grid.Column="1" Style="{DynamicResource TextboxStyle}" />
+                <TextBox x:Name="TorrentTextbox" Text="{Binding TorrentFilesDirectory}" Grid.Row="2" Grid.Column="1"
+                         Style="{DynamicResource TextboxStyle}" KeyDown="Textbox_KeyDown" />
 
                 <!-- Download -->
-                <Label x:Name="DownloadLabel" Grid.Row="3" Grid.Column="0" Content="uTorrent exe file: "
+                <Label x:Name="UtorrentLabel" Grid.Row="3" Grid.Column="0" Content="uTorrent exe file: "
                        Style="{DynamicResource LabelStyle}"
                        ToolTip="Path to uTorrent.exe." />
-                <TextBox x:Name="DownloadTextbox" Grid.Row="3" Grid.Column="1" Style="{DynamicResource TextboxStyle}" />
+                <TextBox x:Name="UtorrentTextbox" Text="{Binding UtorrentFile}" Grid.Row="3" Grid.Column="1"
+                         Style="{DynamicResource TextboxStyle}" KeyDown="Textbox_KeyDown" />
 
                 <!-- Subgroups -->
                 <Label x:Name="SubgroupsLabel" Grid.Row="4" Grid.Column="0" Content="Whitelist subgroups: "
                        Style="{DynamicResource LabelStyle}"
                        ToolTip="A comma + space (', ') separated list of preferred subgroups, e.g. '{subgroup1}, {subgroup2}, {subgroup3}'" />
-                <TextBox x:Name="SubgroupsTextbox" Grid.Row="4" Grid.Column="1" Style="{DynamicResource TextboxStyle}" />
+                <TextBox x:Name="SubgroupsTextbox"
+                         Text="{Binding Path=Subgroups, Converter={StaticResource Converter}}" Grid.Row="4"
+                         Grid.Column="1"
+                         Style="{DynamicResource TextboxStyle}" KeyDown="Textbox_KeyDown" />
             </Grid>
             <Grid Name="CheckboxGrid" Row="1">
                 <Grid.ColumnDefinitions>
@@ -98,14 +110,17 @@
                     <Label x:Name="ExitLabel" Grid.Row="0" Grid.Column="0" Content="Exit to tray:"
                            Style="{DynamicResource LabelStyle}"
                            ToolTip="Instead of closing the program on exit, it is brought to the tray." />
-                    <CheckBox x:Name="TrayExitCheckbox" Grid.Row="0" Grid.Column="1"
+                    <CheckBox x:Name="TrayExitCheckbox"
+                              IsChecked="{Binding Path=ExitOnClose, Converter={StaticResource NotConverter}}"
+                              Grid.Row="0" Grid.Column="1"
                               Style="{DynamicResource CheckboxStyle}" />
 
                     <!-- AlwaysTray -->
                     <Label x:Name="AlwaysTrayLabel" Grid.Row="1" Grid.Column="0" Content="Keep tray open:"
                            Style="{DynamicResource LabelStyle}"
                            ToolTip="Always have the tray enabled." />
-                    <CheckBox x:Name="AlwaysTrayCheckbox" Grid.Row="1" Grid.Column="1"
+                    <CheckBox x:Name="AlwaysTrayCheckbox" IsChecked="{Binding AlwaysShowTray}" Grid.Row="1"
+                              Grid.Column="1"
                               Style="{DynamicResource CheckboxStyle}" />
                 </Grid>
                 <Grid Name="RightSide" Column="1">
@@ -123,9 +138,10 @@
                     <Label x:Name="OnlyWhitelistedLabel" Grid.Row="0" Grid.Column="0" Content="Only whitelisted subs: "
                            Style="{DynamicResource LabelStyle}"
                            ToolTip="Whether or not to only download from subgroups that are on the whitelisted subgroups list." />
-                    <CheckBox x:Name="OnlyWhitelistedCheckbox" Grid.Row="0" Content="" Grid.Column="1"
+                    <CheckBox x:Name="OnlyWhitelistedCheckbox" IsChecked="{Binding OnlyWhitelisted}" Grid.Row="0"
+                              Content="" Grid.Column="1"
                               Style="{DynamicResource CheckboxStyle}" />
-                    
+
                     <!-- Named folders -->
                     <Label x:Name="IndividualShowLabel" Grid.Row="1" Grid.Column="0"
                            Style="{DynamicResource LabelStyle}" VerticalAlignment="Top"
@@ -134,11 +150,13 @@
                             Show-named folders:
                         </TextBlock>
                     </Label>
-                    <CheckBox x:Name="IndividualShowCheckbox" Grid.Row="1" Grid.Column="1"
+                    <CheckBox x:Name="IndividualShowCheckbox" IsChecked="{Binding IndividualShowFolders}" Grid.Row="1"
+                              Grid.Column="1"
                               Style="{DynamicResource CheckboxStyle}" />
                 </Grid>
             </Grid>
         </Grid>
-        <Button x:Name="ApplyChangesButton" Content="Apply" Style="{DynamicResource ConfirmationButtonStyle}" HorizontalAlignment="Right" Grid.Row="1" />
+        <Button x:Name="ApplyChangesButton" Content="Apply" Style="{DynamicResource ConfirmationButtonStyle}"
+                HorizontalAlignment="Right" Grid.Row="1" />
     </Grid>
 </UserControl>

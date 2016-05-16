@@ -1,6 +1,7 @@
-﻿using anime_downloader.Classes;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using anime_downloader.Classes;
 
 namespace anime_downloader.Views
 {
@@ -35,6 +36,11 @@ namespace anime_downloader.Views
         private void FindRectangle_OnMouseLeave(object sender, MouseEventArgs e)
         {
             FindRectangle.Opacity = 1.0;
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            DataGrid.Focus();
         }
     }
 }

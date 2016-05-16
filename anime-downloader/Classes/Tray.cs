@@ -1,11 +1,11 @@
-﻿using anime_downloader.Views;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
+using anime_downloader.Views;
 using Application = System.Windows.Application;
 
 namespace anime_downloader.Classes
@@ -91,7 +91,7 @@ namespace anime_downloader.Classes
                         _mainWindow.Show();
                         _mainWindow.WindowState = WindowState.Normal;
                     }
-                    _mainWindow.DownloadButton.Press();
+                    _mainWindow.Cycle(_mainWindow.DownloadButton);
                     ((DownloadOptions) _mainWindow.CurrentDisplay).SearchButton.Press();
                 }));
 
@@ -153,7 +153,6 @@ namespace anime_downloader.Classes
 
             else if (!_settings.AlwaysShowTray)
             {
-
                 if (_mainWindow.WindowState == WindowState.Minimized)
                 {
                     Visible = true;

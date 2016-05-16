@@ -1,5 +1,4 @@
-﻿using anime_downloader.Classes.Web;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -7,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using anime_downloader.Classes.Web;
 
 namespace anime_downloader.Classes.File
 {
@@ -164,7 +164,7 @@ namespace anime_downloader.Classes.File
                         _client.DownloadFile(torrent.Link, filePath);
                     }
 
-                    // TODO: heh heh heh
+                        // TODO: heh heh heh
                     catch (Exception)
                     {
                         // ignored

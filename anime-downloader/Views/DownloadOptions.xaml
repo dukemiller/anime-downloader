@@ -4,43 +4,50 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
+             Loaded="UserControl_Loaded"
              d:DesignHeight="360" d:DesignWidth="680">
     <UserControl.Resources>
         <Style x:Key="ItemStyle">
-            <Setter Property="RadioButton.FontFamily" Value="{StaticResource MainFont}"/>
+            <Setter Property="RadioButton.FontFamily" Value="{StaticResource MainFont}" />
         </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.Background>White</Grid.Background>
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="5*"/>
-                <RowDefinition Height="1*"/>
+                <RowDefinition Height="5*" />
+                <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
-            <GroupBox x:Name="DownloadGroupBox" FontSize="16" Header="Download Options (Airing Series)" Style="{DynamicResource ItemStyle}"
-                  HorizontalAlignment="Left"
-                  VerticalAlignment="Top" Height="auto" Width="auto" Grid.Column="0">
-                <StackPanel >
-                    <RadioButton x:Name="CheckForLatestRadio" IsChecked="True" Margin="5" Style="{DynamicResource ItemStyle}">
+            <GroupBox x:Name="DownloadGroupBox" FontSize="16" Header="Download Options (Airing Series)"
+                      Style="{DynamicResource ItemStyle}"
+                      HorizontalAlignment="Left"
+                      VerticalAlignment="Top" Height="auto" Width="auto" Grid.Column="0">
+                <StackPanel>
+                    <RadioButton x:Name="CheckForLatestRadio" IsChecked="True" Margin="5"
+                                 Style="{DynamicResource ItemStyle}" KeyDown="Radio_KeyDown">
                         <TextBlock TextWrapping="Wrap">
-                        Latest found episode.
+                            Next found episode.
                         </TextBlock>
                     </RadioButton>
-                    <RadioButton x:Name="GetUpToDateRadio" Margin="5" Style="{DynamicResource ItemStyle}">
+                    <RadioButton x:Name="GetUpToDateRadio" Margin="5"
+                                 Style="{DynamicResource ItemStyle}" KeyDown="Radio_KeyDown">
                         <TextBlock TextWrapping="Wrap">
-                        Continually, until no more are found
-                        (good for getting up to date).
+                            Continually until no more are found
+                            (good for getting up to date).
                         </TextBlock>
                     </RadioButton>
-                    <RadioButton x:Name="GetMissingRadio" Margin="5" Style="{DynamicResource ItemStyle}">
+                    <RadioButton x:Name="GetMissingRadio" Margin="5"
+                                 Style="{DynamicResource ItemStyle}" KeyDown="Radio_KeyDown">
                         <TextBlock TextWrapping="Wrap">
-                        Missing episodes between first and last known episodes.
+                            Any missing episodes between first and last known episodes.
                         </TextBlock>
                     </RadioButton>
                 </StackPanel>
             </GroupBox>
-            <Button x:Name="SearchButton" Style="{DynamicResource ConfirmationButtonStyle}" HorizontalAlignment="Right" Content="Search" Grid.Row="1" />
-            <Button x:Name="LogButton" Style="{DynamicResource ConfirmationButtonStyle}" HorizontalAlignment="Left" Content="Log" Grid.Row="1" />
+            <Button x:Name="SearchButton" Style="{DynamicResource ConfirmationButtonStyle}" HorizontalAlignment="Right"
+                    Content="Search" Grid.Row="1" />
+            <Button x:Name="LogButton" Style="{DynamicResource ConfirmationButtonStyle}" HorizontalAlignment="Left"
+                    Content="Log" Grid.Row="1" />
         </Grid>
     </Grid>
 </UserControl>

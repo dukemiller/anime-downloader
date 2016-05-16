@@ -76,6 +76,8 @@
     <Compile Include="Classes\File\Playlist.cs" />
     <Compile Include="Classes\Settings.cs" />
     <Compile Include="Classes\Web\TorrentProvider.cs" />
+    <Compile Include="Classes\Xaml\Converters.cs" />
+    <Compile Include="Classes\Xaml\DragSelectionHelper.cs" />
     <Compile Include="Classes\Xml\Xml.cs" />
     <Compile Include="Classes\Xml\XmlController.cs" />
     <Compile Include="Classes\Xml\XmlSchema.cs" />

@@ -8,26 +8,27 @@
     <UserControl.Resources>
         <Style x:Key="LabelStyle" TargetType="{x:Type Label}">
             <Setter Property="FontSize" Value="16" />
-            <Setter Property="FontFamily" Value="{StaticResource MainFont}"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="FontFamily" Value="{StaticResource MainFont}" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
         </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.Background>White</Grid.Background>
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="5*"/>
-                <RowDefinition Height="4*"/>
-                <RowDefinition Height="2*"/>
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="5*" />
+                <RowDefinition Height="4*" />
+                <RowDefinition Height="2*" />
             </Grid.RowDefinitions>
-            <TextBlock x:Name="InfoTextBlock" TextWrapping="Wrap" Grid.Row="0" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center">
-            Put each anime on own line, each will be added with the template chosen below.
+            <TextBlock x:Name="InfoTextBlock" TextWrapping="Wrap" Grid.Row="0" FontSize="16" VerticalAlignment="Center"
+                       HorizontalAlignment="Center">
+                Put each anime on own line, each will be added with the template chosen below.
             </TextBlock>
             <TextBox x:Name="InputTextBox" FontSize="16" Grid.Row="1" HorizontalAlignment="Center"
-                 TextWrapping="Wrap" AcceptsReturn="True" Width="630" />
-            <Grid HorizontalAlignment="Center" Width="650" Grid.Row="2" Margin="0, 10, 0, 10" >
+                     TextWrapping="Wrap" AcceptsReturn="True" Width="630" />
+            <Grid HorizontalAlignment="Center" Width="650" Grid.Row="2" Margin="0, 10, 0, 10">
                 <Grid.Background>PapayaWhip</Grid.Background>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="2*" />
@@ -36,58 +37,66 @@
                 </Grid.ColumnDefinitions>
                 <Grid Grid.Column="0" Name="LeftGrid">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="1*"/>
-                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="2*" />
                     </Grid.ColumnDefinitions>
 
                     <Label x:Name="EpisodeLabel" Content="Episode" Style="{DynamicResource LabelStyle}" />
-                    <TextBox x:Name="EpisodeTextBox" FontSize="16" Text="00" TextWrapping="Wrap" Grid.Row="0" Grid.Column="1"
-                     Height="25" HorizontalContentAlignment="Left" VerticalContentAlignment="Center"
-                     GotFocus="EpisodeTextBox_GotFocus" PreviewTextInput="EpisodeTextBox_PreviewTextInput" />
+                    <TextBox x:Name="EpisodeTextBox" FontSize="16" Text="00" TextWrapping="Wrap" Grid.Row="0"
+                             Grid.Column="1"
+                             Height="25" HorizontalContentAlignment="Left" VerticalContentAlignment="Center"
+                             GotFocus="EpisodeTextBox_GotFocus" PreviewTextInput="EpisodeTextBox_PreviewTextInput" />
 
-                    <Label x:Name="RatingLabel" Content="Rating" Style="{DynamicResource LabelStyle}" Grid.Column="0" Grid.Row="1"/>
-                    <TextBox x:Name="RatingTextBox" FontSize="16" Grid.Row="1" Grid.Column="1" Height="25" 
-                          GotFocus="EpisodeTextBox_GotFocus" PreviewTextInput="RatingTextBox_PreviewTextInput"/>
+                    <Label x:Name="RatingLabel" Content="Rating" Style="{DynamicResource LabelStyle}" Grid.Column="0"
+                           Grid.Row="1" />
+                    <TextBox x:Name="RatingTextBox" FontSize="16" Grid.Row="1" Grid.Column="1" Height="25"
+                             GotFocus="EpisodeTextBox_GotFocus" PreviewTextInput="RatingTextBox_PreviewTextInput" />
 
                 </Grid>
                 <Grid Grid.Column="1" Name="MiddleGrid">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="1*"/>
-                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="2*"/>
-                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
 
-                    <Label x:Name="AiringLabel" Content="Airing" Grid.Row="0" Grid.Column="0" Style="{DynamicResource LabelStyle}"/>
-                    <CheckBox x:Name="AiringCheckBox" IsChecked="True" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalContentAlignment="Center" />
+                    <Label x:Name="AiringLabel" Content="Airing" Grid.Row="0" Grid.Column="0"
+                           Style="{DynamicResource LabelStyle}" />
+                    <CheckBox x:Name="AiringCheckBox" IsChecked="True" Grid.Column="1" Grid.Row="0"
+                              HorizontalAlignment="Left" VerticalContentAlignment="Center" />
 
                 </Grid>
                 <Grid Grid.Column="2" Name="RightGrid">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="1*"/>
-                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="2*" />
                     </Grid.ColumnDefinitions>
 
-                    <Label x:Name="ResolutionLabel" Content="Resolution" Grid.Row="0" Grid.Column="0" Style="{DynamicResource LabelStyle}" />
-                    <ComboBox x:Name="ResolutionComboBox" Grid.Column="1" Grid.Row="0" VerticalContentAlignment="Center" Height="20" Width="120">
+                    <Label x:Name="ResolutionLabel" Content="Resolution" Grid.Row="0" Grid.Column="0"
+                           Style="{DynamicResource LabelStyle}" />
+                    <ComboBox x:Name="ResolutionComboBox" Grid.Column="1" Grid.Row="0"
+                              VerticalContentAlignment="Center" Height="20" Width="120">
                         <ComboBoxItem Content="" />
                         <ComboBoxItem Content="480" />
                         <ComboBoxItem IsSelected="True" Content="720" />
                         <ComboBoxItem Content="1080" />
                     </ComboBox>
 
-                    <Label x:Name="StatusLabel" Content="Status" Grid.Row="1" Grid.Column="0" Style="{DynamicResource LabelStyle}" />
-                    <ComboBox x:Name="StatusComboBox" Grid.Column="1" Grid.Row="1" VerticalContentAlignment="Center" Height="20" Width="120">
+                    <Label x:Name="StatusLabel" Content="Status" Grid.Row="1" Grid.Column="0"
+                           Style="{DynamicResource LabelStyle}" />
+                    <ComboBox x:Name="StatusComboBox" Grid.Column="1" Grid.Row="1" VerticalContentAlignment="Center"
+                              Height="20" Width="120">
                         <ComboBoxItem IsSelected="True" Content="Watching" />
                         <ComboBoxItem Content="Finished" />
                         <ComboBoxItem Content="On Hold" />
@@ -96,7 +105,8 @@
 
                 </Grid>
             </Grid>
-            <Button x:Name="SubmitButton" Content="Submit" Grid.Row="3" HorizontalAlignment="Right" Style="{DynamicResource ConfirmationButtonStyle}" />
+            <Button x:Name="SubmitButton" Content="Submit" Grid.Row="3" HorizontalAlignment="Right"
+                    Style="{DynamicResource ConfirmationButtonStyle}" />
         </Grid>
     </Grid>
 </UserControl>

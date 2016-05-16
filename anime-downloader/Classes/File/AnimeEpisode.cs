@@ -41,9 +41,9 @@ namespace anime_downloader.Classes.File
                 var number =
                     int.Parse(string.Join("",
                         StrippedFilename
-                        .Split(new[] { " - " }, StringSplitOptions.RemoveEmptyEntries)
-                        .Last(stripped => stripped.Any(char.IsNumber))
-                        .TakeWhile(char.IsNumber)));
+                            .Split(new[] {" - "}, StringSplitOptions.RemoveEmptyEntries)
+                            .Last(stripped => stripped.Any(char.IsNumber))
+                            .TakeWhile(char.IsNumber)));
                 return $"{number:00}";
             }
         }
@@ -78,9 +78,9 @@ namespace anime_downloader.Classes.File
             var text = fileName;
 
             var phrases = (from Match match in Regex.Matches(text, @"\s?\[(.*?)\]|\((.*?)\)\s*")
-                           select match.Groups[0].Value).ToList();
+                select match.Groups[0].Value).ToList();
 
-            new[] { "_", ".mp4", ".mkv", ".avi" }.ToList().ForEach(p => phrases.Add(p));
+            new[] {"_", ".mp4", ".mkv", ".avi"}.ToList().ForEach(p => phrases.Add(p));
 
             phrases.ForEach(p => text = text.Replace(p, ""));
 

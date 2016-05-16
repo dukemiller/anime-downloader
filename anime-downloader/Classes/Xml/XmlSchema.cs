@@ -70,7 +70,8 @@ namespace anime_downloader.Classes.Xml
                             new XElement("individualShowFolders", false),
                             new XElement("onlyWhitelistedSubs", false),
                             new XElement("exitOnClose", true),
-                            new XElement("alwaysShowTray", false)
+                            new XElement("alwaysShowTray", false),
+                            new XElement("sortByReversed", false)
                             ),
                         new XElement("sortBy", "name"),
                         new XElement("filterBy")

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,7 +9,8 @@ namespace anime_downloader.Classes.File
 {
     public class FileHandler
     {
-        private static readonly string[] FileExtensions = {
+        private static readonly string[] FileExtensions =
+        {
             ".mkv", ".mp4", ".avi"
         };
 
@@ -18,7 +20,7 @@ namespace anime_downloader.Classes.File
         {
             _settings = settings;
         }
-        
+
         /// <summary>
         ///     Set all anime episode counts in the anime list to their last known values from the "watched" folder.
         /// </summary>
@@ -51,45 +53,50 @@ namespace anime_downloader.Classes.File
         /// <summary>
         ///     Move selected files into desintation directory including any subdirectories that file is in
         /// </summary>
-        /// <remarks>
-        ///     //TODO: this really needs to be redone
-        /// </remarks>
-        public void MoveEpisodeToDestination(ListView list, string oldDirectory, string newDirectory)
+        public void MoveEpisodeToDestination(ListBox list, string oldDirectory, string newDirectory)
         {
             var episodes = list.SelectedItems.Cast<AnimeEpisode>().ToList();
 
             foreach (var episode in episodes)
             {
-                var fullPath = episode.FilePath.Replace(oldDirectory, "").Substring(1);
-                var fragments = fullPath.Split(Path.DirectorySeparatorChar);
-
-                var oldPath = oldDirectory;
-                var newPath = newDirectory;
-
-                // If file is a directory, create in new folder, else move file
-                foreach (var fragment in fragments)
+                try
                 {
-                    oldPath = Path.Combine(oldPath, fragment);
-                    newPath = Path.Combine(newPath, fragment);
+                    var fullPath = episode.FilePath.Replace(oldDirectory, "").Substring(1);
+                    var fragments = fullPath.Split(Path.DirectorySeparatorChar);
 
-                    if (Directory.Exists(oldPath))
-                        Directory.CreateDirectory(newPath);
-                    else if (System.IO.File.Exists(oldPath))
-                        System.IO.File.Move(oldPath, newPath);
+                    var oldPath = oldDirectory;
+                    var newPath = newDirectory;
+
+                    // If file is a directory, create in new folder, else move file
+                    foreach (var fragment in fragments)
+                    {
+                        oldPath = Path.Combine(oldPath, fragment);
+                        newPath = Path.Combine(newPath, fragment);
+
+                        if (Directory.Exists(oldPath))
+                            Directory.CreateDirectory(newPath);
+                        else if (System.IO.File.Exists(oldPath))
+                            System.IO.File.Move(oldPath, newPath);
+                    }
+
+                    // Delete all old folders (this would only work on the latest one because it's the only
+                    // path that would be empty, TODO: fix that
+                    oldPath = oldDirectory;
+                    foreach (var fragment in fragments)
+                    {
+                        oldPath = Path.Combine(oldPath, fragment);
+                        if (Directory.Exists(oldPath))
+                            if (Directory.GetFiles(oldPath).Length == 0)
+                            {
+                                Directory.Delete(oldPath);
+                                break;
+                            }
+                    }
                 }
 
-                // Delete all old folders (this would only work on the latest one because it's the only
-                // path that would be empty, TODO: fix that
-                oldPath = oldDirectory;
-                foreach (var fragment in fragments)
+                catch (Exception)
                 {
-                    oldPath = Path.Combine(oldPath, fragment);
-                    if (Directory.Exists(oldPath))
-                        if (Directory.GetFiles(oldPath).Length == 0)
-                        {
-                            Directory.Delete(oldPath);
-                            break;
-                        }
+                    // 
                 }
             }
         }
@@ -97,7 +104,6 @@ namespace anime_downloader.Classes.File
         /// <summary>
         ///     Find and move any duplicate files to another folder.
         /// </summary>
-        /// <returns></returns>
         public async Task<int> MoveDuplicatesAsync()
         {
             var animes = UnwatchedAnimeEpisodes().ToList();
@@ -209,6 +215,5 @@ namespace anime_downloader.Classes.File
             return allAnime.FirstOrDefault(ae => ae.Name.Equals(episodeFileName) &&
                                                  ae.Episode.Equals(anime.Episode));
         }
-        
     }
 }

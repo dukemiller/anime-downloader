@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections;
-using anime_downloader.Classes.Xml;
-using anime_downloader.Views;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using anime_downloader.Classes.Xml;
+using anime_downloader.Views;
 
 namespace anime_downloader.Classes
 {
@@ -77,7 +75,7 @@ namespace anime_downloader.Classes
             foreach (var button in GetAll<ToggleButton>(mainWindow))
                 button.Toggle();
         }
-        
+
         /* --WIP
         public static void AssignTo<T1, T2, T3>(this UserControl parent, Action function)
             where T1 : Control

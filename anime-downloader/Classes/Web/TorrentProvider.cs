@@ -68,7 +68,7 @@ namespace anime_downloader.Classes.Web
             {
                 response = (HttpWebResponse) await request.GetResponseAsync();
                 var disposition = response.Headers["content-disposition"];
-                var filename = disposition?.Split(new[] { "filename=\"" }, StringSplitOptions.None)[1].Split('"')[0];
+                var filename = disposition?.Split(new[] {"filename=\""}, StringSplitOptions.None)[1].Split('"')[0];
                 return filename;
             }
 
@@ -93,11 +93,11 @@ namespace anime_downloader.Classes.Web
             var text = Name;
 
             var phrases = (from Match match in Regex.Matches(text, @"\s?\[(.*?)\]|\((.*?)\)\s*")
-                           select match.Groups[0].Value).ToList();
+                select match.Groups[0].Value).ToList();
 
             phrases.ForEach(p => text = text.Replace(p, ""));
             text = text.Replace("_", " ");
-            text = new[] { ".mkv", ".mp4", ".avi" }.Aggregate(text, (current, s) => current.Replace(s, ""));
+            text = new[] {".mkv", ".mp4", ".avi"}.Aggregate(text, (current, s) => current.Replace(s, ""));
 
             if (removeEpisode)
                 text = string.Join("-", text.Split('-').Take(text.Split('-').Length - 1).ToArray());
@@ -112,7 +112,7 @@ namespace anime_downloader.Classes.Web
         public string Subgroup()
         {
             return (from Match match in Regex.Matches(Name, @"\[([A-Za-z0-9_µ\s\-]+)\]+")
-                    select match.Groups[1].Value).FirstOrDefault(result => result.All(c => !char.IsNumber(c)));
+                select match.Groups[1].Value).FirstOrDefault(result => result.All(c => !char.IsNumber(c)));
         }
 
         /// <summary>

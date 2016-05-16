@@ -77,12 +77,16 @@ namespace anime_downloader.Classes.Xml
         public IEnumerable<Anime> FilteredSortedAnimes()
         {
             var filters = _settings.FilterBy.Split('/');
+
             var propertyDescriptor = TypeDescriptor
                 .GetProperties(typeof(Anime))
                 .Find(_settings.SortBy, true);
-            return Animes
-                .Where(a => _settings.FilterBy.Equals("") || filters.Any(f => f.Equals(a.Status)))
-                .OrderBy(x => propertyDescriptor.GetValue(x));
+
+            var animes = Animes.Where(a => _settings.FilterBy.Equals("") || filters.Any(f => f.Equals(a.Status)));
+
+            return _settings.SortByReversed
+                ? animes.OrderByDescending(x => propertyDescriptor.GetValue(x))
+                : animes.OrderBy(x => propertyDescriptor.GetValue(x));
         }
 
         /// <summary>

@@ -12,7 +12,7 @@ namespace anime_downloader.Classes.File
         {
             _settings = settings;
         }
-        
+
         public async Task WriteLineAsync(string message)
         {
             var timestamp = $"{DateTime.Now:[M/d/yyyy @ hh:mm:ss tt]}";

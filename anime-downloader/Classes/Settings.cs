@@ -1,8 +1,8 @@
-﻿using anime_downloader.Classes.Xml;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using anime_downloader.Classes.Xml;
 
 namespace anime_downloader.Classes
 {
@@ -35,7 +35,7 @@ namespace anime_downloader.Classes
         /// <summary>
         ///     The path of watched files.
         /// </summary>
-        public string WatchedDirectory 
+        public string WatchedDirectory
         {
             get { return Root.Element("path")?.Element("watched")?.Value; }
             set
@@ -68,7 +68,7 @@ namespace anime_downloader.Classes
         /// </summary>
         public string DuplicatesDirectory
             => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyVideos), "Duplicates");
-        
+
         /// <summary>
         ///     The path where all .torrent files will be downloaded to.
         /// </summary>
@@ -101,7 +101,7 @@ namespace anime_downloader.Classes
         }
 
         public string LoggingFile => Path.Combine(ApplicationDirectory, "log.txt");
-        
+
         /// <summary>
         ///     The user preferred anime list sort method.
         /// </summary>
@@ -111,6 +111,16 @@ namespace anime_downloader.Classes
             set
             {
                 Root.Element("sortBy")?.SetValue(value);
+                Save();
+            }
+        }
+
+        public bool SortByReversed
+        {
+            get { return bool.Parse(Root.Element("flag")?.Element("sortByReversed")?.Value ?? "false"); }
+            set
+            {
+                Root.Element("flag")?.Element("sortByReversed")?.SetValue(value);
                 Save();
             }
         }
@@ -154,7 +164,7 @@ namespace anime_downloader.Classes
                 Save();
             }
         }
-        
+
         public bool ExitOnClose
         {
             get { return bool.Parse(Root.Element("flag")?.Element("exitOnClose")?.Value ?? "false"); }

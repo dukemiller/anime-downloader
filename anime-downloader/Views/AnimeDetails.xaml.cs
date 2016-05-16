@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using anime_downloader.Classes;
 
 namespace anime_downloader.Views
 {
@@ -53,6 +54,14 @@ namespace anime_downloader.Views
                     RatingTextbox.Select(0, 2);
                 }
             }
+        }
+
+        private void EnterApply(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Enter)
+                return;
+            SubmitButton.Focus();
+            SubmitButton.Press();
         }
     }
 }

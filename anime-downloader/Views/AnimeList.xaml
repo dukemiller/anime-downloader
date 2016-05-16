@@ -5,27 +5,25 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:classes="clr-namespace:anime_downloader.Classes"
              mc:Ignorable="d"
-             d:DesignHeight="360" d:DesignWidth="680">
+             d:DesignHeight="360" d:DesignWidth="680"
+             Loaded="UserControl_Loaded">
     <Grid>
         <Grid.Background>White</Grid.Background>
         <Grid.RowDefinitions>
             <RowDefinition Height="15*" />
             <RowDefinition Height="2*" />
         </Grid.RowDefinitions>
-        <DataGrid x:Name="DataGrid"
-                  Grid.Row="0"
-                  AutoGenerateColumns="False"
-                  CanUserResizeRows="False"
-                  CanUserAddRows="False"
+        <DataGrid x:Name="DataGrid" Grid.Row="0"
+                  FocusVisualStyle="{x:Null}"
+                  RowHeaderWidth="0" HorizontalContentAlignment="Center"
+                  BorderThickness="0" FontSize="16"
+                  GridLinesVisibility="None"
+                  AutoGenerateColumns="False" CanUserResizeRows="False" CanUserAddRows="False"
                   UseLayoutRounding="False"
                   SelectionUnit="Cell" IsReadOnly="True"
-                  FocusVisualStyle="{x:Null}"
-                  Sorting="DataGrid_OnSorting"
-                  RowHeaderWidth="0"
-                  HorizontalContentAlignment="Center"
-                  GridLinesVisibility="None" BorderThickness="0" FontSize="16"
                   FontFamily="{StaticResource MainFont}"
-                  d:DataContext="{d:DesignInstance classes:Anime }">
+                  d:DataContext="{d:DesignInstance classes:Anime }"
+                  Sorting="DataGrid_OnSorting">
             <DataGrid.Resources>
                 <Style TargetType="{x:Type DataGridColumnHeader}">
                     <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -45,16 +43,15 @@
                 </ContextMenu>
             </DataGrid.ContextMenu>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Name" Width="300" 
-                                    Binding="{Binding Path=Title}" />
-                <DataGridTextColumn Header="Episode" CellStyle="{StaticResource CenterStyle}" Width="auto"
-                                    Binding="{Binding Path=Episode}" />
-                <DataGridTextColumn Header="Status" CellStyle="{StaticResource CenterStyle}" Width="auto"
-                                    Binding="{Binding Path=Status}" />
-                <DataGridTextColumn Header="Airing" CellStyle="{StaticResource CenterStyle}" Width="auto"
-                                    Binding="{Binding Path=AiringSymbol}" SortMemberPath="AiringSymbol" />
-                <DataGridTextColumn Header="Rating" CellStyle="{StaticResource CenterStyle}" Width="auto"
-                                    Binding="{Binding Path=Rating}" SortMemberPath="SortedRating" />
+                <DataGridTextColumn Header="Name" Binding="{Binding Path=Title}" Width="300" />
+                <DataGridTextColumn Header="Episode" Binding="{Binding Path=Episode}"
+                                    CellStyle="{StaticResource CenterStyle}" Width="auto" />
+                <DataGridTextColumn Header="Status" Binding="{Binding Path=Status}"
+                                    CellStyle="{StaticResource CenterStyle}" Width="auto" />
+                <DataGridTextColumn Header="Airing" Binding="{Binding Path=AiringSymbol}"
+                                    CellStyle="{StaticResource CenterStyle}" Width="auto" SortMemberPath="AiringSymbol" />
+                <DataGridTextColumn Header="Rating" Binding="{Binding Path=Rating}"
+                                    CellStyle="{StaticResource CenterStyle}" Width="auto" SortMemberPath="SortedRating" />
             </DataGrid.Columns>
         </DataGrid>
         <Grid Grid.Row="1">
@@ -62,16 +59,18 @@
                 <ColumnDefinition Width="9*" />
                 <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
-            <Label Grid.Column="0" x:Name="StatsLabel" HorizontalAlignment="Left" FontSize="16" FontFamily="{StaticResource MainFont}" VerticalContentAlignment="Center" />
-            <Rectangle Grid.Column="0" x:Name="FindRectangle" HorizontalAlignment="Right" Height="25" Stroke="Gray" Margin="0, 0, 10, 0"
+            <Label Grid.Column="0" x:Name="StatsLabel" HorizontalAlignment="Left" FontSize="16"
+                   FontFamily="{StaticResource MainFont}" VerticalContentAlignment="Center" />
+            <Rectangle Grid.Column="0" x:Name="FindRectangle" HorizontalAlignment="Right" Height="25" Stroke="Gray"
+                       Margin="0, 0, 10, 0"
                        StrokeThickness="0.5" Width="25" RadiusX="25" RadiusY="25"
                        MouseEnter="FindRectangle_OnMouseEnter" MouseLeave="FindRectangle_OnMouseLeave">
                 <Rectangle.Fill>
                     <ImageBrush ImageSource="../Resources/Images/find.png" />
                 </Rectangle.Fill>
             </Rectangle>
-
-            <ComboBox x:Name="FilterComboBox" MouseWheel="OnContentChanged" Height="25" HorizontalContentAlignment="Center" Grid.Column="1" FontFamily="{StaticResource MainFont}">
+            <ComboBox x:Name="FilterComboBox" MouseWheel="OnContentChanged" Height="25"
+                      HorizontalContentAlignment="Center" Grid.Column="1" FontFamily="{StaticResource MainFont}">
                 <ComboBoxItem Content="" IsSelected="True" />
                 <ComboBoxItem Content="Airing/Watching" />
                 <ComboBoxItem Content="Finished" />

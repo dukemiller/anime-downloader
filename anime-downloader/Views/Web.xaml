@@ -1,41 +1,25 @@
 ﻿<UserControl x:Class="anime_downloader.Views.Web"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             mc:Ignorable="d" 
-                      d:DesignHeight="360" d:DesignWidth="680">
+             mc:Ignorable="d"
+             d:DesignHeight="360" d:DesignWidth="680">
     <UserControl.Resources>
         <Style x:Key="BoxStyle" TargetType="{x:Type GroupBox}">
             <Setter Property="FontSize" Value="16" />
             <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="FontFamily" Value="Yu Gothic"/>
+            <Setter Property="FontFamily" Value="Yu Gothic" />
         </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.Background>White</Grid.Background>
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="5*"/>
-                <RowDefinition Height="1*"/>
+                <RowDefinition Height="5*" />
+                <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0">
-                <GroupBox x:Name="WebButtonsGroupBox" Header="Websites" Style="{DynamicResource BoxStyle}">
-                    <DockPanel HorizontalAlignment="Left">
-                        <Button x:Name="AnichartButton" Margin="5" Style="{DynamicResource FeatureButtonStyle}" >
-                            <TextBlock Margin="5">Anichart</TextBlock>
-                        </Button>
-                        <Button x:Name="MyanimelistButton" Margin="5" Style="{DynamicResource FeatureButtonStyle}" >
-                            <TextBlock Margin="5">MyAnimeList</TextBlock>
-                        </Button>
-                        <Button x:Name="AnidbButton" Margin="5" Style="{DynamicResource FeatureButtonStyle}" >
-                            <TextBlock Margin="5">aniDB</TextBlock>
-                        </Button>
-                        <Button x:Name="NyaaButton" Margin="5" Style="{DynamicResource FeatureButtonStyle}" >
-                            <TextBlock Margin="5">Nyaa</TextBlock>
-                        </Button>
-                    </DockPanel>
-                </GroupBox>
                 <GroupBox x:Name="SearchGroupBox" Header="Search on MyAnimeList: " Style="{DynamicResource BoxStyle}">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -43,14 +27,37 @@
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
-                        <TextBox x:Name="SearchTextBox" Width="300" Grid.Column="0" Margin="5" VerticalContentAlignment="Center" />
-                        <Button x:Name="SearchButton" Grid.Column="1" Margin="5" Style="{DynamicResource FeatureButtonStyle}">
+                        <TextBox x:Name="SearchTextBox" Width="300" Grid.Column="0" Margin="5"
+                                 VerticalContentAlignment="Center" KeyDown="SearchTextBox_KeyDown" />
+                        <Button x:Name="SearchButton" Grid.Column="1" Margin="5"
+                                Style="{DynamicResource FeatureButtonStyle}" KeyDown="SearchButton_KeyDown">
                             <TextBlock Margin="5">Search</TextBlock>
                         </Button>
-                        <Button x:Name="FirstResultButton" Grid.Column="2" Margin="5" Style="{DynamicResource FeatureButtonStyle}">
+                        <Button x:Name="FirstResultButton" Grid.Column="2" Margin="5"
+                                Style="{DynamicResource FeatureButtonStyle}">
                             <TextBlock Margin="5">First Result</TextBlock>
                         </Button>
                     </Grid>
+                </GroupBox>
+                <GroupBox x:Name="WebButtonsGroupBox" Header="Websites" Style="{DynamicResource BoxStyle}">
+                    <DockPanel HorizontalAlignment="Left">
+                        <Button x:Name="AnichartButton" Margin="5" Style="{DynamicResource FeatureButtonStyle}"
+                                Click="AnichartButton_Click">
+                            <TextBlock Margin="5">Anichart</TextBlock>
+                        </Button>
+                        <Button x:Name="MyanimelistButton" Margin="5" Style="{DynamicResource FeatureButtonStyle}"
+                                Click="MyanimelistButton_Click">
+                            <TextBlock Margin="5">MyAnimeList</TextBlock>
+                        </Button>
+                        <Button x:Name="AnidbButton" Margin="5" Style="{DynamicResource FeatureButtonStyle}"
+                                Click="AnidbButton_Click">
+                            <TextBlock Margin="5">aniDB</TextBlock>
+                        </Button>
+                        <Button x:Name="NyaaButton" Margin="5" Style="{DynamicResource FeatureButtonStyle}"
+                                Click="NyaaButton_Click">
+                            <TextBlock Margin="5">Nyaa</TextBlock>
+                        </Button>
+                    </DockPanel>
                 </GroupBox>
             </StackPanel>
         </Grid>

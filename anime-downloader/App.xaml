@@ -10,7 +10,7 @@
         <SolidColorBrush x:Key="SelectedColor" Color="#348DFF" />
         <SolidColorBrush x:Key="PressedDownColor" Color="#3F92FE" />
         <SolidColorBrush x:Key="BorderColor" Color="#A1CAFF" />
-        
+
         <!-- Fonts -->
         <FontFamily x:Key="LargeButtonFont">Segoe UI Light</FontFamily>
         <FontFamily x:Key="MediumButtonFont">Segoe WP SemiLight</FontFamily>
@@ -22,33 +22,33 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ToggleButton}">
                         <Border Background="{TemplateBinding Background}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-            <Setter Property="Background" Value="{StaticResource BackgroundColor}"/>
-            <Setter Property="FontFamily" Value="{StaticResource LargeButtonFont}"/>
-            <Setter Property="FontSize" Value="28"/>
-            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-            <Setter Property="BorderBrush" Value="{x:Null}"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Background" Value="{StaticResource BackgroundColor}" />
+            <Setter Property="FontFamily" Value="{StaticResource LargeButtonFont}" />
+            <Setter Property="FontSize" Value="28" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="BorderBrush" Value="{x:Null}" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Foreground" Value="Black" />
             <Style.Triggers>
                 <Trigger Property="IsChecked" Value="True">
-                    <Setter Property="Foreground" Value="White"/>
-                    <Setter Property="Background" Value="{StaticResource SelectedColor}"/>
+                    <Setter Property="Foreground" Value="White" />
+                    <Setter Property="Background" Value="{StaticResource SelectedColor}" />
                 </Trigger>
                 <MultiTrigger>
                     <MultiTrigger.Conditions>
-                        <Condition Property="IsMouseOver" Value="True"/>
-                        <Condition Property="IsChecked" Value="False"/>
+                        <Condition Property="IsMouseOver" Value="True" />
+                        <Condition Property="IsChecked" Value="False" />
                     </MultiTrigger.Conditions>
-                    <Setter Property="Foreground" Value="White"/>
-                    <Setter Property="Background" Value="{StaticResource MouseOverColor}"/>
+                    <Setter Property="Foreground" Value="White" />
+                    <Setter Property="Background" Value="{StaticResource MouseOverColor}" />
                 </MultiTrigger>
                 <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Background" Value="{StaticResource PressedDownColor}"/>
+                    <Setter Property="Background" Value="{StaticResource PressedDownColor}" />
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -56,27 +56,27 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
-                        <Border BorderBrush="{StaticResource BorderColor}" BorderThickness="2" 
-                                Background="{TemplateBinding Background}" >
+                        <Border BorderBrush="{StaticResource BorderColor}" BorderThickness="2"
+                                Background="{TemplateBinding Background}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-            <Setter Property="Background" Value="{StaticResource BackgroundColor}"/>
-            <Setter Property="FontFamily" Value="{StaticResource MediumButtonFont}"/>
-            <Setter Property="FontSize" Value="18"/>
-            <Setter Property="Foreground" Value="Black"/>
-            <Setter Property="Width" Value="80"/>
-            <Setter Property="Height" Value="30"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Background" Value="{StaticResource BackgroundColor}" />
+            <Setter Property="FontFamily" Value="{StaticResource MediumButtonFont}" />
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="Width" Value="80" />
+            <Setter Property="Height" Value="30" />
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Foreground" Value="White"/>
-                    <Setter Property="Background" Value="{StaticResource MouseOverColor}"/>
+                    <Setter Property="Foreground" Value="White" />
+                    <Setter Property="Background" Value="{StaticResource MouseOverColor}" />
                 </Trigger>
                 <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Background" Value="{StaticResource PressedDownColor}"/>
+                    <Setter Property="Background" Value="{StaticResource PressedDownColor}" />
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -84,26 +84,27 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
-                        <Border BorderBrush="{StaticResource BorderColor}" BorderThickness="2" Background="{TemplateBinding Background}" >
+                        <Border BorderBrush="{StaticResource BorderColor}" BorderThickness="2"
+                                Background="{TemplateBinding Background}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             <Setter Property="Background" Value="{StaticResource BackgroundColor}" />
-            <Setter Property="FontFamily" Value="{StaticResource MediumButtonFont}"/>
-            <Setter Property="FontSize" Value="18"/>
-            <Setter Property="Foreground" Value="Black"/>
-            <Setter Property="Width" Value="auto"/>
-            <Setter Property="Height" Value="auto"/>
+            <Setter Property="FontFamily" Value="{StaticResource MediumButtonFont}" />
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="Width" Value="auto" />
+            <Setter Property="Height" Value="auto" />
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Foreground" Value="White"/>
-                    <Setter Property="Background" Value="{StaticResource MouseOverColor}"/>
+                    <Setter Property="Foreground" Value="White" />
+                    <Setter Property="Background" Value="{StaticResource MouseOverColor}" />
                 </Trigger>
                 <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Background" Value="{StaticResource PressedDownColor}"/>
+                    <Setter Property="Background" Value="{StaticResource PressedDownColor}" />
                 </Trigger>
             </Style.Triggers>
         </Style>

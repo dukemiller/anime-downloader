@@ -6,7 +6,7 @@
              mc:Ignorable="d"
              d:DesignHeight="360" d:DesignWidth="680">
     <Grid x:Name="OutputGrid">
-        <TextBox x:Name="TextBox" TextWrapping="Wrap" FontSize="20" IsReadOnly="True" Background="#ECECEC" 
+        <TextBox x:Name="TextBox" TextWrapping="Wrap" FontSize="20" IsReadOnly="True" Background="#ECECEC"
                  VerticalScrollBarVisibility="Auto" BorderThickness="0" FontFamily="Segoe UI Light" />
     </Grid>
 </UserControl>

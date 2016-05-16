@@ -1,12 +1,12 @@
-﻿using anime_downloader.Classes.File;
-using anime_downloader.Classes.Web;
-using anime_downloader.Classes.Xml;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using anime_downloader.Classes.File;
+using anime_downloader.Classes.Web;
+using anime_downloader.Classes.Xml;
 
 namespace anime_downloader.Classes
 {
@@ -181,7 +181,7 @@ namespace anime_downloader.Classes
                 int val;
                 if (int.TryParse(Rating, out val))
                     return val;
-                return 13 * SortedRateFlag - 2;
+                return 13*SortedRateFlag - 2;
             }
         }
 
@@ -204,9 +204,9 @@ namespace anime_downloader.Classes
             if (m == 0)
                 return n;
             for (var i = 0; i <= n; d[i, 0] = i++)
-            { }
+            {}
             for (var j = 0; j <= m; d[0, j] = j++)
-            { }
+            {}
             for (var i = 1; i <= n; i++)
             {
                 for (var j = 1; j <= m; j++)
@@ -227,7 +227,7 @@ namespace anime_downloader.Classes
             var name = episodes
                 .Select(e => e.Name)
                 .Distinct()
-                .Select(e => new { Name = e, Distance = LevenshteinDistance(Name, e) })
+                .Select(e => new {Name = e, Distance = LevenshteinDistance(Name, e)})
                 .OrderBy(e => e.Distance)
                 .First()
                 .Name;
@@ -244,7 +244,7 @@ namespace anime_downloader.Classes
         public static Anime ClosestTo(IEnumerable<Anime> animes, string name)
         {
             return animes
-                .Select(a => new { Anime = a, Distance = LevenshteinDistance(a.Name, name) })
+                .Select(a => new {Anime = a, Distance = LevenshteinDistance(a.Name, name)})
                 .OrderBy(ap => ap.Distance)
                 .First()
                 .Anime;
@@ -254,7 +254,7 @@ namespace anime_downloader.Classes
         {
             var animes = XmlController.GetXmlController(settings).Animes;
             return animes
-                .Select(a => new { Anime = a, Distance = LevenshteinDistance(a.Name, name) })
+                .Select(a => new {Anime = a, Distance = LevenshteinDistance(a.Name, name)})
                 .OrderBy(ap => ap.Distance)
                 .First()
                 .Anime;
@@ -263,7 +263,7 @@ namespace anime_downloader.Classes
         public static AnimeEpisode ClosestTo(IEnumerable<AnimeEpisode> animeEpisodes, string name)
         {
             return animeEpisodes
-                .Select(a => new { Anime = a, Distance = LevenshteinDistance(a.Name, name) })
+                .Select(a => new {Anime = a, Distance = LevenshteinDistance(a.Name, name)})
                 .OrderBy(ap => ap.Distance)
                 .First()
                 .Anime;
@@ -272,7 +272,7 @@ namespace anime_downloader.Classes
         public static string ClosestTo(IEnumerable<string> animeEpisodeFileNames, string name)
         {
             return animeEpisodeFileNames
-                .Select(a => new { Anime = a, Distance = LevenshteinDistance(a, name) })
+                .Select(a => new {Anime = a, Distance = LevenshteinDistance(a, name)})
                 .OrderBy(ap => ap.Distance)
                 .First()
                 .Anime;
@@ -297,13 +297,13 @@ namespace anime_downloader.Classes
         /// <returns>A RSS parsable string.</returns>
         public string ToRss(string episode)
         {
-            string[] separators = { string.Join("+", Title.Replace("'s", "").Split(' ')), episode, Resolution };
+            string[] separators = {string.Join("+", Title.Replace("'s", "").Split(' ')), episode, Resolution};
             return string.Join("+", separators);
         }
 
         public string ToRss()
         {
-            string[] separators = { string.Join("+", Title.Replace("'s", "").Split(' ')), NextEpisode(), Resolution };
+            string[] separators = {string.Join("+", Title.Replace("'s", "").Split(' ')), NextEpisode(), Resolution};
             return string.Join("+", separators);
         }
 
