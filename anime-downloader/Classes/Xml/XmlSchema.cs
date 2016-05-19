@@ -5,7 +5,9 @@ namespace anime_downloader.Classes.Xml
 {
     /// <summary>
     ///     The purpose of this class is to keep the schema for any nodes or documents
-    ///     in one location.
+    ///     in one location. Any change in the schema here is verified in the XmlVerify 
+    ///     class and automatically updated and populated with the default given value
+    ///     or properly removed.
     /// </summary>
     public class XmlSchema
     {
@@ -83,7 +85,7 @@ namespace anime_downloader.Classes.Xml
         /// <summary>
         ///     Create the settings xml file with initial nodes and save to settings-defined xml location.
         /// </summary>
-        public void SettingsXmlAndSave()
+        public void CreateSettingsXml()
         {
             var document = SettingsXml();
             document.Save(_settings.SettingsXml);
@@ -92,7 +94,7 @@ namespace anime_downloader.Classes.Xml
         /// <summary>
         ///     Create the anime xml file with initial nodes and save to settings-defined xml location.
         /// </summary>
-        public void AnimeXmlAndSave()
+        public void CreateAnimeXml()
         {
             var document = AnimeXml();
             document.Save(_settings.AnimeXml);

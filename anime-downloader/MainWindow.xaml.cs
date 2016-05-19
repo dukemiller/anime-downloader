@@ -82,9 +82,9 @@ namespace anime_downloader
 
         /* Initializations */
 
-        private static void HandleIfAlreadyOpened()
+        private void HandleIfAlreadyOpened()
         {
-            const int swRestore = 9;
+            const int restore = 9;
 
             // All same exact processes
             var processes = Process.GetProcessesByName(
@@ -96,8 +96,10 @@ namespace anime_downloader
             if (processes.Length > 1)
             {
                 var hwnd = FindWindow(null, "Anime Downloader");
-                ShowWindow(hwnd, swRestore);
+                ShowWindow(hwnd, restore);
                 SetForegroundWindow(hwnd);
+                if (_tray?.Visible == true)
+                    _tray.Visible = false;
                 Application.Current.Shutdown();
             }
         }
@@ -116,12 +118,10 @@ namespace anime_downloader
 
             if (!Directory.Exists(_settings.ApplicationDirectory))
                 Directory.CreateDirectory(_settings.ApplicationDirectory);
-
-            // Create new anime xml
+            
             if (!File.Exists(_settings.AnimeXml))
-                _xml.Schema.AnimeXmlAndSave();
-
-            // Create new settings xml or edit the schema and load anime
+                _xml.Schema.CreateAnimeXml();
+            
             if (!File.Exists(_settings.SettingsXml))
                 CreateNewSettings();
             else
@@ -425,7 +425,12 @@ namespace anime_downloader
         public async void AnimeList_Context_Search_Click(object sender, RoutedEventArgs e)
         {
             var display = (AnimeList) CurrentDisplay;
-            await SearchOnMyAnimeListAsync(((Anime) display.DataGrid.SelectedCells.First().Item).Name);
+            var anime = display.DataGrid.SelectedCells.FirstOrDefault().Item as Anime;
+            if (anime != null)
+            {
+                await SearchOnMyAnimeListAsync(anime.Name);
+            }
+            
         }
 
         /// <summary>
@@ -713,7 +718,7 @@ namespace anime_downloader
                     if (!display.EpisodeTextBox.Text.Equals(""))
                         anime.Episode = display.EpisodeTextBox.Text;
                     anime.Status = display.StatusComboBox.Text;
-                    anime.Airing = display.AiringCheckBox.IsChecked == true;
+                    anime.Airing = display.AiringCheckBox.IsChecked.Value;
                     anime.Resolution = display.ResolutionComboBox.Text;
                 }
                 AnimeListButton.Press();
@@ -862,7 +867,7 @@ namespace anime_downloader
                     Alert("You must enter in the episode, torrent files and utorrent path information.");
                 else
                 {
-                    _xml.Schema.SettingsXmlAndSave();
+                    _xml.Schema.CreateSettingsXml();
 
                     _settings.EpisodeDirectory = display.EpisodeTextbox.Text;
                     _settings.WatchedDirectory = display.WatchedTextbox.Text;
@@ -976,9 +981,9 @@ namespace anime_downloader
         {
             var response =
                 MessageBox.Show(
-                    "Don't do this often, it might use a lot of requests. You could also potentially download " +
-                    "the wrong series if the intended series isn't found by your anime name and settings. \n\n" +
-                    "Are you sure you want to?",
+                    "You could potentially download the wrong series if the intended series isn't found by your " +
+                    "anime name and settings. Be sure everything on your list retrieves the show you intend. \n\n" +
+                    "Are you sure you want to continue?",
                     "Confirmation",
                     MessageBoxButton.YesNo);
 
@@ -1019,7 +1024,8 @@ namespace anime_downloader
         private async Task GetMissingEpisodesAsync(TextBox textBox)
         {
             textBox.WriteLine(">> Finding all missing episodes ...");
-            var allEpisodeFiles = await Task.Run(() => _filehandler.AllAnimeEpisodes().ToList());
+            var allEpisodeFiles = await Task.Run(() =>
+                _filehandler.AllAnimeEpisodes().ToList());
             var animeFileDeltas = await Task.Run(() =>
                 _filehandler.FirstEpisodesOf(allEpisodeFiles)
                     .OrderBy(a => a.Name)

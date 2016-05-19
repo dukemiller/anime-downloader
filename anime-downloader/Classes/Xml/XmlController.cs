@@ -7,7 +7,7 @@ namespace anime_downloader.Classes.Xml
 {
     /// <summary>
     ///     The purpose of this class is to consolidate operations that may require
-    ///     both read/write operations on the XML files to one location.
+    ///     both read/write operations on the XML files to one location. 
     /// </summary>
     public class XmlController
     {
@@ -68,8 +68,7 @@ namespace anime_downloader.Classes.Xml
         /// </summary>
         /// <returns></returns>
         public XElement AnimeRoot => AnimeDocument.Root;
-
-        // TODO: i have a headache this is the easiest way i can think of
+        
         /// <summary>
         ///     Retrieve settings-defined filtered and sorted collection of the anime
         ///     currently in the anime xml as Anime objects.

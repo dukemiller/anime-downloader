@@ -37,8 +37,6 @@ namespace anime_downloader.Classes
         ///     Preferably read from the already existing schema and
         ///     instantiated from the XmlController.
         /// </remarks>
-        /// <param name="root"></param>
-        /// <param name="xml"></param>
         public Anime(XContainer root, XmlController xml)
         {
             Root = root;
