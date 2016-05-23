@@ -13,14 +13,12 @@ namespace anime_downloader.Classes.File
     public class Downloader
     {
         private readonly WebClient _client;
-        private readonly Logger _logger;
         private readonly Settings _settings;
         private int _downloaded;
 
         public Downloader(Settings settings)
         {
             _settings = settings;
-            _logger = new Logger(settings);
             _client = new WebClient();
         }
 
@@ -125,7 +123,7 @@ namespace anime_downloader.Classes.File
 
             if (downloadedFile)
             {
-                await _logger.WriteLineAsync($"Downloaded '{anime.Title}' episode {anime.NextEpisode()}.");
+                await Logger.WriteLineAsync($"Downloaded '{anime.Title}' episode {anime.NextEpisode()}.");
                 anime.Episode = anime.NextEpisode();
                 _downloaded++;
             }

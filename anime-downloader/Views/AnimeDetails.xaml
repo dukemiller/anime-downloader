@@ -7,7 +7,8 @@
              xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
              d:DesignHeight="360"
              d:DesignWidth="680"
-             mc:Ignorable="d">
+             mc:Ignorable="d"
+             >
     <UserControl.Resources>
         <xaml:KeyValueConverter x:Key="Converter" />
         <Style x:Key="RadioStyle" TargetType="{x:Type RadioButton}">
@@ -56,11 +57,8 @@
                     <Label x:Name="NameLabel"
                            Grid.Row="0"
                            Grid.Column="0"
-                           HorizontalAlignment="Left"
-                           VerticalAlignment="Center"
+                           Style="{StaticResource LabelStyle}"
                            Content="Name: "
-                           FontFamily="Yu Gothic"
-                           FontSize="16"
                            ToolTip="A hopefully close approximation to the name of the show." />
                     <TextBox x:Name="NameTextbox"
                              Grid.Row="0"
@@ -71,17 +69,15 @@
                              GotFocus="NameTextbox_GotFocus"
                              Text="{Binding Name}"
                              TextWrapping="Wrap"
-                             KeyDown="EnterApply" />
+                             KeyDown="EnterApply"
+                             Loaded="NameTextbox_OnLoaded" />
 
                     <!--  Episode  -->
                     <Label x:Name="EpisodeLabel"
                            Grid.Row="1"
                            Grid.Column="0"
-                           HorizontalAlignment="Left"
-                           VerticalAlignment="Center"
+                           Style="{StaticResource LabelStyle}"
                            Content="Episode: "
-                           FontFamily="Yu Gothic"
-                           FontSize="16"
                            ToolTip="The last episode you've watched." />
                     <TextBox x:Name="EpisodeTextbox"
                              Grid.Row="1"
@@ -225,6 +221,7 @@
                                  FontSize="18.667"
                                  GotFocus="EpisodeTextbox_GotFocus"
                                  PreviewTextInput="RatingTextbox_PreviewTextInput"
+                                 KeyDown="EnterApply"
                                  Text="{Binding Rating}" />
 
                         <!--  Airing  -->

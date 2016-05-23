@@ -86,8 +86,12 @@ namespace anime_downloader.Classes.Web
         /// <summary>
         ///     Strips the filename to remove extraneous information and returns name.
         /// </summary>
-        /// <param name="removeEpisode">A flag for also removing the episode number</param>
-        /// <returns>The name of the anime.</returns>
+        /// <param name="removeEpisode">
+        ///     A flag for also removing the episode number
+        /// </param>
+        /// <returns>
+        ///     The name of the anime.
+        /// </returns>
         public string StrippedName(bool removeEpisode = false)
         {
             var text = Name;

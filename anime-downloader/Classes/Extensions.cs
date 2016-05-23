@@ -20,11 +20,11 @@ namespace anime_downloader.Classes
         ///     "Refresh" the datacontext on the UI.
         /// </summary>
         /// <param name="animeList"></param>
-        /// <param name="controller"></param>
-        public static void Refresh(this AnimeList animeList, XmlController controller)
+        /// <param name="collection"></param>
+        public static void Refresh(this AnimeList animeList, AnimeCollection collection)
         {
-            var anime = controller.Animes.ToList();
-            animeList.DataGrid.ItemsSource = controller.FilteredSortedAnimes();
+            var anime = collection.Animes.ToList();
+            animeList.DataGrid.ItemsSource = collection.FilteredAndSorted();
             animeList.StatsLabel.Content = $"{anime.Count} total animes. " +
                                            $"{anime.Count(a => a.Airing)} airing or watching, " +
                                            $"{anime.Count(a => a.Status.Equals("Finished"))} finished, " +
@@ -34,8 +34,6 @@ namespace anime_downloader.Classes
         /// <summary>
         ///     Check if the container is empty.
         /// </summary>
-        /// <param name="textbox"></param>
-        /// <returns></returns>
         public static bool Empty(this TextBox textbox) => textbox.Text.Equals("");
 
         public static void WriteLine(this TextBox textbox, string text)
@@ -69,7 +67,9 @@ namespace anime_downloader.Classes
         /// </summary>
         public static void ToggleButtons(this MainWindow window)
         {
-            foreach (var button in GetAll<ToggleButton>(window))
+            foreach (var button in window.GetAll<ToggleButton>()) //.Union(window.GetAll<Button>(window)))
+                button.Toggle();
+            foreach (var button in window.GetAll<Button>()) //.Union(window.GetAll<Button>(window)))
                 button.Toggle();
         }
 
@@ -107,6 +107,14 @@ namespace anime_downloader.Classes
                     collection.Add(child as T);
                 GetAll(dependencyObject, collection);
             }
+        }
+
+        // http://stackoverflow.com/a/14591148
+        public static string RemoveWhitespace(this string input)
+        {
+            return new string(input.ToCharArray()
+                .Where(c => !char.IsWhiteSpace(c))
+                .ToArray());
         }
     }
 }

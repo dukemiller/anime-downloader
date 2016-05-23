@@ -20,23 +20,34 @@
                 <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0">
-                <GroupBox x:Name="GroupBox" Header="Indexing options (for each show that is both 'airing' and 'watching')"
+                <GroupBox x:Name="GroupBox"
+                          Header="Indexing options (for each show that is both 'airing' and 'watching')"
                           Style="{DynamicResource BoxStyle}"
                           VerticalAlignment="Top">
                     <StackPanel Margin="5">
-                        <RadioButton Name="RadioDuplicates" VerticalContentAlignment="Center" KeyDown="Radio_KeyDown">
+                        <RadioButton Name="DuplicatesRadio" VerticalContentAlignment="Center" KeyDown="Radio_KeyDown">
                             <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Move duplicates to your "My Videos" folder</TextBlock>
                         </RadioButton>
-                        <RadioButton Name="RadioIndexLastWatched" VerticalContentAlignment="Center" KeyDown="Radio_KeyDown">
-                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode to last episode number in the Watched folder</TextBlock>
+                        <RadioButton Name="LastWatchedRadio" VerticalContentAlignment="Center"
+                                     KeyDown="Radio_KeyDown">
+                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode to last episode number in the watched folder</TextBlock>
                         </RadioButton>
-                        <RadioButton Name="RadioIndexLastUnwatched" VerticalContentAlignment="Center" KeyDown="Radio_KeyDown">
-                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode to last episode number in the Episodes folder</TextBlock>
+                        
+                        <RadioButton Name="LastUnwatchedRadio" VerticalContentAlignment="Center"
+                                     KeyDown="Radio_KeyDown">
+                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode to last episode number in the episodes folder</TextBlock>
                         </RadioButton>
-                        <RadioButton Name="RadioIndexFirstWatched" VerticalContentAlignment="Center" KeyDown="Radio_KeyDown">
+
+                        <RadioButton Name="LastAnyRadio" VerticalContentAlignment="Center"
+                                     KeyDown="Radio_KeyDown">
+                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode to last episode number in any folder</TextBlock>
+                        </RadioButton>
+
+                        <RadioButton Name="FirstWatchedRadio" VerticalContentAlignment="Center"
+                                     KeyDown="Radio_KeyDown">
                             <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode to first known episode value in any folder</TextBlock>
                         </RadioButton>
-                        <RadioButton Name="RadioIndexZero" VerticalContentAlignment="Center" KeyDown="Radio_KeyDown">
+                        <RadioButton Name="ZeroRadio" VerticalContentAlignment="Center" KeyDown="Radio_KeyDown">
                             <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode to zero</TextBlock>
                         </RadioButton>
                     </StackPanel>

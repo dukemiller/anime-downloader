@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System.Windows;
+using System.Windows.Input;
 using anime_downloader.Classes;
 
 namespace anime_downloader.Views
@@ -19,7 +20,7 @@ namespace anime_downloader.Views
                 CreateButton.Press();
         }
 
-        private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             CreateButton.Focus();
         }

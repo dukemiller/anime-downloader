@@ -70,7 +70,7 @@ namespace anime_downloader.Views
             ((Shape) sender).Opacity = 1.0;
         }
 
-        private void ContextOpen_Click(object sender, RoutedEventArgs e)
+        private async void ContextOpen_Click(object sender, RoutedEventArgs e)
         {
             var listBox = sender as ListBox ?? (ListBox) ((ContextMenu) ((MenuItem) sender).Parent).PlacementTarget;
 
@@ -79,7 +79,7 @@ namespace anime_downloader.Views
             if (episodes.Count > 1)
             {
                 Playlist.Refresh(episodes);
-                Playlist.Save();
+                await Playlist.Save();
                 Process.Start(Playlist.PlaylistFile);
             }
 

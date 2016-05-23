@@ -1,22 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace anime_downloader.Classes.File
 {
     public class Playlist
     {
         private readonly FileHandler _fileHandler;
-        private readonly Settings _settings;
         private IEnumerable<AnimeEpisode> _episodes;
 
-        public Playlist(Settings settings, FileHandler fileHandler)
+        public Playlist(FileHandler fileHandler)
         {
-            _settings = settings;
             _fileHandler = fileHandler;
         }
 
-        public string PlaylistFile => _settings.PlaylistFile;
+        public string PlaylistFile => Settings.PlaylistFile;
 
         public int Length => _episodes.Count();
 
@@ -25,7 +24,7 @@ namespace anime_downloader.Classes.File
         /// </summary>
         public void Refresh()
         {
-            _episodes = _fileHandler.UnwatchedAnimeEpisodes();
+            _episodes = _fileHandler.Episodes(EpisodeType.Unwatched);
         }
 
         public void Refresh(IEnumerable<AnimeEpisode> episodes)
@@ -82,9 +81,9 @@ namespace anime_downloader.Classes.File
         /// <summary>
         ///     Save and create the playlist.
         /// </summary>
-        public async void Save()
+        public async Task Save()
         {
-            using (var writer = new StreamWriter(_settings.PlaylistFile, false))
+            using (var writer = new StreamWriter(Settings.PlaylistFile, false))
             {
                 foreach (var episode in _episodes)
                     await writer.WriteLineAsync(episode.FilePath);

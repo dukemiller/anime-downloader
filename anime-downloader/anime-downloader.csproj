@@ -45,7 +45,6 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
@@ -70,6 +69,7 @@
     <Compile Include="Classes\File\Downloader.cs" />
     <Compile Include="Classes\Extensions.cs" />
     <Compile Include="Classes\File\Logger.cs" />
+    <Compile Include="Classes\Methods.cs" />
     <Compile Include="Classes\OperatingSystemApi.cs" />
     <Compile Include="Classes\Tray.cs" />
     <Compile Include="Classes\Web\Nyaa.cs" />
@@ -78,10 +78,9 @@
     <Compile Include="Classes\Web\TorrentProvider.cs" />
     <Compile Include="Classes\Xaml\Converters.cs" />
     <Compile Include="Classes\Xaml\DragSelectionHelper.cs" />
-    <Compile Include="Classes\Xml\Xml.cs" />
-    <Compile Include="Classes\Xml\XmlController.cs" />
-    <Compile Include="Classes\Xml\XmlSchema.cs" />
-    <Compile Include="Classes\Xml\XmlVerify.cs" />
+    <Compile Include="Classes\Xml\AnimeCollection.cs" />
+    <Compile Include="Classes\Xml\Schema.cs" />
+    <Compile Include="Classes\Xml\Verify.cs" />
     <Compile Include="Views\AnimeDetails.xaml.cs">
       <DependentUpon>AnimeDetails.xaml</DependentUpon>
     </Compile>

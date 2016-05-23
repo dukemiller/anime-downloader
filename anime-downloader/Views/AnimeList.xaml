@@ -23,7 +23,8 @@
                   SelectionUnit="Cell" IsReadOnly="True"
                   FontFamily="{StaticResource MainFont}"
                   d:DataContext="{d:DesignInstance classes:Anime }"
-                  Sorting="DataGrid_OnSorting">
+                  Sorting="DataGrid_OnSorting"
+                  >
             <DataGrid.Resources>
                 <Style TargetType="{x:Type DataGridColumnHeader}">
                     <Setter Property="HorizontalContentAlignment" Value="Center" />

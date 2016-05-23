@@ -105,4 +105,10 @@ namespace anime_downloader.Classes.File
 
         public string Name { get; }
     }
+
+    public class AnimeWithEpisodes
+    {
+        public Anime Anime { get; set; }
+        public IEnumerable<AnimeEpisode> Episodes { get; set; }
+    }
 }

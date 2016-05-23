@@ -9,29 +9,15 @@ namespace anime_downloader.Classes.Xml
     ///     and populated with initial nodes if there is a change in schema for any
     ///     updates in features.
     /// </summary>
-    public class XmlVerify
+    public static class Verify
     {
-        private readonly XmlController _controller;
-
-        private readonly Settings _settings;
-
-        public XmlVerify(Settings settings, XmlController controller)
-        {
-            _settings = settings;
-            _controller = controller;
-        }
-
         /// <summary>
         ///     Compares the current schema to the default schema and adds any elements
         /// </summary>
-        private static void Compare(
-            XContainer current,
-            XContainer schema)
+        private static void Compare(XContainer current, XContainer schema)
         {
             if (current == null || schema == null)
                 return;
-
-            var remove = new List<XElement>();
 
             // add
             foreach (var element in schema.Elements())
@@ -43,6 +29,8 @@ namespace anime_downloader.Classes.Xml
                     Compare(current.Element(element.Name.ToString()), element);
             }
 
+            var remove = new List<XElement>();
+
             // remove
             foreach (var element in current.Elements())
             {
@@ -53,29 +41,31 @@ namespace anime_downloader.Classes.Xml
             remove.ForEach(e => e.Remove());
         }
 
-        public void Schema()
+        public static void Schema(Settings settings)
         {
-            SettingsSchema();
-            AnimeSchema();
+            SettingsSchema(settings);
+            AnimeSchema(settings);
         }
 
         /// <summary>
         ///     Check the settings xml file for any inconsistencies in schema.
         /// </summary>
-        public void SettingsSchema()
+        public static void SettingsSchema(Settings settings)
         {
-            Compare(_controller.SettingsRoot, XmlSchema.SettingsXml().Root);
-            _controller.SettingsDocument.Save(_settings.SettingsXml);
+            Compare(settings.SettingsDocument.Root, Xml.Schema.SettingsDocument().Root);
+            settings.SettingsDocument.Save(Settings.SettingsXml);
         }
 
         /// <summary>
         ///     Check the anime xml file for any inconsistencies in schema.
         /// </summary>
-        public void AnimeSchema()
+        public static void AnimeSchema(Settings settings)
         {
-            foreach (var anime in _controller.AnimeRoot.Elements())
-                Compare(anime, XmlSchema.AnimeNode());
-            _controller.AnimeDocument.Save(_settings.AnimeXml);
+            var animes = settings.AnimeDocument.Root?.Elements();
+            if (animes != null)
+                foreach (var anime in animes)
+                    Compare(anime, Xml.Schema.AnimeNode());
+            settings.AnimeDocument.Save(Settings.AnimeXml);
         }
     }
 }

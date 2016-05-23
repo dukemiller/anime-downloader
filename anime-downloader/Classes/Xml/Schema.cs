@@ -5,23 +5,16 @@ namespace anime_downloader.Classes.Xml
 {
     /// <summary>
     ///     The purpose of this class is to keep the schema for any nodes or documents
-    ///     in one location. Any change in the schema here is verified in the XmlVerify 
+    ///     in one location. Any change in the schema here is verified in the Verify
     ///     class and automatically updated and populated with the default given value
     ///     or properly removed.
     /// </summary>
-    public class XmlSchema
+    public static class Schema
     {
-        private readonly Settings _settings;
-
-        public XmlSchema(Settings settings)
-        {
-            _settings = settings;
-        }
-
         /// <summary>
         ///     Create the anime xml file with initial nodes.
         /// </summary>
-        public static XDocument AnimeXml()
+        public static XDocument AnimeDocument()
         {
             var document =
                 new XDocument(
@@ -53,7 +46,7 @@ namespace anime_downloader.Classes.Xml
         /// <summary>
         ///     Create the settings xml file with initial nodes.
         /// </summary>
-        public static XDocument SettingsXml()
+        public static XDocument SettingsDocument()
         {
             var document =
                 new XDocument(
@@ -85,19 +78,19 @@ namespace anime_downloader.Classes.Xml
         /// <summary>
         ///     Create the settings xml file with initial nodes and save to settings-defined xml location.
         /// </summary>
-        public void CreateSettingsXml()
+        public static void CreateSettingsXml()
         {
-            var document = SettingsXml();
-            document.Save(_settings.SettingsXml);
+            var document = SettingsDocument();
+            document.Save(Settings.SettingsXml);
         }
 
         /// <summary>
         ///     Create the anime xml file with initial nodes and save to settings-defined xml location.
         /// </summary>
-        public void CreateAnimeXml()
+        public static void CreateAnimeXml()
         {
-            var document = AnimeXml();
-            document.Save(_settings.AnimeXml);
+            var document = AnimeDocument();
+            document.Save(Settings.AnimeXml);
         }
     }
 }

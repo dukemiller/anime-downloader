@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.IO;
 using System.Reflection;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using anime_downloader.Views;
@@ -31,6 +30,8 @@ namespace anime_downloader.Classes
             _mainWindow = mainWindow;
             _settings = settings;
         }
+
+        public bool FullExit { get; private set; }
 
         public bool Visible
         {
@@ -97,46 +98,36 @@ namespace anime_downloader.Classes
 
             //
             _trayContextMenu.MenuItems.Add("-");
-            // 
 
             _trayContextMenu.MenuItems.Add(
                 new MenuItem("Open episode folder ...", (sender, args) =>
                 {
-                    if (_settings.Loaded && Directory.Exists(_settings.EpisodeDirectory))
+                    if (_settings != null && Directory.Exists(_settings.EpisodeDirectory))
                         Process.Start(_settings.EpisodeDirectory);
                 }));
 
             _trayContextMenu.MenuItems.Add(
                 new MenuItem("Open watched folder ...", (sender, args) =>
                 {
-                    if (_settings.Loaded && Directory.Exists(_settings.WatchedDirectory))
+                    if (_settings != null && Directory.Exists(_settings.WatchedDirectory))
                         Process.Start(_settings.WatchedDirectory);
                 }));
 
             _trayContextMenu.MenuItems.Add(
                 new MenuItem("Open application folder ...", (sender, args) =>
                 {
-                    if (_settings.Loaded)
-                        Process.Start(_settings.ApplicationDirectory);
+                    if (_settings != null)
+                        Process.Start(Settings.ApplicationDirectory);
                 }));
 
             //
             _trayContextMenu.MenuItems.Add("-");
-            // 
 
             _trayContextMenu.MenuItems.Add(
-                new MenuItem("Restore", (sender, args) =>
+                new MenuItem("Exit", (sender, args) =>
                 {
-                    _mainWindow.Show();
-                    _mainWindow.WindowState = WindowState.Normal;
-                }));
-
-            _trayContextMenu.MenuItems.Add(
-                new MenuItem("Exit", async (sender, args) =>
-                {
-                    Visible = false;
-                    while (Visible)
-                        await Task.Delay(100);
+                    _trayIcon.Visible = false;
+                    FullExit = true;
                     Application.Current.Shutdown();
                 }));
 

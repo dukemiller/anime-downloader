@@ -42,5 +42,6 @@ namespace anime_downloader.Views
         {
             DataGrid.Focus();
         }
+        
     }
 }

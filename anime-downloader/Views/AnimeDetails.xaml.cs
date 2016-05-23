@@ -63,5 +63,12 @@ namespace anime_downloader.Views
             SubmitButton.Focus();
             SubmitButton.Press();
         }
+
+        private void NameTextbox_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (SubmitButton.Content.Equals("Add"))
+                NameTextbox.Focus();
+        }
+        
     }
 }

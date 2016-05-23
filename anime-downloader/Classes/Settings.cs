@@ -8,32 +8,72 @@ namespace anime_downloader.Classes
 {
     public class Settings
     {
-        private XmlController _xml;
-        public bool Loaded { get; set; } = false;
+        public Settings(bool loadDefaultSettings = false)
+        {
+            if (loadDefaultSettings)
+            {
+                SettingsDocument = XDocument.Load(SettingsXml);
+                AnimeDocument = XDocument.Load(AnimeXml);
+            }
 
-        private XContainer Root => Xml.SettingsRoot;
-
-        private XmlController Xml => _xml ?? (_xml = XmlController.GetXmlController(this));
+            else
+            {
+                SettingsDocument = Schema.SettingsDocument();
+                AnimeDocument = Schema.AnimeDocument();
+            }
+        }
 
         /// <summary>
-        ///     Where all XML and settings files are stored.
+        ///     The root to the settings document (used for convienence).
         /// </summary>
-        public string ApplicationDirectory
-            => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "anime-downloader");
+        private XContainer Root => SettingsDocument.Root;
 
         /// <summary>
-        ///     The path of the settings XML file.
+        ///     The XML document containing all settings information.
         /// </summary>
-        public string SettingsXml => Path.Combine(ApplicationDirectory, "settings.xml");
+        public XDocument SettingsDocument { get; }
 
         /// <summary>
-        ///     The path of the anime XML file.
+        ///     The XML document containing all anime show information.
         /// </summary>
-        public string AnimeXml => Path.Combine(ApplicationDirectory, "anime.xml");
+        public XDocument AnimeDocument { get; private set; }
 
         /// <summary>
-        ///     The path of watched files.
+        ///     The path to the folder containing all settings and configuration files.
+        /// </summary>
+        public static string ApplicationDirectory => Path.Combine(Environment
+            .GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "anime-downloader");
+
+        /// <summary>
+        ///     The path to the settings XML file.
+        /// </summary>
+        public static string SettingsXml => Path.Combine(ApplicationDirectory, "settings.xml");
+
+        /// <summary>
+        ///     The path to the anime XML file.
+        /// </summary>
+        public static string AnimeXml => Path.Combine(ApplicationDirectory, "anime.xml");
+
+        /// <summary>
+        ///     The path to the playlist file.
+        /// </summary>
+        public static string PlaylistFile => Path.Combine(ApplicationDirectory, "playlist.m3u");
+
+        /// <summary>
+        ///     The path to the log text file.
+        /// </summary>
+        public static string LoggingFile => Path.Combine(ApplicationDirectory, "log.txt");
+
+        /// <summary>
+        ///     The path to the directory where duplicate videos will be moved to
+        /// </summary>
+        public static string DuplicatesDirectory => Path.Combine(Environment
+            .GetFolderPath(Environment.SpecialFolder.MyVideos),
+            "Duplicates");
+
+        /// <summary>
+        ///     The path to the directory containing already watched files.
         /// </summary>
         public string WatchedDirectory
         {
@@ -48,9 +88,8 @@ namespace anime_downloader.Classes
         }
 
         /// <summary>
-        ///     Get the user defined download folder.
+        ///     The path to the directory where files will be downloaded to.
         /// </summary>
-        /// <returns>A path used to download into.</returns>
         public string EpisodeDirectory
         {
             get { return Root.Element("path")?.Element("episode")?.Value; }
@@ -62,15 +101,9 @@ namespace anime_downloader.Classes
                 Save();
             }
         }
-
+        
         /// <summary>
-        ///     The path of duplicate files.
-        /// </summary>
-        public string DuplicatesDirectory
-            => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyVideos), "Duplicates");
-
-        /// <summary>
-        ///     The path where all .torrent files will be downloaded to.
+        ///     The path to the directory where all .torrent files will be downloaded to.
         /// </summary>
         public string TorrentFilesDirectory
         {
@@ -81,11 +114,6 @@ namespace anime_downloader.Classes
                 Save();
             }
         }
-
-        /// <summary>
-        ///     A path to where the playlist will be created.
-        /// </summary>
-        public string PlaylistFile => Path.Combine(ApplicationDirectory, "playlist.m3u");
 
         /// <summary>
         ///     The path to the utorrent executable.
@@ -100,10 +128,8 @@ namespace anime_downloader.Classes
             }
         }
 
-        public string LoggingFile => Path.Combine(ApplicationDirectory, "log.txt");
-
         /// <summary>
-        ///     The user preferred anime list sort method.
+        ///     The application defined sort for the anime list.
         /// </summary>
         public string SortBy
         {
@@ -115,6 +141,9 @@ namespace anime_downloader.Classes
             }
         }
 
+        /// <summary>
+        ///     The flag to state if the sort defined in the settings should be reversed.
+        /// </summary>
         public bool SortByReversed
         {
             get { return bool.Parse(Root.Element("flag")?.Element("sortByReversed")?.Value ?? "false"); }
@@ -125,6 +154,9 @@ namespace anime_downloader.Classes
             }
         }
 
+        /// <summary>
+        ///     The application defined filter for the anime list.
+        /// </summary>
         public string FilterBy
         {
             get { return Root.Element("filterBy")?.Value; }
@@ -165,6 +197,9 @@ namespace anime_downloader.Classes
             }
         }
 
+        /// <summary>
+        ///     A flag defining if the program should exit on it's close (or minimize to the tray).
+        /// </summary>
         public bool ExitOnClose
         {
             get { return bool.Parse(Root.Element("flag")?.Element("exitOnClose")?.Value ?? "false"); }
@@ -175,6 +210,9 @@ namespace anime_downloader.Classes
             }
         }
 
+        /// <summary>
+        ///     A flag defining if the tray icon should only be shown (instead of only when minimized).
+        /// </summary>
         public bool AlwaysShowTray
         {
             get { return bool.Parse(Root.Element("flag")?.Element("alwaysShowTray")?.Value ?? "false"); }
@@ -185,6 +223,9 @@ namespace anime_downloader.Classes
             }
         }
 
+        /// <summary>
+        ///     A flag defining if each show should be put into a separate folder (instead of just being put in the main folder).
+        /// </summary>
         public bool IndividualShowFolders
         {
             get
@@ -199,22 +240,10 @@ namespace anime_downloader.Classes
                 Save();
             }
         }
-
-        public string GroupDownloadBy
-        {
-            get { return Root.Element("groupDownloadBy")?.Value ?? "PerWeek"; }
-            set
-            {
-                Root.Element("groupDownloadBy")?.SetValue(value);
-                Save();
-            }
-        }
-
-        private void Save()
-        {
-            if (!Xml.AutoSave)
-                return;
-            Xml.SaveSettings();
-        }
+        
+        /// <summary>
+        ///     Save the schema to the settings path.
+        /// </summary>
+        public void Save() => AnimeCollection.SaveSettings(SettingsDocument);
     }
 }

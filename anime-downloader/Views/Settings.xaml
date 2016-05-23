@@ -54,21 +54,24 @@
                 </Grid.RowDefinitions>
 
                 <!-- Episode path -->
-                <Label x:Name="EpisodeLabel" Grid.Row="0" Grid.Column="0" Content="Episodes download to: "
+                <Label x:Name="EpisodeLabel" Grid.Row="0" Grid.Column="0"
+                       Content="Episode downloads to: "
                        Style="{DynamicResource LabelStyle}"
                        ToolTip="Path to where episodes will be downloaded to." />
                 <TextBox x:Name="EpisodeTextbox" Text="{Binding EpisodeDirectory}" Grid.Row="0" Grid.Column="1"
                          Style="{DynamicResource TextboxStyle}" KeyDown="Textbox_KeyDown" />
 
                 <!-- Watched path -->
-                <Label x:Name="WatchedLabel" Grid.Row="1" Grid.Column="0" Content="Watched files go to: "
+                <Label x:Name="WatchedLabel" Grid.Row="1" Grid.Column="0"
+                       Content="Watched filess to: "
                        Style="{DynamicResource LabelStyle}"
                        ToolTip="Path where watched episodes will be moved to." />
                 <TextBox x:Name="WatchedTextbox" Text="{Binding WatchedDirectory}" Grid.Row="1" Grid.Column="1"
                          Style="{DynamicResource TextboxStyle}" KeyDown="Textbox_KeyDown" />
 
                 <!-- Torrent -->
-                <Label x:Name="TorrentLabel" Grid.Row="2" Grid.Column="0" Content="Torrents download to: "
+                <Label x:Name="TorrentLabel" Grid.Row="2" Grid.Column="0"
+                       Content="Torrent downloads to: "
                        Style="{DynamicResource LabelStyle}"
                        ToolTip="Path to the folder that all .torrent files will be downloaded into." />
                 <TextBox x:Name="TorrentTextbox" Text="{Binding TorrentFilesDirectory}" Grid.Row="2" Grid.Column="1"
@@ -144,12 +147,9 @@
 
                     <!-- Named folders -->
                     <Label x:Name="IndividualShowLabel" Grid.Row="1" Grid.Column="0"
+                           Content="Show-named folders:"
                            Style="{DynamicResource LabelStyle}" VerticalAlignment="Top"
-                           ToolTip="Put each episode inside a folder named after the show">
-                        <TextBlock TextWrapping="Wrap">
-                            Show-named folders:
-                        </TextBlock>
-                    </Label>
+                           ToolTip="Put each episode inside a folder named after the show" />
                     <CheckBox x:Name="IndividualShowCheckbox" IsChecked="{Binding IndividualShowFolders}" Grid.Row="1"
                               Grid.Column="1"
                               Style="{DynamicResource CheckboxStyle}" />

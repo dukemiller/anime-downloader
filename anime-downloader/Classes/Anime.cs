@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,17 +16,17 @@ namespace anime_downloader.Classes
         /// </summary>
         public static int SortedRateFlag;
 
-        private readonly XmlController _xml;
+        private readonly Settings _settings;
 
         /// <summary>
         ///     Create an empty anime xml node.
         /// </summary>
         /// <remarks>
-        ///     Must be explicitly added to the schema with the XmlController.
+        ///     Must be explicitly added to the schema with the AnimeCollection.
         /// </remarks>
         public Anime()
         {
-            Root = XmlSchema.AnimeNode();
+            Root = Schema.AnimeNode();
         }
 
         /// <summary>
@@ -35,12 +34,12 @@ namespace anime_downloader.Classes
         /// </summary>
         /// <remarks>
         ///     Preferably read from the already existing schema and
-        ///     instantiated from the XmlController.
+        ///     instantiated from the AnimeCollection.
         /// </remarks>
-        public Anime(XContainer root, XmlController xml)
+        public Anime(XContainer root, Settings settings)
         {
             Root = root;
-            _xml = xml;
+            _settings = settings;
         }
 
         public XContainer Root { get; }
@@ -189,43 +188,14 @@ namespace anime_downloader.Classes
         /// <returns>A title</returns>
         public string Title => new CultureInfo("en-US", false).TextInfo.ToTitleCase(Name);
 
-        /// <summary>
-        ///     Compute the distance between two strings.
-        /// </summary>
-        private static int LevenshteinDistance(string s, string t)
-        {
-            var n = s.Length;
-            var m = t.Length;
-            var d = new int[n + 1, m + 1];
-            if (n == 0)
-                return m;
-            if (m == 0)
-                return n;
-            for (var i = 0; i <= n; d[i, 0] = i++)
-            {}
-            for (var j = 0; j <= m; d[0, j] = j++)
-            {}
-            for (var i = 1; i <= n; i++)
-            {
-                for (var j = 1; j <= m; j++)
-                {
-                    var cost = t[j - 1] == s[i - 1] ? 0 : 1;
-                    d[i, j] = Math.Min(
-                        Math.Min(d[i - 1, j] + 1, d[i, j - 1] + 1),
-                        d[i - 1, j - 1] + cost);
-                }
-            }
-            return d[n, m];
-        }
-
         public IEnumerable<AnimeEpisode> GetEpisodes(Settings settings)
         {
-            var episodes = new FileHandler(settings).AllAnimeEpisodes().ToList();
+            var episodes = new FileHandler(settings).Episodes(EpisodeType.All).ToList();
 
             var name = episodes
                 .Select(e => e.Name)
                 .Distinct()
-                .Select(e => new {Name = e, Distance = LevenshteinDistance(Name, e)})
+                .Select(e => new {Name = e, Distance = Methods.LevenshteinDistance(Name, e)})
                 .OrderBy(e => e.Distance)
                 .First()
                 .Name;
@@ -234,25 +204,32 @@ namespace anime_downloader.Classes
         }
 
         /// <summary>
-        ///     Gets the best guess to what the anime is based solely on name
+        ///     Gets the best guess to what the anime is based solely on name.
         /// </summary>
-        /// <param name="animes"></param>
-        /// <param name="name"></param>
-        /// <returns></returns>
         public static Anime ClosestTo(IEnumerable<Anime> animes, string name)
         {
             return animes
-                .Select(a => new {Anime = a, Distance = LevenshteinDistance(a.Name, name)})
+                .Select(a => new {Anime = a, Distance = Methods.LevenshteinDistance(a.Name, name)})
                 .OrderBy(ap => ap.Distance)
                 .First()
                 .Anime;
         }
 
+        public static Anime ClosestTo(IEnumerable<Anime> animes, AnimeEpisode anime)
+        {
+            return animes
+                .Select(a => new { Anime = a, Distance = Methods.LevenshteinDistance(a.Name, anime.Name) })
+                .Where(ap => ap.Distance <= 20)
+                .OrderBy(ap => ap.Distance)
+                .FirstOrDefault()?
+                .Anime;
+        }
+
         public static Anime ClosestTo(Settings settings, string name)
         {
-            var animes = XmlController.GetXmlController(settings).Animes;
+            var animes = new AnimeCollection(settings).Animes;
             return animes
-                .Select(a => new {Anime = a, Distance = LevenshteinDistance(a.Name, name)})
+                .Select(a => new {Anime = a, Distance = Methods.LevenshteinDistance(a.Name, name)})
                 .OrderBy(ap => ap.Distance)
                 .First()
                 .Anime;
@@ -261,16 +238,8 @@ namespace anime_downloader.Classes
         public static AnimeEpisode ClosestTo(IEnumerable<AnimeEpisode> animeEpisodes, string name)
         {
             return animeEpisodes
-                .Select(a => new {Anime = a, Distance = LevenshteinDistance(a.Name, name)})
-                .OrderBy(ap => ap.Distance)
-                .First()
-                .Anime;
-        }
-
-        public static string ClosestTo(IEnumerable<string> animeEpisodeFileNames, string name)
-        {
-            return animeEpisodeFileNames
-                .Select(a => new {Anime = a, Distance = LevenshteinDistance(a, name)})
+                .Select(a => new {Anime = a, Distance = Methods.LevenshteinDistance(a.Name, name)})
+                .Where(ap => ap.Distance <= 20)
                 .OrderBy(ap => ap.Distance)
                 .First()
                 .Anime;
@@ -278,9 +247,9 @@ namespace anime_downloader.Classes
 
         private void Save()
         {
-            if (_xml == null || !_xml.AutoSave)
+            if (_settings == null || !AnimeCollection.AutoSave)
                 return;
-            _xml.SaveAnime();
+            AnimeCollection.SaveAnime(_settings.AnimeDocument);
         }
 
         /// <summary>
