@@ -165,7 +165,7 @@ namespace anime_downloader
                     return;
 
                 // Ctrl-X to close
-                if (e.Key == Key.X && (Keyboard.IsKeyDown(Key.LeftCtrl)))
+                if (e.Key == Key.X && Keyboard.IsKeyDown(Key.LeftCtrl))
                     Close();
 
                 // 1-8 to change views
@@ -409,6 +409,11 @@ namespace anime_downloader
 
             var display = ChangeDisplay<AnimeList>();
 
+            // Clear any previous active event handlers
+            KeyDown -= KeyEscapeBack;
+            MouseDown -= MouseEscapeBack;
+
+            // Add the dynamic data context
             display.Refresh(_animeCollection);
             display.FilterComboBox.Text = _settings.FilterBy;
             display.FilterComboBox.DropDownClosed += delegate
@@ -418,6 +423,7 @@ namespace anime_downloader
                 CloseAnimeFindPopup();
             };
 
+            // The event handlers
             display.Add.Click += AnimeList_Context_Add_Click;
             display.Edit.Click += AnimeList_Edit;
             display.Delete.Click += AnimeList_Context_Delete_Click;
@@ -450,63 +456,6 @@ namespace anime_downloader
                 if (keyEventArgs.Key == Key.F && (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
                 {
                     CreateAnimeFindPopup();
-                }
-            };
-        }
-
-        /// <summary>
-        ///     View: AnimeList -> (Right-Click) Context -> Add : Click
-        /// </summary>
-        private void AnimeList_Context_Add_Click(object sender, RoutedEventArgs e)
-        {
-            var display = ChangeDisplay<AnimeDetails>();
-
-            // Default template
-            display.DataContext = new Anime
-            {
-                Episode = "00",
-                Status = "Watching",
-                Resolution = "720",
-                Airing = true
-            };
-
-            display.SubmitButton.Click += AnimeDetails_SubmitButton_Click;
-            _settings.Subgroups.ToList().ForEach(s => display.SubgroupComboBox.Items.Add(s));
-            display.OpenLastButton.Visibility = Visibility.Hidden;
-        }
-
-        /// <summary>
-        ///     View: AnimeList -> (Right-Click) Context -> Add Multiple : Click
-        /// </summary>
-        private void AnimeList_Context_AddMultiple_Click(object sender, RoutedEventArgs e)
-        {
-            var display = ChangeDisplay<AnimeDetailsMultiple>();
-            display.RatingTextBox.Toggle();
-
-            display.InputTextBox.Loaded += delegate { ((AnimeDetailsMultiple) CurrentDisplay).InputTextBox.Focus(); };
-
-            display.SubmitButton.Click += delegate
-            {
-                var names = display.InputTextBox.Text.Split(Environment.NewLine.ToCharArray(),
-                    StringSplitOptions.RemoveEmptyEntries).Select(n => n.ToLower()).ToList();
-                if (names.Distinct().Count() != names.Count)
-                    Alert("Names have to be unique.");
-                else if (_allAnime.Select(a => a.Name.ToLower()).Intersect(names).Any())
-                    Alert("A title entered already exists in the anime list.");
-                else
-                {
-                    foreach (var name in names)
-                    {
-                        _animeCollection.Add(new Anime
-                        {
-                            Name = name,
-                            Airing = display.AiringCheckBox.IsChecked ?? false,
-                            Episode = $"{int.Parse(display.EpisodeTextBox.Text):D2}",
-                            Status = display.StatusComboBox.Text,
-                            Resolution = display.ResolutionComboBox.Text
-                        });
-                    }
-                    AnimeListButton.Press();
                 }
             };
         }
@@ -558,10 +507,12 @@ namespace anime_downloader
                     AnimeList_Edit(sender, e);
                 }
             }
-
-            else if (e.Key == Key.A)
+            
+            // Copy names to clipboard
+            else if (e.Key == Key.OemComma && new[] {Key.LeftCtrl, Key.RightCtrl}.Any(Keyboard.IsKeyDown))
             {
-                AnimeList_Context_Add_Click(sender, e);
+                Clipboard.Clear();
+                Clipboard.SetText(string.Join(", ", display.DataGrid.SelectedCells.Select(c => ((Anime) c.Item).Title).Distinct()));
             }
         }
 
@@ -674,8 +625,10 @@ namespace anime_downloader
         /// </summary>
         private void KeyEscapeBack(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Escape || e.Key == Key.Back)
+            if (e.Key == Key.Escape)// || e.Key == Key.Back)
+            {
                 Cycle(AnimeListButton);
+            }
         }
 
         /// <summary>
@@ -684,11 +637,74 @@ namespace anime_downloader
         private void MouseEscapeBack(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton.Equals(MouseButton.XButton1))
+            {
                 Cycle(AnimeListButton);
+            }
         }
 
         /// <summary>
-        ///     View: AnimeList -> (Right-Click) Context -> Edit
+        ///     View: AnimeDetails || AnimeList -> (Right-Click) Context -> Add : Click
+        /// </summary>
+        private void AnimeList_Context_Add_Click(object sender, RoutedEventArgs e)
+        {
+            var display = ChangeDisplay<AnimeDetails>();
+
+            // Press Escape or mouse back or backspace to go back
+            KeyDown += KeyEscapeBack;
+            MouseDown += MouseEscapeBack;
+
+            // Default template
+            display.DataContext = new Anime
+            {
+                Episode = "00",
+                Status = "Watching",
+                Resolution = "720",
+                Airing = true
+            };
+
+            display.SubmitButton.Click += AnimeDetails_SubmitButton_Click;
+            _settings.Subgroups.ToList().ForEach(s => display.SubgroupComboBox.Items.Add(s));
+            display.OpenLastButton.Visibility = Visibility.Hidden;
+        }
+
+        /// <summary>
+        ///     View: AnimeDetailsMultiple || AnimeList -> (Right-Click) Context -> Add Multiple : Click
+        /// </summary>
+        private void AnimeList_Context_AddMultiple_Click(object sender, RoutedEventArgs e)
+        {
+            var display = ChangeDisplay<AnimeDetailsMultiple>();
+            display.RatingTextBox.Toggle();
+
+            display.InputTextBox.Loaded += delegate { ((AnimeDetailsMultiple) CurrentDisplay).InputTextBox.Focus(); };
+
+            display.SubmitButton.Click += delegate
+            {
+                var names = display.InputTextBox.Text.Split(Environment.NewLine.ToCharArray(),
+                    StringSplitOptions.RemoveEmptyEntries).Select(n => n.ToLower()).ToList();
+                if (names.Distinct().Count() != names.Count)
+                    Alert("Names have to be unique.");
+                else if (_allAnime.Select(a => a.Name.ToLower()).Intersect(names).Any())
+                    Alert("A title entered already exists in the anime list.");
+                else
+                {
+                    foreach (var name in names)
+                    {
+                        _animeCollection.Add(new Anime
+                        {
+                            Name = name,
+                            Airing = display.AiringCheckBox.IsChecked ?? false,
+                            Episode = $"{int.Parse(display.EpisodeTextBox.Text):D2}",
+                            Status = display.StatusComboBox.Text,
+                            Resolution = display.ResolutionComboBox.Text
+                        });
+                    }
+                    AnimeListButton.Press();
+                }
+            };
+        }
+
+        /// <summary>
+        ///     View: AnimeDetails || AnimeList -> (Right-Click) Context -> Edit
         /// </summary>
         private void AnimeDetails_Single()
         {
@@ -702,10 +718,8 @@ namespace anime_downloader
             display.SubmitButton.Content = "Edit";
             display.SubmitButton.Click += AnimeDetails_EditAnimeButton_Click;
 
-            // Press Escape to go back
-            KeyDown -= KeyEscapeBack;
+            // Press Escape or mouse back or backspace to go back
             KeyDown += KeyEscapeBack;
-            MouseDown -= MouseEscapeBack;
             MouseDown += MouseEscapeBack;
 
             _settings.Subgroups.ToList().ForEach(s => display.SubgroupComboBox.Items.Add(s));
@@ -727,7 +741,7 @@ namespace anime_downloader
         }
 
         /// <summary>
-        ///     View: Submit -> Anime list (edit multiple)
+        ///     View: AnimeDetailsMultiple || Anime list (edit multiple)
         /// </summary>
         private void AnimeDetails_Multiple()
         {
@@ -1075,12 +1089,12 @@ namespace anime_downloader
         /// <summary>
         ///     View: Manage
         /// </summary>
-        private void ManageButton_Click(object sender, RoutedEventArgs e)
+        private async void ManageButton_Click(object sender, RoutedEventArgs e)
         {
             var display = ChangeDisplay<Manage>();
 
-            var unwatched = _filehandler.Episodes(EpisodeType.Unwatched).ToList();
-            var watched = _filehandler.Episodes(EpisodeType.Watched).ToList();
+            var unwatched = await Task.Run(() => _filehandler.Episodes(EpisodeType.Unwatched).ToList());
+            var watched = await Task.Run(() => _filehandler.Episodes(EpisodeType.Watched).ToList());
             display.Playlist = _playlist;
             display.UnwatchedFilesLabel.Content = $"({unwatched.Count} files)";
 

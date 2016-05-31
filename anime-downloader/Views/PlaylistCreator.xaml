@@ -30,7 +30,7 @@
                         <RadioButton x:Name="DefaultRadio" Content="Default file listing" Margin="5"
                                      ToolTip="Default windows lexical filename sort" />
                         <RadioButton x:Name="EpisodeRadio" Content="Episode number" Margin="5" IsChecked="True"
-                                     ToolTip="A more rigorous episode number check so that EpisodeTypes are in order" />
+                                     ToolTip="A more rigorous episode number check so that episodes are in order" />
                         <RadioButton x:Name="MomentRadio" Content="Date downloaded" Margin="5"
                                      ToolTip="When the file was created" />
                     </StackPanel>

@@ -35,7 +35,10 @@ namespace anime_downloader.Classes.Xml
                 .GetProperties(typeof(Anime))
                 .Find(_settings.SortBy, true);
 
-            var animes = Animes.Where(a => _settings.FilterBy.Equals("") || filters.Any(f => f.Equals(a.Status)));
+            var animes = Animes;
+
+            if (!_settings.FilterBy.Equals(""))
+                animes = animes.Where(a => filters.Any(f => f.Equals(a.Status)));
 
             return _settings.SortByReversed
                 ? animes.OrderByDescending(x => propertyDescriptor.GetValue(x))

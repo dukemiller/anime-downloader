@@ -150,7 +150,7 @@ namespace anime_downloader.Classes.File
             return Episodes(episodeType)
                 .GroupBy(e => e.Name)
                 .Select(e => new {group = e, distance = Methods.LevenshteinDistance(anime.Name.RemoveWhitespace(), e.Key.RemoveWhitespace()) })
-                .Where(e => e.distance <= 20)
+                .Where(e => e.distance <= 10)
                 .OrderBy(e => e.distance)
                 .FirstOrDefault()?
                 .group.Select(e => e);

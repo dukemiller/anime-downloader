@@ -39,7 +39,7 @@
                     <RadioButton x:Name="GetMissingRadio" Margin="5"
                                  Style="{DynamicResource ItemStyle}" KeyDown="Radio_KeyDown">
                         <TextBlock TextWrapping="Wrap">
-                            Any missing episodes between first and last known EpisodeTypes.
+                            Any missing episodes between first and last known episodes.
                         </TextBlock>
                     </RadioButton>
                 </StackPanel>
