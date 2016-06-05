@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -86,6 +87,13 @@ namespace anime_downloader.Classes
                     ((Control) item).KeyDown += delegate { function(); };
         }
         */
+        
+
+        // http://stackoverflow.com/a/33523743
+        public static System.Windows.Media.Brush ToBrush(this Color color)
+        {
+            return new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B));
+        }
 
         public static List<T> GetAll<T>(this object parent) where T : DependencyObject
         {

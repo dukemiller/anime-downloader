@@ -7,10 +7,10 @@
              xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
              d:DesignHeight="360"
              d:DesignWidth="680"
-             mc:Ignorable="d"
-             >
+             mc:Ignorable="d">
     <UserControl.Resources>
         <xaml:KeyValueConverter x:Key="Converter" />
+        <xaml:MalIdVisibilityConverter x:Key="VisbilityConverter" />
         <Style x:Key="RadioStyle" TargetType="{x:Type RadioButton}">
             <Setter Property="FontSize" Value="16" />
             <Setter Property="VerticalAlignment" Value="Center" />
@@ -29,7 +29,7 @@
             <Setter Property="FontFamily" Value="{StaticResource MainFont}" />
         </Style>
     </UserControl.Resources>
-    <Grid>
+    <Grid d:DataContext="{d:DesignInstance Type=classes:Anime}">
         <Grid.Background>White</Grid.Background>
 
         <Grid>
@@ -37,7 +37,7 @@
                 <RowDefinition Height="5*" />
                 <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0" d:DataContext="{d:DesignInstance Type=classes:Anime}">
+            <Grid Grid.Row="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*" />
                     <RowDefinition Height="3*" />
@@ -57,8 +57,8 @@
                     <Label x:Name="NameLabel"
                            Grid.Row="0"
                            Grid.Column="0"
-                           Style="{StaticResource LabelStyle}"
                            Content="Name: "
+                           Style="{StaticResource LabelStyle}"
                            ToolTip="A hopefully close approximation to the name of the show." />
                     <TextBox x:Name="NameTextbox"
                              Grid.Row="0"
@@ -67,17 +67,17 @@
                              VerticalAlignment="Center"
                              FontSize="18.667"
                              GotFocus="NameTextbox_GotFocus"
-                             Text="{Binding Name}"
-                             TextWrapping="Wrap"
                              KeyDown="EnterApply"
-                             Loaded="NameTextbox_OnLoaded" />
+                             Loaded="NameTextbox_OnLoaded"
+                             Text="{Binding Name}"
+                             TextWrapping="Wrap" />
 
                     <!--  Episode  -->
                     <Label x:Name="EpisodeLabel"
                            Grid.Row="1"
                            Grid.Column="0"
-                           Style="{StaticResource LabelStyle}"
                            Content="Episode: "
+                           Style="{StaticResource LabelStyle}"
                            ToolTip="The last episode you've watched." />
                     <TextBox x:Name="EpisodeTextbox"
                              Grid.Row="1"
@@ -86,10 +86,10 @@
                              VerticalAlignment="Center"
                              FontSize="18.667"
                              GotFocus="EpisodeTextbox_GotFocus"
+                             KeyDown="EnterApply"
                              PreviewTextInput="EpisodeTextbox_PreviewTextInput"
                              Text="{Binding Episode}"
-                             TextWrapping="Wrap"
-                             KeyDown="EnterApply" />
+                             TextWrapping="Wrap" />
                 </Grid>
                 <Grid x:Name="CheckboxContainerGrid" Grid.Row="1">
                     <Grid.ColumnDefinitions>
@@ -130,23 +130,31 @@
                             <RadioButton x:Name="StatusFinishedRadio"
                                          Grid.Column="0"
                                          Content="Finished"
-                                         Style="{DynamicResource RadioStyle}"
-                                         IsChecked="{Binding Path=Status, Converter={StaticResource Converter}, ConverterParameter=Finished}" />
+                                         IsChecked="{Binding Path=Status,
+                                                             Converter={StaticResource Converter},
+                                                             ConverterParameter=Finished}"
+                                         Style="{DynamicResource RadioStyle}" />
                             <RadioButton x:Name="StatusWatchingRadio"
                                          Grid.Column="1"
                                          Content="Watching"
-                                         Style="{DynamicResource RadioStyle}"
-                                         IsChecked="{Binding Path=Status, Converter={StaticResource Converter}, ConverterParameter=Watching}" />
+                                         IsChecked="{Binding Path=Status,
+                                                             Converter={StaticResource Converter},
+                                                             ConverterParameter=Watching}"
+                                         Style="{DynamicResource RadioStyle}" />
                             <RadioButton x:Name="StatusOnHoldRadio"
                                          Grid.Column="2"
                                          Content="On Hold"
-                                         Style="{DynamicResource RadioStyle}"
-                                         IsChecked="{Binding Path=Status, Converter={StaticResource Converter}, ConverterParameter='On Hold'}" />
+                                         IsChecked="{Binding Path=Status,
+                                                             Converter={StaticResource Converter},
+                                                             ConverterParameter='On Hold'}"
+                                         Style="{DynamicResource RadioStyle}" />
                             <RadioButton x:Name="StatusDroppedRadio"
                                          Grid.Column="3"
                                          Content="Dropped"
-                                         Style="{DynamicResource RadioStyle}"
-                                         IsChecked="{Binding Path=Status, Converter={StaticResource Converter}, ConverterParameter=Dropped}" />
+                                         IsChecked="{Binding Path=Status,
+                                                             Converter={StaticResource Converter},
+                                                             ConverterParameter=Dropped}"
+                                         Style="{DynamicResource RadioStyle}" />
                         </Grid>
 
                         <!--  Resolution  -->
@@ -220,8 +228,8 @@
                                  HorizontalAlignment="Left"
                                  FontSize="18.667"
                                  GotFocus="EpisodeTextbox_GotFocus"
-                                 PreviewTextInput="RatingTextbox_PreviewTextInput"
                                  KeyDown="EnterApply"
+                                 PreviewTextInput="RatingTextbox_PreviewTextInput"
                                  Text="{Binding Rating}" />
 
                         <!--  Airing  -->
@@ -258,17 +266,22 @@
                     </Grid>
                 </Grid>
             </Grid>
-            <Button x:Name="OpenLastButton"
-                    Grid.Row="1"
-                    Width="auto"
-                    HorizontalAlignment="Left"
-                    Content="Last episode"
-                    Style="{DynamicResource ConfirmationButtonStyle}" />
-            <Button x:Name="SubmitButton"
-                    Grid.Row="1"
-                    HorizontalAlignment="Right"
-                    Content="Add"
-                    Style="{DynamicResource ConfirmationButtonStyle}" />
+            <DockPanel Grid.Row="1">
+                <Button x:Name="OpenLastButton"
+                        Width="auto"
+                        Content="Last episode"
+                        Style="{DynamicResource ConfirmationButtonStyle}" />
+                <Button x:Name="ClearMalButton"
+                        Width="auto"
+                        Margin="5"
+                        Content="Clear MAL"
+                        Visibility="{Binding MyAnimelistId, Converter={StaticResource VisbilityConverter}}"
+                        Style="{DynamicResource ConfirmationButtonStyle}" />
+                <Button x:Name="SubmitButton"
+                        HorizontalAlignment="Right"
+                        Content="Add"
+                        Style="{DynamicResource ConfirmationButtonStyle}" />
+            </DockPanel>
         </Grid>
     </Grid>
 </UserControl>

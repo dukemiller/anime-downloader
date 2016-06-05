@@ -46,6 +46,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -72,12 +73,15 @@
     <Compile Include="Classes\Methods.cs" />
     <Compile Include="Classes\OperatingSystemApi.cs" />
     <Compile Include="Classes\Tray.cs" />
+    <Compile Include="Classes\Web\MyAnimeList.cs" />
+    <Compile Include="Classes\Web\MyAnimeListNode.cs" />
     <Compile Include="Classes\Web\Nyaa.cs" />
     <Compile Include="Classes\File\Playlist.cs" />
     <Compile Include="Classes\Settings.cs" />
     <Compile Include="Classes\Web\TorrentProvider.cs" />
     <Compile Include="Classes\Xaml\Converters.cs" />
     <Compile Include="Classes\Xaml\DragSelectionHelper.cs" />
+    <Compile Include="Classes\Xaml\PasswordBoxAssistant.cs" />
     <Compile Include="Classes\Xml\AnimeCollection.cs" />
     <Compile Include="Classes\Xml\Schema.cs" />
     <Compile Include="Classes\Xml\Verify.cs" />

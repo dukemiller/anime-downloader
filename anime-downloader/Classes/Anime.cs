@@ -70,6 +70,15 @@ namespace anime_downloader.Classes
                 if (value.Equals(Episode))
                     return;
                 Root.Element("episode")?.SetValue(value);
+
+                if (HasMyAnimelistId)
+                {
+                    MyAnimelistNeedsUpdating = true;
+                    if (!MyAnimelistSeriesContinuationEpisode.Equals(""))
+                        MyAnimelistSeriesContinuationEpisode =
+                            $"{int.Parse(value) - int.Parse(MyAnimelistTotalEpisodes):D2}";
+                }
+
                 Save();
             }
         }
@@ -85,6 +94,8 @@ namespace anime_downloader.Classes
                 if (value.Equals(Status))
                     return;
                 Root.Element("status")?.SetValue(value);
+                if (HasMyAnimelistId)
+                    MyAnimelistNeedsUpdating = true;
                 Save();
             }
         }
@@ -164,6 +175,8 @@ namespace anime_downloader.Classes
                 if (!value.All(char.IsNumber) && !value.Equals(""))
                     return;
                 Root.Element("rating")?.SetValue(value);
+                if (HasMyAnimelistId)
+                    MyAnimelistNeedsUpdating = true;
                 Save();
             }
         }
@@ -180,6 +193,99 @@ namespace anime_downloader.Classes
                     return val;
                 return 13*SortedRateFlag - 2;
             }
+        }
+
+        /* MyAnimeList */
+
+        public bool HasMyAnimelistId => !MyAnimelistId.Equals("");
+
+        public string MyAnimelistId
+        {
+            get { return Root.Element("myanimelist")?.Element("id")?.Value; }
+            set
+            {
+                Root.Element("myanimelist")?.Element("id")?.SetValue(value);
+                Save();
+            }
+        }
+
+        public string MyAnimelistSynopsis
+        {
+            get { return Root.Element("myanimelist")?.Element("synopsis")?.Value; }
+            set
+            {
+                Root.Element("myanimelist")?.Element("synopsis")?.SetValue(value);
+                Save();
+            }
+        }
+
+        public string MyAnimelistImage
+        {
+            get { return Root.Element("myanimelist")?.Element("image")?.Value; }
+            set
+            {
+                Root.Element("myanimelist")?.Element("image")?.SetValue(value);
+                Save();
+            }
+        }
+
+        public string MyAnimelistTitle
+        {
+            get { return Root.Element("myanimelist")?.Element("title")?.Value; }
+            set
+            {
+                Root.Element("myanimelist")?.Element("title")?.SetValue(value);
+                Save();
+            }
+        }
+
+        public string MyAnimelistEnglish
+        {
+            get { return Root.Element("myanimelist")?.Element("english")?.Value; }
+            set
+            {
+                Root.Element("myanimelist")?.Element("english")?.SetValue(value);
+                Save();
+            }
+        }
+
+        public bool MyAnimelistNeedsUpdating
+        {
+            get { return bool.Parse(Root.Element("myanimelist")?.Element("needs-updating")?.Value ?? bool.FalseString); }
+            set
+            {
+                Root.Element("myanimelist")?.Element("needs-updating")?.SetValue(value);
+                Save();
+            }
+        }
+
+        public string MyAnimelistTotalEpisodes
+        {
+            get { return Root.Element("myanimelist")?.Element("total-episodes")?.Value; }
+            set
+            {
+                Root.Element("myanimelist")?.Element("total-episodes")?.SetValue(value);
+                Save();
+            }
+        }
+
+        public string MyAnimelistSeriesContinuationEpisode
+        {
+            get { return Root.Element("myanimelist")?.Element("series-continuation-episode")?.Value; }
+            set
+            {
+                Root.Element("myanimelist")?.Element("series-continuation-episode")?.SetValue(value);
+                Save();
+            }
+        }
+
+        /* */
+
+        public int IntEpisode()
+        {
+            int episode;
+            var successful = int.TryParse(Episode, out episode);
+            return successful ? episode : -1;
         }
 
         /// <summary>
@@ -239,10 +345,62 @@ namespace anime_downloader.Classes
         {
             return animeEpisodes
                 .Select(a => new {Anime = a, Distance = Methods.LevenshteinDistance(a.Name, name)})
-                .Where(ap => ap.Distance <= 20)
+                .Where(ap => ap.Distance <= 15)
                 .OrderBy(ap => ap.Distance)
                 .First()
                 .Anime;
+        }
+
+        public XElement ClosestMyAnimelistNode(IEnumerable<XElement> animeNodes)
+        {
+            return animeNodes
+                .Where(n =>
+                {
+                    var status = n.Element("status")?.Value;
+                    if (Airing && status != null)
+                        return status.Equals("Currently Airing");
+                    return true;
+                })
+                .Where(n =>
+                {
+                    if (!NameStrict)
+                        return true;
+                    var title = n.Element("title")?.Value.ToLower();
+                    var english = n.Element("english")?.Value.ToLower();
+                    var name = Name.ToLower();
+                    return name.Equals(title) || name.Equals(english);
+                })
+                .Select(n => new MyAnimeListNodeDistance(n, Name, n.Element("title")?.Value, n.Element("english")?.Value))
+                // .Where(n => n.Distance <= 80)
+                .OrderBy(n => n.Distance)
+                .Select(n => n.Node)
+                .FirstOrDefault();
+        }
+
+        public XElement ClosestMyAnimelistNode(IEnumerable<XElement> animeNodes, XElement filterNode)
+        {
+            return animeNodes
+                .Where(n =>
+                {
+                    var status = n.Element("status")?.Value;
+                    if (Airing && status != null)
+                        return status.Equals("Currently Airing");
+                    return true;
+                })
+                .Where(n =>
+                {
+                    if (!NameStrict)
+                        return true;
+                    var title = n.Element("title")?.Value.ToLower();
+                    var english = n.Element("english")?.Value.ToLower();
+                    var name = Name.ToLower();
+                    return name.Equals(title) || name.Equals(english);
+                })
+                .Select(n => new MyAnimeListNodeDistance(n, Name, n.Element("title")?.Value, n.Element("english")?.Value))
+                // .Where(n => n.Distance <= 80)
+                .OrderBy(n => n.Distance)
+                .Select(n => n.Node)
+                .FirstOrDefault(n => !(n.Element("id").Value.Equals(filterNode.Element("id").Value)));
         }
 
         private void Save()
@@ -256,7 +414,7 @@ namespace anime_downloader.Classes
         ///     A zero padded string of the number of the next episode.
         /// </summary>
         /// <returns>A padded string representation of the next episode in sequence.</returns>
-        public string NextEpisode() => $"{int.Parse(Episode) + 1:D2}";
+        public string NextEpisode() => $"{IntEpisode() + 1:D2}";
 
         /// <summary>
         ///     Joins properties of anime together to a string that can be read by an RSS query.

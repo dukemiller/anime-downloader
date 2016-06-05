@@ -125,6 +125,7 @@ namespace anime_downloader.Classes.File
             {
                 await Logger.WriteLineAsync($"Downloaded '{anime.Title}' episode {anime.NextEpisode()}.");
                 anime.Episode = anime.NextEpisode();
+                anime.MyAnimelistNeedsUpdating = true;
                 _downloaded++;
             }
             else

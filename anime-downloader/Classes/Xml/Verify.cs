@@ -23,7 +23,9 @@ namespace anime_downloader.Classes.Xml
             foreach (var element in schema.Elements())
             {
                 if (!current.Elements().Any(e => e.Name.Equals(element.Name)))
-                    current.Add(new XElement(element.Name, element.Value));
+                    current.Add(element.HasElements
+                        ? new XElement(element.Name)
+                        : new XElement(element.Name, element.Value));
 
                 if (element.HasElements)
                     Compare(current.Element(element.Name.ToString()), element);

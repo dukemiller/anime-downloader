@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Web;
 using System.Windows;
 using System.Windows.Input;
@@ -11,6 +12,8 @@ namespace anime_downloader.Views
     /// </summary>
     public partial class Web
     {
+        public DateTime WaitDelay { get; set; } = DateTime.Now;
+
         public Web()
         {
             InitializeComponent();
@@ -25,12 +28,7 @@ namespace anime_downloader.Views
         {
             Process.Start("http://anichart.net/");
         }
-
-        private void AnidbButton_Click(object sender, RoutedEventArgs e)
-        {
-            Process.Start("https://anidb.net/");
-        }
-
+        
         private void NyaaButton_Click(object sender, RoutedEventArgs e)
         {
             Process.Start("https://www.nyaa.se/");

@@ -30,17 +30,17 @@
                         </RadioButton>
                         <RadioButton Name="LastWatchedRadio" VerticalContentAlignment="Center"
                                      KeyDown="Radio_KeyDown">
-                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode to last episode number in the watched folder</TextBlock>
+                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode to last found episode number in the watched folder</TextBlock>
                         </RadioButton>
                         
                         <RadioButton Name="LastUnwatchedRadio" VerticalContentAlignment="Center"
                                      KeyDown="Radio_KeyDown">
-                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode to last episode number in the episodes folder</TextBlock>
+                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode to last found episode number in the episodes folder</TextBlock>
                         </RadioButton>
 
                         <RadioButton Name="LastAnyRadio" VerticalContentAlignment="Center"
                                      KeyDown="Radio_KeyDown">
-                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode to last episode number in any folder</TextBlock>
+                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode to last found episode number in any folder</TextBlock>
                         </RadioButton>
 
                         <RadioButton Name="FirstWatchedRadio" VerticalContentAlignment="Center"

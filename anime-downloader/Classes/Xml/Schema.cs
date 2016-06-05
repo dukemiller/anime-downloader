@@ -38,7 +38,17 @@ namespace anime_downloader.Classes.Xml
                 new XElement("airing", false),
                 new XElement("name-strict", false),
                 new XElement("preferredSubgroup"),
-                new XElement("rating")
+                new XElement("rating"),
+                new XElement("myanimelist", 
+                    new XElement("id"),
+                    new XElement("title"),
+                    new XElement("english"),
+                    new XElement("synopsis"),
+                    new XElement("image"),
+                    new XElement("total-episodes"),
+                    new XElement("needs-updating", true),
+                    new XElement("series-continuation-episode")
+                    )
                 );
             return node;
         }
@@ -67,6 +77,11 @@ namespace anime_downloader.Classes.Xml
                             new XElement("exitOnClose", true),
                             new XElement("alwaysShowTray", false),
                             new XElement("sortByReversed", false)
+                            ),
+                        new XElement("myanimelist",
+                            new XElement("username"),
+                            new XElement("password"),
+                            new XElement("works", false)
                             ),
                         new XElement("sortBy", "name"),
                         new XElement("filterBy")

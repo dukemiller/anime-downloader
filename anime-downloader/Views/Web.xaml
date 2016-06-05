@@ -1,65 +1,179 @@
 ﻿<UserControl x:Class="anime_downloader.Views.Web"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:classes="clr-namespace:anime_downloader.Classes"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             mc:Ignorable="d"
-             d:DesignHeight="360" d:DesignWidth="680">
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ff="clr-namespace:anime_downloader.Classes.Xaml"
+             xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
+             d:DesignHeight="360"
+             d:DesignWidth="680"
+             mc:Ignorable="d">
     <UserControl.Resources>
+        <xaml:MyAnimelistWorksConverter x:Key="WorksConverter" />
+        <xaml:MyAnimelistWorksColorConverter x:Key="ColorConverter" />
+        <xaml:MyAnimelistWorksOpacityConverter x:Key="OpacityConverter" />
         <Style x:Key="BoxStyle" TargetType="{x:Type GroupBox}">
             <Setter Property="FontSize" Value="16" />
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="FontFamily" Value="Yu Gothic" />
+        </Style>
+        <Style x:Key="FontStyle">
+            <Setter Property="RadioButton.FontFamily" Value="{StaticResource MainFont}" />
         </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.Background>White</Grid.Background>
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="5*" />
                 <RowDefinition Height="1*" />
+                <RowDefinition Height="11*" />
             </Grid.RowDefinitions>
-            <StackPanel Grid.Row="0">
-                <GroupBox x:Name="SearchGroupBox" Header="Search on MyAnimeList: " Style="{DynamicResource BoxStyle}">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="4*" />
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
-                        </Grid.ColumnDefinitions>
-                        <TextBox x:Name="SearchTextBox" Width="300" Grid.Column="0" Margin="5"
-                                 VerticalContentAlignment="Center" KeyDown="SearchTextBox_KeyDown" />
-                        <Button x:Name="SearchButton" Grid.Column="1" Margin="5"
-                                Style="{DynamicResource FeatureButtonStyle}" KeyDown="SearchButton_KeyDown">
-                            <TextBlock Margin="5">Search</TextBlock>
-                        </Button>
-                        <Button x:Name="FirstResultButton" Grid.Column="2" Margin="5"
-                                Style="{DynamicResource FeatureButtonStyle}">
-                            <TextBlock Margin="5">First Result</TextBlock>
-                        </Button>
-                    </Grid>
+
+            <TextBlock Grid.Row="0" Style="{DynamicResource FontStyle}" TextWrapping="Wrap" FontSize="16" TextAlignment="Justify">
+                Sync your anime list with your MyAnimeList profile and quickly visit pages.
+            </TextBlock>
+
+            <DockPanel Grid.Row="1">
+                <GroupBox x:Name="MyAnimeListGroupbox"
+                          d:DataContext="{d:DesignInstance classes:Settings}"
+                          Header="MyAnimeList"
+                          Style="{DynamicResource BoxStyle}">
+                    <StackPanel Margin="3">
+                        <DockPanel>
+                            <GroupBox x:Name="LoginGroupBox" Header="Sync">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="1*" />
+                                        <RowDefinition Height="1*" />
+                                        <RowDefinition Height="1*" />
+                                        <RowDefinition Height="1*" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1*" />
+                                        <ColumnDefinition Width="4*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Label Grid.Row="0" Grid.Column="0" Content="Username: " />
+                                    <TextBox x:Name="UsernameTextbox"
+                                             Grid.Row="0"
+                                             Grid.Column="1"
+                                             VerticalAlignment="Center"
+                                             Text="{Binding MyAnimeListUsername}" />
+                                    <Label Grid.Row="1"
+                                           Grid.Column="0"
+                                           Content="Password: " />
+                                    <PasswordBox x:Name="PasswordPasswordBox"
+                                                 Grid.Row="1"
+                                                 Grid.Column="1"
+                                                 VerticalAlignment="Center"
+                                                 ff:PasswordBoxAssistant.BindPassword="True" ff:PasswordBoxAssistant.BoundPassword="{Binding Path=MyAnimeListPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    
+                                    <Label Grid.Row="2"
+                                           Grid.Column="0"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Content="Logged in: "/>
+                                    <Label Grid.Row="3" Grid.Column="0"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Content="Synced: "/>
+                                    
+                                    <DockPanel Grid.Row="2" Grid.Column="1">
+                                        <Label x:Name="LoggedIn"
+                                               FontSize="22"
+                                               Content="{Binding MyAnimeListWorks, Converter={StaticResource WorksConverter}}"
+                                               Foreground="{Binding MyAnimeListWorks, Converter={StaticResource ColorConverter}}"/>
+                                    </DockPanel>
+                                    
+                                    <DockPanel Grid.Row="3" Grid.Column="1">
+                                        <!-- Custom data context in code behind ... -->
+                                        <Label x:Name="SyncedUp" FontSize="22" />
+                                        <DockPanel HorizontalAlignment="Right" >
+                                            <Button x:Name="LoginButton"
+                                                    Margin="5"
+                                                    Style="{DynamicResource FeatureButtonStyle}">
+                                                <TextBlock Margin="5">Login</TextBlock>
+                                            </Button>
+                                            <Button x:Name="SyncButton"
+                                                    Margin="5"
+                                                    Style="{DynamicResource SpecialButtonStyle}"
+                                                    IsHitTestVisible="{Binding MyAnimeListWorks}"
+                                                    Opacity="{Binding MyAnimeListWorks, Converter={StaticResource OpacityConverter}}">
+                                                <TextBlock Margin="5">Sync</TextBlock>
+                                            </Button>
+                                        </DockPanel>
+                                    </DockPanel>
+
+                                </Grid>
+                            </GroupBox>
+                        </DockPanel>
+                        <GroupBox x:Name="SearchGroupBox"
+                                  Header="Search "
+                                  Style="{DynamicResource BoxStyle}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition Width="1*" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBox x:Name="SearchTextBox"
+                                         Grid.Column="0"
+                                         Width="300"
+                                         Margin="5"
+                                         VerticalContentAlignment="Center"
+                                         KeyDown="SearchTextBox_KeyDown" />
+
+                                <DockPanel Grid.Column="1" HorizontalAlignment="Left">
+                                    <Button x:Name="SearchButton"
+                                            Margin="5"
+                                            KeyDown="SearchButton_KeyDown"
+                                            Style="{DynamicResource FeatureButtonStyle}">
+                                        <TextBlock Margin="5">Search</TextBlock>
+                                    </Button>
+
+                                    <Button x:Name="FirstResultButton"
+                                            Margin="5"
+                                            Style="{DynamicResource FeatureButtonStyle}">
+                                        <TextBlock Margin="5">First Result</TextBlock>
+                                    </Button>
+                                </DockPanel>
+                            </Grid>
+                        </GroupBox>
+                    </StackPanel>
                 </GroupBox>
-                <GroupBox x:Name="WebButtonsGroupBox" Header="Websites" Style="{DynamicResource BoxStyle}">
-                    <DockPanel HorizontalAlignment="Left">
-                        <Button x:Name="AnichartButton" Margin="5" Style="{DynamicResource FeatureButtonStyle}"
-                                Click="AnichartButton_Click">
-                            <TextBlock Margin="5">Anichart</TextBlock>
-                        </Button>
-                        <Button x:Name="MyanimelistButton" Margin="5" Style="{DynamicResource FeatureButtonStyle}"
-                                Click="MyanimelistButton_Click">
-                            <TextBlock Margin="5">MyAnimeList</TextBlock>
-                        </Button>
-                        <Button x:Name="AnidbButton" Margin="5" Style="{DynamicResource FeatureButtonStyle}"
-                                Click="AnidbButton_Click">
-                            <TextBlock Margin="5">aniDB</TextBlock>
-                        </Button>
-                        <Button x:Name="NyaaButton" Margin="5" Style="{DynamicResource FeatureButtonStyle}"
-                                Click="NyaaButton_Click">
-                            <TextBlock Margin="5">Nyaa</TextBlock>
-                        </Button>
-                    </DockPanel>
-                </GroupBox>
-            </StackPanel>
+
+                <StackPanel >
+                    <GroupBox x:Name="WebButtonsGroupBox"
+                              Header="Launch Website"
+                              Style="{DynamicResource BoxStyle}">
+                        <StackPanel>
+                            <Button x:Name="MyanimelistButton"
+                                    Margin="5"
+                                    Click="MyanimelistButton_Click"
+                                    Style="{DynamicResource FeatureButtonStyle}">
+                                <TextBlock Margin="5">MyAnimeList</TextBlock>
+                            </Button>
+                            <Button x:Name="AnichartButton"
+                                    Margin="5"
+                                    Click="AnichartButton_Click"
+                                    Style="{DynamicResource FeatureButtonStyle}">
+                                <TextBlock Margin="5">Anichart</TextBlock>
+                            </Button>
+                            <Button x:Name="NyaaButton"
+                                    Margin="5"
+                                    Click="NyaaButton_Click"
+                                    Style="{DynamicResource FeatureButtonStyle}">
+                                <TextBlock Margin="5">Nyaa</TextBlock>
+                            </Button>
+                        </StackPanel>
+                    </GroupBox>
+                    <GroupBox 
+                        Header="Usage Notes" Style="{DynamicResource BoxStyle}"
+                        VerticalAlignment="Bottom">
+                            <Button x:Name="UsageButton" Style="{DynamicResource FeatureButtonStyle}" Content="Click me"/>
+                    </GroupBox>
+                </StackPanel>
+            </DockPanel>
         </Grid>
     </Grid>
 </UserControl>

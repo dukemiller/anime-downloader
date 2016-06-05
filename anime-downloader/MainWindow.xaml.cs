@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -161,7 +162,7 @@ namespace anime_downloader
             KeyDown += (o, e) =>
             {
                 // So you can type without changing the view
-                if (Keyboard.FocusedElement is TextBox)
+                if (Keyboard.FocusedElement is TextBox || Keyboard.FocusedElement is PasswordBox)
                     return;
 
                 // Ctrl-X to close
@@ -468,6 +469,7 @@ namespace anime_downloader
             var display = (AnimeList) CurrentDisplay;
             foreach (var cell in display.DataGrid.SelectedCells)
                 _animeCollection.Remove(cell.Item as Anime);
+            CloseAnimeFindPopup();
             display.Refresh(_animeCollection);
         }
 
@@ -496,6 +498,7 @@ namespace anime_downloader
             {
                 foreach (var cell in display.DataGrid.SelectedCells)
                     _animeCollection.Remove(cell.Item as Anime);
+                CloseAnimeFindPopup();
                 display.Refresh(_animeCollection);
             }
 
@@ -737,6 +740,20 @@ namespace anime_downloader
                     Process.Start($"{episode.FilePath}");
             };
 
+            display.ClearMalButton.Click += delegate
+            {
+                anime.MyAnimelistId = "";
+                anime.MyAnimelistNeedsUpdating = true;
+                anime.MyAnimelistSeriesContinuationEpisode = "";
+                anime.MyAnimelistTotalEpisodes = "";
+                anime.MyAnimelistEnglish = "";
+                anime.MyAnimelistImage = "";
+                anime.MyAnimelistSynopsis = "";
+                anime.MyAnimelistTitle = "";
+                Alert("Cleared all MyAnimeList data about this show.");
+                display.ClearMalButton.Visibility = Visibility.Hidden;
+            };
+
             _currentlyEditedAnime = anime;
         }
 
@@ -749,6 +766,10 @@ namespace anime_downloader
             var animes = tableDisplay.DataGrid.SelectedCells.Select(a => a.Item as Anime).Distinct().ToList();
             var display = ChangeDisplay<AnimeDetailsMultiple>();
 
+            // Press Escape or mouse back or backspace to go back
+            KeyDown += KeyEscapeBack;
+            MouseDown += MouseEscapeBack;
+
             // get the most used resolution, status, and airing from the selection,
             // then make them the value in the boxes
             var resolution = animes.GroupBy(a => a.Resolution).OrderByDescending(c => c.Count()).First().Key;
@@ -760,7 +781,7 @@ namespace anime_downloader
 
             // Change the header and content
             display.InfoTextBlock.Text = "Make the same change to the following list of anime: ";
-            display.InputTextBox.Text = string.Join("\n", animes.Select(a => a.Name));
+            display.InputTextBox.Text = string.Join("\n", animes.Select(a => a.Title));
             display.InputTextBox.IsReadOnly = true;
 
             display.SubmitButton.Click += delegate
@@ -1158,9 +1179,36 @@ namespace anime_downloader
         /// <summary>
         ///     View: Web
         /// </summary>
-        private void WebButton_Click(object sender, RoutedEventArgs e)
+        private async void WebButton_Click(object sender, RoutedEventArgs e)
         {
             var display = ChangeDisplay<Web>();
+            display.MyAnimeListGroupbox.DataContext = _settings;
+
+            // TODO: figure out how to add this to the datacontext later
+            var upToDate = await Task.Run(() => !_animeCollection.Animes.Any(a => a.MyAnimelistNeedsUpdating));
+
+            display.SyncedUp.Content = upToDate ? "✓" : "✗";
+            display.SyncedUp.Foreground = upToDate ? Color.Green.ToBrush() : Color.Red.ToBrush();
+
+            // Dont need to click sync if you're up to date
+            display.SyncButton.IsHitTestVisible = !upToDate;
+            display.SyncButton.Opacity = upToDate ? 0.6 : 1.0;
+
+            display.LoginButton.Click += async delegate
+            {
+                if (DateTime.Now < display.WaitDelay)
+                    return;
+
+                display.WaitDelay = DateTime.Now.AddSeconds(5);
+                var credentials = MyAnimeList.GetCredentials(_settings);
+                var result = await MyAnimeList.VerifyAsync(credentials);
+                var temp = _settings.MyAnimeListWorks;
+                _settings.MyAnimeListWorks = result;
+
+                if (temp != _settings.MyAnimeListWorks)
+                    Cycle(WebButton);
+            };
+
             display.FirstResultButton.Click += async delegate
             {
                 var text = display.SearchTextBox.Text.Trim();
@@ -1169,6 +1217,172 @@ namespace anime_downloader
                     await SearchOnMyAnimeListAsync(text);
                 }
             };
+
+            display.UsageButton.Click += delegate
+            {
+                Alert("There are a few tricks and quirks to correctly use the synchronization: \n\n" +
+
+                      "1. Dont use any nicknames for the show even if they get recognized by nyaa, " +
+                      "use the original english or romaji (partial matches are still fine)\n\n" +
+
+                      "2. If the show has a close matching name to another series or is a single " +
+                      "word (e.g. GATE vs Steins;Gate), flagging in the anime details for 'name " +
+                      "strict' will only find exact matches of the show.\n\n" +
+
+                      "3. For shows that have a season with another name, try your hardest to " +
+                      "maintain that naming by adding a new series and marking the original " +
+                      "series as complete instead of keeping the same name and downloading new " +
+                      "episodes. It should still work, but it's bound to cause some kind of " +
+                      "problems."
+                    );
+            };
+
+            display.SyncButton.Click += WebButton_SyncButton_Click;
+        }
+
+        private async void WebButton_SyncButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.ToggleButtons();
+
+            // Get credentials
+            var credentials = MyAnimeList.GetCredentials(_settings);
+
+            // for every anime that needs updating
+            foreach(var anime in _animeCollection.Animes.Where(a => a.MyAnimelistNeedsUpdating))
+            {
+                // if no id is found
+                if (anime.MyAnimelistId.Equals(""))
+                {
+                    // get all results from searching the name
+                    var animeNodes = (await MyAnimeList.FindAsync(credentials, HttpUtility.UrlEncode(anime.Title))).ToList();
+
+                    // if there were absolutely no results from the query
+                    if (!animeNodes.Any())
+                    {
+                        // Continually segment words and attempt to get a result
+                        var name = anime.Title.Split(' ');
+                        var length = name.Length;
+                        while (!animeNodes.Any() && length-- > 1)
+                        {
+                            animeNodes = (await MyAnimeList.FindAsync(credentials, HttpUtility.UrlEncode(string.Join(" ", name.Take(length))))).ToList();
+                        }
+                    }
+
+                    // if there are still no results
+                    if (!animeNodes.Any())
+                    {
+                        // throw an error then skip
+                        Alert($"1. Absolutely no matching names found for {anime.Title}.");
+                        continue;
+                    }
+
+                    // make an estimation as to what is the closest node related to the anime
+                    var chosenNode = anime.ClosestMyAnimelistNode(animeNodes);
+
+                    // if there was no good guess
+                    if (chosenNode == null)
+                    {
+                        // throw an error then skip
+                        Alert($"2. No partial matches found from matching names for {anime.Title}.");
+                        continue;
+                    }
+
+                    // for the node, check episode details
+                    var episode = chosenNode.Element("episodes")?.Value;
+                    int intEpisode;
+                    if (int.TryParse(episode, out intEpisode) && intEpisode > 0)
+                    {
+                        // if you have downloaded more episodes than exists in the show, then you probably mislabeled
+                        // this show as a s2 show but i'll go through painstaking effort to make it work anyway
+                        if (anime.IntEpisode() > intEpisode)
+                        {
+                            // If the show you're watching is airing, you probably got the correct result the first time
+                            // and should keep your current result, and make sure the previous result exists
+                            if (anime.Airing)
+                            {
+                                var previousNode = anime.ClosestMyAnimelistNode(animeNodes, chosenNode);
+
+                                // If there's no previous season found, then skip
+                                if (previousNode == null)
+                                {
+                                    Alert($"3a. Episode mismatch and no new series match for {anime.Title}.\n" +
+                                          $"Given total: {intEpisode}, current episode: {anime.IntEpisode()}");
+                                    continue;
+                                }
+                            }
+
+                            // Disclude current node because it's not correct, find the next node
+                            else
+                            {
+                                chosenNode = anime.ClosestMyAnimelistNode(animeNodes, chosenNode);
+
+                                // If there's still nothing, just skip
+                                if (chosenNode == null)
+                                {
+                                    Alert($"3b. Episode mismatch and no new series match for {anime.Title}.\n" +
+                                          $"Given total: {intEpisode}, current episode: {anime.IntEpisode()}");
+                                    continue;
+                                }
+                            }
+
+                            // keep track of episodes to update instead in this variable
+                            anime.MyAnimelistSeriesContinuationEpisode = $"{anime.IntEpisode() - intEpisode:D2}";
+                        }
+
+                        // then add the episode
+                        anime.MyAnimelistTotalEpisodes = episode;
+                    }
+
+                    else
+                    {
+                        // sometimes there's no given end episode range, which is ok
+                        anime.MyAnimelistTotalEpisodes = "";
+                    }
+
+                    // If there is somehow a value that returns an empty id, skip
+                    anime.MyAnimelistId = chosenNode.Element("id")?.Value ?? "";
+                    if (anime.MyAnimelistId.Equals(""))
+                    {
+                        anime.MyAnimelistTotalEpisodes = "";
+                        Alert($"4. This should never happen, for {anime.Title}.");
+                        continue;
+                    }
+
+                    // then just add all the details available
+                    anime.MyAnimelistSynopsis = chosenNode.Element("synopsis")?.Value ?? "";
+                    anime.MyAnimelistImage = chosenNode.Element("image")?.Value ?? "";
+                    anime.MyAnimelistTitle = chosenNode.Element("title")?.Value ?? "";
+                    anime.MyAnimelistEnglish = chosenNode.Element("english")?.Value ?? "";
+
+                    // convert to node for easier serialization, also checking if this is a mock second season
+                    var myAnimeListNode = !anime.MyAnimelistSeriesContinuationEpisode.Equals("")
+                        ? new MyAnimeListNode(anime, anime.MyAnimelistSeriesContinuationEpisode)
+                        : new MyAnimeListNode(anime);
+
+                    // add the data
+                    await MyAnimeList.AddAsync(credentials, anime.MyAnimelistId, myAnimeListNode.ToString());
+
+                    // reset flag to update
+                    anime.MyAnimelistNeedsUpdating = false;
+                }
+
+                else
+                {
+                    // If this is a mock second season or not
+                    var myAnimeListNode = !anime.MyAnimelistSeriesContinuationEpisode.Equals("")
+                        ? new MyAnimeListNode(anime, anime.MyAnimelistSeriesContinuationEpisode)
+                        : new MyAnimeListNode(anime);
+
+                    // update the data
+                    await MyAnimeList.UpdateAsync(credentials, anime.MyAnimelistId, myAnimeListNode.ToString());
+
+                    // reset flag to update
+                    anime.MyAnimelistNeedsUpdating = false;
+                }
+            }
+
+            this.ToggleButtons();
+            Cycle(WebButton);
         }
 
         /* --Misc */

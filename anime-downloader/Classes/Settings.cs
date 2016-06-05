@@ -21,6 +21,8 @@ namespace anime_downloader.Classes
                 SettingsDocument = Schema.SettingsDocument();
                 AnimeDocument = Schema.AnimeDocument();
             }
+
+            
         }
 
         /// <summary>
@@ -241,9 +243,47 @@ namespace anime_downloader.Classes
             }
         }
         
+        public string MyAnimeListUsername
+        {
+            get { return Root.Element("myanimelist")?.Element("username")?.Value; }
+            set
+            {
+                Root.Element("myanimelist")?.Element("username")?.SetValue(value);
+                Save();
+            }
+        }
+
+        public string MyAnimeListPassword
+        {
+            get { return Root.Element("myanimelist")?.Element("password")?.Value; }
+            set
+            {
+                Root.Element("myanimelist")?.Element("password")?.SetValue(value);
+                Save();
+            }
+        }
+
+        public bool MyAnimeListWorks
+        {
+            get
+            {
+                bool result;
+                var value = Root.Element("myanimelist")?.Element("works")?.Value;
+                return bool.TryParse(value, out result) && result;
+            }
+
+            set
+            {
+                Root.Element("myanimelist")?.Element("works")?.SetValue(value);
+                Save();
+            }
+        }
+
         /// <summary>
         ///     Save the schema to the settings path.
         /// </summary>
         public void Save() => AnimeCollection.SaveSettings(SettingsDocument);
     }
+    
+
 }

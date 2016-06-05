@@ -19,8 +19,7 @@
             <RowDefinition Height="9*" />
             <RowDefinition Height="2*" />
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" x:Name="TextBlock" TextWrapping="Wrap" FontSize="16" TextAlignment="Justify"
-                   Style="{DynamicResource FontStyle}"
+        <TextBlock Grid.Row="0" x:Name="TextBlock" TextWrapping="Wrap" FontSize="16" TextAlignment="Justify" Style="{DynamicResource FontStyle}"
                    Text="Create a playlist from all unwatched anime episodes as the filename 'playlist.m3u'." />
         <StackPanel Grid.Row="1">
             <DockPanel>

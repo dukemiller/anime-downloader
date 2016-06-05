@@ -63,7 +63,7 @@
 
                 <!-- Watched path -->
                 <Label x:Name="WatchedLabel" Grid.Row="1" Grid.Column="0"
-                       Content="Watched filess to: "
+                       Content="Watched files to: "
                        Style="{DynamicResource LabelStyle}"
                        ToolTip="Path where watched episodes will be moved to." />
                 <TextBox x:Name="WatchedTextbox" Text="{Binding WatchedDirectory}" Grid.Row="1" Grid.Column="1"
