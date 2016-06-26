@@ -1,11 +1,11 @@
-﻿using anime_downloader.Classes.Xml;
-using anime_downloader.Views;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using anime_downloader.Classes.Xml;
+using anime_downloader.Views;
 
 namespace anime_downloader.Classes
 {

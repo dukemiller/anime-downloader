@@ -1,13 +1,13 @@
 ﻿using System;
-using anime_downloader.Classes.File;
-using anime_downloader.Classes.Web;
-using anime_downloader.Classes.Xml;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using anime_downloader.Classes.File;
+using anime_downloader.Classes.Web;
 using anime_downloader.Classes.Web.MyAnimeList;
+using anime_downloader.Classes.Xml;
 
 namespace anime_downloader.Classes
 {

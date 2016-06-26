@@ -1,8 +1,8 @@
-﻿using anime_downloader.Classes.Xml;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using anime_downloader.Classes.Xml;
 
 namespace anime_downloader.Classes
 {

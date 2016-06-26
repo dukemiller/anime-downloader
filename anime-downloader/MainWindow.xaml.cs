@@ -1,9 +1,4 @@
-﻿using anime_downloader.Classes;
-using anime_downloader.Classes.File;
-using anime_downloader.Classes.Web;
-using anime_downloader.Classes.Xml;
-using anime_downloader.Views;
-using HtmlAgilityPack;
+﻿using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,9 +14,13 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using anime_downloader.Classes;
+using anime_downloader.Classes.File;
+using anime_downloader.Classes.Web;
 using anime_downloader.Classes.Web.MyAnimeList;
+using anime_downloader.Classes.Xml;
+using anime_downloader.Views;
 using static anime_downloader.Classes.OperatingSystemApi;
-using Settings = anime_downloader.Classes.Settings;
 
 namespace anime_downloader
 {
@@ -58,7 +57,7 @@ namespace anime_downloader
         /// <summary>
         ///     Handles paths and user settings.
         /// </summary>
-        private Settings _settings;
+        private Classes.Settings _settings;
 
         /// <summary>
         ///     Handles logic related to creating and features of the system tray.
@@ -126,21 +125,21 @@ namespace anime_downloader
         /// </summary>
         private void InitializeSettings()
         {
-            if (!File.Exists(Settings.SettingsXml))
+            if (!File.Exists(Classes.Settings.SettingsXml))
                 Settings_CreateNew();
             else
             {
-                _settings = new Settings(true);
+                _settings = new Classes.Settings(true);
                 _animeCollection = new AnimeCollection(_settings);
                 _filehandler = new FileHandler(_settings);
                 _playlist = new Playlist(_filehandler);
                 _downloader = new Downloader(_settings);
                 _tray = new Tray(this, _settings);
 
-                if (!Directory.Exists(Settings.ApplicationDirectory))
-                    Directory.CreateDirectory(Settings.ApplicationDirectory);
+                if (!Directory.Exists(Classes.Settings.ApplicationDirectory))
+                    Directory.CreateDirectory(Classes.Settings.ApplicationDirectory);
 
-                if (!File.Exists(Settings.AnimeXml))
+                if (!File.Exists(Classes.Settings.AnimeXml))
                     Schema.CreateAnimeXml();
 
                 InitialState();
@@ -342,15 +341,15 @@ namespace anime_downloader
         {
             var display = ChangeDisplay<PlaylistCreator>();
 
-            if (!File.Exists(Settings.PlaylistFile))
+            if (!File.Exists(Classes.Settings.PlaylistFile))
             {
                 display.OpenButton.Toggle();
             }
 
             display.OpenButton.Click += delegate
             {
-                if (File.Exists(Settings.PlaylistFile))
-                    Process.Start(Settings.PlaylistFile);
+                if (File.Exists(Classes.Settings.PlaylistFile))
+                    Process.Start(Classes.Settings.PlaylistFile);
             };
             display.CreateButton.Click += Playlist_PlaylistCreateButton_Click;
         }
@@ -890,7 +889,7 @@ namespace anime_downloader
 
             // Default guessed values
             // TODO yeah you know, i don't really like how this works
-            var settings = new Settings
+            var settings = new Classes.Settings
             {
                 Paths =
                 {
@@ -912,7 +911,7 @@ namespace anime_downloader
                 else
                 {
                     this.ToggleButtons();
-                    ((Settings) display.DataContext).Save();
+                    ((Classes.Settings) display.DataContext).Save();
                     InitializeSettings();
                 }
             };
@@ -939,9 +938,9 @@ namespace anime_downloader
 
             var text = ">> No downloads have been logged so far.";
 
-            if (File.Exists(Settings.LoggingFile))
+            if (File.Exists(Classes.Settings.LoggingFile))
             {
-                using (var reader = new StreamReader(Settings.LoggingFile))
+                using (var reader = new StreamReader(Classes.Settings.LoggingFile))
                     text = await reader.ReadToEndAsync();
                 text = string.Join("\n", text.Split('\n').Reverse().Skip(1));
             }
