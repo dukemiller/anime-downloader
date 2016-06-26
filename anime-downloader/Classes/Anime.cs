@@ -216,7 +216,6 @@ namespace anime_downloader.Classes
                     // Else just the actual season total if there is one
                     if (MyAnimeList.IntTotalEpisodes() > 0)
                         return $"{Episode}/{MyAnimeList.TotalEpisodes}";
-                    
                 }
                 
                 return Episode;

@@ -21,35 +21,50 @@
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0">
                 <GroupBox x:Name="GroupBox"
-                          Header="Indexing options (for each show that is both 'airing' and 'watching')"
+                          Header="Indexing"
                           Style="{DynamicResource BoxStyle}"
                           VerticalAlignment="Top">
                     <StackPanel Margin="5">
-                        <RadioButton Name="DuplicatesRadio" VerticalContentAlignment="Center" KeyDown="Radio_KeyDown">
-                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Move duplicates to your "My Videos" folder</TextBlock>
-                        </RadioButton>
+
+                        <Label Content="For every anime that is airing and being watched ..."/>
+                        <Label Content="--- Set current episode to the LAST found episode in ..."/>
+                    
                         <RadioButton Name="LastWatchedRadio" VerticalContentAlignment="Center"
-                                     KeyDown="Radio_KeyDown">
-                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode to last found episode number in the watched folder</TextBlock>
+                                        KeyDown="Radio_KeyDown">
+                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Watched folder</TextBlock>
                         </RadioButton>
 
                         <RadioButton Name="LastUnwatchedRadio" VerticalContentAlignment="Center"
-                                     KeyDown="Radio_KeyDown">
-                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode to last found episode number in the episodes folder</TextBlock>
+                                        KeyDown="Radio_KeyDown">
+                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Episodes folder</TextBlock>
                         </RadioButton>
 
                         <RadioButton Name="LastAnyRadio" VerticalContentAlignment="Center"
-                                     KeyDown="Radio_KeyDown">
-                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode to last found episode number in any folder</TextBlock>
+                                        KeyDown="Radio_KeyDown">
+                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Any folder</TextBlock>
                         </RadioButton>
+
+                        <Label Content="--- Set current episode to the FIRST found episode in ..."/>
 
                         <RadioButton Name="FirstWatchedRadio" VerticalContentAlignment="Center"
                                      KeyDown="Radio_KeyDown">
-                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode to first known episode value in any folder</TextBlock>
+                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Any folder</TextBlock>
                         </RadioButton>
+
+                        <Label Content="---"/>
+
                         <RadioButton Name="ZeroRadio" VerticalContentAlignment="Center" KeyDown="Radio_KeyDown">
                             <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode to zero</TextBlock>
                         </RadioButton>
+
+                        <RadioButton Name="DuplicatesRadio" VerticalContentAlignment="Center" KeyDown="Radio_KeyDown">
+                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Move any found duplicates to "My Videos" folder</TextBlock>
+                        </RadioButton>
+
+                        <RadioButton Name="MarkCompleteRadio" VerticalContentAlignment="Center" KeyDown="Radio_KeyDown">
+                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Change status of animes that you have downloaded every episode for as complete</TextBlock>
+                        </RadioButton> 
+
                     </StackPanel>
                 </GroupBox>
             </StackPanel>

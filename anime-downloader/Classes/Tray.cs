@@ -80,6 +80,15 @@ namespace anime_downloader.Classes
             stream.Close();
         }
 
+        private void BringWindowToFocus()
+        {
+            if (_mainWindow.WindowState == WindowState.Minimized)
+            {
+                _mainWindow.Show();
+                _mainWindow.WindowState = WindowState.Normal;
+            }
+        }
+
         private void CreateContextMenu()
         {
             _trayContextMenu = new ContextMenu();
@@ -87,27 +96,18 @@ namespace anime_downloader.Classes
             _trayContextMenu.MenuItems.Add(
                 new MenuItem("Download latest ...", (sender, args) =>
                 {
-                    if (_mainWindow.WindowState == WindowState.Minimized)
-                    {
-                        _mainWindow.Show();
-                        _mainWindow.WindowState = WindowState.Normal;
-                    }
-                    _mainWindow.Cycle(_mainWindow.DownloadButton);
-                    var view = _mainWindow.CurrentDisplay as DownloadOptions;
-                    view?.SearchButton.Press();
+                    BringWindowToFocus();
+                    _mainWindow.DownloadButton.Press();
+                    (_mainWindow.CurrentDisplay as DownloadOptions)?.SearchButton.Press();
                 }));
 
             _trayContextMenu.MenuItems.Add(
                 new MenuItem("Sync MyAnimeList ...", (sender, args) =>
                 {
-                    if (_mainWindow.WindowState == WindowState.Minimized)
-                    {
-                        _mainWindow.Show();
-                        _mainWindow.WindowState = WindowState.Normal;
-                    }
-                    _mainWindow.Cycle(_mainWindow.WebButton);
+                    BringWindowToFocus();
+                    _mainWindow.WebButton.Press();
                     if (_settings.MyAnimeList.Works)
-                        ((Views.Web) _mainWindow.CurrentDisplay).SyncButton.Press();
+                        (_mainWindow.CurrentDisplay as Views.Web)?.SyncButton.Press();
                 }));
 
             _trayContextMenu.MenuItems.Add("-");

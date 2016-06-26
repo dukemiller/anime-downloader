@@ -1379,37 +1379,54 @@ namespace anime_downloader
 
             else
             {
-                var animes = _allAnime.AiringAndWatching().ToList();
+                var airingAnime = _allAnime.AiringAndWatching().ToList();
 
                 if (display.LastWatchedRadio.IsChecked == true)
                 {
-                    await _filehandler.SetToLastAsync(animes, EpisodeType.Watched);
+                    await _filehandler.SetToLastAsync(airingAnime, EpisodeType.Watched);
                     Alert("Reset episode order to last known in watched folder.");
                 }
 
                 else if (display.LastUnwatchedRadio.IsChecked == true)
                 {
-                    await _filehandler.SetToLastAsync(animes, EpisodeType.Unwatched);
+                    await _filehandler.SetToLastAsync(airingAnime, EpisodeType.Unwatched);
                     Alert("Reset episode order to last known in episode folder.");
                 }
 
                 else if (display.LastAnyRadio.IsChecked == true)
                 {
-                    await _filehandler.SetToLastAsync(animes, EpisodeType.All);
+                    await _filehandler.SetToLastAsync(airingAnime, EpisodeType.All);
                     Alert("Reset episode order to last known in any folder.");
                 }
 
                 else if (display.FirstWatchedRadio.IsChecked == true)
                 {
-                    await _filehandler.SetToFirstAsync(animes, EpisodeType.All);
+                    await _filehandler.SetToFirstAsync(airingAnime, EpisodeType.All);
                     Alert("Reset episode count to first known episode.");
                 }
 
                 else if (display.ZeroRadio.IsChecked == true)
                 {
-                    foreach (var anime in _allAnime.AiringAndWatching())
+                    foreach (var anime in airingAnime)
                         anime.Episode = "00";
                     Alert("Reset episode count to zero.");
+                }
+
+                else if (display.MarkCompleteRadio.IsChecked == true)
+                {
+                    var names = new List<string>();
+                    foreach (var anime in airingAnime.Where(a => a.MyAnimeList.HasId && (
+                        (a.MyAnimeList.IntOverallTotal() > 0 && a.IntEpisode() == a.MyAnimeList.IntOverallTotal()) ||
+                        (a.MyAnimeList.IntTotalEpisodes() > 0 && a.IntEpisode() == a.MyAnimeList.IntTotalEpisodes())
+                        )))
+                    {
+                        anime.Status = "Finished";
+                        anime.Airing = false;
+                        names.Add(anime.Title);
+                    }
+
+                    var result = names.Count > 0 ? string.Join(", ", names) : "no shows";
+                    Alert($"Marked {result} as finished. ");
                 }
             }
 
