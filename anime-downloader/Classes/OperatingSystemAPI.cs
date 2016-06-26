@@ -7,8 +7,8 @@ namespace anime_downloader.Classes
 {
     public static class OperatingSystemApi
     {
-#if WINDOWS
 
+#if WINDOWS
         [DllImport("user32.dll")]
         public static extern bool SetForegroundWindow(IntPtr hWnd);
 
@@ -17,7 +17,6 @@ namespace anime_downloader.Classes
 
         [DllImport("user32.dll")]
         public static extern IntPtr FindWindow(string sClassName, string sAppName);
-
 #endif
 
 #if LINUX

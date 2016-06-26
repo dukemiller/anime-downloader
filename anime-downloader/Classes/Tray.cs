@@ -1,10 +1,10 @@
-﻿using System.Diagnostics;
+﻿using anime_downloader.Views;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Forms;
-using anime_downloader.Views;
 using Application = System.Windows.Application;
 
 namespace anime_downloader.Classes
@@ -44,7 +44,7 @@ namespace anime_downloader.Classes
         {
             CreateTray();
             CreateContextMenu();
-            if (_settings.AlwaysShowTray)
+            if (_settings.Flags.AlwaysShowTray)
                 Visible = true;
         }
 
@@ -93,24 +93,37 @@ namespace anime_downloader.Classes
                         _mainWindow.WindowState = WindowState.Normal;
                     }
                     _mainWindow.Cycle(_mainWindow.DownloadButton);
-                    ((DownloadOptions) _mainWindow.CurrentDisplay).SearchButton.Press();
+                    var view = _mainWindow.CurrentDisplay as DownloadOptions;
+                    view?.SearchButton.Press();
                 }));
 
-            //
+            _trayContextMenu.MenuItems.Add(
+                new MenuItem("Sync MyAnimeList ...", (sender, args) =>
+                {
+                    if (_mainWindow.WindowState == WindowState.Minimized)
+                    {
+                        _mainWindow.Show();
+                        _mainWindow.WindowState = WindowState.Normal;
+                    }
+                    _mainWindow.Cycle(_mainWindow.WebButton);
+                    if (_settings.MyAnimeList.Works)
+                        ((Views.Web) _mainWindow.CurrentDisplay).SyncButton.Press();
+                }));
+
             _trayContextMenu.MenuItems.Add("-");
 
             _trayContextMenu.MenuItems.Add(
                 new MenuItem("Open episode folder ...", (sender, args) =>
                 {
-                    if (_settings != null && Directory.Exists(_settings.EpisodeDirectory))
-                        Process.Start(_settings.EpisodeDirectory);
+                    if (_settings != null && Directory.Exists(_settings.Paths.EpisodeDirectory))
+                        Process.Start(_settings.Paths.EpisodeDirectory);
                 }));
 
             _trayContextMenu.MenuItems.Add(
                 new MenuItem("Open watched folder ...", (sender, args) =>
                 {
-                    if (_settings != null && Directory.Exists(_settings.WatchedDirectory))
-                        Process.Start(_settings.WatchedDirectory);
+                    if (_settings != null && Directory.Exists(_settings.Paths.WatchedDirectory))
+                        Process.Start(_settings.Paths.WatchedDirectory);
                 }));
 
             _trayContextMenu.MenuItems.Add(
@@ -120,7 +133,6 @@ namespace anime_downloader.Classes
                         Process.Start(Settings.ApplicationDirectory);
                 }));
 
-            //
             _trayContextMenu.MenuItems.Add("-");
 
             _trayContextMenu.MenuItems.Add(
@@ -136,19 +148,17 @@ namespace anime_downloader.Classes
 
         public void CheckVisibility()
         {
-            if (_settings.AlwaysShowTray)
+            if (_settings.Flags.AlwaysShowTray)
             {
                 if (!Visible)
                     Visible = true;
             }
-
-            else if (!_settings.AlwaysShowTray)
+            else if (!_settings.Flags.AlwaysShowTray)
             {
                 if (_mainWindow.WindowState == WindowState.Minimized)
                 {
                     Visible = true;
                 }
-
                 else if (_mainWindow.WindowState == WindowState.Normal)
                 {
                     if (Visible)

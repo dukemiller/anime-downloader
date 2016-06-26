@@ -4,7 +4,6 @@ namespace anime_downloader.Classes
 {
     public static class Methods
     {
-
         /// <summary>
         ///     Compute the distance between two strings.
         /// </summary>

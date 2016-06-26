@@ -58,7 +58,7 @@
                        Content="Episode downloads to: "
                        Style="{DynamicResource LabelStyle}"
                        ToolTip="Path to where episodes will be downloaded to." />
-                <TextBox x:Name="EpisodeTextbox" Text="{Binding EpisodeDirectory}" Grid.Row="0" Grid.Column="1"
+                <TextBox x:Name="EpisodeTextbox" Text="{Binding Paths.EpisodeDirectory}"  Grid.Row="0" Grid.Column="1"
                          Style="{DynamicResource TextboxStyle}" KeyDown="Textbox_KeyDown" />
 
                 <!-- Watched path -->
@@ -66,7 +66,7 @@
                        Content="Watched files to: "
                        Style="{DynamicResource LabelStyle}"
                        ToolTip="Path where watched episodes will be moved to." />
-                <TextBox x:Name="WatchedTextbox" Text="{Binding WatchedDirectory}" Grid.Row="1" Grid.Column="1"
+                <TextBox x:Name="WatchedTextbox" Text="{Binding Paths.WatchedDirectory}" Grid.Row="1" Grid.Column="1"
                          Style="{DynamicResource TextboxStyle}" KeyDown="Textbox_KeyDown" />
 
                 <!-- Torrent -->
@@ -74,14 +74,14 @@
                        Content="Torrent downloads to: "
                        Style="{DynamicResource LabelStyle}"
                        ToolTip="Path to the folder that all .torrent files will be downloaded into." />
-                <TextBox x:Name="TorrentTextbox" Text="{Binding TorrentFilesDirectory}" Grid.Row="2" Grid.Column="1"
+                <TextBox x:Name="TorrentTextbox" Text="{Binding Paths.TorrentFilesDirectory}" Grid.Row="2" Grid.Column="1"
                          Style="{DynamicResource TextboxStyle}" KeyDown="Textbox_KeyDown" />
 
                 <!-- Download -->
                 <Label x:Name="UtorrentLabel" Grid.Row="3" Grid.Column="0" Content="uTorrent exe file: "
                        Style="{DynamicResource LabelStyle}"
                        ToolTip="Path to uTorrent.exe." />
-                <TextBox x:Name="UtorrentTextbox" Text="{Binding UtorrentFile}" Grid.Row="3" Grid.Column="1"
+                <TextBox x:Name="UtorrentTextbox" Text="{Binding Paths.UtorrentFile}" Grid.Row="3" Grid.Column="1"
                          Style="{DynamicResource TextboxStyle}" KeyDown="Textbox_KeyDown" />
 
                 <!-- Subgroups -->
@@ -89,8 +89,7 @@
                        Style="{DynamicResource LabelStyle}"
                        ToolTip="A comma + space (', ') separated list of preferred subgroups, e.g. '{subgroup1}, {subgroup2}, {subgroup3}'" />
                 <TextBox x:Name="SubgroupsTextbox"
-                         Text="{Binding Path=Subgroups, Converter={StaticResource Converter}}" Grid.Row="4"
-                         Grid.Column="1"
+                         Text="{Binding Path=Subgroups, Converter={StaticResource Converter}}" Grid.Row="4" Grid.Column="1"
                          Style="{DynamicResource TextboxStyle}" KeyDown="Textbox_KeyDown" />
             </Grid>
             <Grid Name="CheckboxGrid" Row="1">
@@ -114,7 +113,7 @@
                            Style="{DynamicResource LabelStyle}"
                            ToolTip="Instead of closing the program on exit, it is brought to the tray." />
                     <CheckBox x:Name="TrayExitCheckbox"
-                              IsChecked="{Binding Path=ExitOnClose, Converter={StaticResource NotConverter}}"
+                              IsChecked="{Binding Path=Flags.ExitOnClose, Converter={StaticResource NotConverter}}"
                               Grid.Row="0" Grid.Column="1"
                               Style="{DynamicResource CheckboxStyle}" />
 
@@ -122,7 +121,7 @@
                     <Label x:Name="AlwaysTrayLabel" Grid.Row="1" Grid.Column="0" Content="Keep tray open:"
                            Style="{DynamicResource LabelStyle}"
                            ToolTip="Always have the tray enabled." />
-                    <CheckBox x:Name="AlwaysTrayCheckbox" IsChecked="{Binding AlwaysShowTray}" Grid.Row="1"
+                    <CheckBox x:Name="AlwaysTrayCheckbox" IsChecked="{Binding Flags.AlwaysShowTray}" Grid.Row="1"
                               Grid.Column="1"
                               Style="{DynamicResource CheckboxStyle}" />
                 </Grid>
@@ -141,16 +140,16 @@
                     <Label x:Name="OnlyWhitelistedLabel" Grid.Row="0" Grid.Column="0" Content="Only whitelisted subs: "
                            Style="{DynamicResource LabelStyle}"
                            ToolTip="Whether or not to only download from subgroups that are on the whitelisted subgroups list." />
-                    <CheckBox x:Name="OnlyWhitelistedCheckbox" IsChecked="{Binding OnlyWhitelisted}" Grid.Row="0"
+                    <CheckBox x:Name="OnlyWhitelistedCheckbox" IsChecked="{Binding Flags.OnlyWhitelisted}" Grid.Row="0"
                               Content="" Grid.Column="1"
                               Style="{DynamicResource CheckboxStyle}" />
 
                     <!-- Named folders -->
                     <Label x:Name="IndividualShowLabel" Grid.Row="1" Grid.Column="0"
-                           Content="Show-named folders:"
+                           Content="Show named folders:"
                            Style="{DynamicResource LabelStyle}" VerticalAlignment="Top"
                            ToolTip="Put each episode inside a folder named after the show" />
-                    <CheckBox x:Name="IndividualShowCheckbox" IsChecked="{Binding IndividualShowFolders}" Grid.Row="1"
+                    <CheckBox x:Name="IndividualShowCheckbox" IsChecked="{Binding Flags.IndividualShowFolders}" Grid.Row="1"
                               Grid.Column="1"
                               Style="{DynamicResource CheckboxStyle}" />
                 </Grid>

@@ -88,10 +88,9 @@ namespace anime_downloader.Classes.File
                             }
                     }
                 }
-
                 catch (Exception)
                 {
-                    // 
+                    //
                 }
             }
         }
@@ -116,7 +115,7 @@ namespace anime_downloader.Classes.File
 
             return duplicates.Count;
         }
-        
+
         public IEnumerable<AnimeEpisode> Episodes(EpisodeType episodeType)
         {
             try
@@ -124,12 +123,12 @@ namespace anime_downloader.Classes.File
                 IEnumerable<string> files;
 
                 if (episodeType == EpisodeType.Unwatched)
-                    files = Directory.GetFiles(_settings.EpisodeDirectory, "*", SearchOption.AllDirectories);
+                    files = Directory.GetFiles(_settings.Paths.EpisodeDirectory, "*", SearchOption.AllDirectories);
                 else if (episodeType == EpisodeType.Watched)
-                    files = Directory.GetFiles(_settings.WatchedDirectory, "*", SearchOption.AllDirectories);
+                    files = Directory.GetFiles(_settings.Paths.WatchedDirectory, "*", SearchOption.AllDirectories);
                 else // (EpisodeType == Episode.All)
-                    files = Directory.GetFiles(_settings.WatchedDirectory, "*", SearchOption.AllDirectories)
-                        .Union(Directory.GetFiles(_settings.EpisodeDirectory, "*", SearchOption.AllDirectories));
+                    files = Directory.GetFiles(_settings.Paths.WatchedDirectory, "*", SearchOption.AllDirectories)
+                        .Union(Directory.GetFiles(_settings.Paths.EpisodeDirectory, "*", SearchOption.AllDirectories));
 
                 return files
                     .Where(filePath => FileExtensions.Any(ext => filePath.ToLower().EndsWith(ext)))
@@ -137,19 +136,17 @@ namespace anime_downloader.Classes.File
                     .OrderBy(animeFile => animeFile.Name)
                     .ThenBy(animeFile => animeFile.IntEpisode);
             }
-
             catch (Exception ex) when (ex is DirectoryNotFoundException || ex is ArgumentException)
             {
                 return new List<AnimeEpisode>();
             }
-
         }
 
         public IEnumerable<AnimeEpisode> EpisodesFrom(Anime anime, EpisodeType episodeType)
         {
             return Episodes(episodeType)
                 .GroupBy(e => e.Name)
-                .Select(e => new {group = e, distance = Methods.LevenshteinDistance(anime.Name.RemoveWhitespace(), e.Key.RemoveWhitespace()) })
+                .Select(e => new { group = e, distance = Methods.LevenshteinDistance(anime.Name.RemoveWhitespace(), e.Key.RemoveWhitespace()) })
                 .Where(e => e.distance <= 10)
                 .OrderBy(e => e.distance)
                 .FirstOrDefault()?
@@ -160,7 +157,7 @@ namespace anime_downloader.Classes.File
         {
             return Episodes(episodeType)
                 .GroupBy(e => e.Name)
-                .Select(e => new AnimeWithEpisodes{ Anime = Anime.ClosestTo(animes, e.Key), Episodes = e});
+                .Select(e => new AnimeWithEpisodes { Anime = Anime.Closest.To(e.Key, animes), Episodes = e });
         }
 
         public IEnumerable<AnimeEpisode> LastEpisodesOf(IEnumerable<AnimeEpisode> episodes)
@@ -201,6 +198,5 @@ namespace anime_downloader.Classes.File
         {
             return animeEpisodes?.OrderBy(ep => ep.IntEpisode).LastOrDefault();
         }
-
     }
 }

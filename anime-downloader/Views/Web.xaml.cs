@@ -1,9 +1,9 @@
-﻿using System;
+﻿using anime_downloader.Classes;
+using System;
 using System.Diagnostics;
 using System.Web;
 using System.Windows;
 using System.Windows.Input;
-using anime_downloader.Classes;
 
 namespace anime_downloader.Views
 {
@@ -28,7 +28,7 @@ namespace anime_downloader.Views
         {
             Process.Start("http://anichart.net/");
         }
-        
+
         private void NyaaButton_Click(object sender, RoutedEventArgs e)
         {
             Process.Start("https://www.nyaa.se/");

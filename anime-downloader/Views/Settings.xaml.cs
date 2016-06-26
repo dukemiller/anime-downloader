@@ -1,5 +1,5 @@
-﻿using System.Windows.Input;
-using anime_downloader.Classes;
+﻿using anime_downloader.Classes;
+using System.Windows.Input;
 
 namespace anime_downloader.Views
 {

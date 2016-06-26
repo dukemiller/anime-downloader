@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using anime_downloader.Classes.Xml;
+using anime_downloader.Views;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using anime_downloader.Classes.Xml;
-using anime_downloader.Views;
 
 namespace anime_downloader.Classes
 {
@@ -20,15 +20,14 @@ namespace anime_downloader.Classes
         /// <summary>
         ///     "Refresh" the datacontext on the UI.
         /// </summary>
-        /// <param name="animeList"></param>
-        /// <param name="collection"></param>
         public static void Refresh(this AnimeList animeList, AnimeCollection collection)
         {
             var anime = collection.Animes.ToList();
             animeList.DataGrid.ItemsSource = collection.FilteredAndSorted();
             animeList.StatsLabel.Content = $"{anime.Count} total animes. " +
-                                           $"{anime.Count(a => a.Airing)} airing or watching, " +
+                                           $"{anime.Count(a => a.Airing && a.Status.Equals("Watching"))} airing/watching, " +
                                            $"{anime.Count(a => a.Status.Equals("Finished"))} finished, " +
+                                           $"{anime.Count(a => a.Status.Equals("On Hold"))} on hold, " + 
                                            $"{anime.Count(a => a.Status.Equals("Dropped"))} dropped.";
         }
 
@@ -87,7 +86,6 @@ namespace anime_downloader.Classes
                     ((Control) item).KeyDown += delegate { function(); };
         }
         */
-        
 
         // http://stackoverflow.com/a/33523743
         public static System.Windows.Media.Brush ToBrush(this Color color)
@@ -123,6 +121,11 @@ namespace anime_downloader.Classes
             return new string(input.ToCharArray()
                 .Where(c => !char.IsWhiteSpace(c))
                 .ToArray());
+        }
+
+        public static bool IsBlank(this string str)
+        {
+            return str.Equals("");
         }
     }
 }

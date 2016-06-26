@@ -1,4 +1,5 @@
-﻿using System;
+﻿using anime_downloader.Classes.Web;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -6,14 +7,15 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Controls;
-using anime_downloader.Classes.Web;
 
 namespace anime_downloader.Classes.File
 {
     public class Downloader
     {
         private readonly WebClient _client;
+
         private readonly Settings _settings;
+
         private int _downloaded;
 
         public Downloader(Settings settings)
@@ -47,11 +49,10 @@ namespace anime_downloader.Classes.File
 
             foreach (var animeEpisode in animeEpisodeDeltas)
             {
-                var animeBase = Anime.ClosestTo(animeList, animeEpisode.Name);
+                var animeBase = Anime.Closest.To(animeEpisode.Name, animeList);
                 foreach (var episode in animeEpisode.EpisodeRange)
                 {
-                    if (await Task.Run(() => allEpisodes.Any(a => a.Name.Equals(animeEpisode.Name) &&
-                                                                  a.Episode.Equals(episode))))
+                    if (await Task.Run(() => allEpisodes.Any(a => a.Name.Equals(animeEpisode.Name) && a.Episode.Equals(episode))))
                         continue;
 
                     var previousEpisode = $"{int.Parse(episode) - 1:D2}";
@@ -83,13 +84,13 @@ namespace anime_downloader.Classes.File
             // Not the right subgroup
             if (anime.PreferredSubgroup != null && torrent.Subgroup() != null)
             {
-                if (!anime.PreferredSubgroup.Equals("") && !torrent.Subgroup().Contains(anime.PreferredSubgroup))
+                if (!anime.PreferredSubgroup.IsBlank() && !torrent.Subgroup().Contains(anime.PreferredSubgroup))
                 {
                     return false;
                 }
             }
 
-            if (_settings.OnlyWhitelisted)
+            if (_settings.Flags.OnlyWhitelisted)
             {
                 // Torrent listing with no subgroup in the title
                 if (!torrent.HasSubgroup())
@@ -119,13 +120,12 @@ namespace anime_downloader.Classes.File
         public async Task<bool> DownloadTorrentAsync(TorrentProvider torrent, Anime anime, TextBox textbox)
         {
             textbox.WriteLine($"Downloading '{anime.Title}' episode '{anime.NextEpisode()}'.");
-            var downloadedFile = await DownloadFileAsync(torrent, anime);
+            var fileWasDownloaded = await DownloadFileAsync(torrent, anime);
 
-            if (downloadedFile)
+            if (fileWasDownloaded)
             {
                 await Logger.WriteLineAsync($"Downloaded '{anime.Title}' episode {anime.NextEpisode()}.");
                 anime.Episode = anime.NextEpisode();
-                anime.MyAnimelistNeedsUpdating = true;
                 _downloaded++;
             }
             else
@@ -133,7 +133,7 @@ namespace anime_downloader.Classes.File
                 textbox.WriteLine($"Download of '{anime.Title}' failed.");
             }
 
-            return downloadedFile;
+            return fileWasDownloaded;
         }
 
         public async Task<bool> DownloadFileAsync(TorrentProvider torrent, Anime anime)
@@ -141,10 +141,10 @@ namespace anime_downloader.Classes.File
             var torrentName = await torrent.GetTorrentNameAsync();
             if (torrentName == null)
                 return false;
-            var filePath = Path.Combine(_settings.TorrentFilesDirectory, torrentName);
-            var fileDirectory = _settings.EpisodeDirectory;
+            var filePath = Path.Combine(_settings.Paths.TorrentFilesDirectory, torrentName);
+            var fileDirectory = _settings.Paths.EpisodeDirectory;
 
-            if (_settings.IndividualShowFolders)
+            if (_settings.Flags.IndividualShowFolders)
                 fileDirectory = Path.Combine(fileDirectory, anime.Title);
 
             var command = $"/DIRECTORY \"{fileDirectory}\" \"{filePath}\"";
@@ -163,19 +163,19 @@ namespace anime_downloader.Classes.File
                         _client.DownloadFile(torrent.Link, filePath);
                     }
 
-                        // TODO: heh heh heh
+                    // TODO: heh heh heh
                     catch (Exception)
                     {
                         // ignored
                         return false;
                     }
 
-                    CallCommand(_settings.UtorrentFile, command);
+                    CallCommand(_settings.Paths.UtorrentFile, command);
                     return true;
                 });
             }
 
-            CallCommand(_settings.UtorrentFile, command);
+            CallCommand(_settings.Paths.UtorrentFile, command);
             return true;
         }
 

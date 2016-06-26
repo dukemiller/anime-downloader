@@ -12,7 +12,7 @@ namespace anime_downloader.Classes.Xml
     public class AnimeCollection
     {
         private readonly Settings _settings;
-        
+
         public AnimeCollection(Settings settings)
         {
             _settings = settings;
@@ -22,7 +22,7 @@ namespace anime_downloader.Classes.Xml
         ///     Retrieve a collection of the anime currently in the anime xml as Anime objects.
         /// </summary>
         public IEnumerable<Anime> Animes => _settings.AnimeDocument.Root?.Elements().Select(a => new Anime(a, _settings));
-        
+
         /// <summary>
         ///     Retrieve settings-defined filtered and sorted collection of the anime
         ///     currently in the anime xml as Anime objects.
@@ -37,10 +37,10 @@ namespace anime_downloader.Classes.Xml
 
             var animes = Animes;
 
-            if (!_settings.FilterBy.Equals(""))
+            if (!_settings.FilterBy.IsBlank())
                 animes = animes.Where(a => filters.Any(f => f.Equals(a.Status)));
 
-            return _settings.SortByReversed
+            return _settings.Flags.SortByReversed
                 ? animes.OrderByDescending(x => propertyDescriptor.GetValue(x))
                 : animes.OrderBy(x => propertyDescriptor.GetValue(x));
         }

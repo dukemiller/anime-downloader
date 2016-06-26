@@ -10,9 +10,9 @@
              d:DesignWidth="680"
              mc:Ignorable="d">
     <UserControl.Resources>
-        <xaml:MyAnimelistWorksConverter x:Key="WorksConverter" />
-        <xaml:MyAnimelistWorksColorConverter x:Key="ColorConverter" />
-        <xaml:MyAnimelistWorksOpacityConverter x:Key="OpacityConverter" />
+        <xaml:BooleanSymbolConverter x:Key="WorksConverter" />
+        <xaml:BooleanColorConverter x:Key="ColorConverter" />
+        <xaml:BooleanOpacityConverter x:Key="OpacityConverter" />
         <Style x:Key="BoxStyle" TargetType="{x:Type GroupBox}">
             <Setter Property="FontSize" Value="16" />
             <Setter Property="HorizontalAlignment" Value="Left" />
@@ -36,7 +36,7 @@
 
             <DockPanel Grid.Row="1">
                 <GroupBox x:Name="MyAnimeListGroupbox"
-                          d:DataContext="{d:DesignInstance classes:Settings}"
+                          d:DataContext="{d:DesignInstance classes:MyAnimeListLoginDetails}"
                           Header="MyAnimeList"
                           Style="{DynamicResource BoxStyle}">
                     <StackPanel Margin="3">
@@ -58,7 +58,7 @@
                                              Grid.Row="0"
                                              Grid.Column="1"
                                              VerticalAlignment="Center"
-                                             Text="{Binding MyAnimeListUsername}" />
+                                             Text="{Binding Username}" />
                                     <Label Grid.Row="1"
                                            Grid.Column="0"
                                            Content="Password: " />
@@ -66,44 +66,50 @@
                                                  Grid.Row="1"
                                                  Grid.Column="1"
                                                  VerticalAlignment="Center"
-                                                 ff:PasswordBoxAssistant.BindPassword="True" ff:PasswordBoxAssistant.BoundPassword="{Binding Path=MyAnimeListPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    
+                                                 ff:PasswordBoxAssistant.BindPassword="True" ff:PasswordBoxAssistant.BoundPassword="{Binding Path=Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
                                     <Label Grid.Row="2"
                                            Grid.Column="0"
                                            HorizontalAlignment="Center"
                                            VerticalAlignment="Center"
-                                           Content="Logged in: "/>
+                                           Content="Logged in: " />
                                     <Label Grid.Row="3" Grid.Column="0"
                                            HorizontalAlignment="Center"
                                            VerticalAlignment="Center"
-                                           Content="Synced: "/>
-                                    
+                                           Content="Synced: " />
+
                                     <DockPanel Grid.Row="2" Grid.Column="1">
                                         <Label x:Name="LoggedIn"
                                                FontSize="22"
-                                               Content="{Binding MyAnimeListWorks, Converter={StaticResource WorksConverter}}"
-                                               Foreground="{Binding MyAnimeListWorks, Converter={StaticResource ColorConverter}}"/>
+                                               Content="{Binding Works, Converter={StaticResource WorksConverter}}"
+                                               Foreground="{Binding Works, Converter={StaticResource ColorConverter}}" />
                                     </DockPanel>
-                                    
+
                                     <DockPanel Grid.Row="3" Grid.Column="1">
                                         <!-- Custom data context in code behind ... -->
                                         <Label x:Name="SyncedUp" FontSize="22" />
-                                        <DockPanel HorizontalAlignment="Right" >
+                                        <DockPanel HorizontalAlignment="Right">
                                             <Button x:Name="LoginButton"
                                                     Margin="5"
                                                     Style="{DynamicResource FeatureButtonStyle}">
                                                 <TextBlock Margin="5">Login</TextBlock>
                                             </Button>
+                                            <Button x:Name="ProfileButton"
+                                                    Margin="5"
+                                                    Style="{DynamicResource FeatureButtonStyle}"
+                                                    IsHitTestVisible="{Binding Works}"
+                                                    Opacity="{Binding Works, Converter={StaticResource OpacityConverter}}">
+                                                <TextBlock Margin="5">Profile</TextBlock>
+                                            </Button>
                                             <Button x:Name="SyncButton"
                                                     Margin="5"
                                                     Style="{DynamicResource SpecialButtonStyle}"
-                                                    IsHitTestVisible="{Binding MyAnimeListWorks}"
-                                                    Opacity="{Binding MyAnimeListWorks, Converter={StaticResource OpacityConverter}}">
+                                                    IsHitTestVisible="{Binding Works}"
+                                                    Opacity="{Binding Works, Converter={StaticResource OpacityConverter}}">
                                                 <TextBlock Margin="5">Sync</TextBlock>
                                             </Button>
                                         </DockPanel>
                                     </DockPanel>
-
                                 </Grid>
                             </GroupBox>
                         </DockPanel>
@@ -142,7 +148,7 @@
                     </StackPanel>
                 </GroupBox>
 
-                <StackPanel >
+                <StackPanel>
                     <GroupBox x:Name="WebButtonsGroupBox"
                               Header="Launch Website"
                               Style="{DynamicResource BoxStyle}">
@@ -167,10 +173,10 @@
                             </Button>
                         </StackPanel>
                     </GroupBox>
-                    <GroupBox 
+                    <GroupBox
                         Header="Usage Notes" Style="{DynamicResource BoxStyle}"
                         VerticalAlignment="Bottom">
-                            <Button x:Name="UsageButton" Style="{DynamicResource FeatureButtonStyle}" Content="Click me"/>
+                        <Button x:Name="UsageButton" Style="{DynamicResource FeatureButtonStyle}" Content="Click me" />
                     </GroupBox>
                 </StackPanel>
             </DockPanel>

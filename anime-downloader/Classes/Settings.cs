@@ -1,11 +1,12 @@
-﻿using System;
+﻿using anime_downloader.Classes.Xml;
+using System;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using anime_downloader.Classes.Xml;
 
 namespace anime_downloader.Classes
 {
+
     public class Settings
     {
         public Settings(bool loadDefaultSettings = false)
@@ -15,14 +16,17 @@ namespace anime_downloader.Classes
                 SettingsDocument = XDocument.Load(SettingsXml);
                 AnimeDocument = XDocument.Load(AnimeXml);
             }
-
             else
             {
                 SettingsDocument = Schema.SettingsDocument();
                 AnimeDocument = Schema.AnimeDocument();
             }
 
-            
+            Paths = new PathDetails(Root.Element("path"), Save);
+
+            Flags = new FlagDetails(Root.Element("flag"), Save);
+
+            MyAnimeList = new MyAnimeListLoginDetails(Root.Element("myanimelist"), Save);
         }
 
         /// <summary>
@@ -74,61 +78,11 @@ namespace anime_downloader.Classes
             .GetFolderPath(Environment.SpecialFolder.MyVideos),
             "Duplicates");
 
-        /// <summary>
-        ///     The path to the directory containing already watched files.
-        /// </summary>
-        public string WatchedDirectory
-        {
-            get { return Root.Element("path")?.Element("watched")?.Value; }
-            set
-            {
-                if (value.Equals(WatchedDirectory))
-                    return;
-                Root.Element("path")?.Element("watched")?.SetValue(value);
-                Save();
-            }
-        }
+        public PathDetails Paths { get; set; }
 
-        /// <summary>
-        ///     The path to the directory where files will be downloaded to.
-        /// </summary>
-        public string EpisodeDirectory
-        {
-            get { return Root.Element("path")?.Element("episode")?.Value; }
-            set
-            {
-                if (value.Equals(EpisodeDirectory))
-                    return;
-                Root.Element("path")?.Element("episode")?.SetValue(value);
-                Save();
-            }
-        }
-        
-        /// <summary>
-        ///     The path to the directory where all .torrent files will be downloaded to.
-        /// </summary>
-        public string TorrentFilesDirectory
-        {
-            get { return Root.Element("path")?.Element("torrents")?.Value; }
-            set
-            {
-                Root.Element("path")?.Element("torrents")?.SetValue(value);
-                Save();
-            }
-        }
+        public FlagDetails Flags { get; set; }
 
-        /// <summary>
-        ///     The path to the utorrent executable.
-        /// </summary>
-        public string UtorrentFile
-        {
-            get { return Root.Element("path")?.Element("utorrent")?.Value; }
-            set
-            {
-                Root.Element("path")?.Element("utorrent")?.SetValue(value);
-                Save();
-            }
-        }
+        public MyAnimeListLoginDetails MyAnimeList { get; set; }
 
         /// <summary>
         ///     The application defined sort for the anime list.
@@ -142,20 +96,7 @@ namespace anime_downloader.Classes
                 Save();
             }
         }
-
-        /// <summary>
-        ///     The flag to state if the sort defined in the settings should be reversed.
-        /// </summary>
-        public bool SortByReversed
-        {
-            get { return bool.Parse(Root.Element("flag")?.Element("sortByReversed")?.Value ?? "false"); }
-            set
-            {
-                Root.Element("flag")?.Element("sortByReversed")?.SetValue(value);
-                Save();
-            }
-        }
-
+        
         /// <summary>
         ///     The application defined filter for the anime list.
         /// </summary>
@@ -165,19 +106,6 @@ namespace anime_downloader.Classes
             set
             {
                 Root.Element("filterBy")?.SetValue(value);
-                Save();
-            }
-        }
-
-        /// <summary>
-        ///     The user preference for only wanting anime downloaded containing whitelisted subgroups.
-        /// </summary>
-        public bool OnlyWhitelisted
-        {
-            get { return bool.Parse(Root.Element("flag")?.Element("onlyWhitelistedSubs")?.Value ?? "false"); }
-            set
-            {
-                Root.Element("flag")?.Element("onlyWhitelistedSubs")?.SetValue(value);
                 Save();
             }
         }
@@ -195,19 +123,119 @@ namespace anime_downloader.Classes
                 {
                     Root.Element("subgroup")?.Add(new XElement("name", subgroup));
                 }
+            }
+        }
+
+        /// <summary>
+        ///     Save the schema to the settings path.
+        /// </summary>
+        public void Save() => AnimeCollection.SaveSettings(SettingsDocument);
+    }
+
+    public class PathDetails
+    {
+        public XElement Root;
+
+        public Action Save;
+
+        public PathDetails(XElement root, Action save)
+        {
+            Root = root;
+            Save = save;
+        }
+
+        /// <summary>
+        ///     The path to the directory containing already watched files.
+        /// </summary>
+        public string WatchedDirectory
+        {
+            get { return Root.Element("watched")?.Value; }
+            set
+            {
+                if (value.Equals(WatchedDirectory))
+                    return;
+                Root.Element("watched")?.SetValue(value);
                 Save();
             }
         }
 
         /// <summary>
+        ///     The path to the directory where files will be downloaded to.
+        /// </summary>
+        public string EpisodeDirectory
+        {
+            get { return Root.Element("episode")?.Value; }
+            set
+            {
+                if (value.Equals(EpisodeDirectory))
+                    return;
+                Root.Element("episode")?.SetValue(value);
+                Save();
+            }
+        }
+
+        /// <summary>
+        ///     The path to the directory where all .torrent files will be downloaded to.
+        /// </summary>
+        public string TorrentFilesDirectory
+        {
+            get { return Root.Element("torrents")?.Value; }
+            set
+            {
+                Root.Element("torrents")?.SetValue(value);
+                Save();
+            }
+        }
+
+        /// <summary>
+        ///     The path to the utorrent executable.
+        /// </summary>
+        public string UtorrentFile
+        {
+            get { return Root.Element("utorrent")?.Value; }
+            set
+            {
+                Root.Element("utorrent")?.SetValue(value);
+                Save();
+            }
+        }
+
+    }
+
+    public class FlagDetails
+    {
+        public XElement Root;
+
+        public Action Save;
+
+        public FlagDetails(XElement root, Action save)
+        {
+            Root = root;
+            Save = save;
+        }
+
+        /// <summary>
+        ///     The flag to state if the sort defined in the settings should be reversed.
+        /// </summary>
+        public bool SortByReversed
+        {
+            get { return bool.Parse(Root.Element("sortByReversed")?.Value ?? "false"); }
+            set
+            {
+                Root.Element("sortByReversed")?.SetValue(value);
+                Save();
+            }
+        }
+        
+        /// <summary>
         ///     A flag defining if the program should exit on it's close (or minimize to the tray).
         /// </summary>
         public bool ExitOnClose
         {
-            get { return bool.Parse(Root.Element("flag")?.Element("exitOnClose")?.Value ?? "false"); }
+            get { return bool.Parse(Root.Element("exitOnClose")?.Value ?? "false"); }
             set
             {
-                Root.Element("flag")?.Element("exitOnClose")?.SetValue(value);
+                Root.Element("exitOnClose")?.SetValue(value);
                 Save();
             }
         }
@@ -217,10 +245,10 @@ namespace anime_downloader.Classes
         /// </summary>
         public bool AlwaysShowTray
         {
-            get { return bool.Parse(Root.Element("flag")?.Element("alwaysShowTray")?.Value ?? "false"); }
+            get { return bool.Parse(Root.Element("alwaysShowTray")?.Value ?? "false"); }
             set
             {
-                Root.Element("flag")?.Element("alwaysShowTray")?.SetValue(value);
+                Root.Element("alwaysShowTray")?.SetValue(value);
                 Save();
             }
         }
@@ -233,57 +261,78 @@ namespace anime_downloader.Classes
             get
             {
                 bool result;
-                var value = Root.Element("flag")?.Element("individualShowFolders")?.Value;
+                var value = Root.Element("individualShowFolders")?.Value;
                 return bool.TryParse(value, out result) && result;
             }
             set
             {
-                Root.Element("flag")?.Element("individualShowFolders")?.SetValue(value);
-                Save();
-            }
-        }
-        
-        public string MyAnimeListUsername
-        {
-            get { return Root.Element("myanimelist")?.Element("username")?.Value; }
-            set
-            {
-                Root.Element("myanimelist")?.Element("username")?.SetValue(value);
-                Save();
-            }
-        }
-
-        public string MyAnimeListPassword
-        {
-            get { return Root.Element("myanimelist")?.Element("password")?.Value; }
-            set
-            {
-                Root.Element("myanimelist")?.Element("password")?.SetValue(value);
-                Save();
-            }
-        }
-
-        public bool MyAnimeListWorks
-        {
-            get
-            {
-                bool result;
-                var value = Root.Element("myanimelist")?.Element("works")?.Value;
-                return bool.TryParse(value, out result) && result;
-            }
-
-            set
-            {
-                Root.Element("myanimelist")?.Element("works")?.SetValue(value);
+                Root.Element("individualShowFolders")?.SetValue(value);
                 Save();
             }
         }
 
         /// <summary>
-        ///     Save the schema to the settings path.
+        ///     The user preference for only wanting anime downloaded containing whitelisted subgroups.
         /// </summary>
-        public void Save() => AnimeCollection.SaveSettings(SettingsDocument);
-    }
-    
+        public bool OnlyWhitelisted
+        {
+            get { return bool.Parse(Root.Element("onlyWhitelistedSubs")?.Value ?? "false"); }
+            set
+            {
+                Root.Element("onlyWhitelistedSubs")?.SetValue(value);
+                Save();
+            }
+        }
 
+    }
+
+    public class MyAnimeListLoginDetails
+    {
+        public XElement Root;
+
+        public Action Save;
+
+        public MyAnimeListLoginDetails(XElement root, Action save)
+        {
+            Root = root;
+            Save = save;
+        }
+
+        public string Username
+        {
+            get { return Root.Element("username")?.Value; }
+            set
+            {
+                Root.Element("username")?.SetValue(value);
+                Save();
+            }
+        }
+
+        public string Password
+        {
+            get { return Root.Element("password")?.Value; }
+            set
+            {
+                Root.Element("password")?.SetValue(value);
+                Save();
+            }
+        }
+
+        public bool Works
+        {
+            get
+            {
+                bool result;
+                var value = Root.Element("works")?.Value;
+                return bool.TryParse(value, out result) && result;
+            }
+
+            set
+            {
+                Root.Element("works")?.SetValue(value);
+                Save();
+            }
+        }
+
+    }
 }

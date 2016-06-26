@@ -32,7 +32,7 @@
                                      KeyDown="Radio_KeyDown">
                             <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode to last found episode number in the watched folder</TextBlock>
                         </RadioButton>
-                        
+
                         <RadioButton Name="LastUnwatchedRadio" VerticalContentAlignment="Center"
                                      KeyDown="Radio_KeyDown">
                             <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode to last found episode number in the episodes folder</TextBlock>

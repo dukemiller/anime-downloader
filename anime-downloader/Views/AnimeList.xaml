@@ -23,8 +23,7 @@
                   SelectionUnit="Cell" IsReadOnly="True"
                   FontFamily="{StaticResource MainFont}"
                   d:DataContext="{d:DesignInstance classes:Anime }"
-                  Sorting="DataGrid_OnSorting"
-                  >
+                  Sorting="DataGrid_OnSorting">
             <DataGrid.Resources>
                 <Style TargetType="{x:Type DataGridColumnHeader}">
                     <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -45,14 +44,14 @@
             </DataGrid.ContextMenu>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Path=Title}" Width="300" />
-                <DataGridTextColumn Header="Episode" Binding="{Binding Path=Episode}"
+                <DataGridTextColumn Header="Episode" Binding="{Binding Path=EpisodeTotal}" SortMemberPath="{Binding Episode}"
                                     CellStyle="{StaticResource CenterStyle}" Width="auto" />
                 <DataGridTextColumn Header="Status" Binding="{Binding Path=Status}"
                                     CellStyle="{StaticResource CenterStyle}" Width="auto" />
                 <DataGridTextColumn Header="Airing" Binding="{Binding Path=AiringSymbol}"
-                                    CellStyle="{StaticResource CenterStyle}" Width="auto" SortMemberPath="AiringSymbol" />
+                                    CellStyle="{StaticResource CenterStyle}" Width="auto" SortMemberPath="{Binding AiringSymbol}" />
                 <DataGridTextColumn Header="Rating" Binding="{Binding Path=Rating}"
-                                    CellStyle="{StaticResource CenterStyle}" Width="auto" SortMemberPath="SortedRating" />
+                                    CellStyle="{StaticResource CenterStyle}" Width="auto" SortMemberPath="{Binding SortedRating}" />
             </DataGrid.Columns>
         </DataGrid>
         <Grid Grid.Row="1">
@@ -76,6 +75,7 @@
                 <ComboBoxItem Content="Airing/Watching" />
                 <ComboBoxItem Content="Finished" />
                 <ComboBoxItem Content="Dropped" />
+                <ComboBoxItem Content="On Hold" />
             </ComboBox>
         </Grid>
     </Grid>

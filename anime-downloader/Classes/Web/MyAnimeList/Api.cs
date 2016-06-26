@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Xml.Linq;
+using System.Xml.Serialization;
 
-namespace anime_downloader.Classes.Web
+namespace anime_downloader.Classes.Web.MyAnimeList
 {
-    public class MyAnimeList
+    public class Api
     {
         private const string ApiSearch = "http://myanimelist.net/api/anime/search.xml?q={0}";
 
@@ -17,6 +18,8 @@ namespace anime_downloader.Classes.Web
         private const string ApiDelete = "http://myanimelist.net/api/animelist/delete/{0}.xml";
 
         private const string ApiVerify = "http://myanimelist.net/api/account/verify_credentials.xml";
+
+        private static readonly XmlSerializer ResultDeserializer = new XmlSerializer(typeof(FindResultRoot));
 
         private static async Task<HttpContent> GetAsync(ICredentials credentials, string url)
         {
@@ -41,7 +44,7 @@ namespace anime_downloader.Classes.Web
 
         public static NetworkCredential GetCredentials(Settings settings)
         {
-            return new NetworkCredential(settings.MyAnimeListUsername, settings.MyAnimeListPassword);
+            return new NetworkCredential(settings.MyAnimeList.Username, settings.MyAnimeList.Password);
         }
 
         public static async Task<bool> VerifyAsync(ICredentials credentials)
@@ -53,15 +56,18 @@ namespace anime_downloader.Classes.Web
             return response.StatusCode == HttpStatusCode.OK;
         }
 
-        public static async Task<IEnumerable<XElement>> FindAsync(ICredentials credentials, string q)
+        public static async Task<List<FindResult>> FindAsync(ICredentials credentials, string q)
         {
             var url = string.Format(ApiSearch, q);
             var request = await GetAsync(credentials, url);
-            var response = await request.ReadAsStreamAsync();
-            if (response == null || response.Length <= 0)
-                return new List<XElement>();
-            var xml = XDocument.Load(response);
-            return xml.Root?.Elements();
+            var data = await request.ReadAsStreamAsync();
+            if (data == null || data.Length <= 0)
+                return new List<FindResult>();
+            using (var response = new StreamReader(data))
+            {
+                var result = (FindResultRoot) ResultDeserializer.Deserialize(response);
+                return result.Entries;
+            }
         }
 
         public static async Task<HttpContent> AddAsync(ICredentials credentials, string id, string data)

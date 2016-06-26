@@ -62,11 +62,11 @@
             <Setter Property="Width" Value="25" />
             <Setter Property="HorizontalAlignment" Value="Left" />
             <!--
-            
-            <Setter Property="Stroke" Value="Gray"/>
-            <Setter Property="StrokeThickness" Value="0.5"/>
-            <Setter Property="RadiusX" Value="25"/>
-            <Setter Property="RadiusY" Value="25"/>
+
+            <Setter Property="Stroke" Value="Gray" />
+            <Setter Property="StrokeThickness" Value="0.5" />
+            <Setter Property="RadiusX" Value="25" />
+            <Setter Property="RadiusY" Value="25" />
             -->
         </Style>
         <Style TargetType="{x:Type ListBoxItem}">
@@ -77,7 +77,6 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-
     </UserControl.Resources>
     <Grid>
         <Grid.Background>White</Grid.Background>
@@ -186,10 +185,7 @@
                             </Rectangle>
                         </DockPanel>
                     </Grid>
-
-
                 </Grid>
-
             </Grid>
         </Grid>
     </Grid>

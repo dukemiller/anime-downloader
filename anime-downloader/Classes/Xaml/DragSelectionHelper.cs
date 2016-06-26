@@ -169,7 +169,7 @@ namespace anime_downloader.Classes.Xaml
 
         public static readonly DependencyProperty IsDragClickStartedProperty =
             DependencyProperty.RegisterAttached("IsDragClickStarted", typeof(bool), typeof(DragSelectionHelper),
-                new FrameworkPropertyMetadata(false, IsDragClickStartedPropertyChanged) {Inherits = true});
+                new FrameworkPropertyMetadata(false, IsDragClickStartedPropertyChanged) { Inherits = true });
 
         private static void IsDragClickStartedPropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
@@ -200,6 +200,6 @@ namespace anime_downloader.Classes.Xaml
                 listBox.SelectedItems.Clear();
         }
 
-        #endregion IsDragClickInitiatedProperty
+        #endregion IsDragClickStartedProperty
     }
 }

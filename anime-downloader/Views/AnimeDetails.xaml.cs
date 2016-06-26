@@ -1,8 +1,8 @@
-﻿using System;
+﻿using anime_downloader.Classes;
+using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using anime_downloader.Classes;
 
 namespace anime_downloader.Views
 {
@@ -69,6 +69,5 @@ namespace anime_downloader.Views
             if (SubmitButton.Content.Equals("Add"))
                 NameTextbox.Focus();
         }
-        
     }
 }

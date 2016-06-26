@@ -1,12 +1,13 @@
 ﻿using System;
-using System.Drawing;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
-using System.Windows.Forms.VisualStyles;
 
 namespace anime_downloader.Classes.Xaml
 {
+    /// <summary>
+    ///     Joins an array of strings delimited by a comma.
+    /// </summary>
     public class StringJoinConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -16,10 +17,13 @@ namespace anime_downloader.Classes.Xaml
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return ((string) value).Split(new[] {", "}, StringSplitOptions.RemoveEmptyEntries);
+            return ((string) value).Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
         }
     }
 
+    /// <summary>
+    ///     Returns opposite of the bool value.
+    /// </summary>
     public class NotConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -33,6 +37,9 @@ namespace anime_downloader.Classes.Xaml
         }
     }
 
+    /// <summary>
+    ///     Returns if value is equal to first given parameter.
+    /// </summary>
     public class KeyValueConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -54,7 +61,10 @@ namespace anime_downloader.Classes.Xaml
         }
     }
 
-    public class MyAnimelistWorksConverter : IValueConverter
+    /// <summary>
+    ///     Returns a symbol from the bool value representing true and false
+    /// </summary>
+    public class BooleanSymbolConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -67,7 +77,10 @@ namespace anime_downloader.Classes.Xaml
         }
     }
 
-    public class MyAnimelistWorksColorConverter : IValueConverter
+    /// <summary>
+    ///     Returns a color from the bool value repesenting true and false
+    /// </summary>
+    public class BooleanColorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -80,7 +93,10 @@ namespace anime_downloader.Classes.Xaml
         }
     }
 
-    public class MyAnimelistWorksOpacityConverter : IValueConverter
+    /// <summary>
+    ///     Returns an opacity from the bool value.
+    /// </summary>
+    public class BooleanOpacityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -97,7 +113,7 @@ namespace anime_downloader.Classes.Xaml
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return System.Convert.ToString(value).Equals("") ? Visibility.Hidden : Visibility.Visible;
+            return System.Convert.ToString(value).IsBlank() ? Visibility.Hidden : Visibility.Visible;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -105,5 +121,4 @@ namespace anime_downloader.Classes.Xaml
             return (Visibility) value == Visibility.Visible;
         }
     }
-    
 }

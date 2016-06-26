@@ -1,6 +1,6 @@
-﻿using System.Windows;
+﻿using anime_downloader.Classes;
+using System.Windows;
 using System.Windows.Input;
-using anime_downloader.Classes;
 
 namespace anime_downloader.Views
 {

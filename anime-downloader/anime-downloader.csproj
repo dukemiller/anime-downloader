@@ -73,8 +73,11 @@
     <Compile Include="Classes\Methods.cs" />
     <Compile Include="Classes\OperatingSystemApi.cs" />
     <Compile Include="Classes\Tray.cs" />
-    <Compile Include="Classes\Web\MyAnimeList.cs" />
-    <Compile Include="Classes\Web\MyAnimeListNode.cs" />
+    <Compile Include="Classes\Web\MyAnimeList\FindResultDistance.cs" />
+    <Compile Include="Classes\Web\MyAnimeList\Api.cs" />
+    <Compile Include="Classes\Web\MyAnimeList\FindResultRoot.cs" />
+    <Compile Include="Classes\Web\MyAnimeList\Update.cs" />
+    <Compile Include="Classes\Web\MyAnimeList\FindResult.cs" />
     <Compile Include="Classes\Web\Nyaa.cs" />
     <Compile Include="Classes\File\Playlist.cs" />
     <Compile Include="Classes\Settings.cs" />

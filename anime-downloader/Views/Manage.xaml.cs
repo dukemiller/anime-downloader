@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using anime_downloader.Classes.File;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -6,7 +7,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Shapes;
-using anime_downloader.Classes.File;
 
 namespace anime_downloader.Views
 {
@@ -82,7 +82,6 @@ namespace anime_downloader.Views
                 await Playlist.Save();
                 Process.Start(Playlist.PlaylistFile);
             }
-
             else if (episodes.Count == 1)
             {
                 Process.Start(episodes.First().FilePath);

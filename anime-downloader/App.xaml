@@ -21,7 +21,7 @@
         <!-- Fonts -->
         <FontFamily x:Key="LargeButtonFont">Segoe UI Light</FontFamily>
         <FontFamily x:Key="MediumButtonFont">Segoe WP SemiLight</FontFamily>
-        <FontFamily x:Key="MainFont">Yu Gothic</FontFamily>
+        <FontFamily x:Key="MainFont">Yu Gothic UI Semilight</FontFamily>
 
         <!-- Button Styles -->
         <Style x:Key="LargeButtonStyle" TargetType="{x:Type ToggleButton}">
@@ -143,6 +143,5 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-
     </Application.Resources>
 </Application>
