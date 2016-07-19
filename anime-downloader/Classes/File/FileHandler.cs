@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -28,7 +29,7 @@ namespace anime_downloader.Classes.File
             _settings = settings;
         }
 
-        public async Task SetToLastAsync(List<Anime> animes, EpisodeType type)
+        public async Task SetToLastAsync(IEnumerable<Anime> animes, EpisodeType type)
         {
             foreach (var anime in animes)
             {
@@ -38,7 +39,7 @@ namespace anime_downloader.Classes.File
             }
         }
 
-        public async Task SetToFirstAsync(List<Anime> animes, EpisodeType type)
+        public async Task SetToFirstAsync(IEnumerable<Anime> animes, EpisodeType type)
         {
             foreach (var anime in animes)
             {
@@ -48,9 +49,14 @@ namespace anime_downloader.Classes.File
             }
         }
 
-        public void MoveEpisodeToDestination(ListBox list, string oldDirectory, string newDirectory)
+        /// <summary>
+        ///     Moves all selected items in listbox from old to new directory returning a list containing tuples of (old, new).
+        /// </summary>
+        public static IEnumerable<Tuple<AnimeEpisode, AnimeEpisode>> MoveEpisodesToDestination(ListBox list, string oldDirectory, string newDirectory)
         {
+
             var episodes = list.SelectedItems.Cast<AnimeEpisode>().ToList();
+            var newEpisodes = new List<Tuple<AnimeEpisode, AnimeEpisode>>();
 
             foreach (var episode in episodes)
             {
@@ -87,12 +93,17 @@ namespace anime_downloader.Classes.File
                                 break;
                             }
                     }
+
+                    newEpisodes.Add(new Tuple<AnimeEpisode, AnimeEpisode>(episode, new AnimeEpisode(newPath)));
                 }
+
                 catch (Exception)
                 {
                     //
                 }
             }
+
+            return newEpisodes;
         }
 
         public async Task<int> MoveDuplicatesAsync()
@@ -116,7 +127,7 @@ namespace anime_downloader.Classes.File
             return duplicates.Count;
         }
 
-        public IEnumerable<AnimeEpisode> Episodes(EpisodeType episodeType)
+        public ObservableCollection<AnimeEpisode> Episodes(EpisodeType episodeType)
         {
             try
             {
@@ -130,53 +141,56 @@ namespace anime_downloader.Classes.File
                     files = Directory.GetFiles(_settings.Paths.WatchedDirectory, "*", SearchOption.AllDirectories)
                         .Union(Directory.GetFiles(_settings.Paths.EpisodeDirectory, "*", SearchOption.AllDirectories));
 
-                return files
+                return new ObservableCollection<AnimeEpisode>(files
                     .Where(filePath => FileExtensions.Any(ext => filePath.ToLower().EndsWith(ext)))
                     .Select(filePath => new AnimeEpisode(filePath))
                     .OrderBy(animeFile => animeFile.Name)
-                    .ThenBy(animeFile => animeFile.IntEpisode);
+                    .ThenBy(animeFile => animeFile.IntEpisode)
+                    .ToList());
             }
             catch (Exception ex) when (ex is DirectoryNotFoundException || ex is ArgumentException)
             {
-                return new List<AnimeEpisode>();
+                return new ObservableCollection<AnimeEpisode>();
             }
         }
 
-        public IEnumerable<AnimeEpisode> EpisodesFrom(Anime anime, EpisodeType episodeType)
+        public ObservableCollection<AnimeEpisode> EpisodesFrom(Anime anime, EpisodeType episodeType)
         {
-            return Episodes(episodeType)
+            var collection = Episodes(episodeType)
                 .GroupBy(e => e.Name)
-                .Select(e => new { group = e, distance = Methods.LevenshteinDistance(anime.Name.RemoveWhitespace(), e.Key.RemoveWhitespace()) })
-                .Where(e => e.distance <= 10)
-                .OrderBy(e => e.distance)
-                .FirstOrDefault()?
-                .group.Select(e => e);
+                .Select(e => new GroupFileDistance(e, anime))
+                .Where(e => e.Distance <= 25)
+                .OrderBy(e => e.Distance)
+                .FirstOrDefault()?.Group
+                .Select(e => e)
+                .ToList();
+            return new ObservableCollection<AnimeEpisode>(collection ?? new List<AnimeEpisode>());
         }
 
-        public IEnumerable<AnimeWithEpisodes> EpisodesFrom(IEnumerable<Anime> animes, EpisodeType episodeType)
+        public ObservableCollection<AnimeWithEpisodes> EpisodesFrom(IEnumerable<Anime> animes, EpisodeType episodeType)
         {
-            return Episodes(episodeType)
+            return new ObservableCollection<AnimeWithEpisodes>(Episodes(episodeType)
                 .GroupBy(e => e.Name)
-                .Select(e => new AnimeWithEpisodes { Anime = Anime.Closest.To(e.Key, animes), Episodes = e });
+                .Select(e => new AnimeWithEpisodes { Anime = Anime.Closest.To(e.Key, animes), Episodes = e }));
         }
 
-        public IEnumerable<AnimeEpisode> LastEpisodesOf(IEnumerable<AnimeEpisode> episodes)
+        public static IEnumerable<AnimeEpisode> LastEpisodesOf(IEnumerable<AnimeEpisode> episodes)
         {
             var latest = new List<AnimeEpisode>();
             var reversed = episodes.OrderByDescending(animeFile => animeFile.IntEpisode);
             foreach (var anime in reversed)
                 if (!latest.Any(af => af.Name.Equals(anime.Name)))
                     latest.Add(anime);
-            return latest.OrderBy(af => af.Name);
+            return new ObservableCollection<AnimeEpisode>(latest.OrderBy(af => af.Name));
         }
 
-        public IEnumerable<AnimeEpisode> FirstEpisodesOf(IEnumerable<AnimeEpisode> episodes)
+        public static IEnumerable<AnimeEpisode> FirstEpisodesOf(IEnumerable<AnimeEpisode> episodes)
         {
             var earliest = new List<AnimeEpisode>();
             foreach (var anime in episodes)
                 if (!earliest.Any(af => af.Name.Equals(anime.Name)))
                     earliest.Add(anime);
-            return earliest.OrderBy(af => af.Name);
+            return new ObservableCollection<AnimeEpisode>(earliest.OrderBy(af => af.Name));
         }
 
         public AnimeEpisode FirstEpisodeOf(Anime anime)
@@ -184,7 +198,7 @@ namespace anime_downloader.Classes.File
             return FirstEpisodeOf(EpisodesFrom(anime, EpisodeType.All));
         }
 
-        public AnimeEpisode FirstEpisodeOf(IEnumerable<AnimeEpisode> animeEpisodes)
+        private static AnimeEpisode FirstEpisodeOf(IEnumerable<AnimeEpisode> animeEpisodes)
         {
             return animeEpisodes?.OrderBy(ep => ep.IntEpisode).FirstOrDefault();
         }
@@ -194,7 +208,7 @@ namespace anime_downloader.Classes.File
             return LastEpisodeOf(EpisodesFrom(anime, EpisodeType.All));
         }
 
-        public AnimeEpisode LastEpisodeOf(IEnumerable<AnimeEpisode> animeEpisodes)
+        private static AnimeEpisode LastEpisodeOf(IEnumerable<AnimeEpisode> animeEpisodes)
         {
             return animeEpisodes?.OrderBy(ep => ep.IntEpisode).LastOrDefault();
         }

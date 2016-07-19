@@ -29,7 +29,7 @@ namespace anime_downloader.Classes.File
         /// </summary>
         /// <param name="animes">The collection of anime to try and get new episodes from.</param>
         /// <param name="textbox">The output box to display results to.</param>
-        public async Task<int> DownloadAsync(List<Anime> animes, TextBox textbox)
+        public async Task<int> DownloadAsync(IEnumerable<Anime> animes, TextBox textbox)
         {
             _downloaded = 0;
 
@@ -75,7 +75,7 @@ namespace anime_downloader.Classes.File
             return _downloaded;
         }
 
-        public bool CanDownload(TorrentProvider torrent, Anime anime)
+        private bool CanDownload(TorrentProvider torrent, Anime anime)
         {
             // Most likely wrong torrent
             if (anime.NameStrict && !anime.Name.ToLower().Equals(torrent.StrippedName(true).ToLower()))
@@ -117,9 +117,10 @@ namespace anime_downloader.Classes.File
             return false;
         }
 
-        public async Task<bool> DownloadTorrentAsync(TorrentProvider torrent, Anime anime, TextBox textbox)
+        private async Task<bool> DownloadTorrentAsync(TorrentProvider torrent, Anime anime, TextBox textbox)
         {
             textbox.WriteLine($"Downloading '{anime.Title}' episode '{anime.NextEpisode()}'.");
+
             var fileWasDownloaded = await DownloadFileAsync(torrent, anime);
 
             if (fileWasDownloaded)
@@ -136,7 +137,7 @@ namespace anime_downloader.Classes.File
             return fileWasDownloaded;
         }
 
-        public async Task<bool> DownloadFileAsync(TorrentProvider torrent, Anime anime)
+        private async Task<bool> DownloadFileAsync(TorrentProvider torrent, Anime anime)
         {
             var torrentName = await torrent.GetTorrentNameAsync();
             if (torrentName == null)

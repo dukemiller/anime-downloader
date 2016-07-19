@@ -11,13 +11,13 @@ namespace anime_downloader.Classes.Web.MyAnimeList
         /// </summary>
         private const double ArbitraryHighValue = 10000.00;
 
-        private string[] NameSplit { get; }
+        private string Name { get; }
 
-        public FindResult FindResult { get; set; }
+        public FindResult FindResult { get; private set; }
 
         public double Distance { get; private set; }
 
-        public string Name { get; set; }
+        private string[] NameSplit { get; }
 
         public FindResultDistance(string name, FindResult findResult)
         {

@@ -11,6 +11,12 @@ namespace anime_downloader.Classes
 {
     public static class Extensions
     {
+
+        public static string CommaJoined(this string[] array)
+        {
+            return string.Join(", ", array);
+        }
+
         public static IEnumerable<Anime> AiringAndWatching(this IEnumerable<Anime> animes)
         {
             return animes.Where(a => a.Airing && a.Status.Equals("Watching"));
@@ -73,6 +79,18 @@ namespace anime_downloader.Classes
                 button.Toggle();
         }
 
+        public static void AddSorted<T>(this IList<T> list, T item, IComparer<T> comparer = null)
+        {
+            if (comparer == null)
+                comparer = Comparer<T>.Default;
+
+            int i = 0;
+            while (i < list.Count && comparer.Compare(list[i], item) < 0)
+                i++;
+
+            list.Insert(i, item);
+        }
+
         /* --WIP
         public static void AssignTo<T1, T2, T3>(this UserControl parent, Action function)
             where T1 : Control
@@ -120,6 +138,13 @@ namespace anime_downloader.Classes
         {
             return new string(input.ToCharArray()
                 .Where(c => !char.IsWhiteSpace(c))
+                .ToArray());
+        }
+
+        public static string OnlyLettersAndSpace(this string input)
+        {
+            return new string(input.ToCharArray()
+                .Where(c => !char.IsLetter(c) || !char.IsWhiteSpace(c))
                 .ToArray());
         }
 

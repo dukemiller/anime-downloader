@@ -246,19 +246,19 @@
                                   Style="{DynamicResource ValueStyle}" />
 
                         <!--  Name Strict  -->
-                        <Label x:Name="NameStrictLabel"
-                               Grid.Row="5"
-                               Grid.Column="0"
-                               Content="Name Strict: "
-                               Style="{DynamicResource LabelStyle}"
-                               ToolTip="Whether searching for this anime should match exactly what the name is instead of picking up partial matches." />
+                        <Label
+                            Grid.Row="5"
+                            Grid.Column="0"
+                            Content="Name Strict: "
+                            Style="{DynamicResource LabelStyle}"
+                            ToolTip="Whether searching for this anime should match exactly what the name is instead of picking up partial matches." />
                         <CheckBox x:Name="NameStrictCheckbox"
                                   Grid.Row="5"
                                   Grid.Column="1"
                                   IsChecked="{Binding NameStrict}"
                                   Style="{DynamicResource ValueStyle}" />
                     </Grid>
-                    <Grid x:Name="CheckboxGridRight" Grid.Column="1">
+                    <Grid Grid.Column="1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="1*" />
@@ -267,20 +267,17 @@
                 </Grid>
             </Grid>
             <DockPanel Grid.Row="1">
-                <Button x:Name="OpenLastButton"
-                        Width="auto"
-                        Content="Last episode"
-                        Style="{DynamicResource ConfirmationButtonStyle}" />
-                <Button x:Name="ClearMalButton"
-                        Width="auto"
-                        Margin="5"
-                        Content="Clear MAL"
-                        Visibility="{Binding MyAnimelistId, Converter={StaticResource VisbilityConverter}}"
-                        Style="{DynamicResource ConfirmationButtonStyle}" />
-                <Button x:Name="SubmitButton"
-                        HorizontalAlignment="Right"
-                        Content="Add"
-                        Style="{DynamicResource ConfirmationButtonStyle}" />
+                <Button x:Name="OpenLastButton" Width="auto" Content="Last episode" Style="{DynamicResource ConfirmationButtonStyle}" />
+
+                <DockPanel Background="LightCyan" Margin="30,5" Visibility="{Binding MyAnimeList.Id, Converter={StaticResource VisbilityConverter}}" >
+                    <Label Content="MyAnimeList" VerticalAlignment="Center" />
+                    <Button x:Name="GotoMalButton" Width="auto" Margin="5" Content="Page" Style="{DynamicResource ConfirmationButtonStyle}" />
+                    <Button x:Name="RefreshMalButton" Width="auto" Margin="5" Content="Refresh data" Style="{DynamicResource ConfirmationButtonStyle}" />
+                    <Button x:Name="ClearMalButton" Width="auto" Margin="5" Content="Clear data" Style="{DynamicResource ConfirmationButtonStyle}" />
+                </DockPanel>
+                
+                <Button x:Name="SubmitButton" HorizontalAlignment="Right" Content="Add" Style="{DynamicResource ConfirmationButtonStyle}" />
+            
             </DockPanel>
         </Grid>
     </Grid>

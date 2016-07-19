@@ -7,8 +7,10 @@ using System.Xml.Serialization;
 
 namespace anime_downloader.Classes.Web.MyAnimeList
 {
-    public class Api
+    public static class Api
     {
+        // http://myanimelist.net/modules.php?go=api
+
         private const string ApiSearch = "http://myanimelist.net/api/anime/search.xml?q={0}";
 
         private const string ApiAdd = "http://myanimelist.net/api/animelist/add/{0}.xml";

@@ -69,5 +69,7 @@ namespace anime_downloader.Views
             if (SubmitButton.Content.Equals("Add"))
                 NameTextbox.Focus();
         }
+
+
     }
 }

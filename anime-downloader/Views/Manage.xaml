@@ -8,6 +8,10 @@
              mc:Ignorable="d"
              d:DesignHeight="360" d:DesignWidth="680">
     <UserControl.Resources>
+        <Style x:Key="ListboxStyle" TargetType="ListBox">
+            <Setter Property="FontFamily" Value="{StaticResource MainFont}"/>
+            <Setter Property="FontSize" Value="16"/>
+        </Style>
         <Style x:Key="TextboxStyle" TargetType="TextBox">
             <Setter Property="Width" Value="150" />
             <Setter Property="Height" Value="25" />
@@ -61,13 +65,6 @@
             <Setter Property="Height" Value="25" />
             <Setter Property="Width" Value="25" />
             <Setter Property="HorizontalAlignment" Value="Left" />
-            <!--
-
-            <Setter Property="Stroke" Value="Gray" />
-            <Setter Property="StrokeThickness" Value="0.5" />
-            <Setter Property="RadiusX" Value="25" />
-            <Setter Property="RadiusY" Value="25" />
-            -->
         </Style>
         <Style TargetType="{x:Type ListBoxItem}">
             <Setter Property="xaml:DragSelectionHelper.IsDragSelecting" Value="False" />
@@ -81,111 +78,122 @@
     <Grid>
         <Grid.Background>White</Grid.Background>
         <Grid>
+            
             <Grid.RowDefinitions>
                 <RowDefinition Height="1*" />
                 <RowDefinition Height="9*" />
             </Grid.RowDefinitions>
+            
             <TextBlock Grid.Row="0" FontFamily="{StaticResource MainFont}" FontSize="16">
                 Manage and move episodes from your downloaded directory to the Watched directory.
             </TextBlock>
+            
             <Grid Grid.Row="1">
+                
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="30*" />
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="30*" />
                 </Grid.ColumnDefinitions>
 
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="2*" />
-                    <RowDefinition Height="13*" />
-                    <RowDefinition Height="2*" />
-                </Grid.RowDefinitions>
+                <Grid Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="2*" />
+                        <RowDefinition Height="13*" />
+                        <RowDefinition Height="2*" />
+                    </Grid.RowDefinitions>
+                    <DockPanel Grid.Column="0" Grid.Row="0">
+                        <Label Style="{DynamicResource LabelStyle}" Content="Unwatched" />
+                        <Label Style="{DynamicResource DescriptionStyle}" Name="UnwatchedFilesLabel" />
+                    </DockPanel>
+                    <ListBox x:Name="UnwatchedList" Grid.Row="1" Grid.Column="0" Style="{StaticResource ListboxStyle}" 
+                             xaml:DragSelectionHelper.IsDragSelectionEnabled="true"
+                             MouseDoubleClick="Context_MouseDoubleClick" 
+                             KeyUp="Listbox_KeyUp">
+                        <ListBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Move to watched" Click="Context_Move_Click" />
+                                <MenuItem Header="Go to profile" Click="Context_Profile_Click" />
+                                <MenuItem Header="Open" Click="Context_Open_Click" />
+                                <MenuItem Header="Delete" Click="Context_Delete_Click" />
+                            </ContextMenu>
+                        </ListBox.ContextMenu>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <WrapPanel d:DataContext="{d:DesignInstance Type=file:AnimeEpisode }">
+                                    <TextBlock Text="{Binding StrippedFilename}" />
+                                </WrapPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <Grid Grid.Row="2" Grid.Column="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
 
-                <DockPanel Grid.Column="0" Grid.Row="0">
-                    <Label Style="{DynamicResource LabelStyle}" Content="Unwatched" />
-                    <Label x:Name="UnwatchedFilesLabel" Style="{DynamicResource DescriptionStyle}" />
-                </DockPanel>
-                <ListBox x:Name="UnwatchedList" Grid.Row="1" Grid.Column="0" FontFamily="{StaticResource MainFont}"
-                         FontSize="16" xaml:DragSelectionHelper.IsDragSelectionEnabled="true"
-                         MouseDoubleClick="Context_MouseDoubleClick" KeyUp="Listbox_KeyUp">
-                    <ListBox.ContextMenu>
-                        <ContextMenu Name="UnwatchedContextMenu">
-                            <MenuItem Name="UnwatchedMoveWatched" Header="Move to Watched" />
-                            <MenuItem Name="UnwatchedOpen" Header="Open" Click="ContextOpen_Click" />
-                            <MenuItem Name="UnwatchedDelete" Header="Delete" Click="ContextDelete_Click" />
-                        </ContextMenu>
-                    </ListBox.ContextMenu>
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <WrapPanel d:DataContext="{d:DesignInstance Type=file:AnimeEpisode }">
-                                <TextBlock Text="{Binding Name}" />
-                                <TextBlock Text=" - " />
-                                <TextBlock Text="{Binding Episode}" />
-                            </WrapPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-                <Grid Grid.Row="2" Grid.Column="0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                    </Grid.ColumnDefinitions>
+                        <TextBox Grid.Column="0" Style="{DynamicResource TextboxStyle}" KeyUp="FindTextBox_KeyUp" />
 
-                    <TextBox x:Name="UnwatchedFindTextBox" Grid.Column="0" Style="{DynamicResource TextboxStyle}"
-                             KeyUp="UnwatchedFindTextBox_KeyUp" />
-
-                    <Grid x:Name="UnwatchedPanel" Grid.Column="1">
-                        <DockPanel>
-                            <Rectangle x:Name="MoveRight" Style="{DynamicResource ButtonStyle}"
-                                       MouseEnter="MouseEnterItem" MouseLeave="MouseLeaveItem">
-                                <Rectangle.Fill>
-                                    <ImageBrush ImageSource="../Resources/Images/right.png" />
-                                </Rectangle.Fill>
-                            </Rectangle>
-                        </DockPanel>
+                        <Grid Grid.Column="1">
+                            <DockPanel>
+                                <Rectangle Style="{DynamicResource ButtonStyle}" MouseEnter="MouseEnterItem" MouseLeave="MouseLeaveItem" MouseDown="Button_Move_Click">
+                                    <Rectangle.Fill>
+                                        <ImageBrush ImageSource="../Resources/Images/right.png" />
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                            </DockPanel>
+                        </Grid>
                     </Grid>
                 </Grid>
+                
+                <Grid Grid.Column="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="2*" />
+                        <RowDefinition Height="13*" />
+                        <RowDefinition Height="2*" />
+                    </Grid.RowDefinitions>
+                    <Label Grid.Row="0" Style="{DynamicResource LabelStyle}" Content="Watched" />
+                    <ListBox x:Name="WatchedList" Grid.Row="1" Style="{StaticResource ListboxStyle}" 
+                             xaml:DragSelectionHelper.IsDragSelectionEnabled="true"
+                             MouseDoubleClick="Context_MouseDoubleClick" 
+                             KeyUp="Listbox_KeyUp">
+                        <ListBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Move to unwatched" Click="Context_Move_Click" />
+                                <MenuItem Header="Go to profile" Click="Context_Profile_Click" />
+                                <MenuItem Header="Open" Click="Context_Open_Click" />
+                                <MenuItem Header="Delete" Click="Context_Delete_Click" />
+                            </ContextMenu>
+                        </ListBox.ContextMenu>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <WrapPanel d:DataContext="{d:DesignInstance Type=file:AnimeEpisode }">
+                                    <TextBlock Text="{Binding StrippedFilename}" />
+                                </WrapPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <Grid Grid.Row="2">
+                        
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
 
-                <Label Grid.Column="2" Grid.Row="0" Style="{DynamicResource LabelStyle}" Content="Watched" />
-                <ListBox x:Name="WatchedList" Grid.Row="1" Grid.Column="2" FontFamily="{StaticResource MainFont}"
-                         FontSize="16" xaml:DragSelectionHelper.IsDragSelectionEnabled="true"
-                         MouseDoubleClick="Context_MouseDoubleClick" KeyUp="Listbox_KeyUp">
-                    <ListBox.ContextMenu>
-                        <ContextMenu Name="WatchedContextMenu">
-                            <MenuItem Name="WatchedMoveUnwatched" Header="Move To Unwatched " />
-                            <MenuItem Name="WatchedOpen" Header="Open" Click="ContextOpen_Click" />
-                            <MenuItem Name="WatchedDelete" Header="Delete" Click="ContextDelete_Click" />
-                        </ContextMenu>
-                    </ListBox.ContextMenu>
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <WrapPanel d:DataContext="{d:DesignInstance Type=file:AnimeEpisode }">
-                                <TextBlock Text="{Binding Name}" />
-                                <TextBlock Text=" - " />
-                                <TextBlock Text="{Binding Episode}" />
-                            </WrapPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-                <Grid Grid.Row="2" Grid.Column="2">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                    </Grid.ColumnDefinitions>
-
-                    <TextBox x:Name="WatchedFindTextBox" Grid.Row="0" Grid.Column="0"
-                             Style="{DynamicResource TextboxStyle}" KeyUp="WatchedFindTextBox_KeyUp" />
-                    <Grid x:Name="WatchedPanel" Grid.Column="1">
-                        <DockPanel>
-                            <Rectangle x:Name="MoveLeft" Style="{DynamicResource ButtonStyle}"
-                                       MouseEnter="MouseEnterItem" MouseLeave="MouseLeaveItem">
-                                <Rectangle.Fill>
-                                    <ImageBrush ImageSource="../Resources/Images/left.png" />
-                                </Rectangle.Fill>
-                            </Rectangle>
-                        </DockPanel>
+                        <TextBox Style="{DynamicResource TextboxStyle}" KeyUp="FindTextBox_KeyUp" />
+                        
+                        <Grid Grid.Column="1">
+                            <DockPanel>
+                                <Rectangle Style="{DynamicResource ButtonStyle}" MouseEnter="MouseEnterItem" MouseLeave="MouseLeaveItem" MouseDown="Button_Move_Click">
+                                    <Rectangle.Fill>
+                                        <ImageBrush ImageSource="../Resources/Images/left.png" />
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                            </DockPanel>
+                        </Grid>
                     </Grid>
                 </Grid>
+                
             </Grid>
         </Grid>
     </Grid>

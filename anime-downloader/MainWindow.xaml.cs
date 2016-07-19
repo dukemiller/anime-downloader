@@ -1,6 +1,7 @@
 ﻿using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
@@ -21,6 +22,7 @@ using anime_downloader.Classes.Web.MyAnimeList;
 using anime_downloader.Classes.Xml;
 using anime_downloader.Views;
 using static anime_downloader.Classes.OperatingSystemApi;
+using Settings = anime_downloader.Classes.Settings;
 
 namespace anime_downloader
 {
@@ -57,7 +59,7 @@ namespace anime_downloader
         /// <summary>
         ///     Handles paths and user settings.
         /// </summary>
-        private Classes.Settings _settings;
+        private Settings _settings;
 
         /// <summary>
         ///     Handles logic related to creating and features of the system tray.
@@ -213,7 +215,7 @@ namespace anime_downloader
         /// <summary>
         ///     To "refresh" views by rapidly cycling from home to ToggleButton button.
         /// </summary>
-        public void Cycle(ToggleButton button)
+        private void Cycle(ToggleButton button)
         {
             HomeButton.Press();
             button.Press();
@@ -285,12 +287,12 @@ namespace anime_downloader
         /// <summary>
         ///     Display an alert message (currently a messagebox).
         /// </summary>
-        private static void Alert(string msg = "") => MessageBox.Show(msg);
+        public static void Alert(string msg = "") => MessageBox.Show(msg);
 
         /// <summary>
         ///     Search for the first result of text on myanimelist and open in browser.
         /// </summary>
-        public async Task SearchOnMyAnimeListAsync(string text)
+        private async Task SearchOnMyAnimeListAsync(string text)
         {
             this.ToggleButtons();
 
@@ -707,15 +709,20 @@ namespace anime_downloader
         /// <summary>
         ///     View: AnimeDetails || AnimeList -> (Right-Click) Context -> Edit
         /// </summary>
-        private void AnimeDetails_Single()
+        public void AnimeDetails_Single(Anime anime = null)
         {
-            var tableDisplay = (AnimeList) CurrentDisplay;
-            var anime = tableDisplay.DataGrid.SelectedCells.FirstOrDefault().Item as Anime;
+            if (anime == null)
+            {
+                var tableDisplay = (AnimeList) CurrentDisplay;
+                anime = tableDisplay.DataGrid.SelectedCells.FirstOrDefault().Item as Anime;
+            }
+
             if (anime == null)
                 return;
 
             var display = ChangeDisplay<AnimeDetails>();
             display.DataContext = anime;
+
             display.SubmitButton.Content = "Edit";
             display.SubmitButton.Click += AnimeDetails_EditAnimeButton_Click;
 
@@ -740,6 +747,11 @@ namespace anime_downloader
                     Process.Start($"{episode.FilePath}");
             };
 
+            display.GotoMalButton.Click += delegate
+            {
+                Process.Start($"http://myanimelist.net/anime/{anime.MyAnimeList.Id}");
+            };
+
             display.ClearMalButton.Click += delegate
             {
                 anime.MyAnimeList.Id = "";
@@ -755,7 +767,25 @@ namespace anime_downloader
                 display.ClearMalButton.Visibility = Visibility.Hidden;
             };
 
-            
+            display.RefreshMalButton.Click += async delegate
+            {
+                this.ToggleButtons();
+                var credentials = Api.GetCredentials(_settings);
+                var animeResults = await Api.FindAsync(credentials, HttpUtility.UrlEncode(anime.Title));
+                var result = animeResults.FirstOrDefault(r => r.Id.Equals(anime.MyAnimeList.Id));
+                if (result != null)
+                {
+                    anime.MyAnimeList.Synopsis = result.Synopsis;
+                    anime.MyAnimeList.Image = result.Image;
+                    anime.MyAnimeList.Title = result.Title;
+                    anime.MyAnimeList.English = result.English;
+                    anime.MyAnimeList.Synopsis = result.Synopsis;
+                    anime.MyAnimeList.TotalEpisodes = result.TotalEpisodes;
+                    Alert("Updated any information about this show");
+                }
+                this.ToggleButtons();
+            };
+
         }
 
         /// <summary>
@@ -981,7 +1011,7 @@ namespace anime_downloader
                         }
                         catch (Exception)
                         {
-                            textBox.WriteLine(">> An error occured while attempting to download, try again.");
+                            textBox.WriteLine($">> An error occured while attempting to download, try again."); 
                         }
                     }
                     else
@@ -1058,9 +1088,9 @@ namespace anime_downloader
             textBox.WriteLine(">> Finding all missing episodes ...");
             var allEpisodeFiles = await Task.Run(() => _filehandler.Episodes(EpisodeType.All).ToList());
             var animeFileDeltas = await Task.Run(() =>
-                _filehandler.FirstEpisodesOf(allEpisodeFiles).OrderBy(a => a.Name)
+                FileHandler.FirstEpisodesOf(allEpisodeFiles).OrderBy(a => a.Name)
                     .Zip(
-                    _filehandler.LastEpisodesOf(allEpisodeFiles).OrderBy(a => a.Name), (a, b) => new AnimeEpisodeDelta(a, b))
+                    FileHandler.LastEpisodesOf(allEpisodeFiles).OrderBy(a => a.Name), (a, b) => new AnimeEpisodeDelta(a, b))
                 );
             var total = await _downloader.DownloadAsync(_allAnime.AiringAndWatching(),
                 animeFileDeltas, allEpisodeFiles, textBox);
@@ -1076,65 +1106,12 @@ namespace anime_downloader
         private async void ManageButton_Click(object sender, RoutedEventArgs e)
         {
             var display = ChangeDisplay<Manage>();
-
-            var unwatched = await Task.Run(() => _filehandler.Episodes(EpisodeType.Unwatched).ToList());
-            var watched = await Task.Run(() => _filehandler.Episodes(EpisodeType.Watched).ToList());
             display.Playlist = _playlist;
-            display.UnwatchedFilesLabel.Content = $"({unwatched.Count} files)";
-
-            display.Unwatched = unwatched;
-            display.UnwatchedList.ItemsSource = display.Unwatched;
-            display.UnwatchedExists = Directory.Exists(_settings.Paths.EpisodeDirectory);
-            display.UnwatchedMoveWatched.Click += delegate
-            {
-                if (display.WatchedExists)
-                {
-                    var episodes = display.UnwatchedList.SelectedItems.Cast<AnimeEpisode>().ToList();
-                    if (episodes.Count >= 1)
-                    {
-                        _filehandler.MoveEpisodeToDestination(display.UnwatchedList, _settings.Paths.EpisodeDirectory,
-                            _settings.Paths.WatchedDirectory);
-                        Cycle(ManageButton);
-                    }
-                }
-            };
-            display.MoveRight.MouseUp += delegate
-            {
-                if (display.WatchedExists)
-                {
-                    _filehandler.MoveEpisodeToDestination(display.UnwatchedList, _settings.Paths.EpisodeDirectory,
-                        _settings.Paths.WatchedDirectory);
-                    Cycle(ManageButton);
-                }
-            };
-            display.UnwatchedDelete.Click += delegate { Cycle(ManageButton); };
-
-            display.Watched = watched;
-            display.WatchedList.ItemsSource = display.Watched;
-            display.WatchedExists = Directory.Exists(_settings.Paths.WatchedDirectory);
-            display.WatchedMoveUnwatched.Click += delegate
-            {
-                if (display.UnwatchedExists)
-                {
-                    var episodes = display.WatchedList.SelectedItems.Cast<AnimeEpisode>().ToList();
-                    if (episodes.Count >= 1)
-                    {
-                        _filehandler.MoveEpisodeToDestination(display.WatchedList, _settings.Paths.WatchedDirectory,
-                            _settings.Paths.EpisodeDirectory);
-                        Cycle(ManageButton);
-                    }
-                }
-            };
-            display.MoveLeft.MouseUp += delegate
-            {
-                if (display.UnwatchedExists)
-                {
-                    _filehandler.MoveEpisodeToDestination(display.WatchedList, _settings.Paths.WatchedDirectory,
-                        _settings.Paths.EpisodeDirectory);
-                    Cycle(ManageButton);
-                }
-            };
-            display.WatchedDelete.Click += delegate { Cycle(ManageButton); };
+            display.SetInitialValues(
+                this,
+                await Task.Run(() => _filehandler.Episodes(EpisodeType.Unwatched)),
+                await Task.Run(() => _filehandler.Episodes(EpisodeType.Watched)),
+                _settings);
         }
 
         /* --Web */
@@ -1198,18 +1175,23 @@ namespace anime_downloader
             {
                 Alert("There are a few tricks and quirks to correctly use the synchronization: \n\n" +
 
-                      "1. Dont use any nicknames for the show even if they get recognized by nyaa, " +
-                      "use the original english or romaji (partial matches are still fine)\n\n" +
+                      "1. Be partial against using any nicknames for the show, you have a higher chance " +
+                      "of finding the show with original english or romaji.\n\n" +
 
-                      "2. If the show has a close matching name to another series or is a single " +
+                      "2. OVAs have absolutely no chance of being found, so don't expect them to be " +
+                      "found. Anime shorts can still be found if they're the content of the show, " +
+                      "i.e. the show itself is only shorts.\n\n" +
+
+                      "3. If the show has a close matching name to another series or is a single " +
                       "word (e.g. GATE vs Steins;Gate), flagging in the anime details for 'name " +
-                      "strict' will only find exact matches of the show.\n\n" +
+                      "strict' will find exact matches of the show and have a greater chance of " +
+                      "correctly tagging the right show.\n\n" +
 
-                      "3. For shows that have a season with another name, try your hardest to " +
+                      "4. For shows that have a season with another name, try your hardest to " +
                       "maintain that naming by adding a new series and marking the original " +
                       "series as complete instead of keeping the same name and downloading new " +
-                      "episodes. It should still work, but it's bound to cause some kind of " +
-                      "problems."
+                      "episodes. It should still work, but it's bound to cause some type of " +
+                      "problem."
                     );
             };
 
@@ -1221,7 +1203,7 @@ namespace anime_downloader
             display.SyncButton.Click += Web_SyncHandler;
         }
 
-        public async void Web_SyncHandler(object sender, RoutedEventArgs e)
+        private async void Web_SyncHandler(object sender, RoutedEventArgs e)
         {
             this.ToggleButtons();
 
@@ -1263,9 +1245,17 @@ namespace anime_downloader
                     // if there was no good guess
                     if (result == null)
                     {
-                        // throw an error then skip
-                        Alert($"2. No partial matches found from matching names for {anime.Title}.");
-                        continue;
+                        // try slapping a (TV) infront of it because the MAL api is weird sometimes
+                        animeResults = await Api.FindAsync(credentials, HttpUtility.UrlEncode(anime.Title + " (TV)"));
+                        result = anime.ClosestMyAnimeListResult(animeResults);
+
+                        // if still no result
+                        if (result == null)
+                        {
+                            // throw an error then skip
+                            Alert($"2. No partial matches found from matching names for {anime.Title}.");
+                            continue;
+                        }
                     }
 
                     // check episode details if there is a given total (you can only hope)
@@ -1378,7 +1368,7 @@ namespace anime_downloader
 
             else
             {
-                var airingAnime = _allAnime.AiringAndWatching().ToList();
+                var airingAnime = await Task.Run(() => _allAnime.AiringAndWatching().ToList());
 
                 if (display.LastWatchedRadio.IsChecked == true)
                 {
@@ -1426,6 +1416,33 @@ namespace anime_downloader
 
                     var result = names.Count > 0 ? string.Join(", ", names) : "no shows";
                     Alert($"Marked {result} as finished. ");
+                }
+
+                else if (display.SearchMoreRadio.IsChecked == true)
+                {
+                    var count = 0;
+
+                    foreach (var anime in airingAnime
+                        .Where(a => a.MyAnimeList.HasId && (a.MyAnimeList.IntTotalEpisodes() == 0)))
+                    {
+
+                        var credentials = Api.GetCredentials(_settings);
+                        var animeResults = await Api.FindAsync(credentials, HttpUtility.UrlEncode(anime.Title));
+                        var result = animeResults.FirstOrDefault(r => r.Id.Equals(anime.MyAnimeList.Id));
+
+                        if (result != null)
+                        {
+                            anime.MyAnimeList.Synopsis = result.Synopsis;
+                            anime.MyAnimeList.Image = result.Image;
+                            anime.MyAnimeList.Title = result.Title;
+                            anime.MyAnimeList.English = result.English;
+                            anime.MyAnimeList.Synopsis = result.Synopsis;
+                            anime.MyAnimeList.TotalEpisodes = result.TotalEpisodes;
+                            count++;
+                        }
+                    }
+
+                    Alert($"Attempted an update of {count} shows.");
                 }
             }
 

@@ -176,7 +176,9 @@
                     <GroupBox
                         Header="Usage Notes" Style="{DynamicResource BoxStyle}"
                         VerticalAlignment="Bottom">
-                        <Button x:Name="UsageButton" Style="{DynamicResource FeatureButtonStyle}" Content="Click me" />
+                        <Button x:Name="UsageButton" Style="{DynamicResource FeatureButtonStyle}">
+                            <TextBlock Margin="5">Click me</TextBlock>
+                        </Button>
                     </GroupBox>
                 </StackPanel>
             </DockPanel>

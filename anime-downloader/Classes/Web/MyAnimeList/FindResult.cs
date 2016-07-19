@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Serialization;
 
 namespace anime_downloader.Classes.Web.MyAnimeList
@@ -48,6 +50,9 @@ namespace anime_downloader.Classes.Web.MyAnimeList
 
         [XmlElement("image")]
         public string Image { get; set; }
-        
+
+        private IEnumerable<string> SynonymsSplit => Synonyms.Split(';');
+
+        public IEnumerable<string> NameCollection => new[] { English, Title }.Union(SynonymsSplit);
     }
 }

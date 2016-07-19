@@ -69,6 +69,7 @@
     <Compile Include="Classes\File\FileHandler.cs" />
     <Compile Include="Classes\File\Downloader.cs" />
     <Compile Include="Classes\Extensions.cs" />
+    <Compile Include="Classes\File\GroupFileDistance.cs" />
     <Compile Include="Classes\File\Logger.cs" />
     <Compile Include="Classes\Methods.cs" />
     <Compile Include="Classes\OperatingSystemApi.cs" />
@@ -218,6 +219,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Images\find.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Classes\DistanceComparisons\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

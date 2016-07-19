@@ -22,7 +22,7 @@
                   UseLayoutRounding="False"
                   SelectionUnit="Cell" IsReadOnly="True"
                   FontFamily="{StaticResource MainFont}"
-                  d:DataContext="{d:DesignInstance classes:Anime }"
+                  d:DataContext="{d:DesignInstance classes:Anime}"
                   Sorting="DataGrid_OnSorting">
             <DataGrid.Resources>
                 <Style TargetType="{x:Type DataGridColumnHeader}">
@@ -34,7 +34,7 @@
                 </Style>
             </DataGrid.Resources>
             <DataGrid.ContextMenu>
-                <ContextMenu Name="AnimeContextMenu">
+                <ContextMenu>
                     <MenuItem Name="Add" Header="Add (Single) ..." />
                     <MenuItem Name="AddMultiple" Header="Add (Multiple) ..." />
                     <MenuItem Name="Edit" Header="Edit ..." />
@@ -44,14 +44,10 @@
             </DataGrid.ContextMenu>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Path=Title}" Width="300" />
-                <DataGridTextColumn Header="Episode" Binding="{Binding Path=EpisodeTotal}" SortMemberPath="{Binding Episode}"
-                                    CellStyle="{StaticResource CenterStyle}" Width="auto" />
-                <DataGridTextColumn Header="Status" Binding="{Binding Path=Status}"
-                                    CellStyle="{StaticResource CenterStyle}" Width="auto" />
-                <DataGridTextColumn Header="Airing" Binding="{Binding Path=AiringSymbol}"
-                                    CellStyle="{StaticResource CenterStyle}" Width="auto" SortMemberPath="{Binding AiringSymbol}" />
-                <DataGridTextColumn Header="Rating" Binding="{Binding Path=Rating}"
-                                    CellStyle="{StaticResource CenterStyle}" Width="auto" SortMemberPath="{Binding SortedRating}" />
+                <DataGridTextColumn Header="Episode" Binding="{Binding Path=EpisodeTotal}" CellStyle="{StaticResource CenterStyle}" SortMemberPath="{Binding Episode}" Width="auto" />
+                <DataGridTextColumn Header="Status" Binding="{Binding Path=Status}" CellStyle="{StaticResource CenterStyle}" Width="auto" />
+                <DataGridTextColumn Header="Airing" Binding="{Binding Path=AiringSymbol}" CellStyle="{StaticResource CenterStyle}" SortMemberPath="{Binding AiringSymbol}" Width="auto"  />
+                <DataGridTextColumn Header="Rating" Binding="{Binding Path=Rating}" CellStyle="{StaticResource CenterStyle}" SortMemberPath="SortedRating" Width="auto"  />
             </DataGrid.Columns>
         </DataGrid>
         <Grid Grid.Row="1">

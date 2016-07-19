@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using static System.String;
 
 namespace anime_downloader.Classes.File
 {
     /// <summary>
     ///     All the details of an anime file as it's interpreted on the filesystem.
     /// </summary>
-    public class AnimeEpisode
+    public class AnimeEpisode : IComparable<AnimeEpisode>
     {
         public AnimeEpisode(string filePath)
         {
@@ -23,7 +24,7 @@ namespace anime_downloader.Classes.File
         {
             get
             {
-                return string.Join("-",
+                return Join("-",
                     StrippedFilename.Split('-')
                         .Take(StrippedFilename.Count(x => x == '-')))
                     .Trim();
@@ -38,13 +39,14 @@ namespace anime_downloader.Classes.File
         {
             get
             {
-                var number =
-                    int.Parse(string.Join("",
-                        StrippedFilename
-                            .Split(new[] { " - " }, StringSplitOptions.RemoveEmptyEntries)
-                            .Last(stripped => stripped.Any(char.IsNumber))
-                            .TakeWhile(char.IsNumber)));
-                return $"{number:00}";
+                var _ = Join("", StrippedFilename.Replace(" ", "")
+                    .Split('-')
+                    .Last(stripped => stripped.Any(char.IsNumber))
+                    .TakeWhile(char.IsNumber));
+                int number;
+                var result = int.TryParse(_, out number);
+                var value = result ? number : 0;
+                return $"{value:D2}";
             }
         }
 
@@ -56,7 +58,7 @@ namespace anime_downloader.Classes.File
         /// <summary>
         ///     The meta information stripped filename (no seeders, subgroups, etc)
         /// </summary>
-        private string StrippedFilename => Strip(FileName);
+        public string StrippedFilename => Strip(FileName);
 
         /// <summary>
         ///     The path's filename, e.g. "C:/.../.../{anime.mp4}".
@@ -86,6 +88,14 @@ namespace anime_downloader.Classes.File
             // text = string.Join("-", text.Split('-').Take(text.Split('-').Length - 1).ToArray());
 
             return Regex.Replace(text.Trim(), @"\s+", " ");
+        }
+
+        /// <summary>
+        ///     Comparator used for the AddSorted extension method
+        /// </summary>
+        public int CompareTo(AnimeEpisode other)
+        {
+            return Compare(StrippedFilename, other.StrippedFilename, StringComparison.Ordinal);
         }
     }
 

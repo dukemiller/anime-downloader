@@ -122,7 +122,5 @@ namespace anime_downloader.Classes.Web
         /// </summary>
         /// <returns>If a subgroup exists.</returns>
         public bool HasSubgroup() => Subgroup() != null;
-
-        // public abstract Task<IEnumerable<TorrentProvider>> GetTorrentsFor(Anime anime, string episode);
     }
 }

@@ -3,7 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace anime_downloader.Classes.Web
 {
@@ -63,9 +65,35 @@ namespace anime_downloader.Classes.Web
             }
         }
 
+        /// <summary>
+        ///     Encode a string to a nyaa query string
+        /// </summary>
+        /// <remark>
+        ///     Nyaa query searching doesn't follow conventional html escapes so a lot of searches
+        ///     dont work, and this function will have to be used instead
+        /// </remark>
+        private static string NyaaEncode(string text) 
+        {
+            var htmlEscapes = new Dictionary<string, string>() 
+            {
+                {"!", "&#32;"},
+                {"&", "&#37;"}, {"'", "&#38;"},  {"(", "&#39;"}, {")", "&#40;"}, {"*", "&#41;"}, 
+                {",", "&#43;"}, {".", "+"},  {"/", "&#46;"},
+                {":", "&#58;"}, {";", "&#59;"},  {"<", "&#60;"}, {"=", "&#61;"}, {">", "&#62;"}, 
+                {"?", "&#63;"}
+            };
+
+            return htmlEscapes.Aggregate(text, (current, token) => current.Replace(token.Key, token.Value));
+        }
+
+        /// <summary>
+        ///     Get torrents that qualify as downloadable (according to settings.xml)
+        /// </summary>
         public static async Task<IEnumerable<TorrentProvider>> GetTorrentsForAsync(Anime anime, string episode)
         {
-            var url = new Uri($"https://www.nyaa.se/?page=rss&cats=1_37&term={anime.ToRss(episode)}&sort=2");
+            var queryDetails = anime.Name.Replace(" ", "+").Replace("'s", "").Replace(".", "+") + "+" + anime.Resolution + "+" + anime.NextEpisode();
+            var url = new Uri($"https://www.nyaa.se/?page=rss&cats=1_37&term={queryDetails}");
+            
             var document = new HtmlDocument();
 
             using (var client = new WebClient())
@@ -73,7 +101,7 @@ namespace anime_downloader.Classes.Web
                 var html = await client.DownloadStringTaskAsync(url);
                 document.LoadHtml(html);
             }
-
+            
             var result = document.DocumentNode?
                 .SelectNodes("//item")?
                 .Select(n => new Nyaa(n))
@@ -82,7 +110,20 @@ namespace anime_downloader.Classes.Web
                             n.StrippedName().Contains(episode) &&
                             n.Seeders > 0);
 
-            return result;
+            if (anime.MyAnimeList.HasId && anime.MyAnimeList.NameCollection.Any(c => c.Contains(episode)))
+            {
+                // To account for the case that a show contains a number (e.g. 12-sai) that is relevant to the title 
+                // but also might contain the year in case of rework/reboot (e.g. Berserk (2016)), 
+                // >> strip the year from the count
+                const string yearPattern = @"\(\d{4}\)";
+                var count = anime.MyAnimeList.NameCollection.Count(c => Regex.Replace(c, yearPattern, "").Contains(episode));
+
+                var aloneEpisodePattern = @"\D" + episode + @"\D";
+                result = result?.Where(n => Regex.Matches(n.Name, aloneEpisodePattern).Count == count + 1);
+            }
+
+            return result?.OrderByDescending(n => n.Seeders);
         }
+        
     }
 }

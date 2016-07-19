@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using anime_downloader.Classes.File;
 using anime_downloader.Classes.Web;
-using anime_downloader.Classes.Web.MyAnimeList;
 using anime_downloader.Classes.Xml;
 
 namespace anime_downloader.Classes
@@ -46,6 +45,8 @@ namespace anime_downloader.Classes
             MyAnimeList = new MyAnimeListDetails(Root.Element("myanimelist"), Save);
         }
 
+#region -- XML Related
+
         public XContainer Root { get; }
 
         /// <summary>
@@ -73,7 +74,12 @@ namespace anime_downloader.Classes
             {
                 if (value.Equals(Episode))
                     return;
-                Root.Element("episode")?.SetValue(value);
+
+                int intValue;
+                if (!int.TryParse(value, out intValue) || intValue < 0)
+                    return;
+
+                Root.Element("episode")?.SetValue($"{intValue:D2}");
 
                 if (MyAnimeList.HasId)
                 {
@@ -171,7 +177,7 @@ namespace anime_downloader.Classes
         /// </summary>
         public string Rating
         {
-            get { return Root.Element("rating")?.Value ?? ""; }
+            get { return Root.Element("rating")?.Value; }
             set
             {
                 if (value.Equals(Rating))
@@ -211,11 +217,11 @@ namespace anime_downloader.Classes
                     // If it has an overall total, this was a mislabeled show and this
                     // needs to be preferred first
                     if (MyAnimeList.IntOverallTotal() > 0)
-                        return $"{Episode}/{MyAnimeList.OverallTotal}";
+                        return $"{Episode}/{MyAnimeList.IntOverallTotal():D2}";
 
                     // Else just the actual season total if there is one
                     if (MyAnimeList.IntTotalEpisodes() > 0)
-                        return $"{Episode}/{MyAnimeList.TotalEpisodes}";
+                        return $"{Episode}/{MyAnimeList.IntTotalEpisodes():D2}";
                 }
                 
                 return Episode;
@@ -237,9 +243,20 @@ namespace anime_downloader.Classes
         /// <returns>A title</returns>
         public string Title => new CultureInfo("en-US", false).TextInfo.ToTitleCase(Name);
 
+        /* */
+
+        private void Save()
+        {
+            if (_settings == null || !AnimeCollection.AutoSave)
+                return;
+            AnimeCollection.SaveAnime(_settings.AnimeDocument);
+        }
+
+#endregion
+
         public IEnumerable<AnimeEpisode> GetEpisodes(Settings settings)
         {
-            var episodes = new FileHandler(settings).Episodes(EpisodeType.All).ToList();
+            var episodes = new FileHandler(settings).Episodes(EpisodeType.All);
 
             var name = episodes
                 .Select(e => e.Name)
@@ -252,34 +269,37 @@ namespace anime_downloader.Classes
             return episodes.Where(e => e.Name.Equals(name));
         }
 
-        public FindResult ClosestMyAnimeListResult(IEnumerable<FindResult> results)
+        public Web.MyAnimeList.FindResult ClosestMyAnimeListResult(IEnumerable<Web.MyAnimeList.FindResult> results)
         {
-            return results
+            var closestResults = results
                 .Where(result => !result.Type.Equals("OVA")) // I'm sure i'll regret this
-                .Where(result =>        
+                .Where(result =>
                 {
                     if (!NameStrict)
                         return true;
-                    var synonyms = result.Synonyms.Split(';');
-                    return new[] {result.Title, result.English}.Union(synonyms).Any(
-                            r => r.ToLower().Equals(Name.ToLower()));
+                    return result.NameCollection.Any(r => r.ToLower().Replace(" (tv)", "").Equals(Name.ToLower()));
                 })
-                .Where(findResult =>    
+                .Where(findResult =>
                 {
                     if (findResult.IntTotalEpisodes() != 0)
                         return findResult.IntTotalEpisodes() > 2;
                     return true;
                 })
-                .Select(result => new FindResultDistance(Name, result))
-                .OrderBy(resultDistance => resultDistance.Distance)
-                .FirstOrDefault()?.FindResult;
-        }
-        
-        private void Save()
-        {
-            if (_settings == null || !AnimeCollection.AutoSave)
-                return;
-            AnimeCollection.SaveAnime(_settings.AnimeDocument);
+                .Select(result => new Web.MyAnimeList.FindResultDistance(Name, result))
+                .OrderBy(resultDistance => resultDistance.Distance);
+
+            var closest = closestResults.FirstOrDefault();
+
+            // if any values have the same exact distance
+            if (closestResults.Any(c => closest?.Distance == c.Distance))
+            {
+                // get the most recently airing show
+                closest = closestResults.Where(c => c.Distance == closest?.Distance)
+                    .OrderByDescending(r => DateTime.Parse(r.FindResult.StartDate))
+                    .FirstOrDefault();
+            }
+
+            return closest?.FindResult;
         }
 
         /// <summary>
@@ -287,40 +307,20 @@ namespace anime_downloader.Classes
         /// </summary>
         /// <returns>A padded string representation of the next episode in sequence.</returns>
         public string NextEpisode() => $"{IntEpisode() + 1:D2}";
-
+        
         /// <summary>
-        ///     Joins properties of anime together to a string that can be read by an RSS query.
+        ///     Seeks the next episode for the current anime on Nyaa.eu (according to anime.xml)
         /// </summary>
-        /// <returns>A RSS parsable string.</returns>
-        public string ToRss(string episode)
-        {
-            string[] separators = { string.Join("+", Title.Replace("'s", "").Split(' ')), episode, Resolution };
-            return string.Join("+", separators);
-        }
-
-        public string ToRss()
-        {
-            string[] separators = { string.Join("+", Title.Replace("'s", "").Split(' ')), NextEpisode(), Resolution };
-            return string.Join("+", separators);
-        }
-
-        public async Task<IEnumerable<TorrentProvider>> GetLinksToEpisode(string episode)
-        {
-            return await Nyaa.GetTorrentsForAsync(this, episode);
-        }
-
-        public async Task<IEnumerable<TorrentProvider>> GetLinksToCurrentEpisode()
-        {
-            return await Nyaa.GetTorrentsForAsync(this, Episode);
-        }
-
-        /// <summary>
-        ///     Seeks the next episode for the current anime on Nyaa.eu
-        /// </summary>
-        /// <returns>A Nyaa object containing information about the file download.</returns>
+        /// <returns>
+        ///     An enumerable of Nyaa objects containing information about the file downloads.
+        /// </returns>
         public async Task<IEnumerable<TorrentProvider>> GetLinksToNextEpisode()
         {
-            return await Nyaa.GetTorrentsForAsync(this, NextEpisode());
+            var result = await Nyaa.GetTorrentsForAsync(this, NextEpisode());
+            return result?
+                .Select(n => new ClosestTorrentDistance(n, this))
+                .Where(ctd => ctd.Distance <= 20)
+                .Select(ctd => ctd.TorrentProvider);
         }
 
         /// <summary>
@@ -332,7 +332,7 @@ namespace anime_downloader.Classes
             public static Anime To(string name, IEnumerable<Anime> animes)
             {
                 return animes
-                    .Select(a => new { Anime = a, Distance = Methods.LevenshteinDistance(a.Name, name) })
+                    .Select(a => new ClosestStringDistance(name, a))
                     .OrderBy(ap => ap.Distance)
                     .FirstOrDefault()?.Anime;
             }
@@ -345,125 +345,180 @@ namespace anime_downloader.Classes
             public static Anime To(AnimeEpisode anime, IEnumerable<Anime> animes)
             {
                 return animes
-                    .Select(a => new { Anime = a, Distance = Methods.LevenshteinDistance(a.Name, anime.Name) })
-                    .Where(ap => ap.Distance <= 20)
+                    .Select(a => new ClosestStringDistance(anime.Name, a))
+                    .Where(ap => ap.Distance <= 10)
                     .OrderBy(ap => ap.Distance)
                     .FirstOrDefault()?.Anime;
+            }
+
+            public static Anime To(AnimeEpisode animeEpisode, Settings settings)
+            {
+                return To(animeEpisode, new AnimeCollection(settings).Animes);
             }
 
             public static AnimeEpisode To(string name, IEnumerable<AnimeEpisode> animeEpisodes)
             {
                 return animeEpisodes
                     .Select(a => new { Anime = a, Distance = Methods.LevenshteinDistance(a.Name, name) })
-                    .Where(ap => ap.Distance <= 15)
+                    .Where(ap => ap.Distance <= 10)
                     .OrderBy(ap => ap.Distance)
                     .FirstOrDefault()?.Anime;
             }
         }
 
+        private class ClosestStringDistance
+        {
+            private readonly double _relevance;
+
+            private readonly double _distance;
+
+            public double Distance => _distance * (2 - _relevance);
+
+            public Anime Anime { get; }
+
+            public ClosestStringDistance(string animeName, Anime comparison)
+            {
+                var namesplit = animeName.ToLower().Trim().Split(' ').Distinct().ToArray();
+                var groupsplit = comparison.Name.ToLower().Trim().Split(' ').Distinct().ToArray();
+                _distance = Methods.LevenshteinDistance(animeName, comparison.Name);
+                _relevance = (double) groupsplit.Count(a => namesplit.Contains(a)) / groupsplit.Length;
+                Anime = comparison;
+            }
+        }
+
+        private class ClosestTorrentDistance
+        {
+            private readonly double _relevance;
+
+            private readonly double _distance;
+
+            public double Distance => _distance * (2 - _relevance);
+
+            public TorrentProvider TorrentProvider { get; }
+
+            public ClosestTorrentDistance(TorrentProvider nyaa, Anime comparison)
+            {
+                var animeName = nyaa.StrippedName(true);
+                var namesplit = animeName.ToLower().Trim().Split(' ').Distinct().ToArray();
+                var groupsplit = comparison.Name.ToLower().Trim().Split(' ').Distinct().ToArray();
+                _distance = Methods.LevenshteinDistance(animeName, comparison.Name);
+                _relevance = (double) groupsplit.Count(a => namesplit.Contains(a)) / groupsplit.Length;
+                TorrentProvider = nyaa;
+                
+                /*
+                Console.WriteLine($"'{animeName}' COMPARED TO '{comparison.Name}'");
+                Console.WriteLine($"-- {_distance}, {_relevance}, {Distance}");
+                Console.WriteLine($"-- {namesplit.CommaJoined()} || {groupsplit.CommaJoined()}");
+                */
+            }
+        }
     }
 
     public class MyAnimeListDetails
     {
-        public XElement Root;
+        private readonly XElement _root;
 
-        public Action Save;
+        private readonly Action _save;
 
         public MyAnimeListDetails(XElement root, Action save)
         {
-            Root = root;
-            Save = save;
+            _root = root;
+            _save = save;
         }
 
         public bool HasId => !Id.Equals("");
 
         public string Id
         {
-            get { return Root.Element("id")?.Value; }
+            get { return _root.Element("id")?.Value; }
             set
             {
-                Root.Element("id")?.SetValue(value);
-                Save();
+                _root.Element("id")?.SetValue(value);
+                _save();
             }
         }
 
         public string Synopsis
         {
-            get { return Root.Element("synopsis")?.Value; }
+            get { return _root.Element("synopsis")?.Value; }
             set
             {
-                Root.Element("synopsis")?.SetValue(value);
-                Save();
+                _root.Element("synopsis")?.SetValue(value);
+                _save();
             }
         }
 
         public string Image
         {
-            get { return Root.Element("image")?.Value; }
+            get { return _root.Element("image")?.Value; }
             set
             {
-                Root.Element("image")?.SetValue(value);
-                Save();
+                _root.Element("image")?.SetValue(value);
+                _save();
             }
         }
 
         public string Title
         {
-            get { return Root.Element("title")?.Value; }
+            get { return _root.Element("title")?.Value; }
             set
             {
-                Root.Element("title")?.SetValue(value);
-                Save();
+                _root.Element("title")?.SetValue(value);
+                _save();
             }
         }
 
         public string English
         {
-            get { return Root.Element("english")?.Value; }
+            get { return _root.Element("english")?.Value; }
             set
             {
-                Root.Element("english")?.SetValue(value);
-                Save();
+                _root.Element("english")?.SetValue(value);
+                _save();
             }
         }
 
         public string Synonyms
         {
-            get { return Root.Element("synonyms")?.Value; }
+            get { return _root.Element("synonyms")?.Value; }
             set
             {
-                Root.Element("synonyms")?.SetValue(value);
-                Save();
+                _root.Element("synonyms")?.SetValue(value);
+                _save();
             }
         }
 
+        private IEnumerable<string> SynonymsSplit => Synonyms.Split(';');
+
+        public IEnumerable<string> NameCollection => new[] {English, Title}.Union(SynonymsSplit);
+
         public bool NeedsUpdating
         {
-            get { return bool.Parse(Root.Element("needs-updating")?.Value ?? bool.FalseString); }
+            get { return bool.Parse(_root.Element("needs-updating")?.Value ?? bool.FalseString); }
             set
             {
-                Root.Element("needs-updating")?.SetValue(value);
-                Save();
+                _root.Element("needs-updating")?.SetValue(value);
+                _save();
             }
         }
 
         public string TotalEpisodes
         {
-            get { return Root.Element("total-episodes")?.Value; }
+            get { return _root.Element("total-episodes")?.Value; }
             set
             {
-                Root.Element("total-episodes")?.SetValue(value);
-                Save();
+                _root.Element("total-episodes")?.SetValue(value);
+                _save();
             }
         }
 
         public string OverallTotal
         {
-            get { return Root.Element("overall-total")?.Value; }
+            get { return _root.Element("overall-total")?.Value; }
             set
             {
-                Root.Element("overall-total")?.SetValue(value);
-                Save();
+                _root.Element("overall-total")?.SetValue(value);
+                _save();
             }
         }
 
@@ -482,11 +537,11 @@ namespace anime_downloader.Classes
 
         public string SeriesContinuationEpisode
         {
-            get { return Root.Element("series-continuation-episode")?.Value; }
+            get { return _root.Element("series-continuation-episode")?.Value; }
             set
             {
-                Root.Element("series-continuation-episode")?.SetValue(value);
-                Save();
+                _root.Element("series-continuation-episode")?.SetValue(value);
+                _save();
             }
         }
 
