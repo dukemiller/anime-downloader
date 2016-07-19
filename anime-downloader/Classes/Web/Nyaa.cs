@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace anime_downloader.Classes.Web
 {
@@ -20,6 +19,10 @@ namespace anime_downloader.Classes.Web
             {"GiB", 1073.74},
             {"KiB", 0.001024}
         };
+
+        private const string EnglishTranslated = "1_37";
+
+        private const string BySeeders = "2";
 
         /// <summary>
         ///     HTML Nyaa Initializer
@@ -64,35 +67,19 @@ namespace anime_downloader.Classes.Web
                 return false;
             }
         }
-
-        /// <summary>
-        ///     Encode a string to a nyaa query string
-        /// </summary>
-        /// <remark>
-        ///     Nyaa query searching doesn't follow conventional html escapes so a lot of searches
-        ///     dont work, and this function will have to be used instead
-        /// </remark>
-        private static string NyaaEncode(string text) 
-        {
-            var htmlEscapes = new Dictionary<string, string>() 
-            {
-                {"!", "&#32;"},
-                {"&", "&#37;"}, {"'", "&#38;"},  {"(", "&#39;"}, {")", "&#40;"}, {"*", "&#41;"}, 
-                {",", "&#43;"}, {".", "+"},  {"/", "&#46;"},
-                {":", "&#58;"}, {";", "&#59;"},  {"<", "&#60;"}, {"=", "&#61;"}, {">", "&#62;"}, 
-                {"?", "&#63;"}
-            };
-
-            return htmlEscapes.Aggregate(text, (current, token) => current.Replace(token.Key, token.Value));
-        }
-
+        
         /// <summary>
         ///     Get torrents that qualify as downloadable (according to settings.xml)
         /// </summary>
         public static async Task<IEnumerable<TorrentProvider>> GetTorrentsForAsync(Anime anime, string episode)
         {
-            var queryDetails = anime.Name.Replace(" ", "+").Replace("'s", "").Replace(".", "+") + "+" + anime.Resolution + "+" + anime.NextEpisode();
-            var url = new Uri($"https://www.nyaa.se/?page=rss&cats=1_37&term={queryDetails}");
+            var queryDetails = anime.Name.Replace(" ", "+").Replace("'s", "").Replace(".", "+") + "+" + anime.Resolution +
+                               "+" + anime.NextEpisode();
+            
+            var url = new Uri("https://www.nyaa.se/?page=rss" +
+                              $"&cats={EnglishTranslated}" + 
+                              $"&term={queryDetails}" + 
+                              $"&sort={BySeeders}");
             
             var document = new HtmlDocument();
 
