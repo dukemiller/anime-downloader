@@ -27,20 +27,20 @@
             <RowDefinition Height="1*" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
-        <Label x:Name="HomeLabel" Style="{DynamicResource LabelStyle}" Grid.Row="0" Content="The home tab." />
-        <Label x:Name="ListLabel" Style="{DynamicResource LabelStyle}" Grid.Row="1"
+        <Label Style="{DynamicResource LabelStyle}" Grid.Row="0" Content="The home tab." />
+        <Label Style="{DynamicResource LabelStyle}" Grid.Row="1"
                Content="Add and edit anime details." />
-        <Label x:Name="SettingsLabel" Style="{DynamicResource LabelStyle}" Grid.Row="2"
+        <Label Style="{DynamicResource LabelStyle}" Grid.Row="2"
                Content="Change and modify profile settings." />
-        <Label x:Name="DownloadLabel" Style="{DynamicResource LabelStyle}" Grid.Row="3"
+        <Label Style="{DynamicResource LabelStyle}" Grid.Row="3"
                Content="Download anime from the anime list with a few options." />
-        <Label x:Name="ManageLabel" Style="{DynamicResource LabelStyle}" Grid.Row="4"
+        <Label Style="{DynamicResource LabelStyle}" Grid.Row="4"
                Content="Manage and track episode files." />
-        <Label x:Name="PlaylistLabel" Style="{DynamicResource LabelStyle}" Grid.Row="5"
+        <Label Style="{DynamicResource LabelStyle}" Grid.Row="5"
                Content="Create a basic playlist." />
-        <Label x:Name="WebLabel" Style="{DynamicResource LabelStyle}" Grid.Row="6"
+        <Label Style="{DynamicResource LabelStyle}" Grid.Row="6"
                Content="Some helpful internet links and buttons." />
-        <Label x:Name="MiscLabel" Style="{DynamicResource LabelStyle}" Grid.Row="7"
+        <Label Style="{DynamicResource LabelStyle}" Grid.Row="7"
                Content="Other options and features." />
     </Grid>
 </UserControl>

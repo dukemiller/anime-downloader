@@ -54,7 +54,6 @@ namespace anime_downloader.Classes
             var assembly = Assembly.GetExecutingAssembly();
             var stream = assembly.GetManifestResourceStream("anime_downloader.Resources.Icons.icon.ico");
             Debug.Assert(stream != null, "stream != null");
-            // ../Resources/Images/find.png
 
             _trayIcon = new NotifyIcon
             {

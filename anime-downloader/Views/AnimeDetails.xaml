@@ -269,7 +269,7 @@
             <DockPanel Grid.Row="1">
                 <Button x:Name="OpenLastButton" Width="auto" Content="Last episode" Style="{DynamicResource ConfirmationButtonStyle}" />
 
-                <DockPanel Background="LightCyan" Margin="30,5" Visibility="{Binding MyAnimeList.Id, Converter={StaticResource VisbilityConverter}}" >
+                <DockPanel x:Name="MalDockPanel" Background="LightCyan" Margin="30,5" Visibility="{Binding MyAnimeList.Id, Converter={StaticResource VisbilityConverter}}" >
                     <Label Content="MyAnimeList" VerticalAlignment="Center" />
                     <Button x:Name="GotoMalButton" Width="auto" Margin="5" Content="Page" Style="{DynamicResource ConfirmationButtonStyle}" />
                     <Button x:Name="RefreshMalButton" Width="auto" Margin="5" Content="Refresh data" Style="{DynamicResource ConfirmationButtonStyle}" />

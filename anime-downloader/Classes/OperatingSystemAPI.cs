@@ -35,5 +35,6 @@ namespace anime_downloader.Classes
             return IntPtr.Zero;
         }
 #endif
+
     }
 }

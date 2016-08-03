@@ -65,12 +65,17 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Classes\Anime.cs" />
-    <Compile Include="Classes\File\AnimeEpisode.cs" />
-    <Compile Include="Classes\File\FileHandler.cs" />
+    <Compile Include="Classes\Distances\ClosestStringDistance.cs" />
+    <Compile Include="Classes\Distances\ClosestTorrentDistance.cs" />
+    <Compile Include="Classes\File\AnimeFile.cs" />
+    <Compile Include="Classes\File\AnimeFileCollection.cs" />
+    <Compile Include="Classes\File\EpisodeHandler.cs" />
     <Compile Include="Classes\File\Downloader.cs" />
     <Compile Include="Classes\Extensions.cs" />
-    <Compile Include="Classes\File\GroupFileDistance.cs" />
+    <Compile Include="Classes\File\AnimeFileRange.cs" />
+    <Compile Include="Classes\Distances\GroupFileDistance.cs" />
     <Compile Include="Classes\File\Logger.cs" />
+    <Compile Include="Classes\File\MultipleAnimeFiles.cs" />
     <Compile Include="Classes\Methods.cs" />
     <Compile Include="Classes\OperatingSystemApi.cs" />
     <Compile Include="Classes\Tray.cs" />
@@ -82,7 +87,7 @@
     <Compile Include="Classes\Web\Nyaa.cs" />
     <Compile Include="Classes\File\Playlist.cs" />
     <Compile Include="Classes\Settings.cs" />
-    <Compile Include="Classes\Web\TorrentProvider.cs" />
+    <Compile Include="Classes\Web\Torrent.cs" />
     <Compile Include="Classes\Xaml\Converters.cs" />
     <Compile Include="Classes\Xaml\DragSelectionHelper.cs" />
     <Compile Include="Classes\Xaml\PasswordBoxAssistant.cs" />
@@ -220,9 +225,7 @@
   <ItemGroup>
     <Resource Include="Resources\Images\find.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Classes\DistanceComparisons\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy $(TargetPath) $(SolutionDir)</PostBuildEvent>

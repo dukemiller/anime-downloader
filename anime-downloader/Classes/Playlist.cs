@@ -7,16 +7,15 @@ namespace anime_downloader.Classes.File
 {
     public class Playlist
     {
-        private readonly AnimeFileCollection _animeFileCollection;
+        private readonly Handler _handler;
+        private IEnumerable<IndividualEpisode> _episodes;
 
-        private IEnumerable<AnimeFile> _episodes;
-
-        public Playlist(AnimeFileCollection animeFileCollection)
+        public Playlist(Handler handler)
         {
-            _animeFileCollection = animeFileCollection;
+            _handler = handler;
         }
 
-        public static string PlaylistFile => Settings.PlaylistFile;
+        public string PlaylistFile => Settings.PlaylistFile;
 
         public int Length => _episodes.Count();
 
@@ -25,10 +24,10 @@ namespace anime_downloader.Classes.File
         /// </summary>
         public void Refresh()
         {
-            _episodes = _animeFileCollection.GetEpisodes(EpisodeStatus.Unwatched);
+            _episodes = _handler.Episodes(EpisodeType.Unwatched);
         }
 
-        public void Refresh(IEnumerable<AnimeFile> episodes)
+        public void Refresh(IEnumerable<IndividualEpisode> episodes)
         {
             _episodes = episodes;
         }
@@ -36,7 +35,7 @@ namespace anime_downloader.Classes.File
         /// <summary>
         ///     Do a more rigid sort by episode number of the show.
         /// </summary>
-        public void OrderByEpisodeNumber()
+        public void ByEpisodeNumber()
         {
             _episodes = _episodes.OrderBy(f => f.IntEpisode);
         }
@@ -44,12 +43,12 @@ namespace anime_downloader.Classes.File
         /// <summary>
         ///     Sort simply by the time the file was created.
         /// </summary>
-        public void OrderByDate()
+        public void ByDate()
         {
-            _episodes = _episodes.OrderBy(e => System.IO.File.GetCreationTime(e.Path));
+            _episodes = _episodes.OrderBy(e => System.IO.File.GetCreationTime(e.FilePath));
         }
 
-        public void ReverseOrder()
+        public void Reverse()
         {
             _episodes = _episodes.Reverse();
         }
@@ -59,7 +58,7 @@ namespace anime_downloader.Classes.File
         /// </summary>
         public void SeparateShowOrder()
         {
-            var sortedEpisodes = new List<AnimeFile>();
+            var sortedEpisodes = new List<IndividualEpisode>();
             var currentEpisodes = _episodes.ToList();
 
             while (currentEpisodes.Count > 0)
@@ -87,7 +86,7 @@ namespace anime_downloader.Classes.File
             using (var writer = new StreamWriter(Settings.PlaylistFile, false))
             {
                 foreach (var episode in _episodes)
-                    await writer.WriteLineAsync(episode.Path);
+                    await writer.WriteLineAsync(episode.FilePath);
             }
         }
     }

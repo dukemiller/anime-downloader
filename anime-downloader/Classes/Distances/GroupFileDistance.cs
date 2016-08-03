@@ -1,12 +1,11 @@
-﻿using System;
 using System.Linq;
+using anime_downloader.Classes.File;
 
-namespace anime_downloader.Classes.File
+namespace anime_downloader.Classes.Distances
 {
-    internal class GroupFileDistance
+    public class GroupFileDistance
     {
-
-        private static readonly string[] CommonTokens = {"no", "na"};
+        private static readonly string[] CommonTokens = { "no", "na" };
 
         private const double Bias = 3.25;
 
@@ -22,9 +21,9 @@ namespace anime_downloader.Classes.File
 
         public double Distance => _distance * (Bias + _singleWordPenalty - _relevance);
 
-        public IGrouping<string, AnimeEpisode> Group { get; }
+        public IGrouping<string, AnimeFile> Group { get; }
 
-        public GroupFileDistance(IGrouping<string, AnimeEpisode> grouping, Anime anime)
+        public GroupFileDistance(IGrouping<string, AnimeFile> grouping, Anime anime)
         {
             Group = grouping;
             var namesplit = anime.Name.ToLower().OnlyLettersAndSpace().Split(' ').Distinct().Except(CommonTokens).ToArray();

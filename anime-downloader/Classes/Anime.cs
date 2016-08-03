@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using anime_downloader.Classes.Distances;
 using anime_downloader.Classes.File;
 using anime_downloader.Classes.Web;
 using anime_downloader.Classes.Xml;
@@ -12,10 +13,6 @@ namespace anime_downloader.Classes
 {
     public class Anime
     {
-        /// <summary>
-        ///     A variable used sort of like a bit flag for sorting in the data grid.
-        /// </summary>
-        public static int SortedRateFlag;
 
         private readonly Settings _settings;
 
@@ -48,6 +45,11 @@ namespace anime_downloader.Classes
 #region -- XML Related
 
         public XContainer Root { get; }
+
+        /// <summary>
+        ///     A variable used sort of like a bit flag for sorting in the data grid.
+        /// </summary>
+        public static int SortedRateFlag;
 
         /// <summary>
         ///     Main referenced title.
@@ -254,9 +256,9 @@ namespace anime_downloader.Classes
 
 #endregion
 
-        public IEnumerable<AnimeEpisode> GetEpisodes(Settings settings)
+        public IEnumerable<AnimeFile> GetEpisodes(Settings settings)
         {
-            var episodes = new FileHandler(settings).Episodes(EpisodeType.All);
+            var episodes = new AnimeFileCollection(settings).GetEpisodes(EpisodeStatus.All).ToList();
 
             var name = episodes
                 .Select(e => e.Name)
@@ -309,18 +311,18 @@ namespace anime_downloader.Classes
         public string NextEpisode() => $"{IntEpisode() + 1:D2}";
         
         /// <summary>
-        ///     Seeks the next episode for the current anime on Nyaa.eu (according to anime.xml)
+        ///     Seeks the next episode for the current anime on Nyaa.eu (according to individual.xml)
         /// </summary>
         /// <returns>
         ///     An enumerable of Nyaa objects containing information about the file downloads.
         /// </returns>
-        public async Task<IEnumerable<TorrentProvider>> GetLinksToNextEpisode()
+        public async Task<IEnumerable<Torrent>> GetLinksToNextEpisode()
         {
             var result = await Nyaa.GetTorrentsForAsync(this, NextEpisode());
             return result?
                 .Select(n => new ClosestTorrentDistance(n, this))
-                .Where(ctd => ctd.Distance <= 20)
-                .Select(ctd => ctd.TorrentProvider);
+                .Where(ctd => ctd.Distance <= 25)
+                .Select(ctd => ctd.Torrent);
         }
 
         /// <summary>
@@ -342,21 +344,21 @@ namespace anime_downloader.Classes
                 return To(name, new AnimeCollection(settings).Animes);
             }
 
-            public static Anime To(AnimeEpisode anime, IEnumerable<Anime> animes)
+            public static Anime To(AnimeFile individual, IEnumerable<Anime> animes)
             {
                 return animes
-                    .Select(a => new ClosestStringDistance(anime.Name, a))
+                    .Select(a => new ClosestStringDistance(individual.Name, a))
                     .Where(ap => ap.Distance <= 10)
                     .OrderBy(ap => ap.Distance)
                     .FirstOrDefault()?.Anime;
             }
 
-            public static Anime To(AnimeEpisode animeEpisode, Settings settings)
+            public static Anime To(AnimeFile animeFile, Settings settings)
             {
-                return To(animeEpisode, new AnimeCollection(settings).Animes);
+                return To(animeFile, new AnimeCollection(settings).Animes);
             }
 
-            public static AnimeEpisode To(string name, IEnumerable<AnimeEpisode> animeEpisodes)
+            public static AnimeFile To(string name, IEnumerable<AnimeFile> animeEpisodes)
             {
                 return animeEpisodes
                     .Select(a => new { Anime = a, Distance = Methods.LevenshteinDistance(a.Name, name) })
@@ -365,53 +367,7 @@ namespace anime_downloader.Classes
                     .FirstOrDefault()?.Anime;
             }
         }
-
-        private class ClosestStringDistance
-        {
-            private readonly double _relevance;
-
-            private readonly double _distance;
-
-            public double Distance => _distance * (2 - _relevance);
-
-            public Anime Anime { get; }
-
-            public ClosestStringDistance(string animeName, Anime comparison)
-            {
-                var namesplit = animeName.ToLower().Trim().Split(' ').Distinct().ToArray();
-                var groupsplit = comparison.Name.ToLower().Trim().Split(' ').Distinct().ToArray();
-                _distance = Methods.LevenshteinDistance(animeName, comparison.Name);
-                _relevance = (double) groupsplit.Count(a => namesplit.Contains(a)) / groupsplit.Length;
-                Anime = comparison;
-            }
-        }
-
-        private class ClosestTorrentDistance
-        {
-            private readonly double _relevance;
-
-            private readonly double _distance;
-
-            public double Distance => _distance * (2 - _relevance);
-
-            public TorrentProvider TorrentProvider { get; }
-
-            public ClosestTorrentDistance(TorrentProvider nyaa, Anime comparison)
-            {
-                var animeName = nyaa.StrippedName(true);
-                var namesplit = animeName.ToLower().Trim().Split(' ').Distinct().ToArray();
-                var groupsplit = comparison.Name.ToLower().Trim().Split(' ').Distinct().ToArray();
-                _distance = Methods.LevenshteinDistance(animeName, comparison.Name);
-                _relevance = (double) groupsplit.Count(a => namesplit.Contains(a)) / groupsplit.Length;
-                TorrentProvider = nyaa;
-                
-                /*
-                Console.WriteLine($"'{animeName}' COMPARED TO '{comparison.Name}'");
-                Console.WriteLine($"-- {_distance}, {_relevance}, {Distance}");
-                Console.WriteLine($"-- {namesplit.CommaJoined()} || {groupsplit.CommaJoined()}");
-                */
-            }
-        }
+        
     }
 
     public class MyAnimeListDetails

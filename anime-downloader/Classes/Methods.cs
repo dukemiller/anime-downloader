@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace anime_downloader.Classes
 {
@@ -32,5 +34,33 @@ namespace anime_downloader.Classes
             }
             return d[n, m];
         }
+
+        /// <summary>
+        ///     Strip the entire path of extraneous information (subgroups, resolution, etc).
+        /// </summary>
+        /// <param name="filename">
+        /// A file name, not a filepath.
+        /// </param>
+        /// <param name="removeEpisode">
+        ///  A flag for also removing the episode number
+        /// </param>
+        public static string Strip(string filename, bool removeEpisode = false)
+        {
+            var text = filename;
+
+            var phrases = (from Match match in Regex.Matches(text, @"\s?\[(.*?)\]|\((.*?)\)\s*")
+                select match.Groups[0].Value).ToList();
+
+            phrases.ForEach(p => text = text.Replace(p, ""));
+
+            text = text.Replace("_", " ");
+            text = new[] { ".mkv", ".mp4", ".avi" }.Aggregate(text, (current, s) => current.Replace(s, ""));
+
+            if (removeEpisode)
+                text = string.Join("-", text.Split('-').Take(text.Split('-').Length - 1).ToArray());
+            
+            return Regex.Replace(text.Trim(), @"\s+", " ");
+        }
+        
     }
 }

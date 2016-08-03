@@ -16,8 +16,6 @@ namespace anime_downloader.Classes.File
 
         private readonly Settings _settings;
 
-        private int _downloaded;
-
         public Downloader(Settings settings)
         {
             _settings = settings;
@@ -31,28 +29,33 @@ namespace anime_downloader.Classes.File
         /// <param name="textbox">The output box to display results to.</param>
         public async Task<int> DownloadAsync(IEnumerable<Anime> animes, TextBox textbox)
         {
-            _downloaded = 0;
+            var downloaded = 0;
 
             foreach (var anime in animes)
-                await DownloadEpisodeAsync(await anime.GetLinksToNextEpisode(), anime, textbox);
+            {
+                var downloadSuccessful = await DownloadEpisodeAsync(await anime.GetLinksToNextEpisode(), anime, textbox);
+                if (downloadSuccessful)
+                    downloaded++;
+            }
 
-            return _downloaded;
+            return downloaded;
         }
 
         public async Task<int> DownloadAsync(IEnumerable<Anime> animes,
-            IEnumerable<AnimeEpisodeDelta> animeEpisodeDeltas,
-            IEnumerable<AnimeEpisode> allEpisodes,
+            IEnumerable<AnimeFileRange> animeFileRanges,
+            IEnumerable<AnimeFile> allAnimeFiles,
             TextBox textbox)
         {
-            _downloaded = 0;
+            var downloaded = 0;
+
             var animeList = animes.ToList();
 
-            foreach (var animeEpisode in animeEpisodeDeltas)
+            foreach (var animeFile in animeFileRanges)
             {
-                var animeBase = Anime.Closest.To(animeEpisode.Name, animeList);
-                foreach (var episode in animeEpisode.EpisodeRange)
+                var animeBase = Anime.Closest.To(animeFile.Name, animeList);
+                foreach (var episode in animeFile.EpisodeRange)
                 {
-                    if (await Task.Run(() => allEpisodes.Any(a => a.Name.Equals(animeEpisode.Name) && a.Episode.Equals(episode))))
+                    if (await Task.Run(() => allAnimeFiles.Any(a => a.Name.Equals(animeFile.Name) && a.Episode.Equals(episode))))
                         continue;
 
                     var previousEpisode = $"{int.Parse(episode) - 1:D2}";
@@ -60,7 +63,7 @@ namespace anime_downloader.Classes.File
                     // TODO: make a copy constructor?
                     var anime = new Anime
                     {
-                        Name = animeEpisode.Name,
+                        Name = animeFile.Name,
                         Episode = previousEpisode,
                         Airing = animeBase.Airing,
                         Resolution = animeBase.Resolution,
@@ -68,17 +71,19 @@ namespace anime_downloader.Classes.File
                         NameStrict = animeBase.NameStrict
                     };
 
-                    await DownloadEpisodeAsync(await anime.GetLinksToNextEpisode(), anime, textbox);
+                    var downloadSuccessful = await DownloadEpisodeAsync(await anime.GetLinksToNextEpisode(), anime, textbox);
+                    if (downloadSuccessful)
+                        downloaded++;
                 }
             }
 
-            return _downloaded;
+            return downloaded;
         }
 
-        private bool CanDownload(TorrentProvider torrent, Anime anime)
+        private bool CanDownload(Torrent torrent, Anime anime)
         {
             // Most likely wrong torrent
-            if (anime.NameStrict && !anime.Name.ToLower().Equals(torrent.StrippedName(true).ToLower()))
+            if (anime.NameStrict && !anime.Name.ToLower().Equals(torrent.StrippedWithNoEpisode.ToLower()))
                 return false;
 
             // Not the right subgroup
@@ -104,7 +109,7 @@ namespace anime_downloader.Classes.File
             return true;
         }
 
-        public async Task<bool> DownloadEpisodeAsync(IEnumerable<TorrentProvider> torrentLinks, Anime anime,
+        public async Task<bool> DownloadEpisodeAsync(IEnumerable<Torrent> torrentLinks, Anime anime,
             TextBox textbox)
         {
             if (torrentLinks == null || anime == null)
@@ -117,7 +122,7 @@ namespace anime_downloader.Classes.File
             return false;
         }
 
-        private async Task<bool> DownloadTorrentAsync(TorrentProvider torrent, Anime anime, TextBox textbox)
+        private async Task<bool> DownloadTorrentAsync(Torrent torrent, Anime anime, TextBox textbox)
         {
             textbox.WriteLine($"Downloading '{anime.Title}' episode '{anime.NextEpisode()}'.");
 
@@ -127,8 +132,8 @@ namespace anime_downloader.Classes.File
             {
                 await Logger.WriteLineAsync($"Downloaded '{anime.Title}' episode {anime.NextEpisode()}.");
                 anime.Episode = anime.NextEpisode();
-                _downloaded++;
             }
+
             else
             {
                 textbox.WriteLine($"Download of '{anime.Title}' failed.");
@@ -137,7 +142,7 @@ namespace anime_downloader.Classes.File
             return fileWasDownloaded;
         }
 
-        private async Task<bool> DownloadFileAsync(TorrentProvider torrent, Anime anime)
+        private async Task<bool> DownloadFileAsync(Torrent torrent, Anime anime)
         {
             var torrentName = await torrent.GetTorrentNameAsync();
             if (torrentName == null)

@@ -120,7 +120,7 @@
                         </ListBox.ContextMenu>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <WrapPanel d:DataContext="{d:DesignInstance Type=file:AnimeEpisode }">
+                                <WrapPanel d:DataContext="{d:DesignInstance Type=file:AnimeFile }">
                                     <TextBlock Text="{Binding StrippedFilename}" />
                                 </WrapPanel>
                             </DataTemplate>
@@ -167,7 +167,7 @@
                         </ListBox.ContextMenu>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <WrapPanel d:DataContext="{d:DesignInstance Type=file:AnimeEpisode }">
+                                <WrapPanel d:DataContext="{d:DesignInstance Type=file:AnimeFile }">
                                     <TextBlock Text="{Binding StrippedFilename}" />
                                 </WrapPanel>
                             </DataTemplate>

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace anime_downloader.Classes.Web
 {
-    public class Nyaa : TorrentProvider
+    public class Nyaa : Torrent
     {
         /// <summary>
         ///     A conversion chart from any of these values to megabytes.
@@ -71,16 +71,16 @@ namespace anime_downloader.Classes.Web
         /// <summary>
         ///     Get torrents that qualify as downloadable (according to settings.xml)
         /// </summary>
-        public static async Task<IEnumerable<TorrentProvider>> GetTorrentsForAsync(Anime anime, string episode)
+        public static async Task<IEnumerable<Torrent>> GetTorrentsForAsync(Anime anime, string episode)
         {
-            var queryDetails = anime.Name.Replace(" ", "+").Replace("'s", "").Replace(".", "+") + "+" + anime.Resolution +
-                               "+" + anime.NextEpisode();
+            var queryDetails = anime.Name.Replace(" ", "+").Replace("'s", "").Replace(".", "+").Replace(":", "").Replace("!", "%21").Replace("'", "%27").Replace("-", "%2D")
+                + "+" + anime.Resolution + "+" + anime.NextEpisode();
             
             var url = new Uri("https://www.nyaa.se/?page=rss" +
                               $"&cats={EnglishTranslated}" + 
                               $"&term={queryDetails}" + 
                               $"&sort={BySeeders}");
-            
+
             var document = new HtmlDocument();
 
             using (var client = new WebClient())
@@ -94,21 +94,28 @@ namespace anime_downloader.Classes.Web
                 .Select(n => new Nyaa(n))
                 .Where(n => n.Measurement.Equals("MiB") &&
                             n.Size > 5 &&
-                            n.StrippedName().Contains(episode) &&
+                            n.StrippedName.Contains(episode) &&
                             n.Seeders > 0);
-
+            
             if (anime.MyAnimeList.HasId && anime.MyAnimeList.NameCollection.Any(c => c.Contains(episode)))
             {
                 // To account for the case that a show contains a number (e.g. 12-sai) that is relevant to the title 
                 // but also might contain the year in case of rework/reboot (e.g. Berserk (2016)), 
                 // >> strip the year from the count
                 const string yearPattern = @"\(\d{4}\)";
-                var count = anime.MyAnimeList.NameCollection.Count(c => Regex.Replace(c, yearPattern, "").Contains(episode));
+
+                var replacedNames = anime.MyAnimeList.NameCollection.Select(c => Regex.Replace(c, yearPattern, ""));
+
+                var count = replacedNames
+                    .GroupBy(e => Regex.Matches(e, episode).Count)
+                    .OrderByDescending(e => e.Key)
+                    .FirstOrDefault()?.Key;
 
                 var aloneEpisodePattern = @"\D" + episode + @"\D";
+
                 result = result?.Where(n => Regex.Matches(n.Name, aloneEpisodePattern).Count == count + 1);
             }
-
+            
             return result?.OrderByDescending(n => n.Seeders);
         }
         

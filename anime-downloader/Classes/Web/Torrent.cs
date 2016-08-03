@@ -3,10 +3,11 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using static anime_downloader.Classes.Methods;
 
 namespace anime_downloader.Classes.Web
 {
-    public abstract class TorrentProvider
+    public abstract class Torrent
     {
         /// <summary>
         ///     The description containing seeder & measurement information.
@@ -24,7 +25,7 @@ namespace anime_downloader.Classes.Web
         public string Measurement;
 
         /// <summary>
-        ///     The TorrentProvider's parsed filename.
+        ///     The Torrent's parsed filename.
         /// </summary>
         public string Name;
 
@@ -71,41 +72,21 @@ namespace anime_downloader.Classes.Web
                 var filename = disposition?.Split(new[] { "filename=\"" }, StringSplitOptions.None)[1].Split('"')[0];
                 return filename;
             }
+
             catch (Exception ex) when (ex is WebException || ex is InvalidOperationException)
             {
                 return null;
             }
+
             finally
             {
                 response?.Close();
             }
         }
 
-        /// <summary>
-        ///     Strips the filename to remove extraneous information and returns name.
-        /// </summary>
-        /// <param name="removeEpisode">
-        ///     A flag for also removing the episode number
-        /// </param>
-        /// <returns>
-        ///     The name of the anime.
-        /// </returns>
-        public string StrippedName(bool removeEpisode = false)
-        {
-            var text = Name;
+        public string StrippedName => Strip(Name);
 
-            var phrases = (from Match match in Regex.Matches(text, @"\s?\[(.*?)\]|\((.*?)\)\s*")
-                           select match.Groups[0].Value).ToList();
-
-            phrases.ForEach(p => text = text.Replace(p, ""));
-            text = text.Replace("_", " ");
-            text = new[] { ".mkv", ".mp4", ".avi" }.Aggregate(text, (current, s) => current.Replace(s, ""));
-
-            if (removeEpisode)
-                text = string.Join("-", text.Split('-').Take(text.Split('-').Length - 1).ToArray());
-
-            return Regex.Replace(text.Trim(), @"\s+", " ");
-        }
+        public string StrippedWithNoEpisode => Strip(Name, true);
 
         /// <summary>
         ///     Returns the subgroup from the name of the file.

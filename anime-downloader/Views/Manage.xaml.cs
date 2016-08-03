@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -25,11 +22,11 @@ namespace anime_downloader.Views
             InitializeComponent();
         }
 
-        private ObservableCollection<AnimeEpisode> Watched { get; set; }
+        private ObservableCollection<AnimeFile> Watched { get; set; }
 
-        private ObservableCollection<AnimeEpisode> Unwatched { get; set; }
+        private ObservableCollection<AnimeFile> Unwatched { get; set; }
 
-        private ObservableCollection<AnimeEpisode> UnwatchedWindow
+        private ObservableCollection<AnimeFile> UnwatchedWindow
         {
             get { return _watchedWindow; }
 
@@ -42,7 +39,7 @@ namespace anime_downloader.Views
             }
         }
 
-        private ObservableCollection<AnimeEpisode> WatchedWindow
+        private ObservableCollection<AnimeFile> WatchedWindow
         {
             get { return _unwatchedWindow; }
 
@@ -54,9 +51,9 @@ namespace anime_downloader.Views
             }
         }
 
-        private ObservableCollection<AnimeEpisode> _watchedWindow;
+        private ObservableCollection<AnimeFile> _watchedWindow;
 
-        private ObservableCollection<AnimeEpisode> _unwatchedWindow;
+        private ObservableCollection<AnimeFile> _unwatchedWindow;
 
         private Classes.Settings _settings;
 
@@ -64,8 +61,8 @@ namespace anime_downloader.Views
 
         public void SetInitialValues(
             MainWindow mainWindow,
-            ObservableCollection<AnimeEpisode> unwatched,
-            ObservableCollection<AnimeEpisode> watched,
+            ObservableCollection<AnimeFile> unwatched,
+            ObservableCollection<AnimeFile> watched,
             Classes.Settings settings)
         {
             _mainWindow = mainWindow;   // TODO: I REALLY dont like this
@@ -74,8 +71,8 @@ namespace anime_downloader.Views
             Unwatched = unwatched;
             Watched = watched;
 
-            UnwatchedWindow = new ObservableCollection<AnimeEpisode>(unwatched);
-            WatchedWindow = new ObservableCollection<AnimeEpisode>(watched);
+            UnwatchedWindow = new ObservableCollection<AnimeFile>(unwatched);
+            WatchedWindow = new ObservableCollection<AnimeFile>(watched);
         }
 
         public Playlist Playlist { private get; set; }
@@ -89,8 +86,8 @@ namespace anime_downloader.Views
                 .Parent as Grid)?         // entire grid
                 .Children[1] as ListBox;  // element that contains the listbox
 
-            ObservableCollection<AnimeEpisode> current;
-            Action<ObservableCollection<AnimeEpisode>> currentWindowSetter;
+            ObservableCollection<AnimeFile> current;
+            Action<ObservableCollection<AnimeFile>> currentWindowSetter;
 
             if (listbox != null && listbox.Name.Equals(nameof(UnwatchedList)))
             {
@@ -113,7 +110,7 @@ namespace anime_downloader.Views
             else
             {
                 var q = textbox.Text.ToLower().Trim();
-                var result = new ObservableCollection<AnimeEpisode>(current
+                var result = new ObservableCollection<AnimeFile>(current
                     .Where(a => a.Name.ToLower().Contains(q) || a.Episode.Contains(q))
                     .OrderBy(animeFile => animeFile.Name)
                     .ThenBy(animeFile => animeFile.IntEpisode));
@@ -147,7 +144,7 @@ namespace anime_downloader.Views
         private async void Context_Open_Click(object sender, RoutedEventArgs e)
         {
             var listBox = sender as ListBox ?? (ListBox) ((ContextMenu) ((MenuItem) sender).Parent).PlacementTarget;
-            var episodes = listBox.SelectedItems.Cast<AnimeEpisode>().ToList();
+            var episodes = listBox.SelectedItems.Cast<AnimeFile>().ToList();
 
             if (episodes.Count > 1)
             {
@@ -158,20 +155,20 @@ namespace anime_downloader.Views
 
             else if (episodes.Count == 1)
             {
-                Process.Start(episodes.First().FilePath);
+                Process.Start(episodes.First().Path);
             }
         }
 
         private void Context_Delete_Click(object sender, RoutedEventArgs e)
         {
             var listBox = sender as ListBox ?? (ListBox) ((ContextMenu) ((MenuItem) sender).Parent).PlacementTarget;
-            var episodes = listBox.SelectedItems.Cast<AnimeEpisode>().ToList();
+            var episodes = listBox.SelectedItems.Cast<AnimeFile>().ToList();
             var details = new ListDetails(listBox, this);
 
             if (episodes.Count > 0)
             {
                 var response = MessageBox.Show(
-                    $"Files to be deleted: \n\n{string.Join("\n", episodes.Select(ep => ep.FilePath))}\n\n Are you sure?",
+                    $"Files to be deleted: \n\n{string.Join("\n", episodes.Select(ep => ep.Path))}\n\n Are you sure?",
                     "Confirmation",
                     MessageBoxButton.YesNo);
 
@@ -179,7 +176,7 @@ namespace anime_downloader.Views
                 {
                     foreach (var episode in episodes)
                     {
-                        File.Delete(episode.FilePath);
+                        File.Delete(episode.Path);
                         details.Current.Remove(episode);
                         details.CurrentWindow.Remove(episode);
                     }
@@ -196,10 +193,10 @@ namespace anime_downloader.Views
 
             if (details.OppositeFolderExists)
             {
-                var episodes = listBox.SelectedItems.Cast<AnimeEpisode>().ToList();
+                var episodes = listBox.SelectedItems.Cast<AnimeFile>().ToList();
                 if (episodes.Count >= 1)
                 {
-                    var episodePair = FileHandler.MoveEpisodesToDestination(listBox,
+                    var episodePair = EpisodeHandler.MoveEpisodesToDestination(listBox,
                         details.CurrentPath,
                         details.Otherpath
                     );
@@ -226,7 +223,7 @@ namespace anime_downloader.Views
         private void Context_Profile_Click(object sender, RoutedEventArgs e)
         {
             var listBox = sender as ListBox ?? (ListBox) ((ContextMenu) ((MenuItem) sender).Parent).PlacementTarget;
-            var episode = listBox.SelectedItems.Cast<AnimeEpisode>().FirstOrDefault();
+            var episode = listBox.SelectedItems.Cast<AnimeFile>().FirstOrDefault();
             if (episode != null)
             {
                 var anime = Anime.Closest.To(episode, _settings);
@@ -243,7 +240,7 @@ namespace anime_downloader.Views
 
             if (selected != null)
             {
-                Process.Start(((AnimeEpisode) selected).FilePath);
+                Process.Start(((AnimeFile) selected).Path);
             }
         }
 
@@ -287,13 +284,13 @@ namespace anime_downloader.Views
 
         private class ListDetails
         {
-            public ObservableCollection<AnimeEpisode> Current { get; }
+            public ObservableCollection<AnimeFile> Current { get; }
 
-            public ObservableCollection<AnimeEpisode> CurrentWindow { get; }
+            public ObservableCollection<AnimeFile> CurrentWindow { get; }
 
-            public ObservableCollection<AnimeEpisode> Other { get; }
+            public ObservableCollection<AnimeFile> Other { get; }
 
-            public ObservableCollection<AnimeEpisode> OtherWindow { get; }
+            public ObservableCollection<AnimeFile> OtherWindow { get; }
 
             public ListDetails(IFrameworkInputElement listbox, Manage window)
             {

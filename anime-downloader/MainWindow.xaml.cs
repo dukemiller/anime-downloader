@@ -34,7 +34,7 @@ namespace anime_downloader
         /// <summary>
         ///     A collection of all the anime.
         /// </summary>
-        private List<Anime> _allAnime;
+        private IEnumerable<Anime> _allAnime;
 
         /// <summary>
         ///     A helper for modifying anime.
@@ -49,7 +49,7 @@ namespace anime_downloader
         /// <summary>
         ///     Handles tracking/managing files.
         /// </summary>
-        private FileHandler _filehandler;
+        private EpisodeHandler _filehandler;
 
         /// <summary>
         ///     Handle playlist creation with some customization.
@@ -70,6 +70,8 @@ namespace anime_downloader
         ///     Handles objects for modifying and creating the xml files
         /// </summary>
         private AnimeCollection _animeCollection;
+
+        private AnimeFileCollection _animeFileCollection;
 
         /// <summary>
         ///     The current display on the right window pane.
@@ -133,8 +135,9 @@ namespace anime_downloader
             {
                 _settings = new Classes.Settings(true);
                 _animeCollection = new AnimeCollection(_settings);
-                _filehandler = new FileHandler(_settings);
-                _playlist = new Playlist(_filehandler);
+                _animeFileCollection = new AnimeFileCollection(_settings);
+                _filehandler = new EpisodeHandler(_settings);
+                _playlist = new Playlist(_animeFileCollection);
                 _downloader = new Downloader(_settings);
                 _tray = new Tray(this, _settings);
 
@@ -155,7 +158,7 @@ namespace anime_downloader
         {
             Verify.Schema(_settings);
             _tray.Initialize();
-            _allAnime = _animeCollection.FilteredAndSorted().ToList();
+            _allAnime = _animeCollection.FilteredAndSorted();
             ChangeDisplay<Home>();
 
             KeyDown += (o, e) =>
@@ -374,9 +377,9 @@ namespace anime_downloader
                     var display = (PlaylistCreator) CurrentDisplay;
 
                     if (display.EpisodeRadio.IsChecked == true)
-                        _playlist.ByEpisodeNumber();
+                        _playlist.OrderByEpisodeNumber();
                     else if (display.MomentRadio.IsChecked == true)
-                        _playlist.ByDate();
+                        _playlist.OrderByDate();
 
                     // else pass
 
@@ -384,7 +387,7 @@ namespace anime_downloader
                         _playlist.SeparateShowOrder();
 
                     if (display.ReverseCheckbox.IsChecked == true)
-                        _playlist.Reverse();
+                        _playlist.ReverseOrder();
 
                     await _playlist.Save();
 
@@ -740,11 +743,11 @@ namespace anime_downloader
 
             display.OpenLastButton.Click += delegate
             {
-                var episode = _filehandler.LastEpisodeOf(_currentlyEditedAnime);
+                var episode = _animeFileCollection.LastEpisodeOf(_currentlyEditedAnime);
                 if (episode == null)
                     Alert($"Episode {_currentlyEditedAnime.Episode} for '{_currentlyEditedAnime.Name}' not found in any directory.");
                 else
-                    Process.Start($"{episode.FilePath}");
+                    Process.Start($"{episode.Path}");
             };
 
             display.GotoMalButton.Click += delegate
@@ -764,7 +767,7 @@ namespace anime_downloader
                 anime.MyAnimeList.Title = "";
                 anime.MyAnimeList.Synonyms = "";
                 Alert("Cleared all MyAnimeList data about this show.");
-                display.ClearMalButton.Visibility = Visibility.Hidden;
+                display.MalDockPanel.Visibility = Visibility.Hidden;
             };
 
             display.RefreshMalButton.Click += async delegate
@@ -1083,19 +1086,21 @@ namespace anime_downloader
         ///     Find and download any episodes in collection anime that are between the range
         ///     start.episode and last.episode
         /// </remarks>
-        private async Task DownloadOutput_GetMissingEpisodesAsync(TextBox textBox)
+        private async Task DownloadOutput_GetMissingEpisodesAsync(TextBox textbox)
         {
-            textBox.WriteLine(">> Finding all missing episodes ...");
-            var allEpisodeFiles = await Task.Run(() => _filehandler.Episodes(EpisodeType.All).ToList());
-            var animeFileDeltas = await Task.Run(() =>
-                FileHandler.FirstEpisodesOf(allEpisodeFiles).OrderBy(a => a.Name)
-                    .Zip(
-                    FileHandler.LastEpisodesOf(allEpisodeFiles).OrderBy(a => a.Name), (a, b) => new AnimeEpisodeDelta(a, b))
-                );
-            var total = await _downloader.DownloadAsync(_allAnime.AiringAndWatching(),
-                animeFileDeltas, allEpisodeFiles, textBox);
+            textbox.WriteLine(">> Finding all missing episodes ...");
 
-            textBox.WriteLine(total > 0 ? $">> Found {total} anime downloads." : ">> No new anime found.");
+            var allEpisodeFiles = (await _animeFileCollection.GetEpisodesAsync(EpisodeStatus.All)).ToList();
+
+            var firstEpisodeFiles = await Task.Run(() => AnimeFileCollection.FirstEpisodesOf(allEpisodeFiles).OrderBy(a => a.Name));
+
+            var lastEpisodeFiles = await Task.Run(() => AnimeFileCollection.LastEpisodesOf(allEpisodeFiles).OrderBy(a => a.Name));
+
+            var animeFileRanges = await Task.Run(() => firstEpisodeFiles.Zip(lastEpisodeFiles, (a, b) => new AnimeFileRange(a, b)));
+
+            var total = await _downloader.DownloadAsync(_allAnime.AiringAndWatching(), animeFileRanges, allEpisodeFiles, textbox);
+
+            textbox.WriteLine(total > 0 ? $">> Found {total} anime downloads." : ">> No new anime found.");
         }
 
         /* --Manage */
@@ -1109,8 +1114,8 @@ namespace anime_downloader
             display.Playlist = _playlist;
             display.SetInitialValues(
                 this,
-                await Task.Run(() => _filehandler.Episodes(EpisodeType.Unwatched)),
-                await Task.Run(() => _filehandler.Episodes(EpisodeType.Watched)),
+                new ObservableCollection<AnimeFile>(await _animeFileCollection.GetEpisodesAsync(EpisodeStatus.Unwatched)),
+                new ObservableCollection<AnimeFile>(await _animeFileCollection.GetEpisodesAsync(EpisodeStatus.Watched)),
                 _settings);
         }
 
@@ -1372,25 +1377,25 @@ namespace anime_downloader
 
                 if (display.LastWatchedRadio.IsChecked == true)
                 {
-                    await _filehandler.SetToLastAsync(airingAnime, EpisodeType.Watched);
+                    await _filehandler.SetToLastAsync(airingAnime, EpisodeStatus.Watched);
                     Alert("Reset episode order to last known in watched folder.");
                 }
 
                 else if (display.LastUnwatchedRadio.IsChecked == true)
                 {
-                    await _filehandler.SetToLastAsync(airingAnime, EpisodeType.Unwatched);
+                    await _filehandler.SetToLastAsync(airingAnime, EpisodeStatus.Unwatched);
                     Alert("Reset episode order to last known in episode folder.");
                 }
 
                 else if (display.LastAnyRadio.IsChecked == true)
                 {
-                    await _filehandler.SetToLastAsync(airingAnime, EpisodeType.All);
+                    await _filehandler.SetToLastAsync(airingAnime, EpisodeStatus.All);
                     Alert("Reset episode order to last known in any folder.");
                 }
 
                 else if (display.FirstWatchedRadio.IsChecked == true)
                 {
-                    await _filehandler.SetToFirstAsync(airingAnime, EpisodeType.All);
+                    await _filehandler.SetToFirstAsync(airingAnime, EpisodeStatus.All);
                     Alert("Reset episode count to first known episode.");
                 }
 
