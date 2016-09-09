@@ -74,15 +74,19 @@
     <Compile Include="Classes\Extensions.cs" />
     <Compile Include="Classes\File\AnimeFileRange.cs" />
     <Compile Include="Classes\Distances\GroupFileDistance.cs" />
+    <Compile Include="Classes\Web\MyAnimeList\WebPage.cs" />
+    <Compile Include="Enums\EpisodeStatus.cs" />
     <Compile Include="Classes\File\Logger.cs" />
     <Compile Include="Classes\File\MultipleAnimeFiles.cs" />
-    <Compile Include="Classes\Methods.cs" />
+    <Compile Include="Classes\FindPopup.cs" />
+    <Compile Include="Classes\HelperMethods.cs" />
     <Compile Include="Classes\OperatingSystemApi.cs" />
     <Compile Include="Classes\Tray.cs" />
-    <Compile Include="Classes\Web\MyAnimeList\FindResultDistance.cs" />
+    <Compile Include="Classes\Distances\FindResultDistance.cs" />
     <Compile Include="Classes\Web\MyAnimeList\Api.cs" />
     <Compile Include="Classes\Web\MyAnimeList\FindResultRoot.cs" />
-    <Compile Include="Classes\Web\MyAnimeList\Update.cs" />
+    <Compile Include="Classes\Web\MyAnimeList\Synchronizer.cs" />
+    <Compile Include="Classes\Web\MyAnimeList\UpdateShow.cs" />
     <Compile Include="Classes\Web\MyAnimeList\FindResult.cs" />
     <Compile Include="Classes\Web\Nyaa.cs" />
     <Compile Include="Classes\File\Playlist.cs" />
@@ -94,6 +98,7 @@
     <Compile Include="Classes\Xml\AnimeCollection.cs" />
     <Compile Include="Classes\Xml\Schema.cs" />
     <Compile Include="Classes\Xml\Verify.cs" />
+    <Compile Include="Enums\AnimeStatus.cs" />
     <Compile Include="Views\AnimeDetails.xaml.cs">
       <DependentUpon>AnimeDetails.xaml</DependentUpon>
     </Compile>
@@ -106,8 +111,8 @@
     <Compile Include="Views\DownloadOptions.xaml.cs">
       <DependentUpon>DownloadOptions.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\DownloadOutput.xaml.cs">
-      <DependentUpon>DownloadOutput.xaml</DependentUpon>
+    <Compile Include="Views\Downloader.xaml.cs">
+      <DependentUpon>Downloader.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Home.xaml.cs">
       <DependentUpon>Home.xaml</DependentUpon>
@@ -124,6 +129,7 @@
     <Compile Include="Views\Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Enums\ViewMode.cs" />
     <Compile Include="Views\Web.xaml.cs">
       <DependentUpon>Web.xaml</DependentUpon>
     </Compile>
@@ -155,7 +161,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\DownloadOutput.xaml">
+    <Page Include="Views\Downloader.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

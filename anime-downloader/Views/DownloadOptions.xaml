@@ -23,20 +23,20 @@
                       HorizontalAlignment="Left"
                       VerticalAlignment="Top" Height="auto" Width="auto" Grid.Column="0">
                 <StackPanel>
-                    <RadioButton x:Name="CheckForLatestRadio" IsChecked="True" Margin="5"
+                    <RadioButton x:Name="CheckForLatest" IsChecked="True" Margin="5"
                                  Style="{DynamicResource ItemStyle}" KeyDown="Radio_KeyDown">
                         <TextBlock TextWrapping="Wrap">
                             Next found episode.
                         </TextBlock>
                     </RadioButton>
-                    <RadioButton x:Name="GetUpToDateRadio" Margin="5"
+                    <RadioButton x:Name="GetUpToDate" Margin="5"
                                  Style="{DynamicResource ItemStyle}" KeyDown="Radio_KeyDown">
                         <TextBlock TextWrapping="Wrap">
                             Continually until no more are found
                             (good for getting up to date).
                         </TextBlock>
                     </RadioButton>
-                    <RadioButton x:Name="GetMissingRadio" Margin="5"
+                    <RadioButton x:Name="GetMissing" Margin="5"
                                  Style="{DynamicResource ItemStyle}" KeyDown="Radio_KeyDown">
                         <TextBlock TextWrapping="Wrap">
                             Any missing episodes between first and last known episodes.
@@ -45,9 +45,9 @@
                 </StackPanel>
             </GroupBox>
             <Button x:Name="SearchButton" Style="{DynamicResource ConfirmationButtonStyle}" HorizontalAlignment="Right"
-                    Content="Search" Grid.Row="1" />
+                    Content="Search" Grid.Row="1" Click="SearchButton_OnClick" />
             <Button x:Name="LogButton" Style="{DynamicResource ConfirmationButtonStyle}" HorizontalAlignment="Left"
-                    Content="Log" Grid.Row="1" />
+                    Content="Log" Grid.Row="1" Click="LogButton_OnClick" />
         </Grid>
     </Grid>
 </UserControl>

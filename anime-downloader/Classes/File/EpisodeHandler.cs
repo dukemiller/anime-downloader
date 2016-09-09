@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using System.Windows.Controls;
+using anime_downloader.Classes.Web.MyAnimeList;
+using anime_downloader.Enums;
 
 namespace anime_downloader.Classes.File
 {
@@ -21,7 +24,7 @@ namespace anime_downloader.Classes.File
             _animeFileCollection = new AnimeFileCollection(settings);
         }
 
-        public async Task SetToLastAsync(IEnumerable<Anime> animes, EpisodeStatus episodeStatus)
+        private async Task SetToLastAsync(IEnumerable<Anime> animes, EpisodeStatus episodeStatus)
         {
             foreach (var anime in animes)
             {
@@ -32,7 +35,7 @@ namespace anime_downloader.Classes.File
             }
         }
 
-        public async Task SetToFirstAsync(IEnumerable<Anime> animes, EpisodeStatus episodeStatus)
+        private async Task SetToFirstAsync(IEnumerable<Anime> animes, EpisodeStatus episodeStatus)
         {
             foreach (var anime in animes)
             {
@@ -121,6 +124,116 @@ namespace anime_downloader.Classes.File
 
             return duplicates.Count;
         }
-        
+
+        public async Task HandleCommand(string command)
+        {
+            var airingAnime = MainWindow.Window.AllAnime.AiringAndWatching();
+
+            switch (command)
+            {
+
+                case "Duplicates":
+                {
+                    HelperMethods.Alert($"Moved {await MoveDuplicatesAsync()} files to duplicate folder.");
+                    break;
+                }
+
+                case "LastWatched":
+                {
+                    await SetToLastAsync(airingAnime, EpisodeStatus.Watched);
+                    HelperMethods.Alert("Reset episode order to last known in watched folder.");
+                    break;
+                }
+
+                case "LastUnwatched":
+                {
+                    await SetToLastAsync(airingAnime, EpisodeStatus.Unwatched);
+                    HelperMethods.Alert("Reset episode order to last known in episode folder.");
+                    break;
+                }
+
+                case "LastAny":
+                {
+                    await SetToLastAsync(airingAnime, EpisodeStatus.All);
+                    HelperMethods.Alert("Reset episode order to last known in any folder.");
+                    break;
+                }
+
+                case "FirstWatched":
+                {
+                    await SetToFirstAsync(airingAnime, EpisodeStatus.All);
+                    HelperMethods.Alert("Reset episode count to first known episode.");
+                    break;
+                }
+
+                case "Zero": 
+                {
+                    foreach (var anime in airingAnime)
+                        anime.Episode = "00";
+                    HelperMethods.Alert("Reset episode count to zero.");
+                    break;
+                }
+
+                case "MarkComplete":
+                {
+                    var names = new List<string>();
+                    foreach (var anime in airingAnime
+                        .Where(a => a.MyAnimeList.HasId && (
+                                        (a.MyAnimeList.IntOverallTotal() > 0 &&
+                                         a.IntEpisode() == a.MyAnimeList.IntOverallTotal()) ||
+                                        (a.MyAnimeList.IntTotalEpisodes() > 0 &&
+                                         a.IntEpisode() == a.MyAnimeList.IntTotalEpisodes())
+                                    )))
+                    {
+                        anime.Status = "Finished";
+                        anime.Airing = false;
+                        names.Add(anime.Title);
+                    }
+
+                    var result = names.Count > 0 ? string.Join(", ", names) : "no shows";
+                    HelperMethods.Alert($"Marked {result} as finished. ");
+                    break;
+                }
+
+                case "SearchMore":
+                {
+                    var credentials = Api.GetCredentials(MainWindow.Window.Settings);
+                    var updated = new List<string>();
+                    var animesMissingTotal = airingAnime
+                        .Where(a => a.MyAnimeList.HasId &&
+                                    (a.MyAnimeList.IntTotalEpisodes() == 0))
+                        .ToList();
+
+                    foreach (var anime in animesMissingTotal)
+                    {
+                        var animeResults = await Api.FindAsync(credentials, HttpUtility.UrlEncode(anime.Title));
+                        var result = animeResults.FirstOrDefault(r => r.Id.Equals(anime.MyAnimeList.Id));
+
+                        if (result != null && !anime.MyAnimeList.TotalEpisodes.Equals(result.TotalEpisodes))
+                        {
+                            updated.Add(anime.Title);
+                            anime.MyAnimeList.TotalEpisodes = result.TotalEpisodes;
+                        }
+                    }
+
+                    if (updated.Count > 0)
+                    {
+                        var updateResult = string.Join(", and ", updated);
+                        HelperMethods.Alert($"Updated total episodes for {updateResult}.");
+                    }
+
+                    else
+                    {
+                        HelperMethods.Alert($"No shows were updated for an attempted {animesMissingTotal.Count} shows.");
+                    }
+
+                    break;
+                }
+
+                default:
+                    break;
+
+            }
+        }
     }
 }

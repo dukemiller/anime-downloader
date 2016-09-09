@@ -110,19 +110,11 @@ namespace anime_downloader.Classes.Xml
         /// <summary>
         ///     Create the settings xml file with initial nodes and save to settings-defined xml location.
         /// </summary>
-        public static void CreateSettingsXml()
-        {
-            var document = SettingsDocument();
-            document.Save(Settings.SettingsXml);
-        }
+        public static void CreateSettingsXml() => SettingsDocument().Save(Settings.SettingsXml);
 
         /// <summary>
         ///     Create the anime xml file with initial nodes and save to settings-defined xml location.
         /// </summary>
-        public static void CreateAnimeXml()
-        {
-            var document = AnimeDocument();
-            document.Save(Settings.AnimeXml);
-        }
+        public static void CreateAnimeXml() => AnimeDocument().Save(Settings.AnimeXml);
     }
 }

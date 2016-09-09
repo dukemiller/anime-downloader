@@ -3,7 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using static anime_downloader.Classes.Methods;
+using static anime_downloader.Classes.HelperMethods;
 
 namespace anime_downloader.Classes.Web
 {
@@ -40,7 +40,7 @@ namespace anime_downloader.Classes.Web
         public double Size;
 
         /// <summary>
-        ///     A simple representation of the important attribes of a Nyaa object.
+        ///     A simple representation of the important attributes of a Nyaa object.
         /// </summary>
         /// <returns>
         ///     Summary of torrent providers' values

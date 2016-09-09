@@ -27,7 +27,6 @@ namespace anime_downloader.Classes.Web
         /// <summary>
         ///     HTML Nyaa Initializer
         /// </summary>
-        /// <param name="node">A raw node.</param>
         public Nyaa(HtmlNode node)
         {
             Name = WebUtility.HtmlDecode(node.Element("title").InnerText.Replace("Â", ""));
@@ -73,8 +72,14 @@ namespace anime_downloader.Classes.Web
         /// </summary>
         public static async Task<IEnumerable<Torrent>> GetTorrentsForAsync(Anime anime, string episode)
         {
-            var queryDetails = anime.Name.Replace(" ", "+").Replace("'s", "").Replace(".", "+").Replace(":", "").Replace("!", "%21").Replace("'", "%27").Replace("-", "%2D")
-                + "+" + anime.Resolution + "+" + anime.NextEpisode();
+            var queryDetails = anime.Name.Replace(" ", "+")
+                                   .Replace("'s", "")
+                                   .Replace(".", "+")
+                                   .Replace(":", "")
+                                   .Replace("!", "%21")
+                                   .Replace("'", "%27")
+                                   .Replace("-", "%2D")
+                               + "+" + anime.Resolution + "+" + anime.NextEpisode();
             
             var url = new Uri("https://www.nyaa.se/?page=rss" +
                               $"&cats={EnglishTranslated}" + 
@@ -99,8 +104,8 @@ namespace anime_downloader.Classes.Web
             
             if (anime.MyAnimeList.HasId && anime.MyAnimeList.NameCollection.Any(c => c.Contains(episode)))
             {
-                // To account for the case that a show contains a number (e.g. 12-sai) that is relevant to the title 
-                // but also might contain the year in case of rework/reboot (e.g. Berserk (2016)), 
+                // To account for the case that a show contains a number (e.g. 12-sai - ep 12) that is relevant to the title 
+                // and or also might contain the year in case of rework/reboot (e.g. Berserk (2016)) 
                 // >> strip the year from the count
                 const string yearPattern = @"\(\d{4}\)";
 

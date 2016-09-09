@@ -93,18 +93,18 @@ namespace anime_downloader.Classes
             _trayContextMenu = new ContextMenu();
 
             _trayContextMenu.MenuItems.Add(
-                new MenuItem("Download latest ...", (sender, args) =>
+                new MenuItem("&Download latest...", (sender, args) =>
                 {
                     BringWindowToFocus();
-                    _mainWindow.DownloadButton.Press();
+                    _mainWindow.Download.Press();
                     (_mainWindow.CurrentDisplay as DownloadOptions)?.SearchButton.Press();
                 }));
 
             _trayContextMenu.MenuItems.Add(
-                new MenuItem("Sync MyAnimeList ...", (sender, args) =>
+                new MenuItem("&Sync MyAnimeList...", (sender, args) =>
                 {
                     BringWindowToFocus();
-                    _mainWindow.WebButton.Press();
+                    _mainWindow.Web.Press();
                     if (_settings.MyAnimeList.Works)
                         (_mainWindow.CurrentDisplay as Views.Web)?.SyncButton.Press();
                 }));
@@ -112,21 +112,21 @@ namespace anime_downloader.Classes
             _trayContextMenu.MenuItems.Add("-");
 
             _trayContextMenu.MenuItems.Add(
-                new MenuItem("Open episode folder ...", (sender, args) =>
+                new MenuItem("Open &episode folder...", (sender, args) =>
                 {
                     if (_settings != null && Directory.Exists(_settings.Paths.EpisodeDirectory))
                         Process.Start(_settings.Paths.EpisodeDirectory);
                 }));
 
             _trayContextMenu.MenuItems.Add(
-                new MenuItem("Open watched folder ...", (sender, args) =>
+                new MenuItem("Open &watched folder...", (sender, args) =>
                 {
                     if (_settings != null && Directory.Exists(_settings.Paths.WatchedDirectory))
                         Process.Start(_settings.Paths.WatchedDirectory);
                 }));
 
             _trayContextMenu.MenuItems.Add(
-                new MenuItem("Open application folder ...", (sender, args) =>
+                new MenuItem("Open &application folder...", (sender, args) =>
                 {
                     if (_settings != null)
                         Process.Start(Settings.ApplicationDirectory);
@@ -135,7 +135,7 @@ namespace anime_downloader.Classes
             _trayContextMenu.MenuItems.Add("-");
 
             _trayContextMenu.MenuItems.Add(
-                new MenuItem("Exit", (sender, args) =>
+                new MenuItem("E&xit", (sender, args) =>
                 {
                     _trayIcon.Visible = false;
                     FullExit = true;
@@ -152,6 +152,7 @@ namespace anime_downloader.Classes
                 if (!Visible)
                     Visible = true;
             }
+
             else if (!_settings.Flags.AlwaysShowTray)
             {
                 if (_mainWindow.WindowState == WindowState.Minimized)

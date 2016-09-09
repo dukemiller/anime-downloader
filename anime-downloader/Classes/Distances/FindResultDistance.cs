@@ -1,6 +1,7 @@
 using System.Linq;
+using anime_downloader.Classes.Web.MyAnimeList;
 
-namespace anime_downloader.Classes.Web.MyAnimeList
+namespace anime_downloader.Classes.Distances
 {
     public class FindResultDistance
     {
@@ -33,7 +34,7 @@ namespace anime_downloader.Classes.Web.MyAnimeList
             if (comparison.IsBlank())
                 return ArbitraryHighValue;
 
-            var distance = Methods.LevenshteinDistance(comparison, Name);
+            var distance = HelperMethods.LevenshteinDistance(comparison, Name);
             var array = comparison.ToLower().Trim().Split(' ').Distinct().ToArray();
             var relevance = (double) array.Count(a => NameSplit.Contains(a)) / array.Length;
             return distance * (2 - relevance);

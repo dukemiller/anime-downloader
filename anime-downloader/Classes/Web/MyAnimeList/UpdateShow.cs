@@ -2,11 +2,11 @@
 
 namespace anime_downloader.Classes.Web.MyAnimeList
 {
-    public class Update
+    public class UpdateShow
     {
         private readonly XDocument _document;
         
-        public Update(Anime anime, string episode = null)
+        public UpdateShow(Anime anime, string episode = null)
         {
             var details = new AnimeDetailGroup(anime, episode);
 
@@ -83,5 +83,4 @@ namespace anime_downloader.Classes.Web.MyAnimeList
         }
 
     }
-
 }

@@ -1,4 +1,7 @@
-﻿using anime_downloader.Classes;
+﻿using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using anime_downloader.Classes;
 using System.Windows.Input;
 
 namespace anime_downloader.Views
@@ -17,6 +20,15 @@ namespace anime_downloader.Views
         {
             if (e.Key == Key.Enter)
                 ButtonSubmit.Press();
+        }
+
+        private async void ButtonSubmit_OnClick(object sender, RoutedEventArgs e)
+        {
+            MainWindow.Window.ToggleButtons();
+            var command = this.GetAll<RadioButton>().FirstOrDefault(r => r.IsChecked == true)?.Name;
+            if (command != null)
+                await MainWindow.Window.EpisodeHandler.HandleCommand(command);
+            MainWindow.Window.ToggleButtons();
         }
     }
 }

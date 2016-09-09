@@ -28,7 +28,7 @@ namespace anime_downloader.Classes.Distances
             Group = grouping;
             var namesplit = anime.Name.ToLower().OnlyLettersAndSpace().Split(' ').Distinct().Except(CommonTokens).ToArray();
             var groupsplit = grouping.Key.ToLower().OnlyLettersAndSpace().Split(' ').Distinct().Except(CommonTokens).ToArray();
-            _distance = Methods.LevenshteinDistance(grouping.Key, anime.Name);
+            _distance = HelperMethods.LevenshteinDistance(grouping.Key, anime.Name);
             _relevance = (double) groupsplit.Count(a => namesplit.Contains(a)) / groupsplit.Length;
             _singleWordPenalty = namesplit.Length == 1 && groupsplit.Length == 1 ? 1 : 0;
             /*

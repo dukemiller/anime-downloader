@@ -74,7 +74,7 @@ namespace anime_downloader.Classes
         public static void ToggleButtons(this MainWindow window)
         {
             foreach (var button in window.GetAll<ToggleButton>()) //.Union(window.GetAll<Button>(window)))
-                button.Toggle();
+                 button.Toggle();
             foreach (var button in window.GetAll<Button>()) //.Union(window.GetAll<Button>(window)))
                 button.Toggle();
         }
@@ -90,21 +90,7 @@ namespace anime_downloader.Classes
 
             list.Insert(i, item);
         }
-
-        /* --WIP
-        public static void AssignTo<T1, T2, T3>(this UserControl parent, Action function)
-            where T1 : Control
-            where T2 : Control
-            where T3 : Control
-        {
-            var collections = new object[] { parent.GetAll<T1>(), parent.GetAll<T2>(), parent.GetAll<T3>() };
-
-            foreach (var collection in collections)
-                foreach (var item in (IEnumerable) collection)
-                    ((Control) item).KeyDown += delegate { function(); };
-        }
-        */
-
+        
         // http://stackoverflow.com/a/33523743
         public static System.Windows.Media.Brush ToBrush(this Color color)
         {

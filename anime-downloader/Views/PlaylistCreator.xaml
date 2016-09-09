@@ -46,8 +46,8 @@
             </DockPanel>
         </StackPanel>
         <Button x:Name="CreateButton" Content="Create" Style="{DynamicResource ConfirmationButtonStyle}"
-                HorizontalAlignment="Right" Grid.Row="2" />
+                HorizontalAlignment="Right" Grid.Row="2" Click="CreateButton_OnClick" />
         <Button x:Name="OpenButton" Content="Open" Style="{DynamicResource ConfirmationButtonStyle}"
-                HorizontalAlignment="Left" Grid.Row="2" />
+                HorizontalAlignment="Left" Grid.Row="2" Click="OpenButton_OnClick" />
     </Grid>
 </UserControl>

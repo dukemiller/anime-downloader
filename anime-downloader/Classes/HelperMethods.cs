@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows;
+using System.Windows.Input;
 
 namespace anime_downloader.Classes
 {
-    public static class Methods
+    public static class HelperMethods
     {
         /// <summary>
         ///     Compute the distance between two strings.
@@ -57,10 +59,26 @@ namespace anime_downloader.Classes
             text = new[] { ".mkv", ".mp4", ".avi" }.Aggregate(text, (current, s) => current.Replace(s, ""));
 
             if (removeEpisode)
-                text = string.Join("-", text.Split('-').Take(text.Split('-').Length - 1).ToArray());
+                text = String.Join("-", text.Split('-').Take(text.Split('-').Length - 1).ToArray());
             
             return Regex.Replace(text.Trim(), @"\s+", " ");
         }
-        
+
+        /// <summary>
+        ///     Completely clear focus from an element.
+        /// </summary>
+        public static void ClearFocusFrom(FrameworkElement element)
+        {
+            var parent = (FrameworkElement) element.Parent;
+            while (parent != null && !((IInputElement) parent).Focusable)
+                parent = (FrameworkElement) parent.Parent;
+            var scope = FocusManager.GetFocusScope(element);
+            FocusManager.SetFocusedElement(scope, parent);
+        }
+
+        /// <summary>
+        ///     Display an alert message (currently a messagebox).
+        /// </summary>
+        public static void Alert(string msg = "") => MessageBox.Show(msg);
     }
 }

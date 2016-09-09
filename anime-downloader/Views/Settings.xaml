@@ -123,6 +123,7 @@
                            ToolTip="Always have the tray enabled." />
                     <CheckBox x:Name="AlwaysTrayCheckbox" IsChecked="{Binding Flags.AlwaysShowTray}" Grid.Row="1"
                               Grid.Column="1"
+                              Click="AlwaysTrayCheckbox_OnClick"
                               Style="{DynamicResource CheckboxStyle}" />
                 </Grid>
                 <Grid Name="RightSide" Column="1">
@@ -156,6 +157,6 @@
             </Grid>
         </Grid>
         <Button x:Name="ApplyChangesButton" Content="Apply" Style="{DynamicResource ConfirmationButtonStyle}"
-                HorizontalAlignment="Right" Grid.Row="1" />
+                HorizontalAlignment="Right" Grid.Row="1" Click="ApplyChangesButton_OnClick" />
     </Grid>
 </UserControl>

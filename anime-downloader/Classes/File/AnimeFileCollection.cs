@@ -4,16 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using anime_downloader.Classes.Distances;
+using anime_downloader.Enums;
 
 namespace anime_downloader.Classes.File
 {
-    public enum EpisodeStatus
-    {
-        Unwatched,
-        Watched,
-        All
-    }
-
     /// <summary>
     ///     A class meant for READ-ONLY operations on accessing file paths.
     /// </summary>

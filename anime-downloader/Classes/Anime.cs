@@ -8,6 +8,7 @@ using anime_downloader.Classes.Distances;
 using anime_downloader.Classes.File;
 using anime_downloader.Classes.Web;
 using anime_downloader.Classes.Xml;
+using anime_downloader.Enums;
 
 namespace anime_downloader.Classes
 {
@@ -111,7 +112,7 @@ namespace anime_downloader.Classes
                 Save();
             }
         }
-
+        
         /// <summary>
         ///     The quality to be downloaded.
         /// </summary>
@@ -193,6 +194,18 @@ namespace anime_downloader.Classes
             }
         }
 
+        public bool HasRating => !Rating.Equals("");
+
+        /// <summary>
+        ///     Returns rating if able to retrieve, else -1
+        /// </summary>
+        public int IntRating()
+        {
+            int rating;
+            var successful = int.TryParse(Rating, out rating);
+            return successful ? rating : -1;
+        }
+
         /// <summary>
         ///     A property used for sorting the rating in the datagrid
         /// </summary>
@@ -232,6 +245,9 @@ namespace anime_downloader.Classes
 
         /* */
         
+        /// <summary>
+        ///     Returns episode count if able to retrieve, else -1
+        /// </summary>
         public int IntEpisode()
         {
             int episode;
@@ -263,7 +279,7 @@ namespace anime_downloader.Classes
             var name = episodes
                 .Select(e => e.Name)
                 .Distinct()
-                .Select(e => new { Name = e, Distance = Methods.LevenshteinDistance(Name, e) })
+                .Select(e => new { Name = e, Distance = HelperMethods.LevenshteinDistance(Name, e) })
                 .OrderBy(e => e.Distance)
                 .First()
                 .Name;
@@ -287,7 +303,7 @@ namespace anime_downloader.Classes
                         return findResult.IntTotalEpisodes() > 2;
                     return true;
                 })
-                .Select(result => new Web.MyAnimeList.FindResultDistance(Name, result))
+                .Select(result => new FindResultDistance(Name, result))
                 .OrderBy(resultDistance => resultDistance.Distance);
 
             var closest = closestResults.FirstOrDefault();
@@ -361,7 +377,7 @@ namespace anime_downloader.Classes
             public static AnimeFile To(string name, IEnumerable<AnimeFile> animeEpisodes)
             {
                 return animeEpisodes
-                    .Select(a => new { Anime = a, Distance = Methods.LevenshteinDistance(a.Name, name) })
+                    .Select(a => new { Anime = a, Distance = HelperMethods.LevenshteinDistance(a.Name, name) })
                     .Where(ap => ap.Distance <= 10)
                     .OrderBy(ap => ap.Distance)
                     .FirstOrDefault()?.Anime;
@@ -478,7 +494,7 @@ namespace anime_downloader.Classes
             }
         }
 
-        public int IntOverallTotal() {
+        public int IntOverallTotal(){
             int episodes;
             var successful = int.TryParse(OverallTotal, out episodes);
             return successful ? episodes : 0;

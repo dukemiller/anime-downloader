@@ -6,7 +6,6 @@ using anime_downloader.Classes.Xml;
 
 namespace anime_downloader.Classes
 {
-
     public class Settings
     {
         public Settings(bool loadDefaultSettings = false)
@@ -22,11 +21,11 @@ namespace anime_downloader.Classes
                 AnimeDocument = Schema.AnimeDocument();
             }
 
-            Paths = new PathDetails(Root.Element("path"), Save);
+            Paths = new PathDetails(Root.Element("path"));
 
-            Flags = new FlagDetails(Root.Element("flag"), Save);
+            Flags = new FlagDetails(Root.Element("flag"));
 
-            MyAnimeList = new MyAnimeListLoginDetails(Root.Element("myanimelist"), Save);
+            MyAnimeList = new MyAnimeListLoginDetails(Root.Element("myanimelist"));
         }
 
         /// <summary>
@@ -93,7 +92,6 @@ namespace anime_downloader.Classes
             set
             {
                 Root.Element("sortBy")?.SetValue(value);
-                Save();
             }
         }
         
@@ -106,7 +104,6 @@ namespace anime_downloader.Classes
             set
             {
                 Root.Element("filterBy")?.SetValue(value);
-                Save();
             }
         }
 
@@ -129,19 +126,19 @@ namespace anime_downloader.Classes
         /// <summary>
         ///     Save the schema to the settings path.
         /// </summary>
-        public void Save() => AnimeCollection.SaveSettings(SettingsDocument);
-    }
+        public void Save()
+        {
+            AnimeCollection.SaveSettings(SettingsDocument);
+        }
+}
 
     public class PathDetails
     {
-        public XElement Root;
+        private readonly XElement _root;
 
-        public Action Save;
-
-        public PathDetails(XElement root, Action save)
+        public PathDetails(XElement root)
         {
-            Root = root;
-            Save = save;
+            _root = root;
         }
 
         /// <summary>
@@ -149,13 +146,12 @@ namespace anime_downloader.Classes
         /// </summary>
         public string WatchedDirectory
         {
-            get { return Root.Element("watched")?.Value; }
+            get { return _root.Element("watched")?.Value; }
             set
             {
                 if (value.Equals(WatchedDirectory))
                     return;
-                Root.Element("watched")?.SetValue(value);
-                Save();
+                _root.Element("watched")?.SetValue(value);
             }
         }
 
@@ -164,13 +160,12 @@ namespace anime_downloader.Classes
         /// </summary>
         public string EpisodeDirectory
         {
-            get { return Root.Element("episode")?.Value; }
+            get { return _root.Element("episode")?.Value; }
             set
             {
                 if (value.Equals(EpisodeDirectory))
                     return;
-                Root.Element("episode")?.SetValue(value);
-                Save();
+                _root.Element("episode")?.SetValue(value);
             }
         }
 
@@ -179,11 +174,10 @@ namespace anime_downloader.Classes
         /// </summary>
         public string TorrentFilesDirectory
         {
-            get { return Root.Element("torrents")?.Value; }
+            get { return _root.Element("torrents")?.Value; }
             set
             {
-                Root.Element("torrents")?.SetValue(value);
-                Save();
+                _root.Element("torrents")?.SetValue(value);
             }
         }
 
@@ -192,11 +186,10 @@ namespace anime_downloader.Classes
         /// </summary>
         public string UtorrentFile
         {
-            get { return Root.Element("utorrent")?.Value; }
+            get { return _root.Element("utorrent")?.Value; }
             set
             {
-                Root.Element("utorrent")?.SetValue(value);
-                Save();
+                _root.Element("utorrent")?.SetValue(value);
             }
         }
 
@@ -204,14 +197,11 @@ namespace anime_downloader.Classes
 
     public class FlagDetails
     {
-        public XElement Root;
+        private readonly XElement _root;
 
-        public Action Save;
-
-        public FlagDetails(XElement root, Action save)
+        public FlagDetails(XElement root)
         {
-            Root = root;
-            Save = save;
+            _root = root;
         }
 
         /// <summary>
@@ -219,11 +209,10 @@ namespace anime_downloader.Classes
         /// </summary>
         public bool SortByReversed
         {
-            get { return bool.Parse(Root.Element("sortByReversed")?.Value ?? "false"); }
+            get { return bool.Parse(_root.Element("sortByReversed")?.Value ?? "false"); }
             set
             {
-                Root.Element("sortByReversed")?.SetValue(value);
-                Save();
+                _root.Element("sortByReversed")?.SetValue(value);
             }
         }
         
@@ -232,11 +221,10 @@ namespace anime_downloader.Classes
         /// </summary>
         public bool ExitOnClose
         {
-            get { return bool.Parse(Root.Element("exitOnClose")?.Value ?? "false"); }
+            get { return bool.Parse(_root.Element("exitOnClose")?.Value ?? "false"); }
             set
             {
-                Root.Element("exitOnClose")?.SetValue(value);
-                Save();
+                _root.Element("exitOnClose")?.SetValue(value);
             }
         }
 
@@ -245,11 +233,10 @@ namespace anime_downloader.Classes
         /// </summary>
         public bool AlwaysShowTray
         {
-            get { return bool.Parse(Root.Element("alwaysShowTray")?.Value ?? "false"); }
+            get { return bool.Parse(_root.Element("alwaysShowTray")?.Value ?? "false"); }
             set
             {
-                Root.Element("alwaysShowTray")?.SetValue(value);
-                Save();
+                _root.Element("alwaysShowTray")?.SetValue(value);
             }
         }
 
@@ -261,13 +248,12 @@ namespace anime_downloader.Classes
             get
             {
                 bool result;
-                var value = Root.Element("individualShowFolders")?.Value;
+                var value = _root.Element("individualShowFolders")?.Value;
                 return bool.TryParse(value, out result) && result;
             }
             set
             {
-                Root.Element("individualShowFolders")?.SetValue(value);
-                Save();
+                _root.Element("individualShowFolders")?.SetValue(value);
             }
         }
 
@@ -276,11 +262,10 @@ namespace anime_downloader.Classes
         /// </summary>
         public bool OnlyWhitelisted
         {
-            get { return bool.Parse(Root.Element("onlyWhitelistedSubs")?.Value ?? "false"); }
+            get { return bool.Parse(_root.Element("onlyWhitelistedSubs")?.Value ?? "false"); }
             set
             {
-                Root.Element("onlyWhitelistedSubs")?.SetValue(value);
-                Save();
+                _root.Element("onlyWhitelistedSubs")?.SetValue(value);
             }
         }
 
@@ -288,33 +273,28 @@ namespace anime_downloader.Classes
 
     public class MyAnimeListLoginDetails
     {
-        public XElement Root;
+        private readonly XElement _root;
 
-        public Action Save;
-
-        public MyAnimeListLoginDetails(XElement root, Action save)
+        public MyAnimeListLoginDetails(XElement root)
         {
-            Root = root;
-            Save = save;
+            _root = root;
         }
 
         public string Username
         {
-            get { return Root.Element("username")?.Value; }
+            get { return _root.Element("username")?.Value; }
             set
             {
-                Root.Element("username")?.SetValue(value);
-                Save();
+                _root.Element("username")?.SetValue(value);
             }
         }
 
         public string Password
         {
-            get { return Root.Element("password")?.Value; }
+            get { return _root.Element("password")?.Value; }
             set
             {
-                Root.Element("password")?.SetValue(value);
-                Save();
+                _root.Element("password")?.SetValue(value);
             }
         }
 
@@ -323,14 +303,13 @@ namespace anime_downloader.Classes
             get
             {
                 bool result;
-                var value = Root.Element("works")?.Value;
+                var value = _root.Element("works")?.Value;
                 return bool.TryParse(value, out result) && result;
             }
 
             set
             {
-                Root.Element("works")?.SetValue(value);
-                Save();
+                _root.Element("works")?.SetValue(value);
             }
         }
 

@@ -103,7 +103,7 @@
                         <RowDefinition Height="2*" />
                     </Grid.RowDefinitions>
                     <DockPanel Grid.Column="0" Grid.Row="0">
-                        <Label Style="{DynamicResource LabelStyle}" Content="Unwatched" />
+                        <Label Style="{DynamicResource LabelStyle}" Content="Unwatched" MouseUp="Unwatched_OnMouseUp" />
                         <Label Style="{DynamicResource DescriptionStyle}" Name="UnwatchedFilesLabel" />
                     </DockPanel>
                     <ListBox x:Name="UnwatchedList" Grid.Row="1" Grid.Column="0" Style="{StaticResource ListboxStyle}" 
@@ -152,7 +152,7 @@
                         <RowDefinition Height="13*" />
                         <RowDefinition Height="2*" />
                     </Grid.RowDefinitions>
-                    <Label Grid.Row="0" Style="{DynamicResource LabelStyle}" Content="Watched" />
+                    <Label Grid.Row="0" Style="{DynamicResource LabelStyle}" Content="Watched" MouseUp="Watched_OnMouseUp" />
                     <ListBox x:Name="WatchedList" Grid.Row="1" Style="{StaticResource ListboxStyle}" 
                              xaml:DragSelectionHelper.IsDragSelectionEnabled="true"
                              MouseDoubleClick="Context_MouseDoubleClick" 

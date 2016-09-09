@@ -9,6 +9,7 @@ using System.Windows.Input;
 using System.Windows.Shapes;
 using anime_downloader.Classes;
 using anime_downloader.Classes.File;
+using anime_downloader.Enums;
 
 namespace anime_downloader.Views
 {
@@ -20,6 +21,7 @@ namespace anime_downloader.Views
         public Manage()
         {
             InitializeComponent();
+            SetInitialValues();
         }
 
         private ObservableCollection<AnimeFile> Watched { get; set; }
@@ -55,27 +57,19 @@ namespace anime_downloader.Views
 
         private ObservableCollection<AnimeFile> _unwatchedWindow;
 
-        private Classes.Settings _settings;
+        private static Classes.Settings Settings => MainWindow.Settings;
 
-        private MainWindow _mainWindow;
+        private static MainWindow MainWindow => MainWindow.Window;
 
-        public void SetInitialValues(
-            MainWindow mainWindow,
-            ObservableCollection<AnimeFile> unwatched,
-            ObservableCollection<AnimeFile> watched,
-            Classes.Settings settings)
+        private async void SetInitialValues()
         {
-            _mainWindow = mainWindow;   // TODO: I REALLY dont like this
-            _settings = settings;
-
-            Unwatched = unwatched;
-            Watched = watched;
-
-            UnwatchedWindow = new ObservableCollection<AnimeFile>(unwatched);
-            WatchedWindow = new ObservableCollection<AnimeFile>(watched);
+            Unwatched = new ObservableCollection<AnimeFile>(await MainWindow.AnimeFileCollection.GetEpisodesAsync(EpisodeStatus.Unwatched));
+            Watched = new ObservableCollection<AnimeFile>(await MainWindow.AnimeFileCollection.GetEpisodesAsync(EpisodeStatus.Watched));
+            UnwatchedWindow = new ObservableCollection<AnimeFile>(Unwatched);
+            WatchedWindow = new ObservableCollection<AnimeFile>(Watched);
         }
 
-        public Playlist Playlist { private get; set; }
+        private static Playlist Playlist => MainWindow.Window.Playlist;
         
         private void FindTextBox_KeyUp(object sender, KeyEventArgs e)
         {
@@ -119,15 +113,9 @@ namespace anime_downloader.Views
 
         }
 
-        private void MouseEnterItem(object sender, MouseEventArgs e)
-        {
-            ((Shape) sender).Opacity = 0.6;
-        }
+        private void MouseEnterItem(object sender, MouseEventArgs e) => ((Shape) sender).Opacity = 0.6;
 
-        private void MouseLeaveItem(object sender, MouseEventArgs e)
-        {
-            ((Shape) sender).Opacity = 1.0;
-        }
+        private void MouseLeaveItem(object sender, MouseEventArgs e) => ((Shape) sender).Opacity = 1.0;
 
         private void Button_Move_Click(object sender, RoutedEventArgs e)
         {
@@ -189,7 +177,7 @@ namespace anime_downloader.Views
         private void Context_Move_Click(object sender, RoutedEventArgs e)
         {
             var listBox = sender as ListBox ?? (ListBox) ((ContextMenu) ((MenuItem) sender).Parent).PlacementTarget;
-            var details = new TransferDetails(listBox, this, _settings);
+            var details = new TransferDetails(listBox, this, Settings);
 
             if (details.OppositeFolderExists)
             {
@@ -226,11 +214,11 @@ namespace anime_downloader.Views
             var episode = listBox.SelectedItems.Cast<AnimeFile>().FirstOrDefault();
             if (episode != null)
             {
-                var anime = Anime.Closest.To(episode, _settings);
+                var anime = Anime.Closest.To(episode, Settings);
                 if (anime != null)
-                    _mainWindow.AnimeDetails_Single(anime);
+                    MainWindow.Window.ChangeDisplay<AnimeDetails>().Load(anime);
                 else
-                    MainWindow.Alert($"No anime profile found for {episode.Name}.");
+                    HelperMethods.Alert($"No anime profile found for {episode.Name}.");
             }
         }
 
@@ -294,6 +282,7 @@ namespace anime_downloader.Views
 
             public ListDetails(IFrameworkInputElement listbox, Manage window)
             {
+
                 if (listbox.Name.Equals(nameof(UnwatchedList)))
                 {
                     Current = window.Unwatched;
@@ -301,6 +290,7 @@ namespace anime_downloader.Views
                     Other = window.Watched;
                     OtherWindow = window.WatchedWindow;
                 }
+
                 else
                 {
                     Current = window.Watched;
@@ -308,8 +298,12 @@ namespace anime_downloader.Views
                     Other = window.Unwatched;
                     OtherWindow = window.UnwatchedWindow;
                 }
+
             }
         }
-        
+
+        private void Unwatched_OnMouseUp(object sender, MouseButtonEventArgs e) => Process.Start(Settings.Paths.EpisodeDirectory);
+
+        private void Watched_OnMouseUp(object sender, MouseButtonEventArgs e) => Process.Start(Settings.Paths.WatchedDirectory);
     }
 }

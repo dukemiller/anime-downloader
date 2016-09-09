@@ -51,6 +51,8 @@ namespace anime_downloader.Classes.Xml
         /// </summary>
         public IEnumerable<Anime> AiringAndWatching => Animes.Where(a => a.Airing && a.Status == "Watching");
 
+        public IEnumerable<Anime> NeedsUpdates => Animes.Where(a => a.MyAnimeList.NeedsUpdating && !a.Status.Equals("On Hold"));
+
         /// <summary>
         ///     A flag that will save any change in the xml schema as soon as it happens.
         /// </summary>

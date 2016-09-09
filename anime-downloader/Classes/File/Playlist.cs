@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using anime_downloader.Enums;
 
 namespace anime_downloader.Classes.File
 {

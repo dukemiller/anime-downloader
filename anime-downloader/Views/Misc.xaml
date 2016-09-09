@@ -33,45 +33,46 @@
                         <Label Content="For every anime that is airing and being watched ..."/>
                         <Label Content="--- Set current episode to the LAST found episode in ..." Padding="0" />
 
-                        <RadioButton Name="LastWatchedRadio" Style="{DynamicResource RadioButtonStyle}" KeyDown="Radio_KeyDown">
+                        <RadioButton Name="LastWatched" Style="{DynamicResource RadioButtonStyle}" KeyDown="Radio_KeyDown">
                             <TextBlock TextWrapping="Wrap" Margin="10,0,0,0" >Watched folder</TextBlock>
                         </RadioButton>
 
-                        <RadioButton Name="LastUnwatchedRadio" Style="{DynamicResource RadioButtonStyle}" KeyDown="Radio_KeyDown">
+                        <RadioButton Name="LastUnwatched" Style="{DynamicResource RadioButtonStyle}" KeyDown="Radio_KeyDown">
                             <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Episodes folder</TextBlock>
                         </RadioButton>
 
-                        <RadioButton Name="LastAnyRadio" Style="{DynamicResource RadioButtonStyle}" KeyDown="Radio_KeyDown">
+                        <RadioButton Name="LastAny" Style="{DynamicResource RadioButtonStyle}" KeyDown="Radio_KeyDown">
                             <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Any folder</TextBlock>
                         </RadioButton>
 
                         <Label Content="--- Set current episode to the FIRST found episode in ..." Padding="0"/>
 
-                        <RadioButton Name="FirstWatchedRadio" Style="{DynamicResource RadioButtonStyle}" KeyDown="Radio_KeyDown">
+                        <RadioButton Name="FirstWatched" Style="{DynamicResource RadioButtonStyle}" KeyDown="Radio_KeyDown">
                             <TextBlock TextWrapping="Wrap" Margin="10,0,0,0" >Any folder</TextBlock>
                         </RadioButton>
 
                         <Label Content="---" Padding="0"/>
 
-                        <RadioButton Name="ZeroRadio" KeyDown="Radio_KeyDown" Style="{DynamicResource RadioButtonStyle}">
+                        <RadioButton Name="Zero" KeyDown="Radio_KeyDown" Style="{DynamicResource RadioButtonStyle}">
                             <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode to zero</TextBlock>
                         </RadioButton>
 
-                        <RadioButton Name="DuplicatesRadio" KeyDown="Radio_KeyDown" Style="{DynamicResource RadioButtonStyle}">
+                        <RadioButton Name="Duplicates" KeyDown="Radio_KeyDown" Style="{DynamicResource RadioButtonStyle}">
                             <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Move any found duplicates to "My Videos" folder</TextBlock>
                         </RadioButton>
 
-                        <RadioButton Name="MarkCompleteRadio" KeyDown="Radio_KeyDown" Style="{DynamicResource RadioButtonStyle}">
+                        <RadioButton Name="MarkComplete" KeyDown="Radio_KeyDown" Style="{DynamicResource RadioButtonStyle}">
                             <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Change status of animes that you have downloaded every episode for as complete</TextBlock>
                         </RadioButton>
 
-                        <RadioButton Name="SearchMoreRadio" KeyDown="Radio_KeyDown" Style="{DynamicResource RadioButtonStyle}">
+                        <RadioButton Name="SearchMore" KeyDown="Radio_KeyDown" Style="{DynamicResource RadioButtonStyle}">
                             <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Regather data for any show that has no total episodes</TextBlock>
                         </RadioButton> 
                     </StackPanel>
                 </GroupBox>
             </StackPanel>
             <Button x:Name="ButtonSubmit" Grid.Row="1" Content="Submit"
+                    Click ="ButtonSubmit_OnClick"
                     Style="{DynamicResource ConfirmationButtonStyle}" HorizontalAlignment="Right" />
         </Grid>
     </Grid>
