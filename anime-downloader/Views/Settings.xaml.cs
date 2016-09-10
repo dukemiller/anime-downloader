@@ -1,7 +1,11 @@
-﻿using System.IO;
+﻿using System.ComponentModel;
+using System.IO;
+using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Controls;
 using anime_downloader.Classes;
 using System.Windows.Input;
+using anime_downloader.Annotations;
 using anime_downloader.Enums;
 
 namespace anime_downloader.Views
@@ -9,7 +13,7 @@ namespace anime_downloader.Views
     /// <summary>
     ///     Interaction logic for Settings.xaml
     /// </summary>
-    public partial class Settings
+    public sealed partial class Settings : INotifyPropertyChanged
     {
         private Classes.Settings _settings;
 
@@ -79,11 +83,49 @@ namespace anime_downloader.Views
                     MainWindow.Window.InitializeSettings();
                 }
             }
+
+            if (UnsavedChanges)
+                UnsavedChanges = false;
         }
 
         private void AlwaysTrayCheckbox_OnClick(object sender, RoutedEventArgs e)
         {
             MainWindow.Window.Tray.CheckVisibility();
         }
+
+        // Saved changes notification
+
+        private void Textbox_OnPreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (!UnsavedChanges)
+                UnsavedChanges = true;
+        }
+
+        private void Checkbox_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (!UnsavedChanges)
+                UnsavedChanges = true;
+        }
+        
+        private static bool _unsavedChanges;
+
+        public bool UnsavedChanges
+        {
+            get { return _unsavedChanges; }
+            set
+            {
+                _unsavedChanges = value;
+                OnPropertyChanged(nameof(UnsavedChanges));
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        
     }
 }

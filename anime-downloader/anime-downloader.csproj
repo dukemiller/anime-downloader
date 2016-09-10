@@ -99,6 +99,7 @@
     <Compile Include="Classes\Xml\Schema.cs" />
     <Compile Include="Classes\Xml\Verify.cs" />
     <Compile Include="Enums\AnimeStatus.cs" />
+    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Views\AnimeDetails.xaml.cs">
       <DependentUpon>AnimeDetails.xaml</DependentUpon>
     </Compile>
