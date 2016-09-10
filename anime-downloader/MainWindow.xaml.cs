@@ -294,7 +294,7 @@ namespace anime_downloader
                 error += "Your uTorrent.exe path seems to be wrong.";
 
             if (error.Length > 0)
-                HelperMethods.Alert(error);
+                Methods.Alert(error);
 
             return error.Length == 0;
         }

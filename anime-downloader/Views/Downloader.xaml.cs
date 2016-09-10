@@ -65,7 +65,7 @@ namespace anime_downloader.Views
                 TextBox.WriteLine(">> Nyaa is currently offline. Try checking later.");
             }
 
-            HelperMethods.ClearFocusFrom(TextBox);
+            Methods.ClearFocusFrom(TextBox);
             MainWindow.Window.ToggleButtons();
         }
         

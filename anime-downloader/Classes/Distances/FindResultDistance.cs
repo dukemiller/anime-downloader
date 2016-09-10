@@ -34,7 +34,7 @@ namespace anime_downloader.Classes.Distances
             if (comparison.IsBlank())
                 return ArbitraryHighValue;
 
-            var distance = HelperMethods.LevenshteinDistance(comparison, Name);
+            var distance = Methods.LevenshteinDistance(comparison, Name);
             var array = comparison.ToLower().Trim().Split(' ').Distinct().ToArray();
             var relevance = (double) array.Count(a => NameSplit.Contains(a)) / array.Length;
             return distance * (2 - relevance);

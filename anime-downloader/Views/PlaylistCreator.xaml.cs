@@ -40,7 +40,7 @@ namespace anime_downloader.Views
 
                 if (_playlist.Length == 0)
                 {
-                    HelperMethods.Alert("No playlist created (no files were found in the episode folders).");
+                    Methods.Alert("No playlist created (no files were found in the episode folders).");
                 }
 
                 else
@@ -61,7 +61,7 @@ namespace anime_downloader.Views
 
                     await _playlist.Save();
 
-                    HelperMethods.Alert("Playlist created.");
+                    Methods.Alert("Playlist created.");
                 }
 
                 MainWindow.Window.Cycle(MainWindow.Window.Playlists);

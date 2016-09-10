@@ -67,7 +67,7 @@ namespace anime_downloader.Views
 
         private void UsageButton_OnClick(object sender, RoutedEventArgs e)
         {
-            HelperMethods.Alert("There are a few tricks and quirks to correctly use the synchronization: \n\n" +
+            Methods.Alert("There are a few tricks and quirks to correctly use the synchronization: \n\n" +
 
                              "1. Be partial against using any nicknames for the show, you have a higher chance " +
                              "of finding the show with original english or romaji.\n\n" +

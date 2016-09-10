@@ -53,7 +53,7 @@ namespace anime_downloader.Classes.File
         /// <summary>
         ///     The meta information stripped filename (no seeders, subgroups, etc)
         /// </summary>
-        public string StrippedFilename => HelperMethods.Strip(FileName);
+        public string StrippedFilename => Methods.Strip(FileName);
 
         /// <summary>
         ///     The path's filename, e.g. "C:/.../.../{anime.mp4}".

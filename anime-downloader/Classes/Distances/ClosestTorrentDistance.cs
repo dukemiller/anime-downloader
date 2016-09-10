@@ -18,7 +18,7 @@ namespace anime_downloader.Classes.Distances
             var animeName = nyaa.StrippedWithNoEpisode;
             var namesplit = animeName.ToLower().Trim().Split(' ').Distinct().ToArray();
             var groupsplit = comparison.Name.ToLower().Trim().Split(' ').Distinct().ToArray();
-            _distance = HelperMethods.LevenshteinDistance(animeName, comparison.Name);
+            _distance = Methods.LevenshteinDistance(animeName, comparison.Name);
             _relevance = (double) groupsplit.Count(a => namesplit.Contains(a)) / groupsplit.Length;
             Torrent = nyaa;
 

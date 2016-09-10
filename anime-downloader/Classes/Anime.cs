@@ -279,7 +279,7 @@ namespace anime_downloader.Classes
             var name = episodes
                 .Select(e => e.Name)
                 .Distinct()
-                .Select(e => new { Name = e, Distance = HelperMethods.LevenshteinDistance(Name, e) })
+                .Select(e => new { Name = e, Distance = Methods.LevenshteinDistance(Name, e) })
                 .OrderBy(e => e.Distance)
                 .First()
                 .Name;
@@ -377,7 +377,7 @@ namespace anime_downloader.Classes
             public static AnimeFile To(string name, IEnumerable<AnimeFile> animeEpisodes)
             {
                 return animeEpisodes
-                    .Select(a => new { Anime = a, Distance = HelperMethods.LevenshteinDistance(a.Name, name) })
+                    .Select(a => new { Anime = a, Distance = Methods.LevenshteinDistance(a.Name, name) })
                     .Where(ap => ap.Distance <= 10)
                     .OrderBy(ap => ap.Distance)
                     .FirstOrDefault()?.Anime;

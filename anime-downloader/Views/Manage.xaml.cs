@@ -218,7 +218,7 @@ namespace anime_downloader.Views
                 if (anime != null)
                     MainWindow.Window.ChangeDisplay<AnimeDetails>().Load(anime);
                 else
-                    HelperMethods.Alert($"No anime profile found for {episode.Name}.");
+                    Methods.Alert($"No anime profile found for {episode.Name}.");
             }
         }
 

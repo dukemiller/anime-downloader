@@ -6,7 +6,7 @@ using System.Windows.Input;
 
 namespace anime_downloader.Classes
 {
-    public static class HelperMethods
+    public static class Methods
     {
         /// <summary>
         ///     Compute the distance between two strings.

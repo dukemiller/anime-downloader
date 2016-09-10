@@ -111,9 +111,9 @@ namespace anime_downloader.Views
                     .Select(n => n.ToLower())
                     .ToList();
                 if (names.Distinct().Count() != names.Count)
-                    HelperMethods.Alert("Names have to be unique.");
+                    Methods.Alert("Names have to be unique.");
                 else if (MainWindow.Window.AllAnime.Select(a => a.Name.ToLower()).Intersect(names).Any())
-                    HelperMethods.Alert("A title entered already exists in the anime list.");
+                    Methods.Alert("A title entered already exists in the anime list.");
                 else
                 {
                     foreach (var name in names)

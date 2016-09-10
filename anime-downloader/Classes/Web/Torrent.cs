@@ -3,7 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using static anime_downloader.Classes.HelperMethods;
+using static anime_downloader.Classes.Methods;
 
 namespace anime_downloader.Classes.Web
 {

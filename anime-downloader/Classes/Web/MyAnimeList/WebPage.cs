@@ -32,7 +32,7 @@ namespace anime_downloader.Classes.Web.MyAnimeList
             if (link != null)
                 Process.Start(link.Attributes["href"].Value);
             else
-                HelperMethods.Alert("No results found.");
+                Methods.Alert("No results found.");
         }
     }
 }

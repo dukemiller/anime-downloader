@@ -75,7 +75,7 @@ namespace anime_downloader.Views
             else if (_viewMode == ViewMode.Adding)
             {
                 if (EpisodeTextbox.Empty() || TorrentTextbox.Empty() || UtorrentTextbox.Empty())
-                    HelperMethods.Alert("You must enter in the episode, torrent files and utorrent path information.");
+                    Methods.Alert("You must enter in the episode, torrent files and utorrent path information.");
                 else
                 {
                     _settings.Save();

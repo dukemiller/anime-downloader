@@ -52,7 +52,7 @@ namespace anime_downloader.Views
         private void Add(object sender, RoutedEventArgs routedEventArgs)
         {
             if (NameTextbox.Empty())
-                HelperMethods.Alert("There needs to be a name.");
+                Methods.Alert("There needs to be a name.");
             else
             {
                 var subgroup = SubgroupComboBox.Text;
@@ -90,7 +90,7 @@ namespace anime_downloader.Views
         private void Edit(object sender, RoutedEventArgs routedEventArgs)
         {
             if (NameTextbox.Empty())
-                HelperMethods.Alert("There needs to be a name.");
+                Methods.Alert("There needs to be a name.");
             else
             {
                 var subgroup = SubgroupComboBox.Text;
@@ -181,7 +181,7 @@ namespace anime_downloader.Views
             _currentlyEditedAnime.MyAnimeList.Synopsis = "";
             _currentlyEditedAnime.MyAnimeList.Title = "";
             _currentlyEditedAnime.MyAnimeList.Synonyms = "";
-            HelperMethods.Alert("Cleared all MyAnimeList data about this show.");
+            Methods.Alert("Cleared all MyAnimeList data about this show.");
             MalDockPanel.Visibility = Visibility.Hidden;
         }
 
@@ -200,7 +200,7 @@ namespace anime_downloader.Views
                 _currentlyEditedAnime.MyAnimeList.English = result.English;
                 _currentlyEditedAnime.MyAnimeList.Synopsis = result.Synopsis;
                 _currentlyEditedAnime.MyAnimeList.TotalEpisodes = result.TotalEpisodes;
-                HelperMethods.Alert("Updated any information about this show");
+                Methods.Alert("Updated any information about this show");
             }
 
             MainWindow.Window.ToggleButtons();
@@ -210,7 +210,7 @@ namespace anime_downloader.Views
         {
             var episode = MainWindow.Window.AnimeFileCollection.LastEpisodeOf(_currentlyEditedAnime);
             if (episode == null)
-                HelperMethods.Alert($"Episode {_currentlyEditedAnime.Episode} for '{_currentlyEditedAnime.Name}' not found in any directory.");
+                Methods.Alert($"Episode {_currentlyEditedAnime.Episode} for '{_currentlyEditedAnime.Name}' not found in any directory.");
             else
                 Process.Start($"{episode.Path}");
         }

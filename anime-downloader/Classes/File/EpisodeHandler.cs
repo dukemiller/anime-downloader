@@ -134,35 +134,35 @@ namespace anime_downloader.Classes.File
 
                 case "Duplicates":
                 {
-                    HelperMethods.Alert($"Moved {await MoveDuplicatesAsync()} files to duplicate folder.");
+                    Methods.Alert($"Moved {await MoveDuplicatesAsync()} files to duplicate folder.");
                     break;
                 }
 
                 case "LastWatched":
                 {
                     await SetToLastAsync(airingAnime, EpisodeStatus.Watched);
-                    HelperMethods.Alert("Reset episode order to last known in watched folder.");
+                    Methods.Alert("Reset episode order to last known in watched folder.");
                     break;
                 }
 
                 case "LastUnwatched":
                 {
                     await SetToLastAsync(airingAnime, EpisodeStatus.Unwatched);
-                    HelperMethods.Alert("Reset episode order to last known in episode folder.");
+                    Methods.Alert("Reset episode order to last known in episode folder.");
                     break;
                 }
 
                 case "LastAny":
                 {
                     await SetToLastAsync(airingAnime, EpisodeStatus.All);
-                    HelperMethods.Alert("Reset episode order to last known in any folder.");
+                    Methods.Alert("Reset episode order to last known in any folder.");
                     break;
                 }
 
                 case "FirstWatched":
                 {
                     await SetToFirstAsync(airingAnime, EpisodeStatus.All);
-                    HelperMethods.Alert("Reset episode count to first known episode.");
+                    Methods.Alert("Reset episode count to first known episode.");
                     break;
                 }
 
@@ -170,7 +170,7 @@ namespace anime_downloader.Classes.File
                 {
                     foreach (var anime in airingAnime)
                         anime.Episode = "00";
-                    HelperMethods.Alert("Reset episode count to zero.");
+                    Methods.Alert("Reset episode count to zero.");
                     break;
                 }
 
@@ -191,7 +191,7 @@ namespace anime_downloader.Classes.File
                     }
 
                     var result = names.Count > 0 ? string.Join(", ", names) : "no shows";
-                    HelperMethods.Alert($"Marked {result} as finished. ");
+                    Methods.Alert($"Marked {result} as finished. ");
                     break;
                 }
 
@@ -219,12 +219,12 @@ namespace anime_downloader.Classes.File
                     if (updated.Count > 0)
                     {
                         var updateResult = string.Join(", and ", updated);
-                        HelperMethods.Alert($"Updated total episodes for {updateResult}.");
+                        Methods.Alert($"Updated total episodes for {updateResult}.");
                     }
 
                     else
                     {
-                        HelperMethods.Alert($"No shows were updated for an attempted {animesMissingTotal.Count} shows.");
+                        Methods.Alert($"No shows were updated for an attempted {animesMissingTotal.Count} shows.");
                     }
 
                     break;

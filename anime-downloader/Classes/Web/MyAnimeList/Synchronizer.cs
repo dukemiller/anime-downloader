@@ -31,7 +31,7 @@ namespace anime_downloader.Classes.Web.MyAnimeList
                 if (!animeResults.Any())
                 {
                     // throw an error then skip
-                    HelperMethods.Alert($"1. Absolutely no matching names found for {anime.Title}.");
+                    Methods.Alert($"1. Absolutely no matching names found for {anime.Title}.");
                     return false;
                 }
             }
@@ -50,7 +50,7 @@ namespace anime_downloader.Classes.Web.MyAnimeList
                 if (result == null)
                 {
                     // throw an error then skip
-                    HelperMethods.Alert($"2. No partial matches found from matching names for {anime.Title}.");
+                    Methods.Alert($"2. No partial matches found from matching names for {anime.Title}.");
                     return false;
                 }
             }
@@ -84,7 +84,7 @@ namespace anime_downloader.Classes.Web.MyAnimeList
                     // if we've run out of episodes, games over
                     if (result == null)
                     {
-                        HelperMethods.Alert($"3. Episode mismatch and no new series match for {anime.Title}.\n" +
+                        Methods.Alert($"3. Episode mismatch and no new series match for {anime.Title}.\n" +
                               $"Given total: {total}, current episode: {anime.IntEpisode()}");
                         return false;
                     }
