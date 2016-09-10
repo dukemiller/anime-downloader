@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace anime_downloader.Classes
@@ -80,5 +81,53 @@ namespace anime_downloader.Classes
         ///     Display an alert message (currently a messagebox).
         /// </summary>
         public static void Alert(string msg = "") => MessageBox.Show(msg);
+
+        public static void AnimeRatingRules(TextBox textbox, TextCompositionEventArgs e)
+        {
+            if (textbox.Text.Any(c => !char.IsDigit(c)) || e.Text.Any(c => !char.IsDigit(c)) ||
+                e.Text.Length == 0 || e.Text.Trim().Equals(" ") || e.Text.IsBlank())
+            {
+                e.Handled = true;
+                return;
+            }
+
+            if (textbox.Text.Length == 0)
+                return;
+
+            var current = int.Parse(textbox.Text);
+            var adder = int.Parse(e.Text);
+
+            if (current == 10)
+            {
+                if (textbox.SelectionStart == 2)
+                {
+                    e.Handled = true;
+                    textbox.Text = $"{adder}";
+                    textbox.SelectionStart = 1;
+                }
+
+                else if (textbox.SelectedText.Length != textbox.Text.Length)
+                {
+                    e.Handled = true;
+                }
+            }
+
+            else
+            {
+                if (adder == 0)
+                {
+                    if (current == 1)
+                    {
+                        textbox.Text = "10";
+                        textbox.SelectionStart = 2;
+                        e.Handled = true;
+                        return;
+                    }
+                }
+                e.Handled = true;
+                textbox.Text = $"{adder}";
+                textbox.SelectionStart = 1;
+            }
+        }
     }
 }
