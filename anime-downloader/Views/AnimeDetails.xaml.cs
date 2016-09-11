@@ -102,15 +102,9 @@ namespace anime_downloader.Views
 
         // 
 
-        private void EpisodeTextbox_GotFocus(object sender, RoutedEventArgs e)
-        {
-            EpisodeTextbox.SelectAll();
-        }
+        private void EpisodeTextbox_GotFocus(object sender, RoutedEventArgs e) => EpisodeTextbox.SelectAll();
 
-        private void NameTextbox_GotFocus(object sender, RoutedEventArgs e)
-        {
-            NameTextbox.SelectAll();
-        }
+        private void NameTextbox_GotFocus(object sender, RoutedEventArgs e) => NameTextbox.SelectAll();
 
         private void EpisodeTextbox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
@@ -144,10 +138,7 @@ namespace anime_downloader.Views
                 NameTextbox.Focus();
         }
 
-        private void GotoMalButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            Process.Start($"http://myanimelist.net/anime/{_currentlyEditedAnime.MyAnimeList.Id}");
-        }
+        private void GotoMalButton_OnClick(object sender, RoutedEventArgs e) => Process.Start($"http://myanimelist.net/anime/{_currentlyEditedAnime.MyAnimeList.Id}");
 
         private void ClearMalButton_OnClick(object sender, RoutedEventArgs e)
         {

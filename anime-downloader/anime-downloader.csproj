@@ -65,8 +65,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Classes\Anime.cs" />
-    <Compile Include="Classes\Distances\ClosestStringDistance.cs" />
-    <Compile Include="Classes\Distances\ClosestTorrentDistance.cs" />
+    <Compile Include="Classes\Distances\StringDistance.cs" />
     <Compile Include="Classes\File\AnimeFile.cs" />
     <Compile Include="Classes\File\AnimeFileCollection.cs" />
     <Compile Include="Classes\File\EpisodeHandler.cs" />

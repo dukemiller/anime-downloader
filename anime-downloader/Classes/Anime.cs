@@ -336,9 +336,9 @@ namespace anime_downloader.Classes
         {
             var result = await Nyaa.GetTorrentsForAsync(this, NextEpisode());
             return result?
-                .Select(n => new ClosestTorrentDistance(n, this))
+                .Select(n => new StringDistance<Torrent>(n, n.StrippedWithNoEpisode, Name))
                 .Where(ctd => ctd.Distance <= 25)
-                .Select(ctd => ctd.Torrent);
+                .Select(ctd => ctd.Item);
         }
 
         /// <summary>
@@ -350,9 +350,9 @@ namespace anime_downloader.Classes
             public static Anime To(string name, IEnumerable<Anime> animes)
             {
                 return animes
-                    .Select(a => new ClosestStringDistance(name, a))
+                    .Select(a => new StringDistance<Anime>(a, name, a.Name))
                     .OrderBy(ap => ap.Distance)
-                    .FirstOrDefault()?.Anime;
+                    .FirstOrDefault()?.Item;
             }
 
             public static Anime To(string name, Settings settings)
@@ -363,10 +363,10 @@ namespace anime_downloader.Classes
             public static Anime To(AnimeFile individual, IEnumerable<Anime> animes)
             {
                 return animes
-                    .Select(a => new ClosestStringDistance(individual.Name, a))
+                    .Select(a => new StringDistance<Anime>(a, individual.Name, a.Name))
                     .Where(ap => ap.Distance <= 10)
                     .OrderBy(ap => ap.Distance)
-                    .FirstOrDefault()?.Anime;
+                    .FirstOrDefault()?.Item;
             }
 
             public static Anime To(AnimeFile animeFile, Settings settings)
