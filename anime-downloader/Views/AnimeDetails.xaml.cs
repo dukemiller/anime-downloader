@@ -45,7 +45,6 @@ namespace anime_downloader.Views
             };
 
             SubmitButton.Click += Add;
-            MainWindow.Window.Settings.Subgroups.ToList().ForEach(s => SubgroupComboBox.Items.Add(s));
             OpenLastButton.Visibility = Visibility.Hidden;
         }
 
