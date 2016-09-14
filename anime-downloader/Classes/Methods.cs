@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -51,17 +52,35 @@ namespace anime_downloader.Classes
         {
             var text = filename;
 
-            var phrases = (from Match match in Regex.Matches(text, @"\s?\[(.*?)\]|\((.*?)\)\s*")
-                select match.Groups[0].Value).ToList();
+            // Remove brackets and parenthesis
+            var phrases = Regex.Matches(text, @"\s?\[(.*?)\]|\((.*?)\)\s*")
+                .Cast<Match>()
+                .Select(match => match.Groups[0].Value)
+                .ToList();
+            text = new[] { ".mkv", ".mp4", ".avi" }.Union(phrases).Aggregate(text, (current, s) => current.Replace(s, ""));
 
-            phrases.ForEach(p => text = text.Replace(p, ""));
-
-            text = text.Replace("_", " ");
-            text = new[] { ".mkv", ".mp4", ".avi" }.Aggregate(text, (current, s) => current.Replace(s, ""));
+            // _ and . can be used for spaces for some subgroups, replace with spaces instead
+            text = new[] {"_", "."}.Aggregate(text, (current, s) => current.Replace(s, " "));
 
             if (removeEpisode)
-                text = String.Join("-", text.Split('-').Take(text.Split('-').Length - 1).ToArray());
-            
+            {
+                var regularEpisodePattern = Regex.Matches(text, @"\-\s[0-9]{1,}\s");            // Name {- #}
+                var namedEpisodePattern = Regex.Matches(text, @"[e|E]pisode\s[0-9]{1,}");       // Name {Episode #}
+
+                if (regularEpisodePattern.Count > 0)
+                {
+                    var split = text.Split('-');
+                    text = string.Join("-", split.Take(split.Length - 1));
+                }
+
+                else if (namedEpisodePattern.Count > 0)
+                {
+                    var value = namedEpisodePattern.Cast<Match>().Select(match => match.Groups[0].Value).ToList().First();
+                    text = text.Replace(value, "");
+                }
+                
+            }
+
             return Regex.Replace(text.Trim(), @"\s+", " ");
         }
 

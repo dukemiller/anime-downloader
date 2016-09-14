@@ -101,26 +101,26 @@ namespace anime_downloader.Classes.Web
                             n.Size > 5 &&
                             n.StrippedName.Contains(episode) &&
                             n.Seeders > 0);
-            
-            if (anime.MyAnimeList.HasId && anime.MyAnimeList.NameCollection.Any(c => c.Contains(episode)))
+
+            if (anime.NameCollection.Any(c => c.Contains(episode)))
             {
-                // To account for the case that a show contains a number (e.g. 12-sai - ep 12) that is relevant to the title 
-                // and or also might contain the year in case of rework/reboot (e.g. Berserk (2016)) 
-                // >> strip the year from the count
-                const string yearPattern = @"\(\d{4}\)";
+                // To account for the case that a show contains a number (e.g. 12-sai - ep 12) that is 
+                // relevant to the title and or also might contain the year in case of rework/reboot 
+                // (e.g. Berserk (2016)) 
+                const string fullYearPattern = @"\(\d{4}\)";
+                result = result?
+                    .Where(nyaa => nyaa.StrippedName.Split()
+                                       .Select(c => Regex.Replace(c, fullYearPattern, ""))
+                                       .Count(c => c.Contains(episode))
+                                   >= 2);
 
-                var replacedNames = anime.MyAnimeList.NameCollection.Select(c => Regex.Replace(c, yearPattern, ""));
+                /* TODO
+                 * This will fail in the case that there is a show with a name that contains the 
+                 * same string multiple times in the name, something like "12 Dogfighter 12 - 12"
+                */
 
-                var count = replacedNames
-                    .GroupBy(e => Regex.Matches(e, episode).Count)
-                    .OrderByDescending(e => e.Key)
-                    .FirstOrDefault()?.Key;
-
-                var aloneEpisodePattern = @"\D" + episode + @"\D";
-
-                result = result?.Where(n => Regex.Matches(n.Name, aloneEpisodePattern).Count == count + 1);
             }
-            
+
             return result?.OrderByDescending(n => n.Seeders);
         }
         

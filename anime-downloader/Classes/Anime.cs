@@ -287,6 +287,24 @@ namespace anime_downloader.Classes
             return episodes.Where(e => e.Name.Equals(name));
         }
 
+        public IEnumerable<string> NameCollection
+        {
+            get
+            {
+                IEnumerable<string> names;
+
+                if (MyAnimeList.HasId)
+                    names = new[] {MyAnimeList.English, MyAnimeList.Title}
+                        .Union(MyAnimeList.SynonymsSplit)
+                        .SelectMany(c => c.Split())
+                        .Distinct();
+                else
+                    names = Title.Split().Distinct();
+
+                return names.Where(c => c.Length > 0);
+            }  
+        } 
+
         public Web.MyAnimeList.FindResult ClosestMyAnimeListResult(IEnumerable<Web.MyAnimeList.FindResult> results)
         {
             var closestResults = results
@@ -460,10 +478,8 @@ namespace anime_downloader.Classes
             }
         }
 
-        private IEnumerable<string> SynonymsSplit => Synonyms.Split(';');
-
-        public IEnumerable<string> NameCollection => new[] {English, Title}.Union(SynonymsSplit);
-
+        public IEnumerable<string> SynonymsSplit => Synonyms.Split(';');
+        
         public bool NeedsUpdating
         {
             get { return bool.Parse(_root.Element("needs-updating")?.Value ?? bool.FalseString); }
