@@ -3,7 +3,7 @@
 
 vs/*
 packages/
-*DotSettings.user
+*DotSettings
 *.exe
 
 # User-specific files
