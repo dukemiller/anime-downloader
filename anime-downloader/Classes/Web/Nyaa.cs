@@ -79,7 +79,7 @@ namespace anime_downloader.Classes.Web
                                    .Replace("!", "%21")
                                    .Replace("'", "%27")
                                    .Replace("-", "%2D")
-                               + "+" + anime.Resolution + "+" + anime.NextEpisode();
+                               + "+" + anime.Resolution + "+" + episode;
             
             var url = new Uri("https://www.nyaa.se/?page=rss" +
                               $"&cats={EnglishTranslated}" + 
