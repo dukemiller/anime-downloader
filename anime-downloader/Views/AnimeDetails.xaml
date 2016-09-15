@@ -34,7 +34,7 @@
     <Grid d:DataContext="{d:DesignInstance Type=classes:Anime}">
         <Grid.Background>White</Grid.Background>
 
-        <Grid>
+        <Grid MouseDown="UIElement_OnMouseDown">
             <Grid.RowDefinitions>
                 <RowDefinition Height="5*" />
                 <RowDefinition Height="1*" />

@@ -215,16 +215,32 @@ namespace anime_downloader.Views
 
         private void AnimeDetails_OnKeyDown(object sender, KeyEventArgs e)
         {
+            // So you can type without changing the view
+            if (Keyboard.FocusedElement is TextBox || Keyboard.FocusedElement is PasswordBox)
+                return;
+
             if (e.Key == Key.Right)
+            {
                 GoToNext();
+                e.Handled = true;
+            }
             else if (e.Key == Key.Left)
+            {
                 GoToPrevious();
+                e.Handled = true;
+            }
         }
 
         private void AnimeDetails_OnLoaded(object sender, RoutedEventArgs e)
         {
             PreviewKeyDown += AnimeDetails_OnKeyDown;
             Focusable = true;
+            Focus();
+        }
+
+        private void UIElement_OnMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Keyboard.ClearFocus();
             Focus();
         }
     }
