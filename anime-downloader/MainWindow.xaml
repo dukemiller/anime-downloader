@@ -15,7 +15,7 @@
             <DoubleAnimation From="0.0" To="1.0" Duration="0:0:0.25" Storyboard.TargetProperty="Opacity" />
         </Storyboard>
     </Window.Resources>
-    <Grid x:Name="MainGrid">
+    <Grid>
         <Grid.Background>White</Grid.Background>
 
         <Grid.ColumnDefinitions>

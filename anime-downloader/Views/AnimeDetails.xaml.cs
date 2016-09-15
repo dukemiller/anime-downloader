@@ -102,6 +102,27 @@ namespace anime_downloader.Views
 
         // 
 
+        private void GoToNext()
+        {
+            var animes = MainWindow.Window.AnimeCollection.FilteredAndSorted().ToList();
+            var anime = animes.First(an => an.Name.Equals(_currentlyEditedAnime.Name));
+            var position = (animes.IndexOf(anime) + 1) % animes.Count;
+            MainWindow.Window.DisplayTransition();
+            MainWindow.Window.ChangeDisplay<AnimeDetails>().Load(animes.ElementAt(position));
+
+        }
+
+        private void GoToPrevious()
+        {
+            var animes = MainWindow.Window.AnimeCollection.FilteredAndSorted().ToList();
+            var anime = animes.First(an => an.Name.Equals(_currentlyEditedAnime.Name));
+            var position = animes.IndexOf(anime) - 1 >= 0 ? animes.IndexOf(anime) - 1 : animes.Count - 1;
+            MainWindow.Window.DisplayTransition();
+            MainWindow.Window.ChangeDisplay<AnimeDetails>().Load(animes.ElementAt(position));
+        }
+
+        // 
+
         private void EpisodeTextbox_GotFocus(object sender, RoutedEventArgs e) => EpisodeTextbox.SelectAll();
 
         private void NameTextbox_GotFocus(object sender, RoutedEventArgs e) => NameTextbox.SelectAll();
@@ -183,6 +204,21 @@ namespace anime_downloader.Views
                 Methods.Alert($"Episode {_currentlyEditedAnime.Episode} for '{_currentlyEditedAnime.Name}' not found in any directory.");
             else
                 Process.Start($"{episode.Path}");
+        }
+
+        private void AnimeDetails_OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Right)
+                GoToNext();
+            else if (e.Key == Key.Left)
+                GoToPrevious();
+        }
+
+        private void AnimeDetails_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            PreviewKeyDown += AnimeDetails_OnKeyDown;
+            Focusable = true;
+            Focus();
         }
     }
 }
