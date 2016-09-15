@@ -3,10 +3,18 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d"
+        Title="Anime Downloader"
+        Width="920"
+        Height="400"
+        Closing="MainWindow_OnClosing"
         ResizeMode="CanMinimize"
-        Title="Anime Downloader" Height="400" Width="920"
-        StateChanged="Window_StateChanged" Closing="MainWindow_OnClosing">
+        StateChanged="Window_StateChanged"
+        mc:Ignorable="d">
+    <Window.Resources>
+        <Storyboard x:Key="DisplayTransition">
+            <DoubleAnimation From="0.0" To="1.0" Duration="0:0:0.25" Storyboard.TargetProperty="Opacity" />
+        </Storyboard>
+    </Window.Resources>
     <Grid x:Name="MainGrid">
         <Grid.Background>White</Grid.Background>
 
@@ -15,7 +23,7 @@
             <ColumnDefinition Width="9*" />
         </Grid.ColumnDefinitions>
 
-        <Grid x:Name="ButtonContainerGrid" Column="0" Background="{StaticResource BackgroundColor}">
+        <Grid Background="{StaticResource BackgroundColor}" Column="0">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*" />
@@ -29,26 +37,53 @@
                     <RowDefinition Height="1*" />
                     <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
-                <RadioButton x:Name="Home" Grid.Row="0" Style="{DynamicResource LargeButtonStyle}" Content="Home"
-                             Click="Home_Click" IsChecked="True" />
-                <RadioButton x:Name="AnimeList" Grid.Row="1" Style="{DynamicResource LargeButtonStyle}"
-                             Content="Anime" Click="AnimeList_Click" />
-                <RadioButton x:Name="SettingsButton" Grid.Row="2" Style="{DynamicResource LargeButtonStyle}"
-                             Content="Settings" Click="Settings_Click" />
-                <RadioButton x:Name="Download" Grid.Row="3" Style="{DynamicResource LargeButtonStyle}"
-                             Content="Download" Click="Download_Click" />
-                <RadioButton x:Name="Manage" Grid.Row="4" Style="{DynamicResource LargeButtonStyle}"
-                             Content="Manage" Click="Manage_Click" />
-                <RadioButton x:Name="Playlists" Grid.Row="5" Style="{DynamicResource LargeButtonStyle}"
-                             Content="Playlists" Click="Playlists_Click" />
-                <RadioButton x:Name="Web" Grid.Row="6" Style="{DynamicResource LargeButtonStyle}" Content="Web"
-                             Click="Web_Click" />
-                <RadioButton x:Name="Misc" Grid.Row="7" Style="{DynamicResource LargeButtonStyle}" Content="Misc"
-                             Click="Misc_Click" />
+                <RadioButton x:Name="Home"
+                             Grid.Row="0"
+                             Click="Home_Click"
+                             Content="Home"
+                             IsChecked="True"
+                             Style="{DynamicResource LargeButtonStyle}" />
+                <RadioButton x:Name="AnimeList"
+                             Grid.Row="1"
+                             Click="AnimeList_Click"
+                             Content="Anime"
+                             Style="{DynamicResource LargeButtonStyle}" />
+                <RadioButton x:Name="SettingsButton"
+                             Grid.Row="2"
+                             Click="Settings_Click"
+                             Content="Settings"
+                             Style="{DynamicResource LargeButtonStyle}" />
+                <RadioButton x:Name="Download"
+                             Grid.Row="3"
+                             Click="Download_Click"
+                             Content="Download"
+                             Style="{DynamicResource LargeButtonStyle}" />
+                <RadioButton x:Name="Manage"
+                             Grid.Row="4"
+                             Click="Manage_Click"
+                             Content="Manage"
+                             Style="{DynamicResource LargeButtonStyle}" />
+                <RadioButton x:Name="Playlists"
+                             Grid.Row="5"
+                             Click="Playlists_Click"
+                             Content="Playlists"
+                             Style="{DynamicResource LargeButtonStyle}" />
+                <RadioButton x:Name="Web"
+                             Grid.Row="6"
+                             Click="Web_Click"
+                             Content="Web"
+                             Style="{DynamicResource LargeButtonStyle}" />
+                <RadioButton x:Name="Misc"
+                             Grid.Row="7"
+                             Click="Misc_Click"
+                             Content="Misc"
+                             Style="{DynamicResource LargeButtonStyle}" />
             </Grid>
         </Grid>
 
-        <Grid x:Name="Display" Margin="20,0,20,0" Column="1">
+        <Grid x:Name="Display"
+              Margin="20,0,20,0"
+              Column="1">
             <Grid.Background>White</Grid.Background>
         </Grid>
     </Grid>

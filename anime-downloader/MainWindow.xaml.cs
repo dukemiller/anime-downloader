@@ -8,6 +8,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 using anime_downloader.Classes;
 using anime_downloader.Classes.File;
 using anime_downloader.Classes.Xml;
@@ -271,6 +273,7 @@ namespace anime_downloader
             CurrentDisplay = new TView();
             Display.Children.Clear();
             Display.Children.Add(CurrentDisplay);
+            Display.BeginStoryboard((Storyboard)FindResource("DisplayTransition"));
             return (TView) CurrentDisplay;
         }
 
