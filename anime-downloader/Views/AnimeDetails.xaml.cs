@@ -45,7 +45,6 @@ namespace anime_downloader.Views
             };
 
             SubmitButton.Click += Add;
-            OpenLastButton.Visibility = Visibility.Hidden;
         }
 
         private void Add(object sender, RoutedEventArgs routedEventArgs)
@@ -109,7 +108,6 @@ namespace anime_downloader.Views
             var position = (animes.IndexOf(anime) + 1) % animes.Count;
             MainWindow.Window.DisplayTransition();
             MainWindow.Window.ChangeDisplay<AnimeDetails>().Load(animes.ElementAt(position));
-
         }
 
         private void GoToPrevious()
@@ -163,17 +161,26 @@ namespace anime_downloader.Views
 
         private void ClearMalButton_OnClick(object sender, RoutedEventArgs e)
         {
-            _currentlyEditedAnime.MyAnimeList.Id = "";
-            _currentlyEditedAnime.MyAnimeList.NeedsUpdating = true;
-            _currentlyEditedAnime.MyAnimeList.SeriesContinuationEpisode = "";
-            _currentlyEditedAnime.MyAnimeList.TotalEpisodes = "";
-            _currentlyEditedAnime.MyAnimeList.English = "";
-            _currentlyEditedAnime.MyAnimeList.Image = "";
-            _currentlyEditedAnime.MyAnimeList.Synopsis = "";
-            _currentlyEditedAnime.MyAnimeList.Title = "";
-            _currentlyEditedAnime.MyAnimeList.Synonyms = "";
-            Methods.Alert("Cleared all MyAnimeList data about this show.");
-            MalDockPanel.Visibility = Visibility.Hidden;
+            var response =
+                MessageBox.Show(
+                    "This will delete all MyAnimeList data about this show gottne from attempting to synchronize.\n" +
+                    "Are you sure?",
+                    "Confirmation",
+                    MessageBoxButton.YesNo);
+
+            if (response == MessageBoxResult.Yes)
+            {
+                _currentlyEditedAnime.MyAnimeList.Id = "";
+                _currentlyEditedAnime.MyAnimeList.NeedsUpdating = true;
+                _currentlyEditedAnime.MyAnimeList.SeriesContinuationEpisode = "";
+                _currentlyEditedAnime.MyAnimeList.TotalEpisodes = "";
+                _currentlyEditedAnime.MyAnimeList.English = "";
+                _currentlyEditedAnime.MyAnimeList.Image = "";
+                _currentlyEditedAnime.MyAnimeList.Synopsis = "";
+                _currentlyEditedAnime.MyAnimeList.Title = "";
+                _currentlyEditedAnime.MyAnimeList.Synonyms = "";
+                Methods.Alert("Cleared all MyAnimeList data about this show.");
+            }
         }
 
         private async void RefreshMalButton_OnClick(object sender, RoutedEventArgs e)

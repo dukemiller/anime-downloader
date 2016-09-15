@@ -134,4 +134,19 @@ namespace anime_downloader.Classes.Xaml
             return (Visibility) value == Visibility.Visible;
         }
     }
+
+    public class StringLengthVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return System.Convert.ToString(value).Length > 0 ? Visibility.Visible : Visibility.Hidden;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (Visibility) value == Visibility.Visible;
+        }
+    }
+
+
 }

@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using anime_downloader.Annotations;
 using anime_downloader.Classes.Distances;
 using anime_downloader.Classes.File;
 using anime_downloader.Classes.Web;
@@ -404,7 +407,7 @@ namespace anime_downloader.Classes
         
     }
 
-    public class MyAnimeListDetails
+    public class MyAnimeListDetails : INotifyPropertyChanged
     {
         private readonly XElement _root;
 
@@ -424,6 +427,7 @@ namespace anime_downloader.Classes
             set
             {
                 _root.Element("id")?.SetValue(value);
+                OnPropertyChanged();
                 _save();
             }
         }
@@ -540,6 +544,13 @@ namespace anime_downloader.Classes
             return successful ? episodes : 0;
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 
 }
