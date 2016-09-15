@@ -273,9 +273,11 @@ namespace anime_downloader
             CurrentDisplay = new TView();
             Display.Children.Clear();
             Display.Children.Add(CurrentDisplay);
-            Display.BeginStoryboard((Storyboard)FindResource("DisplayTransition"));
+            DisplayTransition();
             return (TView) CurrentDisplay;
         }
+
+        public void DisplayTransition() => Display.BeginStoryboard((Storyboard)FindResource("DisplayTransition"));
 
         /// <summary>
         ///     Throw an alert and return if there are any missing directories needed in the program.
