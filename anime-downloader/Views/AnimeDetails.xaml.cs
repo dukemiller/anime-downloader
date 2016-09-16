@@ -1,18 +1,44 @@
 ﻿using anime_downloader.Classes;
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Web;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using anime_downloader.Annotations;
 using anime_downloader.Classes.Web.MyAnimeList;
 
 namespace anime_downloader.Views
 {
-    public partial class AnimeDetails
+    public partial class AnimeDetails : INotifyPropertyChanged
     {
-        private Anime _currentlyEditedAnime;
+        private Anime _anime;
+
+        public Anime Anime
+        {
+            get { return _anime; }
+            set
+            {
+                _anime = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _buttonText;
+
+        public string ButtonText
+        {
+            get { return _buttonText; }
+            set
+            {
+                _buttonText = value;
+                OnPropertyChanged();
+            }
+            
+        }
 
         public AnimeDetails()
         {
@@ -24,10 +50,10 @@ namespace anime_downloader.Views
 
         public void Load(Anime anime)
         {
-            DataContext = anime;
-            SubmitButton.Content = "Edit";
+            Anime = anime;
+            ButtonText = "Edit";
             SubmitButton.Click += Edit;
-            _currentlyEditedAnime = anime;
+
             SubgroupComboBox.Text = anime.PreferredSubgroup != null && anime.PreferredSubgroup.Equals("")
                 ? "(None)"
                 : anime.PreferredSubgroup;
@@ -36,14 +62,14 @@ namespace anime_downloader.Views
         public void New()
         {
             // Default template
-            DataContext = new Anime
+            Anime = new Anime
             {
                 Episode = "00",
                 Status = "Watching",
                 Resolution = "720",
                 Airing = true
             };
-
+            ButtonText = "Add";
             SubmitButton.Click += Add;
         }
 
@@ -92,9 +118,9 @@ namespace anime_downloader.Views
             else
             {
                 var subgroup = SubgroupComboBox.Text;
-                _currentlyEditedAnime.PreferredSubgroup = subgroup.Equals("(None)") ? "" : subgroup;
-                if (_currentlyEditedAnime.Status.Equals("Finished") && _currentlyEditedAnime.Airing)
-                    _currentlyEditedAnime.Airing = false;
+                _anime.PreferredSubgroup = subgroup.Equals("(None)") ? "" : subgroup;
+                if (_anime.Status.Equals("Finished") && _anime.Airing)
+                    _anime.Airing = false;
                 MainWindow.Window.Cycle(MainWindow.Window.AnimeList);
             }
         }
@@ -104,7 +130,7 @@ namespace anime_downloader.Views
         private void GoToNext()
         {
             var animes = MainWindow.Window.AnimeCollection.FilteredAndSorted().ToList();
-            var anime = animes.First(an => an.Name.Equals(_currentlyEditedAnime.Name));
+            var anime = animes.First(an => an.Name.Equals(_anime.Name));
             var position = (animes.IndexOf(anime) + 1) % animes.Count;
             MainWindow.Window.DisplayTransition();
             MainWindow.Window.ChangeDisplay<AnimeDetails>().Load(animes.ElementAt(position));
@@ -113,7 +139,7 @@ namespace anime_downloader.Views
         private void GoToPrevious()
         {
             var animes = MainWindow.Window.AnimeCollection.FilteredAndSorted().ToList();
-            var anime = animes.First(an => an.Name.Equals(_currentlyEditedAnime.Name));
+            var anime = animes.First(an => an.Name.Equals(_anime.Name));
             var position = animes.IndexOf(anime) - 1 >= 0 ? animes.IndexOf(anime) - 1 : animes.Count - 1;
             MainWindow.Window.DisplayTransition();
             MainWindow.Window.ChangeDisplay<AnimeDetails>().Load(animes.ElementAt(position));
@@ -156,7 +182,7 @@ namespace anime_downloader.Views
                 NameTextbox.Focus();
         }
 
-        private void GotoMalButton_OnClick(object sender, RoutedEventArgs e) => Process.Start($"http://myanimelist.net/anime/{_currentlyEditedAnime.MyAnimeList.Id}");
+        private void GotoMalButton_OnClick(object sender, RoutedEventArgs e) => Process.Start($"http://myanimelist.net/anime/{_anime.MyAnimeList.Id}");
 
         private void ClearMalButton_OnClick(object sender, RoutedEventArgs e)
         {
@@ -169,15 +195,15 @@ namespace anime_downloader.Views
 
             if (response == MessageBoxResult.Yes)
             {
-                _currentlyEditedAnime.MyAnimeList.Id = "";
-                _currentlyEditedAnime.MyAnimeList.NeedsUpdating = true;
-                _currentlyEditedAnime.MyAnimeList.SeriesContinuationEpisode = "";
-                _currentlyEditedAnime.MyAnimeList.TotalEpisodes = "";
-                _currentlyEditedAnime.MyAnimeList.English = "";
-                _currentlyEditedAnime.MyAnimeList.Image = "";
-                _currentlyEditedAnime.MyAnimeList.Synopsis = "";
-                _currentlyEditedAnime.MyAnimeList.Title = "";
-                _currentlyEditedAnime.MyAnimeList.Synonyms = "";
+                _anime.MyAnimeList.Id = "";
+                _anime.MyAnimeList.NeedsUpdating = true;
+                _anime.MyAnimeList.SeriesContinuationEpisode = "";
+                _anime.MyAnimeList.TotalEpisodes = "";
+                _anime.MyAnimeList.English = "";
+                _anime.MyAnimeList.Image = "";
+                _anime.MyAnimeList.Synopsis = "";
+                _anime.MyAnimeList.Title = "";
+                _anime.MyAnimeList.Synonyms = "";
                 Methods.Alert("Cleared all MyAnimeList data about this show.");
             }
         }
@@ -186,17 +212,17 @@ namespace anime_downloader.Views
         {
             MainWindow.Window.ToggleButtons();
             var credentials = Api.GetCredentials(MainWindow.Window.Settings);
-            var animeResults = await Api.FindAsync(credentials, HttpUtility.UrlEncode(_currentlyEditedAnime.Title));
-            var result = animeResults.FirstOrDefault(r => r.Id.Equals(_currentlyEditedAnime.MyAnimeList.Id));
+            var animeResults = await Api.FindAsync(credentials, HttpUtility.UrlEncode(_anime.Title));
+            var result = animeResults.FirstOrDefault(r => r.Id.Equals(_anime.MyAnimeList.Id));
 
             if (result != null)
             {
-                _currentlyEditedAnime.MyAnimeList.Synopsis = result.Synopsis;
-                _currentlyEditedAnime.MyAnimeList.Image = result.Image;
-                _currentlyEditedAnime.MyAnimeList.Title = result.Title;
-                _currentlyEditedAnime.MyAnimeList.English = result.English;
-                _currentlyEditedAnime.MyAnimeList.Synopsis = result.Synopsis;
-                _currentlyEditedAnime.MyAnimeList.TotalEpisodes = result.TotalEpisodes;
+                _anime.MyAnimeList.Synopsis = result.Synopsis;
+                _anime.MyAnimeList.Image = result.Image;
+                _anime.MyAnimeList.Title = result.Title;
+                _anime.MyAnimeList.English = result.English;
+                _anime.MyAnimeList.Synopsis = result.Synopsis;
+                _anime.MyAnimeList.TotalEpisodes = result.TotalEpisodes;
                 Methods.Alert("Updated any information about this show");
             }
 
@@ -205,11 +231,7 @@ namespace anime_downloader.Views
 
         private void OpenLastButton_OnClick(object sender, RoutedEventArgs e)
         {
-            var episode = MainWindow.Window.AnimeFileCollection.LastEpisodeOf(_currentlyEditedAnime);
-            if (episode == null)
-                Methods.Alert($"Episode {_currentlyEditedAnime.Episode} for '{_currentlyEditedAnime.Name}' not found in any directory.");
-            else
-                Process.Start($"{episode.Path}");
+            Process.Start(Anime.LastEpisode.Path);
         }
 
         private void AnimeDetails_OnKeyDown(object sender, KeyEventArgs e)
@@ -247,11 +269,18 @@ namespace anime_downloader.Views
         {
             MainWindow.Window.ToggleButtons();
             var credentials = Api.GetCredentials(MainWindow.Window.Settings);
-            var id = await Synchronizer.GetId(_currentlyEditedAnime, credentials);
+            var id = await Synchronizer.GetId(_anime, credentials);
             var words = id ? "found" : "not found";
-            Methods.Alert($"MAL ID {words} for {_currentlyEditedAnime.Name}.");
+            Methods.Alert($"MAL ID {words} for {_anime.Name}.");
             MainWindow.Window.ToggleButtons();
         }
-        
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

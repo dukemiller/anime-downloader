@@ -85,6 +85,23 @@ namespace anime_downloader.Classes.Xaml
         }
     }
 
+    public class StringCompareVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (System.Convert.ToString(value).Equals(System.Convert.ToString(parameter)))
+            {
+                return Visibility.Visible;
+            }
+            return Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     /// <summary>
     ///     Returns a symbol from the bool value representing true and false
     /// </summary>
@@ -172,5 +189,18 @@ namespace anime_downloader.Classes.Xaml
             return (Visibility) value == Visibility.Collapsed;
         }
     }
-    
+
+    public class IsNullVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value != null ? Visibility.Visible : Visibility.Hidden;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
 }

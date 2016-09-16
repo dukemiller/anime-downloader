@@ -17,7 +17,6 @@ namespace anime_downloader.Classes
 {
     public class Anime
     {
-
         private readonly Settings _settings;
 
         /// <summary>
@@ -306,7 +305,9 @@ namespace anime_downloader.Classes
 
                 return names.Where(c => c.Length > 0);
             }  
-        } 
+        }
+
+        public AnimeFile LastEpisode => MainWindow.Window.AnimeFileCollection.LastEpisodeOf(this);
 
         public Web.MyAnimeList.FindResult ClosestMyAnimeListResult(IEnumerable<Web.MyAnimeList.FindResult> results)
         {

@@ -7,6 +7,7 @@
              xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
              d:DesignHeight="360"
              d:DesignWidth="680"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}"
              FocusVisualStyle="{x:Null}"
              Loaded="AnimeDetails_OnLoaded"
              mc:Ignorable="d">
@@ -15,6 +16,8 @@
         <xaml:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter" />
         <xaml:StringLengthVisibilityConverter x:Key="StringLengthVisibilityConverter" />
         <xaml:StringLengthVisibilityConverterNot x:Key="StringLengthVisibilityConverterNot" />
+        <xaml:StringCompareVisibilityConverter x:Key="StringCompareVisibilityConverter" />
+        <xaml:IsNullVisibilityConverter x:Key="IsNullVisibilityConverter" />
         <Style x:Key="RadioStyle" TargetType="{x:Type RadioButton}">
             <Setter Property="FontSize" Value="16" />
             <Setter Property="VerticalAlignment" Value="Center" />
@@ -33,7 +36,7 @@
             <Setter Property="FontFamily" Value="{StaticResource MainFont}" />
         </Style>
     </UserControl.Resources>
-    <Grid d:DataContext="{d:DesignInstance Type=classes:Anime}">
+    <Grid>
         <Grid.Background>White</Grid.Background>
 
         <Grid MouseDown="UIElement_OnMouseDown">
@@ -72,12 +75,11 @@
                              GotFocus="NameTextbox_GotFocus"
                              KeyDown="EnterApply"
                              Loaded="NameTextbox_OnLoaded"
-                             Text="{Binding Name}"
+                             Text="{Binding Anime.Name}"
                              TextWrapping="Wrap" />
 
                     <!--  Episode  -->
-                    <Label x:Name="EpisodeLabel"
-                           Grid.Row="1"
+                    <Label Grid.Row="1"
                            Grid.Column="0"
                            Content="Episode: "
                            Style="{StaticResource LabelStyle}"
@@ -91,7 +93,7 @@
                              GotFocus="EpisodeTextbox_GotFocus"
                              KeyDown="EnterApply"
                              PreviewTextInput="EpisodeTextbox_PreviewTextInput"
-                             Text="{Binding Episode}"
+                             Text="{Binding Anime.Episode}"
                              TextWrapping="Wrap" />
                 </Grid>
                 <Grid Grid.Row="1">
@@ -129,39 +131,34 @@
                                 <ColumnDefinition Width="1*" />
                             </Grid.ColumnDefinitions>
 
-                            <RadioButton x:Name="StatusFinishedRadio"
-                                         Grid.Column="0"
+                            <RadioButton Grid.Column="0"
                                          Content="Finished"
-                                         IsChecked="{Binding Path=Status,
+                                         IsChecked="{Binding Path=Anime.Status,
                                                              Converter={StaticResource StringCompareConverter},
                                                              ConverterParameter=Finished}"
                                          Style="{DynamicResource RadioStyle}" />
-                            <RadioButton x:Name="StatusWatchingRadio"
-                                         Grid.Column="1"
+                            <RadioButton Grid.Column="1"
                                          Content="Watching"
-                                         IsChecked="{Binding Path=Status,
+                                         IsChecked="{Binding Path=Anime.Status,
                                                              Converter={StaticResource StringCompareConverter},
                                                              ConverterParameter=Watching}"
                                          Style="{DynamicResource RadioStyle}" />
-                            <RadioButton x:Name="StatusOnHoldRadio"
-                                         Grid.Column="2"
+                            <RadioButton Grid.Column="2"
                                          Content="On Hold"
-                                         IsChecked="{Binding Path=Status,
+                                         IsChecked="{Binding Path=Anime.Status,
                                                              Converter={StaticResource StringCompareConverter},
                                                              ConverterParameter='On Hold'}"
                                          Style="{DynamicResource RadioStyle}" />
-                            <RadioButton x:Name="StatusDroppedRadio"
-                                         Grid.Column="3"
+                            <RadioButton Grid.Column="3"
                                          Content="Dropped"
-                                         IsChecked="{Binding Path=Status,
+                                         IsChecked="{Binding Path=Anime.Status,
                                                              Converter={StaticResource StringCompareConverter},
                                                              ConverterParameter=Dropped}"
                                          Style="{DynamicResource RadioStyle}" />
                         </Grid>
 
                         <!--  Resolution  -->
-                        <Label x:Name="ResolutionLabel"
-                               Grid.Row="1"
+                        <Label Grid.Row="1"
                                Grid.Column="0"
                                Content="Resolution: "
                                Style="{DynamicResource LabelStyle}"
@@ -175,32 +172,28 @@
                                 <ColumnDefinition Width="1*" />
                                 <ColumnDefinition Width="1*" />
                             </Grid.ColumnDefinitions>
-                            <RadioButton x:Name="Resolution480"
-                                         Grid.Column="0"
+                            <RadioButton Grid.Column="0"
                                          Content="480"
-                                         IsChecked="{Binding Path=Resolution,
+                                         IsChecked="{Binding Path=Anime.Resolution,
                                                              Converter={StaticResource StringCompareConverter},
                                                              ConverterParameter=480}"
                                          Style="{DynamicResource RadioStyle}" />
-                            <RadioButton x:Name="Resolution780"
-                                         Grid.Column="1"
+                            <RadioButton Grid.Column="1"
                                          Content="720"
-                                         IsChecked="{Binding Path=Resolution,
+                                         IsChecked="{Binding Path=Anime.Resolution,
                                                              Converter={StaticResource StringCompareConverter},
                                                              ConverterParameter=720}"
                                          Style="{DynamicResource RadioStyle}" />
-                            <RadioButton x:Name="Resolution1080"
-                                         Grid.Column="2"
+                            <RadioButton Grid.Column="2"
                                          Content="1080"
-                                         IsChecked="{Binding Path=Resolution,
+                                         IsChecked="{Binding Path=Anime.Resolution,
                                                              Converter={StaticResource StringCompareConverter},
                                                              ConverterParameter=1080}"
                                          Style="{DynamicResource RadioStyle}" />
                         </Grid>
 
                         <!--  Subgroup  -->
-                        <Label x:Name="SubgroupLabel"
-                               Grid.Row="2"
+                        <Label Grid.Row="2"
                                Grid.Column="0"
                                Content="Only from:"
                                Style="{DynamicResource LabelStyle}"
@@ -216,8 +209,7 @@
                         </ComboBox>
 
                         <!--  Rating  -->
-                        <Label x:Name="RatingLabel"
-                               Grid.Row="3"
+                        <Label Grid.Row="3"
                                Grid.Column="0"
                                Content="Rating: "
                                Style="{DynamicResource LabelStyle}"
@@ -232,11 +224,10 @@
                                  GotFocus="EpisodeTextbox_GotFocus"
                                  KeyDown="EnterApply"
                                  PreviewTextInput="RatingTextbox_PreviewTextInput"
-                                 Text="{Binding Rating}" />
+                                 Text="{Binding Anime.Rating}" />
 
                         <!--  Airing  -->
-                        <Label x:Name="AiringLabel"
-                               Grid.Row="4"
+                        <Label Grid.Row="4"
                                Grid.Column="0"
                                Content="Airing: "
                                Style="{DynamicResource LabelStyle}"
@@ -244,7 +235,7 @@
                         <CheckBox x:Name="AiringCheckbox"
                                   Grid.Row="4"
                                   Grid.Column="1"
-                                  IsChecked="{Binding Airing}"
+                                  IsChecked="{Binding Anime.Airing}"
                                   Style="{DynamicResource ValueStyle}" />
 
                         <!--  Name Strict  -->
@@ -256,7 +247,7 @@
                         <CheckBox x:Name="NameStrictCheckbox"
                                   Grid.Row="5"
                                   Grid.Column="1"
-                                  IsChecked="{Binding NameStrict}"
+                                  IsChecked="{Binding Anime.NameStrict}"
                                   Style="{DynamicResource ValueStyle}" />
                     </Grid>
                     <Grid Grid.Column="1">
@@ -273,9 +264,12 @@
                         Click="OpenLastButton_OnClick"
                         Content="Last episode"
                         Style="{DynamicResource ConfirmationButtonStyle}"
-                        Visibility="{Binding HasRating,
-                                             Converter={StaticResource BooleanVisibilityConverter}}" />
-                <DockPanel Margin="30,5" Background="Cyan">
+                        Visibility="{Binding Anime.LastEpisode,
+                                             Converter={StaticResource IsNullVisibilityConverter}}" />
+                
+                <DockPanel Margin="30,5" Background="Cyan" Visibility="{Binding ButtonText, 
+                                                                                Converter={StaticResource StringCompareVisibilityConverter}, 
+                                                                                ConverterParameter=Edit}" >
                     <Border Background="LightGray"
                             BorderBrush="Gray"
                             BorderThickness="2"
@@ -290,25 +284,25 @@
                                     Click="MalFind_OnClick"
                                     Content="Find ID"
                                     Style="{DynamicResource ConfirmationButtonStyle}"
-                                    Visibility="{Binding Path=MyAnimeList.Id,
+                                    Visibility="{Binding Path=Anime.MyAnimeList.Id,
                                                          Converter={StaticResource StringLengthVisibilityConverterNot}}" />
                             <Button Margin="5"
                                     Click="GotoMalButton_OnClick"
-                                    Content="Page"
+                                    Content="Open"
                                     Style="{DynamicResource ConfirmationButtonStyle}"
-                                    Visibility="{Binding Path=MyAnimeList.Id,
+                                    Visibility="{Binding Path=Anime.MyAnimeList.Id,
                                                          Converter={StaticResource StringLengthVisibilityConverter}}" />
                             <Button Margin="5"
                                     Click="RefreshMalButton_OnClick"
                                     Content="Refresh"
                                     Style="{DynamicResource ConfirmationButtonStyle}"
-                                    Visibility="{Binding Path=MyAnimeList.Id,
+                                    Visibility="{Binding Path=Anime.MyAnimeList.Id,
                                                          Converter={StaticResource StringLengthVisibilityConverter}}" />
                             <Button Margin="5"
                                     Click="ClearMalButton_OnClick"
                                     Content="Clear"
                                     Style="{DynamicResource ConfirmationButtonStyle}"
-                                    Visibility="{Binding Path=MyAnimeList.Id,
+                                    Visibility="{Binding Path=Anime.MyAnimeList.Id,
                                                          Converter={StaticResource StringLengthVisibilityConverter}}" />
                         </StackPanel>
                     </Border>
@@ -317,7 +311,7 @@
 
                 <Button x:Name="SubmitButton"
                         HorizontalAlignment="Right"
-                        Content="Add"
+                        Content="{Binding ButtonText}"
                         Style="{DynamicResource ConfirmationButtonStyle}" />
 
             </DockPanel>
