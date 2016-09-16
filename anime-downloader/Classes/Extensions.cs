@@ -4,19 +4,11 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using anime_downloader.Classes.Xml;
-using anime_downloader.Views;
 
 namespace anime_downloader.Classes
 {
     public static class Extensions
     {
-
-        public static string CommaJoined(this string[] array)
-        {
-            return string.Join(", ", array);
-        }
-
         public static IEnumerable<Anime> AiringAndWatching(this IEnumerable<Anime> animes)
         {
             return animes.Where(a => a.Airing && a.Status.Equals("Watching"));
@@ -103,15 +95,7 @@ namespace anime_downloader.Classes
                 GetAll(dependencyObject, collection);
             }
         }
-
-        // http://stackoverflow.com/a/14591148
-        public static string RemoveWhitespace(this string input)
-        {
-            return new string(input.ToCharArray()
-                .Where(c => !char.IsWhiteSpace(c))
-                .ToArray());
-        }
-
+        
         public static string OnlyLettersAndSpace(this string input)
         {
             return new string(input.ToCharArray()
