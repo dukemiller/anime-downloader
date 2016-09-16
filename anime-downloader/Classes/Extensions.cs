@@ -22,21 +22,6 @@ namespace anime_downloader.Classes
             return animes.Where(a => a.Airing && a.Status.Equals("Watching"));
         }
 
-        // TODO: Hey turn this into a real data binding instead of a fake one
-        /// <summary>
-        ///     "Refresh" the datacontext on the UI.
-        /// </summary>
-        public static void Refresh(this AnimeList animeList, AnimeCollection collection)
-        {
-            var anime = collection.Animes.ToList();
-            animeList.DataGrid.ItemsSource = collection.FilteredAndSorted();
-            animeList.StatsLabel.Content = $"{anime.Count} total animes. " +
-                                           $"{anime.Count(a => a.Airing && a.Status.Equals("Watching"))} airing/watching, " +
-                                           $"{anime.Count(a => a.Status.Equals("Finished"))} finished, " +
-                                           $"{anime.Count(a => a.Status.Equals("On Hold"))} on hold, " + 
-                                           $"{anime.Count(a => a.Status.Equals("Dropped"))} dropped.";
-        }
-
         /// <summary>
         ///     Check if the container is empty.
         /// </summary>

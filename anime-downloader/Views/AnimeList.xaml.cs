@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using anime_downloader.Annotations;
 using anime_downloader.Classes;
 
 namespace anime_downloader.Views
@@ -13,7 +16,7 @@ namespace anime_downloader.Views
     /// <summary>
     ///     Interaction logic for AnimeList.xaml
     /// </summary>
-    public partial class AnimeList
+    public partial class AnimeList : INotifyPropertyChanged
     {
         private readonly FindPopup _find;
 
@@ -21,10 +24,38 @@ namespace anime_downloader.Views
 
         private IEnumerable<Anime> SelectedAnimes() => DataGrid.SelectedCells.Select(c => c.Item).Cast<Anime>().Distinct();
 
+        public ObservableCollection<Anime> Animes { get; set; }
+
+        /// <summary>
+        ///     Hoopla to make the data binding in AnimeList
+        /// </summary>
+        private string _stats;
+
+        public string Stats
+        {
+            get { return _stats; }
+            set
+            {
+                _stats = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private static string CreateStats()
+        {
+            var anime = MainWindow.Window.AnimeCollection.Animes.ToList();
+            return $"{anime.Count} total animes. " +
+                    $"{anime.Count(a => a.Airing && a.Status.Equals("Watching"))} airing/watching, " +
+                    $"{anime.Count(a => a.Status.Equals("Finished"))} finished, " +
+                    $"{anime.Count(a => a.Status.Equals("On Hold"))} on hold, " +
+                    $"{anime.Count(a => a.Status.Equals("Dropped"))} dropped.";
+        }
+        
         public AnimeList()
         {
+            Animes = new ObservableCollection<Anime>(MainWindow.Window.AnimeCollection.FilteredAndSorted());
+            Stats = CreateStats();
             InitializeComponent();
-            this.Refresh(MainWindow.Window.AnimeCollection);
 
             // Clear these set by AnimeDetails && AnimeDetailsMultiple
             KeyDown -= KeyEscapeBack;
@@ -46,27 +77,27 @@ namespace anime_downloader.Views
         private void RelegateAnime()
         {
             DeleteProcedure(SelectedAnimes());
+            Stats = CreateStats();
             _find.Close();
-            this.Refresh(MainWindow.Window.AnimeCollection);
         }
 
-        private static void DeleteProcedure(IEnumerable<Anime> selectedAnime)
+        private void DeleteProcedure(IEnumerable<Anime> selectedAnime)
         {
             foreach (var anime in selectedAnime)
             {
-                if (!anime.Status.Equals("Dropped") && (anime.MyAnimeList.HasId || anime.IntEpisode() > 0 || anime.HasRating))
+                if (!anime.Status.Equals("Dropped") &&
+                    (anime.MyAnimeList.HasId || anime.IntEpisode() > 0 || anime.HasRating))
                     anime.Status = "Dropped";
                 else
+                {
                     MainWindow.Window.AnimeCollection.Remove(anime);
+                    Animes.Remove(anime);
+                }
             }
         }
 
         // Find
-
-        private void FindIcon_OnMouseEnter(object sender, MouseEventArgs e) => FindIcon.Opacity = 0.8;
-
-        private void FindIcon_OnMouseLeave(object sender, MouseEventArgs e) => FindIcon.Opacity = 1.0;
-
+        
         private void FindIcon_OnMouseDown(object sender, MouseButtonEventArgs e) => _find.Toggle();
 
         // 
@@ -76,7 +107,7 @@ namespace anime_downloader.Views
         private void FilterComboBox_OnDropDownClosed(object sender, EventArgs e)
         {
             MainWindow.Window.Settings.FilterBy = FilterComboBox.Text;
-            this.Refresh(MainWindow.Window.AnimeCollection);
+            Animes = new ObservableCollection<Anime>(MainWindow.Window.AnimeCollection.FilteredAndSorted());
             _find.Close();
         }
 
@@ -93,7 +124,6 @@ namespace anime_downloader.Views
             if (e.ChangedButton.Equals(MouseButton.XButton1))
                 MainWindow.Window.Cycle(MainWindow.Window.AnimeList);
         }
-
 
         // Datagrid
 
@@ -155,5 +185,12 @@ namespace anime_downloader.Views
         private void Add_OnClick(object sender, RoutedEventArgs e) => MainWindow.Window.ChangeDisplay<AnimeDetails>().New();
 
         private void AddMultiple_OnClick(object sender, RoutedEventArgs e) => MainWindow.Window.ChangeDisplay<AnimeDetailsMultiple>().New();
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }
