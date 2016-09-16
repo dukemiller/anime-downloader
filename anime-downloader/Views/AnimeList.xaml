@@ -8,6 +8,26 @@
              d:DesignWidth="680"
              Loaded="UserControl_Loaded"
              mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style x:Key="FindBox" TargetType="Rectangle">
+            <Setter Property="Width" Value="25"/>
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="Margin" Value="0, 0, 10, 0"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="RadiusX" Value="25"/>
+            <Setter Property="RadiusY" Value="25"/>
+            <Setter Property="Stroke" Value="Gray"/>
+            <Setter Property="StrokeThickness" Value="0.5"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Opacity" Value="0.8"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="False">
+                    <Setter Property="Opacity" Value="1.0"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
     <Grid>
         <Grid.Background>White</Grid.Background>
         <Grid.RowDefinitions>
@@ -87,19 +107,9 @@
                    VerticalContentAlignment="Center"
                    FontFamily="{StaticResource MainFont}"
                    FontSize="16" />
-            <Rectangle x:Name="FindIcon"
-                       Grid.Column="0"
-                       Width="25"
-                       Height="25"
-                       Margin="0, 0, 10, 0"
-                       HorizontalAlignment="Right"
-                       MouseDown="FindIcon_OnMouseDown"
-                       MouseEnter="FindIcon_OnMouseEnter"
-                       MouseLeave="FindIcon_OnMouseLeave"
-                       RadiusX="25"
-                       RadiusY="25"
-                       Stroke="Gray"
-                       StrokeThickness="0.5">
+            <Rectangle Grid.Column="0"
+                       Style="{StaticResource FindBox}"
+                       MouseDown="FindIcon_OnMouseDown">
                 <Rectangle.Fill>
                     <ImageBrush ImageSource="../Resources/Images/find.png" />
                 </Rectangle.Fill>
