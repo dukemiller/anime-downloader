@@ -13,6 +13,7 @@
         <xaml:KeyValueConverter x:Key="Converter" />
         <xaml:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter" />
         <xaml:StringLengthVisibilityConverter x:Key="StringLengthVisibilityConverter" />
+        <xaml:StringLengthVisibilityConverterNot x:Key="StringLengthVisibilityConverterNot" />
         <Style x:Key="RadioStyle" TargetType="{x:Type RadioButton}">
             <Setter Property="FontSize" Value="16" />
             <Setter Property="VerticalAlignment" Value="Center" />
@@ -274,33 +275,43 @@
                         Style="{DynamicResource ConfirmationButtonStyle}"
                         Visibility="{Binding HasRating,
                                              Converter={StaticResource BooleanVisibilityConverter}}" />
-                <DockPanel Margin="30,5"
-                           Background="Cyan"
-                           Visibility="{Binding Path=MyAnimeList.Id,
-                                                Converter={StaticResource StringLengthVisibilityConverter}}">
+                <DockPanel Margin="30,5" Background="Cyan">
                     <Border Background="LightGray"
                             BorderBrush="Gray"
                             BorderThickness="2"
                             CornerRadius="6"
                             DockPanel.Dock="Top">
 
-                        <StackPanel Orientation="Horizontal">
-                            <Label VerticalAlignment="Center" Content="MyAnimeList" />
-                            <Button Width="auto"
+                        <StackPanel Orientation="Horizontal" Width="Auto" >
+                            <Label VerticalAlignment="Center" Content="MyAnimeList" FontSize="16" />
+                            <Button 
+                                    Margin="5"
+                                    Click="MalFind_OnClick"
+                                    Content="Find ID"
+                                    Style="{DynamicResource ConfirmationButtonStyle}"
+                                    Visibility="{Binding Path=MyAnimeList.Id,
+                                                         Converter={StaticResource StringLengthVisibilityConverterNot}}" />
+                            <Button 
                                     Margin="5"
                                     Click="GotoMalButton_OnClick"
                                     Content="Page"
-                                    Style="{DynamicResource ConfirmationButtonStyle}" />
-                            <Button Width="auto"
+                                    Style="{DynamicResource ConfirmationButtonStyle}"
+                                    Visibility="{Binding Path=MyAnimeList.Id,
+                                                         Converter={StaticResource StringLengthVisibilityConverter}}" />
+                            <Button 
                                     Margin="5"
                                     Click="RefreshMalButton_OnClick"
                                     Content="Refresh"
-                                    Style="{DynamicResource ConfirmationButtonStyle}" />
-                            <Button Width="auto"
+                                    Style="{DynamicResource ConfirmationButtonStyle}"
+                                    Visibility="{Binding Path=MyAnimeList.Id,
+                                                         Converter={StaticResource StringLengthVisibilityConverter}}" />
+                            <Button 
                                     Margin="5"
                                     Click="ClearMalButton_OnClick"
                                     Content="Clear"
-                                    Style="{DynamicResource ConfirmationButtonStyle}" />
+                                    Style="{DynamicResource ConfirmationButtonStyle}"
+                                    Visibility="{Binding Path=MyAnimeList.Id,
+                                                         Converter={StaticResource StringLengthVisibilityConverter}}" />
                         </StackPanel>
                     </Border>
 

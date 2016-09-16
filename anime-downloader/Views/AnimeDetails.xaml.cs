@@ -142,7 +142,6 @@ namespace anime_downloader.Views
         private void RatingTextbox_PreviewTextInput(object sender, TextCompositionEventArgs e)
             => Methods.AnimeRatingRules(RatingTextbox, e);
 
-
         private void EnterApply(object sender, KeyEventArgs e)
         {
             if (e.Key != Key.Enter)
@@ -163,7 +162,7 @@ namespace anime_downloader.Views
         {
             var response =
                 MessageBox.Show(
-                    "This will delete all MyAnimeList data about this show gottne from attempting to synchronize.\n" +
+                    "This will delete all MyAnimeList data about this show received from attempting to synchronize.\n" +
                     "Are you sure?",
                     "Confirmation",
                     MessageBoxButton.YesNo);
@@ -243,5 +242,16 @@ namespace anime_downloader.Views
             Keyboard.ClearFocus();
             Focus();
         }
+
+        private async void MalFind_OnClick(object sender, RoutedEventArgs e)
+        {
+            MainWindow.Window.ToggleButtons();
+            var credentials = Api.GetCredentials(MainWindow.Window.Settings);
+            var id = await Synchronizer.GetId(_currentlyEditedAnime, credentials);
+            var words = id ? "found" : "not found";
+            Methods.Alert($"MAL ID {words} for {_currentlyEditedAnime.Name}.");
+            MainWindow.Window.ToggleButtons();
+        }
+        
     }
 }
