@@ -139,7 +139,7 @@ namespace anime_downloader.Classes.Xaml
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return System.Convert.ToString(value).Length > 0 ? Visibility.Visible : Visibility.Hidden;
+            return System.Convert.ToString(value).Length > 0 ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -147,6 +147,22 @@ namespace anime_downloader.Classes.Xaml
             return (Visibility) value == Visibility.Visible;
         }
     }
+
+    // Just the opposite of the above
+    public class StringLengthVisibilityConverterNot : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return System.Convert.ToString(value).Length > 0 ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (Visibility) value == Visibility.Collapsed;
+        }
+    }
+
+
 
 
 }
