@@ -7,6 +7,7 @@
              xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
              d:DesignHeight="360"
              d:DesignWidth="680"
+             FocusVisualStyle="{x:Null}"
              Loaded="AnimeDetails_OnLoaded"
              mc:Ignorable="d">
     <UserControl.Resources>
@@ -46,7 +47,7 @@
                     <RowDefinition Height="3*" />
                     <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
-                <Grid x:Name="TextboxGrid" Grid.Row="0">
+                <Grid Grid.Row="0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />
@@ -57,8 +58,8 @@
                     </Grid.ColumnDefinitions>
 
                     <!--  Name  -->
-                    <Label x:Name="NameLabel"
-                           Grid.Row="0"
+                    <Label
+                        Grid.Row="0"
                            Grid.Column="0"
                            Content="Name: "
                            Style="{StaticResource LabelStyle}"
