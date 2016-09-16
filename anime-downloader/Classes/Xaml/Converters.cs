@@ -108,20 +108,7 @@ namespace anime_downloader.Classes.Xaml
             return Math.Abs(System.Convert.ToDouble(value) - 1.0) < 0.01;
         }
     }
-
-    public class MalIdVisibilityConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return System.Convert.ToString(value).IsBlank() ? Visibility.Hidden : Visibility.Visible;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return (Visibility) value == Visibility.Visible;
-        }
-    }
-
+    
     public class BooleanVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -161,8 +148,5 @@ namespace anime_downloader.Classes.Xaml
             return (Visibility) value == Visibility.Collapsed;
         }
     }
-
-
-
-
+    
 }
