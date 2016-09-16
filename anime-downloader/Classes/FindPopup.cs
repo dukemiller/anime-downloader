@@ -36,7 +36,15 @@ namespace anime_downloader.Classes
                 _animeList.DataGrid.ItemsSource = result;
             };
 
+            MainWindow.Window.AnimeList.Click += CloseOnRepeatedView;
+
             return textbox;
+        }
+
+        private void CloseOnRepeatedView(object sender, RoutedEventArgs routedEventArgs)
+        {
+            Close();
+            MainWindow.Window.AnimeList.Click -= CloseOnRepeatedView;
         }
 
         private void Create()
@@ -95,6 +103,5 @@ namespace anime_downloader.Classes
             else
                 Close();
         }
-
     }
 }
