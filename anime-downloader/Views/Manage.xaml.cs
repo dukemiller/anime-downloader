@@ -113,10 +113,6 @@ namespace anime_downloader.Views
 
         }
 
-        private void MouseEnterItem(object sender, MouseEventArgs e) => ((Shape) sender).Opacity = 0.6;
-
-        private void MouseLeaveItem(object sender, MouseEventArgs e) => ((Shape) sender).Opacity = 1.0;
-
         private void Button_Move_Click(object sender, RoutedEventArgs e)
         {
             var listbox = (((((
