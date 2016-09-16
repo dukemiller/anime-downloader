@@ -11,7 +11,7 @@
              Loaded="AnimeDetails_OnLoaded"
              mc:Ignorable="d">
     <UserControl.Resources>
-        <xaml:KeyValueConverter x:Key="Converter" />
+        <xaml:StringCompareConverter x:Key="StringCompareConverter" />
         <xaml:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter" />
         <xaml:StringLengthVisibilityConverter x:Key="StringLengthVisibilityConverter" />
         <xaml:StringLengthVisibilityConverterNot x:Key="StringLengthVisibilityConverterNot" />
@@ -58,8 +58,7 @@
                     </Grid.ColumnDefinitions>
 
                     <!--  Name  -->
-                    <Label
-                        Grid.Row="0"
+                    <Label Grid.Row="0"
                            Grid.Column="0"
                            Content="Name: "
                            Style="{StaticResource LabelStyle}"
@@ -134,28 +133,28 @@
                                          Grid.Column="0"
                                          Content="Finished"
                                          IsChecked="{Binding Path=Status,
-                                                             Converter={StaticResource Converter},
+                                                             Converter={StaticResource StringCompareConverter},
                                                              ConverterParameter=Finished}"
                                          Style="{DynamicResource RadioStyle}" />
                             <RadioButton x:Name="StatusWatchingRadio"
                                          Grid.Column="1"
                                          Content="Watching"
                                          IsChecked="{Binding Path=Status,
-                                                             Converter={StaticResource Converter},
+                                                             Converter={StaticResource StringCompareConverter},
                                                              ConverterParameter=Watching}"
                                          Style="{DynamicResource RadioStyle}" />
                             <RadioButton x:Name="StatusOnHoldRadio"
                                          Grid.Column="2"
                                          Content="On Hold"
                                          IsChecked="{Binding Path=Status,
-                                                             Converter={StaticResource Converter},
+                                                             Converter={StaticResource StringCompareConverter},
                                                              ConverterParameter='On Hold'}"
                                          Style="{DynamicResource RadioStyle}" />
                             <RadioButton x:Name="StatusDroppedRadio"
                                          Grid.Column="3"
                                          Content="Dropped"
                                          IsChecked="{Binding Path=Status,
-                                                             Converter={StaticResource Converter},
+                                                             Converter={StaticResource StringCompareConverter},
                                                              ConverterParameter=Dropped}"
                                          Style="{DynamicResource RadioStyle}" />
                         </Grid>
@@ -180,21 +179,21 @@
                                          Grid.Column="0"
                                          Content="480"
                                          IsChecked="{Binding Path=Resolution,
-                                                             Converter={StaticResource Converter},
+                                                             Converter={StaticResource StringCompareConverter},
                                                              ConverterParameter=480}"
                                          Style="{DynamicResource RadioStyle}" />
                             <RadioButton x:Name="Resolution780"
                                          Grid.Column="1"
                                          Content="720"
                                          IsChecked="{Binding Path=Resolution,
-                                                             Converter={StaticResource Converter},
+                                                             Converter={StaticResource StringCompareConverter},
                                                              ConverterParameter=720}"
                                          Style="{DynamicResource RadioStyle}" />
                             <RadioButton x:Name="Resolution1080"
                                          Grid.Column="2"
                                          Content="1080"
                                          IsChecked="{Binding Path=Resolution,
-                                                             Converter={StaticResource Converter},
+                                                             Converter={StaticResource StringCompareConverter},
                                                              ConverterParameter=1080}"
                                          Style="{DynamicResource RadioStyle}" />
                         </Grid>
@@ -283,31 +282,29 @@
                             CornerRadius="6"
                             DockPanel.Dock="Top">
 
-                        <StackPanel Orientation="Horizontal" Width="Auto" >
-                            <Label VerticalAlignment="Center" Content="MyAnimeList" FontSize="16" />
-                            <Button 
-                                    Margin="5"
+                        <StackPanel Width="Auto" Orientation="Horizontal">
+                            <Label VerticalAlignment="Center"
+                                   Content="MyAnimeList"
+                                   FontSize="16" />
+                            <Button Margin="5"
                                     Click="MalFind_OnClick"
                                     Content="Find ID"
                                     Style="{DynamicResource ConfirmationButtonStyle}"
                                     Visibility="{Binding Path=MyAnimeList.Id,
                                                          Converter={StaticResource StringLengthVisibilityConverterNot}}" />
-                            <Button 
-                                    Margin="5"
+                            <Button Margin="5"
                                     Click="GotoMalButton_OnClick"
                                     Content="Page"
                                     Style="{DynamicResource ConfirmationButtonStyle}"
                                     Visibility="{Binding Path=MyAnimeList.Id,
                                                          Converter={StaticResource StringLengthVisibilityConverter}}" />
-                            <Button 
-                                    Margin="5"
+                            <Button Margin="5"
                                     Click="RefreshMalButton_OnClick"
                                     Content="Refresh"
                                     Style="{DynamicResource ConfirmationButtonStyle}"
                                     Visibility="{Binding Path=MyAnimeList.Id,
                                                          Converter={StaticResource StringLengthVisibilityConverter}}" />
-                            <Button 
-                                    Margin="5"
+                            <Button Margin="5"
                                     Click="ClearMalButton_OnClick"
                                     Content="Clear"
                                     Style="{DynamicResource ConfirmationButtonStyle}"

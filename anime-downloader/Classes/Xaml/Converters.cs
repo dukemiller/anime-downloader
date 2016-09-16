@@ -40,7 +40,7 @@ namespace anime_downloader.Classes.Xaml
     /// <summary>
     ///     Returns if value is equal to first given parameter.
     /// </summary>
-    public class KeyValueConverter : IValueConverter
+    public class StringCompareConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -54,6 +54,30 @@ namespace anime_downloader.Classes.Xaml
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (System.Convert.ToBoolean(value))
+            {
+                return parameter;
+            }
+            return null;
+        }
+    }
+
+    /// <summary>
+    ///     Returns if value is NOT equal to first given parameter.
+    /// </summary>
+    public class StringCompareConverterNot : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (!System.Convert.ToString(value).Equals(System.Convert.ToString(parameter)))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (!System.Convert.ToBoolean(value))
             {
                 return parameter;
             }
