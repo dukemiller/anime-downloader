@@ -4,26 +4,26 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
 
-        <!-- Brush Colors -->
+        <!--  Brush Colors  -->
         <SolidColorBrush x:Key="BackgroundColor" Color="#FF7FCEE4" />
         <SolidColorBrush x:Key="MouseOverColor" Color="#4D9BFF" />
         <SolidColorBrush x:Key="SelectedColor" Color="#348DFF" />
         <SolidColorBrush x:Key="PressedDownColor" Color="#3F92FE" />
         <SolidColorBrush x:Key="BorderColor" Color="#A1CAFF" />
 
-        <!-- Special Brush Colors -->
+        <!--  Special Brush Colors  -->
         <SolidColorBrush x:Key="SpecialBackgroundColor" Color="#10D910" />
         <SolidColorBrush x:Key="SpecialMouseOverColor" Color="#18B618" />
         <SolidColorBrush x:Key="SpecialSelectedColor" Color="#139E13" />
         <SolidColorBrush x:Key="SpecialPressedDownColor" Color="#0B8E0B" />
         <SolidColorBrush x:Key="SpecialBorderColor" Color="#2CF12C" />
 
-        <!-- Fonts -->
+        <!--  Fonts  -->
         <FontFamily x:Key="LargeButtonFont">Segoe UI Light</FontFamily>
         <FontFamily x:Key="MediumButtonFont">Segoe WP SemiLight</FontFamily>
         <FontFamily x:Key="MainFont">Yu Gothic UI Semilight</FontFamily>
 
-        <!-- Button Styles -->
+        <!--  Button Styles  -->
         <Style x:Key="LargeButtonStyle" TargetType="{x:Type ToggleButton}">
             <Setter Property="Template">
                 <Setter.Value>
@@ -63,9 +63,10 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
-                        <Border BorderBrush="{StaticResource BorderColor}" BorderThickness="2"
-                                Background="{TemplateBinding Background}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{StaticResource BorderColor}"
+                                BorderThickness="2">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5, 5" />
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
@@ -75,8 +76,9 @@
             <Setter Property="FontFamily" Value="{StaticResource MediumButtonFont}" />
             <Setter Property="FontSize" Value="18" />
             <Setter Property="Foreground" Value="Black" />
-            <Setter Property="Width" Value="80" />
-            <Setter Property="Height" Value="30" />
+            <Setter Property="Width" Value="auto" />
+            <Setter Property="Height" Value="auto" />
+            <Setter Property="VerticalAlignment" Value="Center" />
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Foreground" Value="White" />
@@ -91,9 +93,10 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
-                        <Border BorderBrush="{StaticResource BorderColor}" BorderThickness="2"
-                                Background="{TemplateBinding Background}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{StaticResource BorderColor}"
+                                BorderThickness="2">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5, 5" />
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
@@ -105,6 +108,7 @@
             <Setter Property="Foreground" Value="Black" />
             <Setter Property="Width" Value="auto" />
             <Setter Property="Height" Value="auto" />
+            <Setter Property="VerticalAlignment" Value="Center" />
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Foreground" Value="White" />
@@ -119,9 +123,10 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
-                        <Border BorderBrush="{StaticResource SpecialBorderColor}" BorderThickness="2"
-                                Background="{TemplateBinding Background}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{StaticResource SpecialBorderColor}"
+                                BorderThickness="2">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5, 5" />
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
@@ -133,6 +138,7 @@
             <Setter Property="Foreground" Value="Black" />
             <Setter Property="Width" Value="auto" />
             <Setter Property="Height" Value="auto" />
+            <Setter Property="VerticalAlignment" Value="Center" />
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Foreground" Value="White" />
