@@ -240,15 +240,18 @@ namespace anime_downloader.Views
             if (Keyboard.FocusedElement is TextBox || Keyboard.FocusedElement is PasswordBox)
                 return;
 
-            if (e.Key == Key.Right)
+            if (ButtonText.Equals("Edit"))
             {
-                GoToNext();
-                e.Handled = true;
-            }
-            else if (e.Key == Key.Left)
-            {
-                GoToPrevious();
-                e.Handled = true;
+                if (e.Key == Key.Right)
+                {
+                    GoToNext();
+                    e.Handled = true;
+                }
+                else if (e.Key == Key.Left)
+                {
+                    GoToPrevious();
+                    e.Handled = true;
+                }
             }
         }
 
