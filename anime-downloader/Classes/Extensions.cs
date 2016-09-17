@@ -45,13 +45,19 @@ namespace anime_downloader.Classes
             control.IsHitTestVisible ^= true;
         }
 
+        public static void Toggle(this IEnumerable<Control> controls)
+        {
+            foreach(var control in controls)
+                control.Toggle();
+        }
+
         /// <summary>
         ///     Toggle opacity and visibility of all buttons inside the MainWindow.
         /// </summary>
         public static void ToggleButtons(this MainWindow window)
         {
             foreach (var button in window.GetAll<ToggleButton>()) //.Union(window.GetAll<Button>(window)))
-                 button.Toggle();
+                button.Toggle();
             foreach (var button in window.GetAll<Button>()) //.Union(window.GetAll<Button>(window)))
                 button.Toggle();
         }
