@@ -44,10 +44,10 @@ namespace anime_downloader.Views
         private static string CreateStats()
         {
             var anime = MainWindow.Window.AnimeCollection.Animes.ToList();
-            return $"{anime.Count} total animes. " +
+            return $"{anime.Count} total. " +
                     $"{anime.Count(a => a.Airing && a.Status.Equals("Watching"))} airing/watching, " +
                     $"{anime.Count(a => a.Status.Equals("Finished"))} finished, " +
-                    $"{anime.Count(a => a.Status.Equals("On Hold"))} on hold, " +
+                    $"{anime.Count(a => a.Status.Equals("On Hold") || a.Status.Equals("Considering"))} on hold/considering, " +
                     $"{anime.Count(a => a.Status.Equals("Dropped"))} dropped.";
         }
         

@@ -65,7 +65,7 @@ namespace anime_downloader.Views
             Anime = new Anime
             {
                 Episode = "00",
-                Status = "Watching",
+                Status = "Considering",
                 Resolution = "720",
                 Airing = true
             };
@@ -79,34 +79,9 @@ namespace anime_downloader.Views
                 Methods.Alert("There needs to be a name.");
             else
             {
-                var subgroup = SubgroupComboBox.Text;
-                if (subgroup.Equals("(None)"))
-                    subgroup = "";
-
-                var episode = EpisodeTextbox.Text.Length > 0
-                    ? $"{int.Parse(EpisodeTextbox.Text):D2}"
-                    : "00";
-
-                var status = StatusContainerGrid.GetAll<RadioButton>()
-                    .First(radio => radio.IsChecked != null && radio.IsChecked.Value)
-                    .Content.ToString();
-
-                var resolution = ResolutionContainerGrid.GetAll<RadioButton>()
-                    .First(radio => radio.IsChecked != null && radio.IsChecked.Value)
-                    .Content.ToString();
-
-                MainWindow.Window.AnimeCollection.Add(new Anime
-                {
-                    Name = NameTextbox.Text,
-                    Episode = episode,
-                    Status = status,
-                    Resolution = resolution,
-                    Airing = AiringCheckbox.IsChecked ?? false,
-                    NameStrict = NameStrictCheckbox.IsChecked ?? false,
-                    PreferredSubgroup = subgroup,
-                    Rating = RatingTextbox.Text
-                });
-
+                Anime.PreferredSubgroup = Anime.PreferredSubgroup.Equals("(None)") ? "" : Anime.PreferredSubgroup;
+                Anime.Episode = Anime.Episode.Length > 0 ? $"{int.Parse(Anime.Episode):D2}" : "00";
+                MainWindow.Window.AnimeCollection.Add(Anime);
                 MainWindow.Window.AnimeList.Press();
             }
         }

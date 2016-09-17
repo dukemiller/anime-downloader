@@ -118,29 +118,48 @@
                         <ColumnDefinition Width="2*" />
                     </Grid.ColumnDefinitions>
 
-                    <Label x:Name="ResolutionLabel" Content="Resolution" Grid.Row="0" Grid.Column="0"
+                    <Label x:Name="ResolutionLabel"
+                           Grid.Row="0"
+                           Grid.Column="0"
+                           Content="Resolution"
                            Style="{DynamicResource LabelStyle}" />
-                    <ComboBox x:Name="ResolutionComboBox" Grid.Column="1" Grid.Row="0"
-                              VerticalContentAlignment="Center" Height="20" Width="120">
+                    <ComboBox x:Name="ResolutionComboBox"
+                              Grid.Row="0"
+                              Grid.Column="1"
+                              Width="120"
+                              Height="20"
+                              VerticalContentAlignment="Center">
                         <ComboBoxItem Content="" />
                         <ComboBoxItem Content="480" />
-                        <ComboBoxItem IsSelected="True" Content="720" />
+                        <ComboBoxItem Content="720" IsSelected="True" />
                         <ComboBoxItem Content="1080" />
                     </ComboBox>
 
-                    <Label x:Name="StatusLabel" Content="Status" Grid.Row="1" Grid.Column="0"
+                    <Label x:Name="StatusLabel"
+                           Grid.Row="1"
+                           Grid.Column="0"
+                           Content="Status"
                            Style="{DynamicResource LabelStyle}" />
-                    <ComboBox x:Name="StatusComboBox" Grid.Column="1" Grid.Row="1" VerticalContentAlignment="Center"
-                              Height="20" Width="120">
-                        <ComboBoxItem IsSelected="True" Content="Watching" />
+                    <ComboBox x:Name="StatusComboBox"
+                              Grid.Row="1"
+                              Grid.Column="1"
+                              Width="120"
+                              Height="20"
+                              VerticalContentAlignment="Center">
+                        <ComboBoxItem Content="Considering" />
+                        <ComboBoxItem Content="Watching" IsSelected="True" />
                         <ComboBoxItem Content="Finished" />
                         <ComboBoxItem Content="On Hold" />
                         <ComboBoxItem Content="Dropped" />
                     </ComboBox>
                 </Grid>
             </Grid>
-            <Button x:Name="SubmitButton" Content="Submit" Grid.Row="3" HorizontalAlignment="Right"
-                    Style="{DynamicResource ConfirmationButtonStyle}" Click="SubmitButton_OnClick" />
+            <Button x:Name="SubmitButton"
+                    Grid.Row="3"
+                    HorizontalAlignment="Right"
+                    Click="SubmitButton_OnClick"
+                    Content="Submit"
+                    Style="{DynamicResource ConfirmationButtonStyle}" />
         </Grid>
     </Grid>
 </UserControl>

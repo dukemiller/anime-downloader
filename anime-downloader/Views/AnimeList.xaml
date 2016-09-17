@@ -124,8 +124,9 @@
                 <ComboBoxItem Content="" IsSelected="True" />
                 <ComboBoxItem Content="Airing/Watching" />
                 <ComboBoxItem Content="Finished" />
-                <ComboBoxItem Content="Dropped" />
                 <ComboBoxItem Content="On Hold" />
+                <ComboBoxItem Content="Considering" />
+                <ComboBoxItem Content="Dropped" />
             </ComboBox>
         </Grid>
     </Grid>

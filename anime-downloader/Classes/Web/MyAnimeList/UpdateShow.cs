@@ -74,6 +74,10 @@ namespace anime_downloader.Classes.Web.MyAnimeList
                     status = "dropped";
                     break;
 
+                case "Considering":
+                    status = "plantowatch";
+                    break;
+
                 default:
                     status = "completed";
                     break;
