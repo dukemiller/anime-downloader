@@ -17,10 +17,10 @@
         <xaml:StringCompareVisibilityConverter x:Key="StringCompareVisibilityConverter" />
         <xaml:IsNullVisibilityConverter x:Key="IsNullVisibilityConverter" />
         <Style x:Key="NumberBoxStyle" TargetType="TextBox">
-            <Setter Property="Width" Value="40"/>
-            <Setter Property="HorizontalAlignment" Value="Left"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="FontSize" Value="18.667"/>
+            <Setter Property="Width" Value="40" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="18.667" />
         </Style>
         <Style x:Key="LabelStyle" TargetType="{x:Type Label}">
             <Setter Property="HorizontalAlignment" Value="Left" />
@@ -75,7 +75,7 @@
                              GotFocus="NameTextbox_GotFocus"
                              KeyDown="EnterApply"
                              Loaded="NameTextbox_OnLoaded"
-                             Text="{Binding Anime.Name}"/>
+                             Text="{Binding Anime.Name}" />
                 </Grid>
 
                 <Grid Grid.Row="1">
@@ -113,11 +113,11 @@
                         <TextBox x:Name="EpisodeTextbox"
                                  Grid.Row="0"
                                  Grid.Column="1"
-                                 Style="{DynamicResource NumberBoxStyle}"
                                  GotFocus="EpisodeTextbox_GotFocus"
                                  KeyDown="EnterApply"
                                  PreviewTextInput="EpisodeTextbox_PreviewTextInput"
-                                 Text="{Binding Anime.Episode}"/>
+                                 Style="{DynamicResource NumberBoxStyle}"
+                                 Text="{Binding Anime.Episode}" />
 
                         <!--  Status  -->
                         <Label Grid.Row="1"
@@ -174,10 +174,10 @@
                         <TextBox x:Name="RatingTextbox"
                                  Grid.Row="4"
                                  Grid.Column="1"
-                                 Style="{DynamicResource NumberBoxStyle}"
                                  GotFocus="EpisodeTextbox_GotFocus"
                                  KeyDown="EnterApply"
                                  PreviewTextInput="RatingTextbox_PreviewTextInput"
+                                 Style="{DynamicResource NumberBoxStyle}"
                                  Text="{Binding Anime.Rating}" />
 
                         <!--  Airing  -->
@@ -205,8 +205,8 @@
 
                     <Grid Grid.Column="1">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="6*"/>
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="6*" />
                         </Grid.ColumnDefinitions>
 
                         <Grid.RowDefinitions>
@@ -229,8 +229,7 @@
 
             <DockPanel Grid.Row="1">
 
-                <Button Width="auto"
-                        Click="OpenLastButton_OnClick"
+                <Button Click="OpenLastButton_OnClick"
                         Content="Last episode"
                         Style="{DynamicResource ConfirmationButtonStyle}"
                         Visibility="{Binding Anime.LastEpisode,
