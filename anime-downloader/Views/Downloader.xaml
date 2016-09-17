@@ -12,7 +12,7 @@
                  Background="#ECECEC"
                  BorderThickness="0"
                  FontFamily="Segoe UI Light"
-                 FontSize="16"
+                 FontSize="20"
                  IsReadOnly="True"
                  Text="{Binding Text}"
                  TextWrapping="Wrap"
