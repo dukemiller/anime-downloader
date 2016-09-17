@@ -66,7 +66,9 @@
                         <Border Background="{TemplateBinding Background}"
                                 BorderBrush="{StaticResource BorderColor}"
                                 BorderThickness="2">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5, 5" />
+                            <ContentPresenter Margin="5"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
@@ -96,7 +98,9 @@
                         <Border Background="{TemplateBinding Background}"
                                 BorderBrush="{StaticResource BorderColor}"
                                 BorderThickness="2">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5, 5" />
+                            <ContentPresenter Margin="5"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
@@ -126,7 +130,9 @@
                         <Border Background="{TemplateBinding Background}"
                                 BorderBrush="{StaticResource SpecialBorderColor}"
                                 BorderThickness="2">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5, 5" />
+                            <ContentPresenter Margin="5"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
