@@ -229,10 +229,7 @@ namespace anime_downloader.Views
             MainWindow.Window.ToggleButtons();
         }
 
-        private void OpenLastButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            Process.Start(Anime.LastEpisode.Path);
-        }
+        private void OpenLastButton_OnClick(object sender, RoutedEventArgs e) => Process.Start(Anime.LastEpisode.Path);
 
         private void AnimeDetails_OnKeyDown(object sender, KeyEventArgs e)
         {

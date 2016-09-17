@@ -87,7 +87,11 @@ namespace anime_downloader.Views
             {
                 if (!anime.Status.Equals("Dropped") &&
                     (anime.MyAnimeList.HasId || anime.IntEpisode() > 0 || anime.HasRating))
+                {
                     anime.Status = "Dropped";
+                    anime.Airing = false;
+                }
+
                 else
                 {
                     MainWindow.Window.AnimeCollection.Remove(anime);
