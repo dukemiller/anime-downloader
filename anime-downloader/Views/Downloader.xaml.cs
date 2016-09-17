@@ -1,8 +1,11 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
+using anime_downloader.Annotations;
 using anime_downloader.Classes;
 using anime_downloader.Classes.File;
 using anime_downloader.Classes.Web;
@@ -14,8 +17,20 @@ namespace anime_downloader.Views
     /// <summary>
     ///     Interaction logic for Downloader.xaml
     /// </summary>
-    public partial class Downloader
+    public partial class Downloader : INotifyPropertyChanged
     {
+        private string _text;
+
+        public string Text
+        {
+            get { return _text; }
+            set
+            {
+                _text = value;
+                OnPropertyChanged();
+            }
+        }
+
         public Downloader()
         {
             InitializeComponent();
@@ -23,16 +38,16 @@ namespace anime_downloader.Views
 
         public async void Logger()
         {
-            var text = ">> No downloads have been logged so far.";
+            Text = ">> No downloads have been logged so far.";
 
             if (File.Exists(Classes.Settings.LoggingFile))
             {
                 using (var reader = new StreamReader(Classes.Settings.LoggingFile))
-                    text = await reader.ReadToEndAsync();
-                text = string.Join("\n", text.Split('\n').Reverse().Skip(1));
+                {
+                    var data = await reader.ReadToEndAsync();
+                    Text = await Task.Run(() => string.Join("\n", data.Split('\n').Reverse().Skip(1)));
+                }
             }
-
-            TextBox.Text = text;
         }
 
         public async void Download(string choice)
@@ -153,5 +168,12 @@ namespace anime_downloader.Views
             TextBox.WriteLine(total > 0 ? $">> Found {total} anime downloads." : ">> No new anime found.");
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }
