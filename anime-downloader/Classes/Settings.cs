@@ -1,7 +1,10 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Xml.Linq;
+using anime_downloader.Annotations;
 using anime_downloader.Classes.Xml;
 
 namespace anime_downloader.Classes
@@ -271,7 +274,7 @@ namespace anime_downloader.Classes
 
     }
 
-    public class MyAnimeListLoginDetails
+    public class MyAnimeListLoginDetails : INotifyPropertyChanged
     {
         private readonly XElement _root;
 
@@ -286,6 +289,7 @@ namespace anime_downloader.Classes
             set
             {
                 _root.Element("username")?.SetValue(value);
+                OnPropertyChanged();
             }
         }
 
@@ -295,6 +299,7 @@ namespace anime_downloader.Classes
             set
             {
                 _root.Element("password")?.SetValue(value);
+                OnPropertyChanged();
             }
         }
 
@@ -310,8 +315,16 @@ namespace anime_downloader.Classes
             set
             {
                 _root.Element("works")?.SetValue(value);
+                OnPropertyChanged();
             }
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }
