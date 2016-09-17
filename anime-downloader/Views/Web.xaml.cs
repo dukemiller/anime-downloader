@@ -1,10 +1,14 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Web;
 using System.Windows;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using anime_downloader.Annotations;
 using anime_downloader.Classes;
 using anime_downloader.Classes.Web.MyAnimeList;
 
@@ -13,34 +17,53 @@ namespace anime_downloader.Views
     /// <summary>
     ///     Interaction logic for Web.xaml
     /// </summary>
-    public partial class Web
+    public partial class Web : INotifyPropertyChanged
     {
+
         private DateTime WaitDelay { get; set; } = DateTime.Now;
+
+        private bool _upToDate;
+
+        public bool UpToDate
+        {
+            get { return _upToDate; }
+            set
+            {
+                _upToDate = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private MyAnimeListLoginDetails _loginDetails;
+
+        public MyAnimeListLoginDetails LoginDetails
+        {
+            get { return _loginDetails; }
+            set
+            {
+                _loginDetails = value; 
+                OnPropertyChanged();
+            }
+        }
+
+        private string _syncText;
+
+        public string SyncText
+        {
+            get { return _syncText; }
+            set
+            {
+                _syncText = value;
+                OnPropertyChanged();
+            }
+        }
 
         public Web()
         {
+            UpToDate = !MainWindow.Window.AnimeCollection.NeedsUpdates.Any();
+            LoginDetails = MainWindow.Window.Settings.MyAnimeList;
+            SyncText = UpToDate ? "Synced" : "Sync";
             InitializeComponent();
-            UpToDate();
-        }
-
-        private void UpToDate()
-        {
-            // TODO: figure out how to add this to the datacontext later
-            var upToDate = !MainWindow.Window.AnimeCollection.Animes
-                .Any(a => a.MyAnimeList.NeedsUpdating && !a.Status.Equals("On Hold"));
-
-            SyncedUp.Content = upToDate ? "✓" : "✗";
-            SyncedUp.Foreground = upToDate ? Color.Green.ToBrush() : Color.Red.ToBrush();
-
-            if (MainWindow.Window.Settings.MyAnimeList.Works)
-            {
-                // Dont need to click sync if you're up to date
-                SyncButton.IsHitTestVisible = !upToDate;
-                SyncButton.Opacity = upToDate ? 0.6 : 1.0;
-            }
-
-            MyAnimeListGroupbox.DataContext = MainWindow.Window.Settings.MyAnimeList;
-
         }
 
         private void MyanimelistButton_Click(object sender, RoutedEventArgs e) => Process.Start("http://myanimelist.net/");
@@ -65,7 +88,9 @@ namespace anime_downloader.Views
             }
         }
 
-        private void UsageButton_OnClick(object sender, RoutedEventArgs e)
+        // 
+
+        private void UsageNotes_OnClick(object sender, RoutedEventArgs e)
         {
             Methods.Alert("There are a few tricks and quirks to correctly use the synchronization: \n\n" +
 
@@ -89,21 +114,9 @@ namespace anime_downloader.Views
             );
         }
 
-        private async void FirstResultButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            var text = SearchTextBox.Text.Trim();
-            if (text.Length > 0)
-            {
-                MainWindow.Window.ToggleButtons();
-                await WebPage.SearchAndOpenAsync(text);
-                MainWindow.Window.ToggleButtons();
-            }
-            
-        }
+        private void GotoProfile_OnClick(object sender, RoutedEventArgs e) => Process.Start($"http://myanimelist.net/profile/{UsernameTextbox.Text}");
 
-        private void ProfileButton_OnClick(object sender, RoutedEventArgs e) => Process.Start($"http://myanimelist.net/profile/{UsernameTextbox.Text}");
-
-        private void SearchButton_OnClick(object sender, RoutedEventArgs e)
+        private void Search_OnClick(object sender, RoutedEventArgs e)
         {
             var text = SearchTextBox.Text.Trim();
             if (text.Length > 0)
@@ -113,14 +126,26 @@ namespace anime_downloader.Views
             }
         }
 
-        private async void LoginButton_OnClick(object sender, RoutedEventArgs e)
+        private async void Search_FirstResult_OnClick(object sender, RoutedEventArgs e)
+        {
+            var text = SearchTextBox.Text.Trim();
+            if (text.Length > 0)
+            {
+                MainWindow.Window.GetAll<ToggleButton>().Toggle();
+                await WebPage.SearchAndOpenAsync(text);
+                MainWindow.Window.GetAll<ToggleButton>().Toggle();
+            }
+
+        }
+
+        private async void Login_OnClick(object sender, RoutedEventArgs e)
         {
             if (DateTime.Now < WaitDelay)
                 return;
 
             WaitDelay = DateTime.Now.AddSeconds(5);
             var credentials = Api.GetCredentials(MainWindow.Window.Settings);
-            var result = await Api.VerifyAsync(credentials);
+            var result = await Api.VerifyCredentialsAsync(credentials);
             var temp = MainWindow.Window.Settings.MyAnimeList.Works;
             MainWindow.Window.Settings.MyAnimeList.Works = result;
 
@@ -128,29 +153,22 @@ namespace anime_downloader.Views
                 MainWindow.Window.Cycle(MainWindow.Window.Web);
         }
 
-        private async void SyncButton_OnClick(object sender, RoutedEventArgs e)
+        private async void Sync_OnClick(object sender, RoutedEventArgs e)
         {
-            MainWindow.Window.ToggleButtons();
+            SyncText = "Syncing ...";
+            MainWindow.Window.GetAll<ToggleButton>().Toggle();
+            await Synchronizer.FullSynchronize();
+            MainWindow.Window.GetAll<ToggleButton>().Toggle();
+            UpToDate = !MainWindow.Window.AnimeCollection.NeedsUpdates.Any();
+            SyncText = UpToDate ? "Synced" : "Sync";
+        }
+        
+        public event PropertyChangedEventHandler PropertyChanged;
 
-            // Get credentials
-            var credentials = Api.GetCredentials(MainWindow.Window.Settings);
-
-            // for every anime that needs updating
-            foreach (var anime in MainWindow.Window.AnimeCollection.NeedsUpdates)
-            {
-                // if no id is found
-                if (anime.MyAnimeList.Id.IsBlank())
-                {
-                    if (await Synchronizer.GetId(anime, credentials))
-                        await Synchronizer.AddMal(anime, credentials);
-                }
-
-                else
-                    await Synchronizer.UpdateMal(anime, credentials);
-            }
-
-            MainWindow.Window.ToggleButtons();
-            MainWindow.Window.Cycle(MainWindow.Window.Web);
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

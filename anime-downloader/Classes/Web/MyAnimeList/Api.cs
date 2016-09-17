@@ -49,7 +49,7 @@ namespace anime_downloader.Classes.Web.MyAnimeList
             return new NetworkCredential(settings.MyAnimeList.Username, settings.MyAnimeList.Password);
         }
 
-        public static async Task<bool> VerifyAsync(ICredentials credentials)
+        public static async Task<bool> VerifyCredentialsAsync(ICredentials credentials)
         {
             const string url = ApiVerify;
             var handler = new HttpClientHandler { Credentials = credentials };

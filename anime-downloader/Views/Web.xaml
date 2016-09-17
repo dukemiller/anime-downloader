@@ -1,18 +1,19 @@
 ﻿<UserControl x:Class="anime_downloader.Views.Web"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:classes="clr-namespace:anime_downloader.Classes"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:ff="clr-namespace:anime_downloader.Classes.Xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
              d:DesignHeight="360"
              d:DesignWidth="680"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}"
              mc:Ignorable="d">
     <UserControl.Resources>
-        <xaml:BooleanSymbolConverter x:Key="WorksConverter" />
-        <xaml:BooleanColorConverter x:Key="ColorConverter" />
-        <xaml:BooleanOpacityConverter x:Key="OpacityConverter" />
+        <xaml:BooleanSymbolConverter x:Key="BooleanSymbolConverter" />
+        <xaml:BooleanColorConverter x:Key="BooleanColorConverter" />
+        <xaml:BooleanOpacityConverterNot x:Key="BooleanOpacityConverterNot" />
+        <xaml:BooleanOpacityConverter x:Key="BooleanOpacityConverter" />
+        <xaml:NotConverter x:Key="NotConverter" />
         <Style x:Key="BoxStyle" TargetType="{x:Type GroupBox}">
             <Setter Property="FontSize" Value="16" />
             <Setter Property="HorizontalAlignment" Value="Left" />
@@ -21,6 +22,13 @@
         <Style x:Key="FontStyle">
             <Setter Property="RadioButton.FontFamily" Value="{StaticResource MainFont}" />
         </Style>
+
+        <Style TargetType="Label">
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
+
     </UserControl.Resources>
     <Grid>
         <Grid.Background>White</Grid.Background>
@@ -39,13 +47,10 @@
             </TextBlock>
 
             <DockPanel Grid.Row="1">
-                <GroupBox x:Name="MyAnimeListGroupbox"
-                          d:DataContext="{d:DesignInstance classes:MyAnimeListLoginDetails}"
-                          Header="MyAnimeList"
-                          Style="{DynamicResource BoxStyle}">
+                <GroupBox Header="MyAnimeList" Style="{DynamicResource BoxStyle}">
                     <StackPanel Margin="3">
                         <DockPanel>
-                            <GroupBox x:Name="LoginGroupBox" Header="Sync">
+                            <GroupBox Header="Sync">
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="1*" />
@@ -57,82 +62,99 @@
                                         <ColumnDefinition Width="1*" />
                                         <ColumnDefinition Width="4*" />
                                     </Grid.ColumnDefinitions>
+
                                     <Label Grid.Row="0"
                                            Grid.Column="0"
                                            Content="Username: " />
+
                                     <TextBox x:Name="UsernameTextbox"
                                              Grid.Row="0"
                                              Grid.Column="1"
                                              VerticalAlignment="Center"
-                                             Text="{Binding Username}" />
+                                             Text="{Binding LoginDetails.Username}" />
+
                                     <Label Grid.Row="1"
                                            Grid.Column="0"
                                            Content="Password: " />
-                                    <PasswordBox x:Name="PasswordPasswordBox"
-                                                 Grid.Row="1"
+                                    <PasswordBox Grid.Row="1"
                                                  Grid.Column="1"
                                                  VerticalAlignment="Center"
                                                  xaml:PasswordBoxAssistant.BindPassword="True"
-                                                 xaml:PasswordBoxAssistant.BoundPassword="{Binding Path=Password,
+                                                 xaml:PasswordBoxAssistant.BoundPassword="{Binding Path=LoginDetails.Password,
                                                                                                    Mode=TwoWay,
                                                                                                    UpdateSourceTrigger=PropertyChanged}" />
 
                                     <Label Grid.Row="2"
                                            Grid.Column="0"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"
                                            Content="Logged in: " />
 
                                     <DockPanel Grid.Row="2" Grid.Column="1">
-                                        <Label x:Name="LoggedIn"
-                                               Content="{Binding Works,
-                                                                 Converter={StaticResource WorksConverter}}"
+                                        <Label HorizontalAlignment="Left"
+                                               VerticalAlignment="Center"
+                                               Content="{Binding LoginDetails.Works,
+                                                                 Converter={StaticResource BooleanSymbolConverter}}"
                                                FontSize="22"
-                                               Foreground="{Binding Works,
-                                                                    Converter={StaticResource ColorConverter}}" />
+                                               Foreground="{Binding LoginDetails.Works,
+                                                                    Converter={StaticResource BooleanColorConverter}}" />
                                     </DockPanel>
+
                                     <Label Grid.Row="3"
                                            Grid.Column="0"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"
                                            Content="Synced: " />
 
-                                    <DockPanel Grid.Row="3" Grid.Column="1">
-                                        <!--  Custom data context in code behind ...  -->
-                                        <Label x:Name="SyncedUp" FontSize="22" />
-                                        <DockPanel HorizontalAlignment="Right">
-                                            <Button x:Name="LoginButton"
-                                                    Margin="5"
-                                                    Click="LoginButton_OnClick"
-                                                    Style="{DynamicResource FeatureButtonStyle}">
-                                                <TextBlock Margin="5">Login</TextBlock>
-                                            </Button>
-                                            <Button x:Name="ProfileButton"
-                                                    Margin="5"
-                                                    Click="ProfileButton_OnClick"
-                                                    IsHitTestVisible="{Binding Works}"
-                                                    Opacity="{Binding Works,
-                                                                      Converter={StaticResource OpacityConverter}}"
-                                                    Style="{DynamicResource FeatureButtonStyle}">
-                                                <TextBlock Margin="5">Profile</TextBlock>
-                                            </Button>
-                                            <Button x:Name="SyncButton"
-                                                    Margin="5"
-                                                    Click="SyncButton_OnClick"
-                                                    IsHitTestVisible="{Binding Works}"
-                                                    Opacity="{Binding Works,
-                                                                      Converter={StaticResource OpacityConverter}}"
-                                                    Style="{DynamicResource SpecialButtonStyle}">
-                                                <TextBlock Margin="5">Sync</TextBlock>
-                                            </Button>
-                                        </DockPanel>
+                                    <DockPanel Grid.Row="3"
+                                               Grid.Column="1"
+                                               HorizontalAlignment="Stretch"
+                                               LastChildFill="false">
+                                        <DockPanel.Resources>
+                                            <Style x:Key="Normal"
+                                                   BasedOn="{StaticResource FeatureButtonStyle}"
+                                                   TargetType="Button">
+                                                <Setter Property="Margin" Value="5, 0" />
+                                                <Setter Property="DockPanel.Dock" Value="Right" />
+                                            </Style>
+                                            <Style x:Key="Special"
+                                                   BasedOn="{StaticResource SpecialButtonStyle}"
+                                                   TargetType="Button">
+                                                <Setter Property="Margin" Value="5, 0" />
+                                                <Setter Property="Width" Value="90" />
+                                                <Setter Property="DockPanel.Dock" Value="Right" />
+                                            </Style>
+                                        </DockPanel.Resources>
+
+                                        <Label Content="{Binding Path=UpToDate,
+                                                                 Converter={StaticResource BooleanSymbolConverter}}"
+                                               DockPanel.Dock="Left"
+                                               FontSize="22"
+                                               Foreground="{Binding Path=UpToDate,
+                                                                    Converter={StaticResource BooleanColorConverter}}" />
+
+                                        <Button x:Name="SyncButton"
+                                                Click="Sync_OnClick"
+                                                Content="{Binding SyncText}"
+                                                IsHitTestVisible="{Binding UpToDate,
+                                                                           Converter={StaticResource NotConverter}}"
+                                                Opacity="{Binding UpToDate,
+                                                                  Converter={StaticResource BooleanOpacityConverterNot}}"
+                                                Style="{StaticResource Special}" />
+
+                                        <Button Click="GotoProfile_OnClick"
+                                                Content="Profile"
+                                                IsHitTestVisible="{Binding LoginDetails.Works}"
+                                                Opacity="{Binding LoginDetails.Works,
+                                                                  Converter={StaticResource BooleanOpacityConverter}}"
+                                                Style="{StaticResource Normal}" />
+
+                                        <Button Click="Login_OnClick"
+                                                Content="Login"
+                                                Style="{StaticResource Normal}" />
+
                                     </DockPanel>
                                 </Grid>
                             </GroupBox>
                         </DockPanel>
-                        <GroupBox x:Name="SearchGroupBox"
-                                  Header="Search "
-                                  Style="{DynamicResource BoxStyle}">
+
+                        <GroupBox Header="Search " Style="{DynamicResource BoxStyle}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="2*" />
@@ -149,18 +171,15 @@
                                 <DockPanel Grid.Column="1" HorizontalAlignment="Left">
                                     <Button x:Name="SearchButton"
                                             Margin="5"
-                                            Click="SearchButton_OnClick"
+                                            Click="Search_OnClick"
+                                            Content="Search"
                                             KeyDown="SearchButton_KeyDown"
-                                            Style="{DynamicResource FeatureButtonStyle}">
-                                        <TextBlock Margin="5">Search</TextBlock>
-                                    </Button>
+                                            Style="{DynamicResource FeatureButtonStyle}" />
 
-                                    <Button x:Name="FirstResultButton"
-                                            Margin="5"
-                                            Click="FirstResultButton_OnClick"
-                                            Style="{DynamicResource FeatureButtonStyle}">
-                                        <TextBlock Margin="5">First Result</TextBlock>
-                                    </Button>
+                                    <Button Margin="5"
+                                            Click="Search_FirstResult_OnClick"
+                                            Content="First Result"
+                                            Style="{DynamicResource FeatureButtonStyle}" />
                                 </DockPanel>
                             </Grid>
                         </GroupBox>
@@ -168,38 +187,28 @@
                 </GroupBox>
 
                 <StackPanel>
-                    <GroupBox x:Name="WebButtonsGroupBox"
-                              Header="Launch Website"
-                              Style="{DynamicResource BoxStyle}">
+                    <GroupBox Header="Launch Website" Style="{DynamicResource BoxStyle}">
                         <StackPanel>
-                            <Button x:Name="MyanimelistButton"
-                                    Margin="5"
+                            <Button Margin="5"
                                     Click="MyanimelistButton_Click"
-                                    Style="{DynamicResource FeatureButtonStyle}">
-                                <TextBlock Margin="5">MyAnimeList</TextBlock>
-                            </Button>
-                            <Button x:Name="AnichartButton"
-                                    Margin="5"
+                                    Content="MyAnimeList"
+                                    Style="{DynamicResource FeatureButtonStyle}" />
+                            <Button Margin="5"
                                     Click="AnichartButton_Click"
-                                    Style="{DynamicResource FeatureButtonStyle}">
-                                <TextBlock Margin="5">Anichart</TextBlock>
-                            </Button>
-                            <Button x:Name="NyaaButton"
-                                    Margin="5"
+                                    Content="Anichart"
+                                    Style="{DynamicResource FeatureButtonStyle}" />
+                            <Button Margin="5"
                                     Click="NyaaButton_Click"
-                                    Style="{DynamicResource FeatureButtonStyle}">
-                                <TextBlock Margin="5">Nyaa</TextBlock>
-                            </Button>
+                                    Content="Nyaa"
+                                    Style="{DynamicResource FeatureButtonStyle}" />
                         </StackPanel>
                     </GroupBox>
                     <GroupBox VerticalAlignment="Bottom"
                               Header="Usage Notes"
                               Style="{DynamicResource BoxStyle}">
-                        <Button x:Name="UsageButton"
-                                Click="UsageButton_OnClick"
-                                Style="{DynamicResource FeatureButtonStyle}">
-                            <TextBlock Margin="5">Click me</TextBlock>
-                        </Button>
+                        <Button Click="UsageNotes_OnClick"
+                                Content="Click me"
+                                Style="{DynamicResource FeatureButtonStyle}" />
                     </GroupBox>
                 </StackPanel>
             </DockPanel>

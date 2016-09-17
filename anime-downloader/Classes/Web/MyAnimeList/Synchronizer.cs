@@ -125,8 +125,31 @@ namespace anime_downloader.Classes.Web.MyAnimeList
             anime.MyAnimeList.NeedsUpdating = false;
         }
 
-        public static async Task UpdateMal(Anime anime, ICredentials credentials) => await CallMalApi(anime, credentials, Api.UpdateAsync);
+        private static async Task UpdateMal(Anime anime, ICredentials credentials) => await CallMalApi(anime, credentials, Api.UpdateAsync);
 
-        public static async Task AddMal(Anime anime, ICredentials credentials) => await CallMalApi(anime, credentials, Api.AddAsync);
+        private static async Task AddMal(Anime anime, ICredentials credentials) => await CallMalApi(anime, credentials, Api.AddAsync);
+
+        // 
+
+        public static async Task FullSynchronize()
+        {
+            // Get credentials
+            var credentials = Api.GetCredentials(MainWindow.Window.Settings);
+
+            // for every anime that needs updating
+            foreach (var anime in MainWindow.Window.AnimeCollection.NeedsUpdates)
+            {
+                // if no id is found
+                if (anime.MyAnimeList.Id.IsBlank())
+                {
+                    if (await GetId(anime, credentials))
+                        await AddMal(anime, credentials);
+                }
+
+                else
+                    await UpdateMal(anime, credentials);
+            }
+        }
+
     }
 }

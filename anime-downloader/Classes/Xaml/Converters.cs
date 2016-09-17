@@ -149,7 +149,25 @@ namespace anime_downloader.Classes.Xaml
             return Math.Abs(System.Convert.ToDouble(value) - 1.0) < 0.01;
         }
     }
-    
+
+    /// <summary>
+    ///     Returns an opacity from the bool value.
+    /// </summary>
+    public class BooleanOpacityConverterNot : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return System.Convert.ToBoolean(value) ? 0.4 : 1.0;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return Math.Abs(System.Convert.ToDouble(value) - 1.0) < 0.01;
+        }
+    }
+
+
+
     public class BooleanVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
