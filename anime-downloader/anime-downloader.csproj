@@ -73,6 +73,7 @@
     <Compile Include="Classes\Extensions.cs" />
     <Compile Include="Classes\File\AnimeFileRange.cs" />
     <Compile Include="Classes\Distances\GroupFileDistance.cs" />
+    <Compile Include="Classes\AnimeDetails.cs" />
     <Compile Include="Classes\Web\MyAnimeList\WebPage.cs" />
     <Compile Include="Enums\EpisodeStatus.cs" />
     <Compile Include="Classes\File\Logger.cs" />

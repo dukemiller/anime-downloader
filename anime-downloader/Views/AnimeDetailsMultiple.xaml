@@ -3,16 +3,35 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
              d:DesignHeight="360"
              d:DesignWidth="680"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}"
              mc:Ignorable="d">
     <UserControl.Resources>
-        <Style x:Key="LabelStyle" TargetType="{x:Type Label}">
+        <xaml:ViewModeIsEditingBooleanConverter x:Key="ViewModeIsAddingConverterNot" />
+        <xaml:ViewModeIsEditingOpacityConverter x:Key="ViewModeOpacityConverterNot" />
+        <xaml:StringCompareConverter x:Key="StringCompareConverter" />
+        <Style TargetType="{x:Type Label}">
             <Setter Property="FontSize" Value="16" />
             <Setter Property="FontFamily" Value="{StaticResource MainFont}" />
             <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
         </Style>
+
+        <Style TargetType="{x:Type TextBox}">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="16" />
+        </Style>
+
+        <Style TargetType="{x:Type ComboBox}">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+
     </UserControl.Resources>
     <Grid>
         <Grid.Background>White</Grid.Background>
@@ -23,33 +42,36 @@
                 <RowDefinition Height="4*" />
                 <RowDefinition Height="2*" />
             </Grid.RowDefinitions>
-            <TextBlock x:Name="InfoTextBlock"
-                       Grid.Row="0"
+
+            <TextBlock Grid.Row="0"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"
                        FontSize="16"
-                       TextWrapping="Wrap">
-                Put each anime on own line, each will be added with the template chosen below.
-            </TextBlock>
-            <TextBox x:Name="InputTextBox"
-                     Grid.Row="1"
-                     Width="630"
-                     HorizontalAlignment="Center"
+                       Text="{Binding Header}"
+                       TextWrapping="Wrap" />
+
+            <TextBox Grid.Row="1"
+                     HorizontalAlignment="Stretch"
+                     VerticalAlignment="Stretch"
+                     VerticalContentAlignment="Top"
                      AcceptsReturn="True"
-                     FontSize="16"
+                     IsReadOnly="{Binding CurrentViewMode,
+                                          Converter={StaticResource ViewModeIsAddingConverterNot}}"
+                     IsTabStop="{Binding Path=CurrentViewMode,
+                                         Converter={StaticResource ViewModeIsAddingConverterNot}}"
                      Loaded="InputTextBox_OnLoaded"
+                     Text="{Binding Input}"
                      TextWrapping="Wrap" />
             <Grid Grid.Row="2"
-                  Width="650"
-                  Margin="0, 10, 0, 10"
-                  HorizontalAlignment="Center">
+                  Margin="0,10,0,10"
+                  HorizontalAlignment="Stretch">
                 <Grid.Background>PapayaWhip</Grid.Background>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="2*" />
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="2*" />
                 </Grid.ColumnDefinitions>
-                <Grid Name="LeftGrid" Grid.Column="0">
+                <Grid Grid.Column="0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />
@@ -59,34 +81,31 @@
                         <ColumnDefinition Width="2*" />
                     </Grid.ColumnDefinitions>
 
-                    <Label x:Name="EpisodeLabel"
-                           Content="Episode"
-                           Style="{DynamicResource LabelStyle}" />
-                    <TextBox x:Name="EpisodeTextBox"
-                             Grid.Row="0"
+                    <Label Content="Episode" />
+
+                    <TextBox Grid.Row="0"
                              Grid.Column="1"
-                             Height="25"
-                             HorizontalContentAlignment="Left"
-                             VerticalContentAlignment="Center"
-                             FontSize="16"
-                             GotFocus="EpisodeTextBox_GotFocus"
                              PreviewTextInput="EpisodeTextBox_PreviewTextInput"
+                             Text="{Binding Details.Episode}"
                              TextWrapping="Wrap" />
 
-                    <Label x:Name="RatingLabel"
-                           Grid.Row="1"
+                    <Label Grid.Row="1"
                            Grid.Column="0"
-                           Content="Rating"
-                           Style="{DynamicResource LabelStyle}" />
+                           Content="Rating" />
+
                     <TextBox x:Name="RatingTextBox"
                              Grid.Row="1"
                              Grid.Column="1"
-                             Height="25"
-                             FontSize="16"
-                             GotFocus="EpisodeTextBox_GotFocus"
-                             PreviewTextInput="RatingTextBox_PreviewTextInput" />
+                             IsHitTestVisible="{Binding Path=CurrentViewMode,
+                                                        Converter={StaticResource ViewModeIsAddingConverterNot}}"
+                             IsTabStop="{Binding Path=CurrentViewMode,
+                                                 Converter={StaticResource ViewModeIsAddingConverterNot}}"
+                             Opacity="{Binding Path=CurrentViewMode,
+                                               Converter={StaticResource ViewModeOpacityConverterNot}}"
+                             PreviewTextInput="RatingTextBox_PreviewTextInput"
+                             Text="{Binding Details.Rating}" />
                 </Grid>
-                <Grid Name="MiddleGrid" Grid.Column="1">
+                <Grid Grid.Column="1">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />
@@ -96,66 +115,50 @@
                         <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
 
-                    <Label x:Name="AiringLabel"
-                           Grid.Row="0"
+                    <Label Grid.Row="0"
                            Grid.Column="0"
-                           Content="Airing"
-                           Style="{DynamicResource LabelStyle}" />
-                    <CheckBox x:Name="AiringCheckBox"
-                              Grid.Row="0"
+                           Content="Airing" />
+
+                    <CheckBox Grid.Row="0"
                               Grid.Column="1"
                               HorizontalAlignment="Left"
                               VerticalContentAlignment="Center"
-                              IsChecked="True" />
+                              IsChecked="{Binding Details.Airing}" />
                 </Grid>
-                <Grid Name="RightGrid" Grid.Column="2">
+                <Grid Grid.Column="2">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />
                     </Grid.RowDefinitions>
+
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="2*" />
                     </Grid.ColumnDefinitions>
 
-                    <Label x:Name="ResolutionLabel"
-                           Grid.Row="0"
+                    <Label Grid.Row="0"
                            Grid.Column="0"
-                           Content="Resolution"
-                           Style="{DynamicResource LabelStyle}" />
-                    <ComboBox x:Name="ResolutionComboBox"
-                              Grid.Row="0"
-                              Grid.Column="1"
-                              Width="120"
-                              Height="20"
-                              VerticalContentAlignment="Center">
-                        <ComboBoxItem Content="" />
-                        <ComboBoxItem Content="480" />
-                        <ComboBoxItem Content="720" IsSelected="True" />
-                        <ComboBoxItem Content="1080" />
+                           Content="Resolution" />
+                    <ComboBox Grid.Row="0" Grid.Column="1">
+                        <ComboBoxItem Content="480" IsSelected="{Binding Path=Details.Resolution, Converter={StaticResource StringCompareConverter}, ConverterParameter=480}" />
+                        <ComboBoxItem Content="720" IsSelected="{Binding Path=Details.Resolution, Converter={StaticResource StringCompareConverter}, ConverterParameter=720}" />
+                        <ComboBoxItem Content="1080" IsSelected="{Binding Path=Details.Resolution, Converter={StaticResource StringCompareConverter}, ConverterParameter=1080}" />
                     </ComboBox>
 
-                    <Label x:Name="StatusLabel"
-                           Grid.Row="1"
+                    <Label Grid.Row="1"
                            Grid.Column="0"
-                           Content="Status"
-                           Style="{DynamicResource LabelStyle}" />
-                    <ComboBox x:Name="StatusComboBox"
-                              Grid.Row="1"
-                              Grid.Column="1"
-                              Width="120"
-                              Height="20"
-                              VerticalContentAlignment="Center">
-                        <ComboBoxItem Content="Considering" />
-                        <ComboBoxItem Content="Watching" IsSelected="True" />
-                        <ComboBoxItem Content="Finished" />
-                        <ComboBoxItem Content="On Hold" />
-                        <ComboBoxItem Content="Dropped" />
+                           Content="Status" />
+                    <ComboBox Grid.Row="1" Grid.Column="1">
+                        <ComboBoxItem Content="Considering" IsSelected="{Binding Path=Details.Status, Converter={StaticResource StringCompareConverter}, ConverterParameter=Considering}" />
+                        <ComboBoxItem Content="Watching" IsSelected="{Binding Path=Details.Status, Converter={StaticResource StringCompareConverter}, ConverterParameter=Watching}" />
+                        <ComboBoxItem Content="Finished" IsSelected="{Binding Path=Details.Status, Converter={StaticResource StringCompareConverter}, ConverterParameter=Finished}" />
+                        <ComboBoxItem Content="On Hold" IsSelected="{Binding Path=Details.Status, Converter={StaticResource StringCompareConverter}, ConverterParameter='On Hold'}" />
+                        <ComboBoxItem Content="Dropped" IsSelected="{Binding Path=Details.Status, Converter={StaticResource StringCompareConverter}, ConverterParameter=Dropped}" />
                     </ComboBox>
                 </Grid>
             </Grid>
-            <Button x:Name="SubmitButton"
-                    Grid.Row="3"
+
+            <Button Grid.Row="3"
                     HorizontalAlignment="Right"
                     Click="SubmitButton_OnClick"
                     Content="Submit"

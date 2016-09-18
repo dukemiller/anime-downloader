@@ -1,21 +1,63 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using anime_downloader.Annotations;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
 
 namespace anime_downloader.Views
 {
-    public partial class AnimeDetailsMultiple
+    public partial class AnimeDetailsMultiple : INotifyPropertyChanged
     {
         private IEnumerable<Anime> _animes;
+        
+        private ViewMode _currentViewMode;
 
-        private ViewMode _viewMode;
+        public ViewMode CurrentViewMode
+        {
+            get { return _currentViewMode; }
+            set
+            {
+                _currentViewMode = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _input;
+
+        public string Input
+        {
+            get { return _input; }
+            set
+            {
+                if (value == _input) return;
+                _input = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _header;
+
+        public string Header
+        {
+            get { return _header; }
+            set
+            {
+                _header = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Classes.AnimeDetails Details { get; set; }
 
         public AnimeDetailsMultiple()
         {
+            Details = new Classes.AnimeDetails();
             InitializeComponent();
             KeyDown += AnimeList.KeyEscapeBack;
             MouseDown += AnimeList.MouseEscapeBack;
@@ -23,36 +65,27 @@ namespace anime_downloader.Views
 
         public void New()
         {
-            _viewMode = ViewMode.Adding;
-            EpisodeTextBox.Text = "00";
-            RatingTextBox.Toggle();
+            CurrentViewMode = ViewMode.Adding;
+            Header = "Put each anime on own line, each will be added with the template chosen below: ";
+            Details.Resolution = "720";
+            Details.Episode = "00";
+            Details.Airing = true;
+            Details.Status = "Considering";
         }
 
         public void Load(IList<Anime> animes)
         {
-            _viewMode = ViewMode.Editing;
+            CurrentViewMode = ViewMode.Editing;
+            Header = "Make the same change to the following list of anime: ";
+            _animes = animes;
 
             // get the most used resolution, status, and airing from the selection,
             // then make them the value in the boxes
-            _animes = animes;
-
-            var resolution = animes.GroupBy(a => a.Resolution).OrderByDescending(c => c.Count()).First().Key;
-            var status = animes.GroupBy(a => a.Status).OrderByDescending(c => c.Count()).First().Key;
-            var airing = animes.GroupBy(a => a.Airing).OrderByDescending(c => c.Count()).First().Key;
-            StatusComboBox.Text = status;
-            AiringCheckBox.IsChecked = airing;
-            ResolutionComboBox.Text = resolution;
-
-            // Change the header and content
-            InfoTextBlock.Text = "Make the same change to the following list of anime: ";
-            InputTextBox.Text = string.Join("\n", animes.Select(a => a.Title));
-            InputTextBox.IsReadOnly = true;
+            Input = string.Join("\n", animes.Select(a => a.Title));
+            Details.Resolution = animes.GroupBy(a => a.Resolution).OrderByDescending(c => c.Count()).First().Key;
+            Details.Status = animes.GroupBy(a => a.Status).OrderByDescending(c => c.Count()).First().Key;
+            Details.Airing = animes.GroupBy(a => a.Airing).OrderByDescending(c => c.Count()).First().Key;
             
-        }
-
-        private void EpisodeTextBox_GotFocus(object sender, RoutedEventArgs e)
-        {
-            EpisodeTextBox.SelectAll();
         }
 
         private void EpisodeTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
@@ -67,25 +100,26 @@ namespace anime_downloader.Views
         private void SubmitButton_OnClick(object sender, RoutedEventArgs e)
         {
             // Editing multiple
-            if (_viewMode == ViewMode.Editing)
+            if (_currentViewMode == ViewMode.Editing)
             {
                 foreach (var anime in _animes)
                 {
-                    if (!RatingTextBox.Text.IsBlank())
-                        anime.Rating = RatingTextBox.Text;
-                    if (!EpisodeTextBox.Text.IsBlank())
-                        anime.Episode = EpisodeTextBox.Text;
-                    anime.Status = StatusComboBox.Text;
-                    anime.Airing = AiringCheckBox.IsChecked == true;
-                    anime.Resolution = ResolutionComboBox.Text;
+                    if (!Details.Rating.IsBlank())
+                        anime.Rating = Details.Rating;
+                    if (!Details.Episode.IsBlank())
+                        anime.Episode = Details.Episode;
+                    anime.Status = Details.Status;
+                    anime.Airing = Details.Airing;
+                    anime.Resolution = Details.Resolution;
                 }
+
                 MainWindow.Window.AnimeList.Press();
             }
 
             // Adding multiple
-            else if (_viewMode == ViewMode.Adding)
+            else if (_currentViewMode == ViewMode.Adding)
             {
-                var names = InputTextBox.Text
+                var names = Input
                     .Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
                     .Select(n => n.ToLower())
                     .ToList();
@@ -100,10 +134,10 @@ namespace anime_downloader.Views
                         MainWindow.Window.AnimeCollection.Add(new Anime
                         {
                             Name = name,
-                            Airing = AiringCheckBox.IsChecked ?? false,
-                            Episode = $"{int.Parse(EpisodeTextBox.Text):D2}",
-                            Status = StatusComboBox.Text,
-                            Resolution = ResolutionComboBox.Text
+                            Airing = Details.Airing,
+                            Episode = $"{int.Parse(Details.Episode):D2}",
+                            Status = Details.Status,
+                            Resolution = Details.Resolution
                         });
                     }
                     MainWindow.Window.AnimeList.Press();
@@ -113,8 +147,16 @@ namespace anime_downloader.Views
 
         private void InputTextBox_OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (_viewMode == ViewMode.Adding)
-                InputTextBox.Focus();
+            if (_currentViewMode == ViewMode.Adding)
+                (sender as TextBox)?.Focus();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
