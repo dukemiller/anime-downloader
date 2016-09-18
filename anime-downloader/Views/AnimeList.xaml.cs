@@ -111,6 +111,7 @@ namespace anime_downloader.Views
         private void FilterComboBox_OnDropDownClosed(object sender, EventArgs e)
         {
             MainWindow.Window.Settings.FilterBy = FilterComboBox.Text;
+            MainWindow.Window.Settings.Save();
             Animes = new ObservableCollection<Anime>(MainWindow.Window.AnimeCollection.FilteredAndSorted());
             _find.Close();
         }
@@ -145,8 +146,11 @@ namespace anime_downloader.Views
                     Anime.SortedRateFlag ^= 1;
             }
 
+            // TODO: Separate this from settings? 
+            // Autosaving these changes will save changes from the settings window unintentionally
             MainWindow.Window.Settings.SortBy = header.Equals("rating") ? "sortedrating" : header;
             MainWindow.Window.Settings.Flags.SortByReversed = column.SortDirection == ListSortDirection.Ascending;
+            MainWindow.Window.Settings.Save();
         }
 
         private void DataGrid_OnKeyDown(object sender, KeyEventArgs e)
