@@ -200,8 +200,7 @@ namespace anime_downloader.Classes.File
                     var credentials = Api.GetCredentials(MainWindow.Window.Settings);
                     var updated = new List<string>();
                     var animesMissingTotal = airingAnime
-                        .Where(a => a.MyAnimeList.HasId &&
-                                    (a.MyAnimeList.IntTotalEpisodes() == 0))
+                        .Where(a => a.MyAnimeList.HasId && (a.MyAnimeList.IntTotalEpisodes() == 0))
                         .ToList();
 
                     foreach (var anime in animesMissingTotal)

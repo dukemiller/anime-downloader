@@ -1,79 +1,119 @@
 ﻿<UserControl x:Class="anime_downloader.Views.Misc"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             mc:Ignorable="d"
-             d:DesignHeight="360" d:DesignWidth="680">
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             d:DesignHeight="360"
+             d:DesignWidth="680"
+             mc:Ignorable="d">
     <UserControl.Resources>
-        <Style x:Key="BoxStyle" TargetType="{x:Type GroupBox}">
-            <Setter Property="FontSize" Value="16" />
+        <Style TargetType="{x:Type GroupBox}">
+            <Setter Property="FontSize" Value="18" />
             <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             <Setter Property="FontFamily" Value="{StaticResource MainFont}" />
         </Style>
-        <Style x:Key="RadioButtonStyle" TargetType="{x:Type RadioButton}">
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="Padding" Value="0"/>
+        <Style TargetType="{x:Type RadioButton}">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Margin" Value="5, 0" />
+            <Setter Property="GroupName" Value="TheSame" />
+        </Style>
+        <Style TargetType="{x:Type TextBlock}">
+            <Setter Property="TextWrapping" Value="Wrap" />
         </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.Background>White</Grid.Background>
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="5*" />
                 <RowDefinition Height="1*" />
+                <RowDefinition Height="9*" />
+                <RowDefinition Height="2*" />
             </Grid.RowDefinitions>
-            <StackPanel Grid.Row="0">
-                <GroupBox x:Name="GroupBox"
-                          Header="Indexing"
-                          Style="{DynamicResource BoxStyle}"
-                          VerticalAlignment="Top">
-                    <StackPanel Margin="10,0">
 
-                        <Label Content="For every anime that is airing and being watched ..."/>
-                        <Label Content="--- Set current episode to the LAST found episode in ..." Padding="0" />
+            <TextBlock Grid.Row="0"
+                       FontFamily="{StaticResource MainFont}"
+                       FontSize="16"
+                       Text="Other useful features that don't fit much into other sections."
+                       TextAlignment="Justify"
+                       TextWrapping="Wrap" />
 
-                        <RadioButton Name="LastWatched" Style="{DynamicResource RadioButtonStyle}" KeyDown="Radio_KeyDown">
-                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0" >Watched folder</TextBlock>
-                        </RadioButton>
+            <DockPanel Grid.Row="1">
+                <GroupBox Header="Anime manipulation (for airing and watched shows)">
+                    <StackPanel>
+                        <GroupBox Header="Episode">
+                            <StackPanel>
+                                <RadioButton Name="Zero" KeyDown="Radio_KeyDown">
+                                    <TextBlock>Set all episodes to zero</TextBlock>
+                                </RadioButton>
+                                <GroupBox Header="Re-indexing">
+                                    <StackPanel>
+                                        <Label Content="Set all episodes to LAST found in ..." Padding="0" />
+                                        <DockPanel>
+                                            <RadioButton Name="LastWatched" KeyDown="Radio_KeyDown">
+                                                <TextBlock>Watched folder</TextBlock>
+                                            </RadioButton>
 
-                        <RadioButton Name="LastUnwatched" Style="{DynamicResource RadioButtonStyle}" KeyDown="Radio_KeyDown">
-                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Episodes folder</TextBlock>
-                        </RadioButton>
+                                            <RadioButton Name="LastUnwatched" KeyDown="Radio_KeyDown">
+                                                <TextBlock>Episodes folder</TextBlock>
+                                            </RadioButton>
 
-                        <RadioButton Name="LastAny" Style="{DynamicResource RadioButtonStyle}" KeyDown="Radio_KeyDown">
-                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Any folder</TextBlock>
-                        </RadioButton>
+                                            <RadioButton Name="LastAny" KeyDown="Radio_KeyDown">
+                                                <TextBlock>Any folder</TextBlock>
+                                            </RadioButton>
+                                        </DockPanel>
+                                        <Label Content="Set all episodes to FIRST found in ..." Padding="0" />
+                                        <RadioButton Name="FirstWatched" KeyDown="Radio_KeyDown">
+                                            <TextBlock>Any folder</TextBlock>
+                                        </RadioButton>
+                                    </StackPanel>
+                                </GroupBox>
 
-                        <Label Content="--- Set current episode to the FIRST found episode in ..." Padding="0"/>
+                            </StackPanel>
+                        </GroupBox>
 
-                        <RadioButton Name="FirstWatched" Style="{DynamicResource RadioButtonStyle}" KeyDown="Radio_KeyDown">
-                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0" >Any folder</TextBlock>
-                        </RadioButton>
+                        <GroupBox Header="Status">
+                            <StackPanel>
+                                <RadioButton Name="MarkComplete" KeyDown="Radio_KeyDown">
+                                    <TextBlock>Mark fully watched shows as completed</TextBlock>
+                                </RadioButton>
+                            </StackPanel>
+                        </GroupBox>
 
-                        <Label Content="---" Padding="0"/>
-
-                        <RadioButton Name="Zero" KeyDown="Radio_KeyDown" Style="{DynamicResource RadioButtonStyle}">
-                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Set episode to zero</TextBlock>
-                        </RadioButton>
-
-                        <RadioButton Name="Duplicates" KeyDown="Radio_KeyDown" Style="{DynamicResource RadioButtonStyle}">
-                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Move any found duplicates to "My Videos" folder</TextBlock>
-                        </RadioButton>
-
-                        <RadioButton Name="MarkComplete" KeyDown="Radio_KeyDown" Style="{DynamicResource RadioButtonStyle}">
-                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Change status of animes that you have downloaded every episode for as complete</TextBlock>
-                        </RadioButton>
-
-                        <RadioButton Name="SearchMore" KeyDown="Radio_KeyDown" Style="{DynamicResource RadioButtonStyle}">
-                            <TextBlock TextWrapping="Wrap" Margin="10,0,0,0">Regather data for any show that has no total episodes</TextBlock>
-                        </RadioButton> 
                     </StackPanel>
                 </GroupBox>
-            </StackPanel>
-            <Button x:Name="ButtonSubmit" Grid.Row="1" Content="Submit"
-                    Click ="ButtonSubmit_OnClick"
-                    Style="{DynamicResource ConfirmationButtonStyle}" HorizontalAlignment="Right" />
+                <StackPanel>
+                    <GroupBox Header="Episode/File Management">
+                        <StackPanel>
+                            <RadioButton Name="Duplicates" KeyDown="Radio_KeyDown">
+                                <TextBlock Text="Move any duplicates to 'My Videos' folder" />
+                            </RadioButton>
+                        </StackPanel>
+                    </GroupBox>
+
+                    <GroupBox Header="MyAnimeList">
+                        <StackPanel>
+
+                            <RadioButton Name="SearchMore" KeyDown="Radio_KeyDown">
+                                <TextBlock Text="Regather data for any show that have no total episodes" /> 
+                            </RadioButton>
+
+                        </StackPanel>
+                    </GroupBox>
+                </StackPanel>
+            </DockPanel>
+
+            <Button x:Name="ButtonSubmit"
+                    Grid.Row="2"
+                    HorizontalAlignment="Right"
+                    Click="ButtonSubmit_OnClick"
+                    Content="Submit"
+                    Style="{DynamicResource ConfirmationButtonStyle}" />
         </Grid>
     </Grid>
 </UserControl>
