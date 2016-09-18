@@ -34,6 +34,7 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+            <Setter Property="IsTabStop" Value="False"></Setter>
             <Setter Property="Background" Value="{StaticResource BackgroundColor}" />
             <Setter Property="FontFamily" Value="{StaticResource LargeButtonFont}" />
             <Setter Property="FontSize" Value="28" />

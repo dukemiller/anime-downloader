@@ -111,7 +111,7 @@ namespace anime_downloader.Classes
 
         public static bool IsBlank(this string str)
         {
-            return str.Equals("");
+            return str == null || str.Equals("");
         }
     }
 }
