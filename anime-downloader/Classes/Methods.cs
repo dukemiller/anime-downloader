@@ -63,7 +63,7 @@ namespace anime_downloader.Classes
 
             if (removeEpisode)
             {
-                var regularEpisodePattern = Regex.Matches(text, @"\-\s[0-9]{1,}\s");            // Name {- #}
+                var regularEpisodePattern = Regex.Matches(text, @"\-\s[0-9]{1,}");       // Name {- #}
                 var namedEpisodePattern = Regex.Matches(text, @"[e|E]pisode\s[0-9]{1,}");       // Name {Episode #}
 
                 if (regularEpisodePattern.Count > 0)
