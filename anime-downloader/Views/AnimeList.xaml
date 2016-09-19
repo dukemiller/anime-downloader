@@ -1,9 +1,10 @@
 ﻿<UserControl x:Class="anime_downloader.Views.AnimeList"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:classes="clr-namespace:anime_downloader.Classes"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:classes="clr-namespace:anime_downloader.Classes"
+             xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
              d:DesignHeight="360"
              d:DesignWidth="680"
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
@@ -11,23 +12,24 @@
              mc:Ignorable="d">
     <UserControl.Resources>
         <Style x:Key="FindBox" TargetType="Rectangle">
-            <Setter Property="Width" Value="25"/>
-            <Setter Property="Height" Value="25"/>
-            <Setter Property="Margin" Value="0, 0, 10, 0"/>
-            <Setter Property="HorizontalAlignment" Value="Right"/>
-            <Setter Property="RadiusX" Value="25"/>
-            <Setter Property="RadiusY" Value="25"/>
-            <Setter Property="Stroke" Value="Gray"/>
-            <Setter Property="StrokeThickness" Value="0.5"/>
+            <Setter Property="Width" Value="25" />
+            <Setter Property="Height" Value="25" />
+            <Setter Property="Margin" Value="0,0,10,0" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Setter Property="RadiusX" Value="25" />
+            <Setter Property="RadiusY" Value="25" />
+            <Setter Property="Stroke" Value="Gray" />
+            <Setter Property="StrokeThickness" Value="0.5" />
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Opacity" Value="0.8"/>
+                    <Setter Property="Opacity" Value="0.8" />
                 </Trigger>
                 <Trigger Property="IsMouseOver" Value="False">
-                    <Setter Property="Opacity" Value="1.0"/>
+                    <Setter Property="Opacity" Value="1.0" />
                 </Trigger>
             </Style.Triggers>
         </Style>
+        <xaml:StringCompareConverter x:Key="StringCompareConverter" />
     </UserControl.Resources>
     <Grid>
         <Grid.Background>White</Grid.Background>
@@ -38,6 +40,7 @@
         <DataGrid x:Name="DataGrid"
                   Grid.Row="0"
                   HorizontalContentAlignment="Center"
+                  d:DataContext="{d:DesignInstance classes:Anime}"
                   AutoGenerateColumns="False"
                   BorderThickness="0"
                   CanUserAddRows="False"
@@ -48,12 +51,11 @@
                   GridLinesVisibility="None"
                   IsReadOnly="True"
                   ItemsSource="{Binding Animes}"
-                  d:DataContext="{d:DesignInstance classes:Anime}"
                   MouseDoubleClick="DataGrid_OnMouseDoubleClick"
                   PreviewKeyDown="DataGrid_OnKeyDown"
+                  Sorting="DataGrid_OnSorting"
                   RowHeaderWidth="0"
                   SelectionUnit="Cell"
-                  Sorting="DataGrid_OnSorting"
                   UseLayoutRounding="False">
             <DataGrid.Resources>
                 <Style TargetType="{x:Type DataGridColumnHeader}">
@@ -73,15 +75,15 @@
                     <MenuItem Click="Search_OnClick" Header="Search on MyAnimeList ..." />
                 </ContextMenu>
             </DataGrid.ContextMenu>
-            <DataGrid.RowStyle >
+            <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
                     <Style.Triggers>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding Path=MyAnimeList.HasId}" Value="True"/>
-                                <Condition Binding="{Binding Path=MyAnimeList.NeedsUpdating}" Value="True"/>
+                                <Condition Binding="{Binding Path=MyAnimeList.HasId}" Value="True" />
+                                <Condition Binding="{Binding Path=MyAnimeList.NeedsUpdating}" Value="True" />
                             </MultiDataTrigger.Conditions>
-                            <Setter Property="Background" Value="LightGreen"/>
+                            <Setter Property="Background" Value="LightGreen" />
                         </MultiDataTrigger>
                     </Style.Triggers>
                 </Style>
@@ -123,25 +125,24 @@
                    FontFamily="{StaticResource MainFont}"
                    FontSize="16" />
             <Rectangle Grid.Column="0"
-                       Style="{StaticResource FindBox}"
-                       MouseDown="FindIcon_OnMouseDown">
+                       MouseDown="FindIcon_OnMouseDown"
+                       Style="{StaticResource FindBox}">
                 <Rectangle.Fill>
                     <ImageBrush ImageSource="../Resources/Images/find.png" />
                 </Rectangle.Fill>
             </Rectangle>
-            <ComboBox x:Name="FilterComboBox"
-                      Grid.Column="1"
+            <ComboBox Grid.Column="1"
                       Height="25"
                       HorizontalContentAlignment="Center"
                       DropDownClosed="FilterComboBox_OnDropDownClosed"
                       FontFamily="{StaticResource MainFont}"
                       MouseWheel="OnContentChanged">
-                <ComboBoxItem Content="" IsSelected="True" />
-                <ComboBoxItem Content="Airing/Watching" />
-                <ComboBoxItem Content="Finished" />
-                <ComboBoxItem Content="On Hold" />
-                <ComboBoxItem Content="Considering" />
-                <ComboBoxItem Content="Dropped" />
+                <ComboBoxItem Content="" IsSelected="{Binding FilterText, Converter={StaticResource StringCompareConverter}, ConverterParameter=''}" />
+                <ComboBoxItem Content="Airing/Watching" IsSelected="{Binding FilterText, Converter={StaticResource StringCompareConverter}, ConverterParameter=Airing/Watching}" />
+                <ComboBoxItem Content="Finished" IsSelected="{Binding FilterText, Converter={StaticResource StringCompareConverter}, ConverterParameter=Finished}" />
+                <ComboBoxItem Content="On Hold" IsSelected="{Binding FilterText, Converter={StaticResource StringCompareConverter}, ConverterParameter='On Hold'}" />
+                <ComboBoxItem Content="Considering" IsSelected="{Binding FilterText, Converter={StaticResource StringCompareConverter}, ConverterParameter=Considering}" />
+                <ComboBoxItem Content="Dropped" IsSelected="{Binding FilterText, Converter={StaticResource StringCompareConverter}, ConverterParameter=Dropped}" />
             </ComboBox>
         </Grid>
     </Grid>

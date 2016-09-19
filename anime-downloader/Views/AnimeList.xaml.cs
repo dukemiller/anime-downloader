@@ -26,10 +26,23 @@ namespace anime_downloader.Views
 
         public ObservableCollection<Anime> Animes { get; set; }
 
+        public string FilterText
+        {
+            get { return _filterText; }
+            set
+            {
+                if (value == _filterText) return;
+                _filterText = value;
+                OnPropertyChanged();
+            }
+        }
+
         /// <summary>
         ///     Hoopla to make the data binding in AnimeList
         /// </summary>
         private string _stats;
+
+        private string _filterText;
 
         public string Stats
         {
@@ -62,7 +75,7 @@ namespace anime_downloader.Views
             MouseDown -= MouseEscapeBack;
             
             _find = new FindPopup(this);
-            FilterComboBox.Text = MainWindow.Window.Settings.FilterBy;
+            FilterText = MainWindow.Window.Settings.FilterBy;
         }
 
         private void EditAnime()
@@ -110,7 +123,7 @@ namespace anime_downloader.Views
 
         private void FilterComboBox_OnDropDownClosed(object sender, EventArgs e)
         {
-            MainWindow.Window.Settings.FilterBy = FilterComboBox.Text;
+            MainWindow.Window.Settings.FilterBy = FilterText ?? "";
             MainWindow.Window.Settings.Save();
             Animes = new ObservableCollection<Anime>(MainWindow.Window.AnimeCollection.FilteredAndSorted());
             _find.Close();
