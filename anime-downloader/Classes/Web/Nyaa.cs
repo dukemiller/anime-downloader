@@ -75,7 +75,7 @@ namespace anime_downloader.Classes.Web
             var queryDetails = anime.Name.Replace(" ", "+")
                                    .Replace("'s", "")
                                    .Replace(".", "+")
-                                   .Replace(":", "")
+                                   .Replace(":", " ")
                                    .Replace("!", "%21")
                                    .Replace("'", "%27")
                                    .Replace("-", "%2D")
