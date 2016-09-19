@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:classes="clr-namespace:anime_downloader.Classes"
              d:DesignHeight="360"
              d:DesignWidth="680"
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
@@ -47,6 +48,7 @@
                   GridLinesVisibility="None"
                   IsReadOnly="True"
                   ItemsSource="{Binding Animes}"
+                  d:DataContext="{d:DesignInstance classes:Anime}"
                   MouseDoubleClick="DataGrid_OnMouseDoubleClick"
                   PreviewKeyDown="DataGrid_OnKeyDown"
                   RowHeaderWidth="0"
@@ -71,6 +73,19 @@
                     <MenuItem Click="Search_OnClick" Header="Search on MyAnimeList ..." />
                 </ContextMenu>
             </DataGrid.ContextMenu>
+            <DataGrid.RowStyle >
+                <Style TargetType="DataGridRow">
+                    <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Path=MyAnimeList.HasId}" Value="True"/>
+                                <Condition Binding="{Binding Path=MyAnimeList.NeedsUpdating}" Value="True"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Background" Value="LightGreen"/>
+                        </MultiDataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>
             <DataGrid.Columns>
                 <DataGridTextColumn Width="300"
                                     Binding="{Binding Path=Title}"
