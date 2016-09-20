@@ -223,11 +223,12 @@
                                  Height="84"
                                  HorizontalContentAlignment="Left"
                                  VerticalContentAlignment="Top"
-                                 FontSize="16"
+                                 FontSize="15"
                                  KeyDown="EnterApply"
-                                 MaxLength="150"
+                                 MaxLength="170"
                                  Text="{Binding Anime.Notes}"
-                                 TextWrapping="Wrap" />
+                                 VerticalScrollBarVisibility="Disabled"
+                                 TextWrapping="WrapWithOverflow" />
 
                     </Grid>
 
