@@ -39,6 +39,7 @@ namespace anime_downloader.Classes.Xml
                 new XElement("name-strict", false),
                 new XElement("preferredSubgroup"),
                 new XElement("rating"),
+                new XElement("notes"),
                 new XElement("myanimelist",
                     new XElement("id"),
                     new XElement("title"),

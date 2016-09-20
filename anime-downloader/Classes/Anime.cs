@@ -245,6 +245,20 @@ namespace anime_downloader.Classes
             }
         }
 
+        public string Notes
+        {
+            get { return Root.Element("notes")?.Value; }
+            set
+            {
+                if (value.Equals(Name))
+                    return;
+                Root.Element("notes")?.SetValue(value);
+                if (MyAnimeList.HasId)
+                    MyAnimeList.NeedsUpdating = true;
+                Save();
+            }
+        }
+
         /* */
         
         /// <summary>
