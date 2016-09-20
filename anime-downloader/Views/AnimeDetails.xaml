@@ -80,8 +80,9 @@
                 <Grid Grid.Row="1">
 
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="2*" />
-                        <ColumnDefinition Width="5*" />
+                        <ColumnDefinition Width="8*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="16*" />
                     </Grid.ColumnDefinitions>
 
                     <Grid Grid.Column="0">
@@ -194,12 +195,11 @@
                                   Style="{DynamicResource ValueStyle}" />
                     </Grid>
 
-                    <Grid Grid.Column="1">
+                    <Grid Grid.Column="2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="6*" />
                         </Grid.ColumnDefinitions>
-
                         <Grid.RowDefinitions>
                             <RowDefinition Height="1*" />
                             <RowDefinition Height="1*" />
@@ -211,6 +211,23 @@
                             <RowDefinition Height="1*" />
                             <RowDefinition Height="1*" />
                         </Grid.RowDefinitions>
+
+                        <Label Grid.Row="0"
+                               Grid.Column="0"
+                               Content="Notes: "
+                               ToolTip="Notes, tags or comments to give the show to remember it (This is usually loosely used as a way to summarize feelings about the show)" />
+
+                        <TextBox Grid.Row="0"
+                                 Grid.RowSpan="3"
+                                 Grid.Column="1"
+                                 Height="84"
+                                 HorizontalContentAlignment="Left"
+                                 VerticalContentAlignment="Top"
+                                 FontSize="16"
+                                 KeyDown="EnterApply"
+                                 MaxLength="150"
+                                 Text="{Binding Anime.Notes}"
+                                 TextWrapping="Wrap" />
 
                     </Grid>
 

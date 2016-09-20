@@ -27,7 +27,7 @@ namespace anime_downloader.Classes.Web.MyAnimeList
                     new XElement("enable_rewatching", ""),
                     new XElement("comments", ""),
                     new XElement("fansub_group", ""),
-                    new XElement("tags", "")
+                    new XElement("tags", anime.Notes)
                     )
                 );
         }
