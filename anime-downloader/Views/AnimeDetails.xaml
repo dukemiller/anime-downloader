@@ -22,7 +22,7 @@
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="FontSize" Value="18.667" />
         </Style>
-        <Style x:Key="LabelStyle" TargetType="{x:Type Label}">
+        <Style TargetType="{x:Type Label}">
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="FontSize" Value="16" />
@@ -64,7 +64,6 @@
                     <Label Grid.Row="0"
                            Grid.Column="0"
                            Content="Name: "
-                           Style="{StaticResource LabelStyle}"
                            ToolTip="A hopefully close approximation to the name of the show." />
                     <TextBox x:Name="NameTextbox"
                              Grid.Row="0"
@@ -107,11 +106,9 @@
                         <Label Grid.Row="0"
                                Grid.Column="0"
                                Content="Episode: "
-                               Style="{StaticResource LabelStyle}"
                                ToolTip="The last episode you've watched." />
 
-                        <TextBox x:Name="EpisodeTextbox"
-                                 Grid.Row="0"
+                        <TextBox Grid.Row="0"
                                  Grid.Column="1"
                                  GotFocus="EpisodeTextbox_GotFocus"
                                  KeyDown="EnterApply"
@@ -123,7 +120,6 @@
                         <Label Grid.Row="1"
                                Grid.Column="0"
                                Content="Status: "
-                               Style="{DynamicResource LabelStyle}"
                                ToolTip="What state you're currently at in regards to watching the show." />
                         <ComboBox Grid.Row="1"
                                   Grid.Column="1"
@@ -140,7 +136,6 @@
                         <Label Grid.Row="2"
                                Grid.Column="0"
                                Content="Resolution: "
-                               Style="{DynamicResource LabelStyle}"
                                ToolTip="The quality that will be downloaded." />
                         <ComboBox Grid.Row="2"
                                   Grid.Column="1"
@@ -155,7 +150,6 @@
                         <Label Grid.Row="3"
                                Grid.Column="0"
                                Content="Only from:"
-                               Style="{DynamicResource LabelStyle}"
                                ToolTip="Only download from animes that have this subgroup." />
                         <ComboBox x:Name="SubgroupComboBox"
                                   Grid.Row="3"
@@ -169,10 +163,9 @@
                         <Label Grid.Row="4"
                                Grid.Column="0"
                                Content="Rating: "
-                               Style="{DynamicResource LabelStyle}"
                                ToolTip="What you would rate the show (out of 10?)" />
-                        <TextBox x:Name="RatingTextbox"
-                                 Grid.Row="4"
+
+                        <TextBox Grid.Row="4"
                                  Grid.Column="1"
                                  GotFocus="EpisodeTextbox_GotFocus"
                                  KeyDown="EnterApply"
@@ -184,7 +177,6 @@
                         <Label Grid.Row="5"
                                Grid.Column="0"
                                Content="Airing: "
-                               Style="{DynamicResource LabelStyle}"
                                ToolTip="Whether the anime is currently airing and will be included on the search for new episodes." />
                         <CheckBox Grid.Row="5"
                                   Grid.Column="1"
@@ -195,7 +187,6 @@
                         <Label Grid.Row="6"
                                Grid.Column="0"
                                Content="Exact name:"
-                               Style="{DynamicResource LabelStyle}"
                                ToolTip="Whether searching for this anime should match exactly what the name is instead of picking up partial matches." />
                         <CheckBox Grid.Row="6"
                                   Grid.Column="1"

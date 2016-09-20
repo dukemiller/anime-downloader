@@ -37,7 +37,6 @@ namespace anime_downloader.Views
                 _buttonText = value;
                 OnPropertyChanged();
             }
-            
         }
 
         public AnimeDetails()
@@ -122,7 +121,7 @@ namespace anime_downloader.Views
 
         // 
 
-        private void EpisodeTextbox_GotFocus(object sender, RoutedEventArgs e) => EpisodeTextbox.SelectAll();
+        private void EpisodeTextbox_GotFocus(object sender, RoutedEventArgs e) => (sender as TextBox)?.SelectAll();
 
         private void NameTextbox_GotFocus(object sender, RoutedEventArgs e) => NameTextbox.SelectAll();
 
@@ -141,7 +140,7 @@ namespace anime_downloader.Views
         }
 
         private void RatingTextbox_PreviewTextInput(object sender, TextCompositionEventArgs e)
-            => Methods.AnimeRatingRules(RatingTextbox, e);
+            => Methods.AnimeRatingRules(sender as TextBox, e);
 
         private void EnterApply(object sender, KeyEventArgs e)
         {

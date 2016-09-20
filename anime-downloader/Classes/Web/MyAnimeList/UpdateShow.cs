@@ -79,7 +79,7 @@ namespace anime_downloader.Classes.Web.MyAnimeList
                     break;
 
                 default:
-                    status = "completed";
+                    status = "plantowatch";
                     break;
             }
 
