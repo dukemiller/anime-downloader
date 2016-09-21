@@ -67,8 +67,7 @@
                                            Grid.Column="0"
                                            Content="Username: " />
 
-                                    <TextBox x:Name="UsernameTextbox"
-                                             Grid.Row="0"
+                                    <TextBox Grid.Row="0"
                                              Grid.Column="1"
                                              VerticalAlignment="Center"
                                              Text="{Binding LoginDetails.Username}" />

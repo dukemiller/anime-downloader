@@ -1,12 +1,13 @@
 ﻿<UserControl x:Class="anime_downloader.Views.PlaylistCreator"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             mc:Ignorable="d"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             d:DesignHeight="360"
+             d:DesignWidth="680"
              KeyDown="UserControl_KeyDown"
              Loaded="UserControl_Loaded"
-             d:DesignHeight="360" d:DesignWidth="680">
+             mc:Ignorable="d">
     <UserControl.Resources>
         <Style x:Key="FontStyle">
             <Setter Property="RadioButton.FontFamily" Value="{StaticResource MainFont}" />
@@ -19,35 +20,64 @@
             <RowDefinition Height="9*" />
             <RowDefinition Height="2*" />
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" TextWrapping="Wrap" FontSize="16" TextAlignment="Justify" Style="{DynamicResource FontStyle}"
-                   Text="Create a playlist from all unwatched anime episodes as the filename 'playlist.m3u'." />
+        <TextBlock Grid.Row="0"
+                   FontSize="16"
+                   Style="{DynamicResource FontStyle}"
+                   Text="Create a playlist from all unwatched anime episodes as the filename 'playlist.m3u'."
+                   TextAlignment="Justify"
+                   TextWrapping="Wrap" />
         <StackPanel Grid.Row="1">
             <DockPanel>
-                <GroupBox x:Name="SortGroupBox" FontSize="16" Header="Sort by" HorizontalAlignment="Left"
-                          VerticalAlignment="Top" Style="{DynamicResource FontStyle}">
+                <GroupBox HorizontalAlignment="Left"
+                          VerticalAlignment="Top"
+                          FontSize="16"
+                          Header="Sort by"
+                          Style="{DynamicResource FontStyle}">
                     <StackPanel>
-                        <RadioButton x:Name="DefaultRadio" Content="Default file listing" Margin="5"
+                        <RadioButton x:Name="DefaultRadio"
+                                     Margin="5"
+                                     Content="Default file listing"
                                      ToolTip="Default windows lexical filename sort" />
-                        <RadioButton x:Name="EpisodeRadio" Content="Episode number" Margin="5" IsChecked="True"
+                        <RadioButton x:Name="EpisodeRadio"
+                                     Margin="5"
+                                     Content="Episode number"
+                                     IsChecked="True"
                                      ToolTip="A more rigorous episode number check so that episodes are in order" />
-                        <RadioButton x:Name="MomentRadio" Content="Date downloaded" Margin="5"
+                        <RadioButton x:Name="MomentRadio"
+                                     Margin="5"
+                                     Content="Date downloaded"
                                      ToolTip="When the file was created" />
                     </StackPanel>
                 </GroupBox>
-                <GroupBox x:Name="OptionsGroupBox" FontSize="16" Header="Options" HorizontalAlignment="Left"
-                          Style="{DynamicResource FontStyle}" VerticalAlignment="Top">
+                <GroupBox HorizontalAlignment="Left"
+                          VerticalAlignment="Top"
+                          FontSize="16"
+                          Header="Options"
+                          Style="{DynamicResource FontStyle}">
                     <StackPanel>
-                        <CheckBox x:Name="SeparateCheckBox" Content="Separate show order" Margin="5"
+                        <CheckBox x:Name="SeparateCheckBox"
+                                  Margin="5"
+                                  Content="Separate show order"
                                   ToolTip="Distribute the show order so that you don't watch the same show twice in a row." />
-                        <CheckBox x:Name="ReverseCheckbox" Content="Reverse order" Margin="5"
+                        <CheckBox x:Name="ReverseCheckbox"
+                                  Margin="5"
+                                  Content="Reverse order"
                                   ToolTip="Reverse the order." />
                     </StackPanel>
                 </GroupBox>
             </DockPanel>
         </StackPanel>
-        <Button x:Name="CreateButton" Content="Create" Style="{DynamicResource ConfirmationButtonStyle}"
-                HorizontalAlignment="Right" Grid.Row="2" Click="CreateButton_OnClick" />
-        <Button x:Name="OpenButton" Content="Open" Style="{DynamicResource ConfirmationButtonStyle}"
-                HorizontalAlignment="Left" Grid.Row="2" Click="OpenButton_OnClick" />
+        <Button x:Name="CreateButton"
+                Grid.Row="2"
+                HorizontalAlignment="Right"
+                Click="CreateButton_OnClick"
+                Content="Create"
+                Style="{DynamicResource ConfirmationButtonStyle}" />
+        <Button x:Name="OpenButton"
+                Grid.Row="2"
+                HorizontalAlignment="Left"
+                Click="OpenButton_OnClick"
+                Content="Open"
+                Style="{DynamicResource ConfirmationButtonStyle}" />
     </Grid>
 </UserControl>

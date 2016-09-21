@@ -57,14 +57,12 @@
                 </Grid.RowDefinitions>
 
                 <!--  Episode path  -->
-                <Label x:Name="EpisodeLabel"
-                       Grid.Row="0"
+                <Label Grid.Row="0"
                        Grid.Column="0"
                        Content="Episode downloads to: "
                        Style="{DynamicResource LabelStyle}"
                        ToolTip="Path to where episodes will be downloaded to." />
-                <TextBox x:Name="EpisodeTextbox"
-                         Grid.Row="0"
+                <TextBox Grid.Row="0"
                          Grid.Column="1"
                          KeyDown="Textbox_KeyDown"
                          Style="{DynamicResource TextboxStyle}"
@@ -72,14 +70,12 @@
                          PreviewKeyDown="Textbox_OnPreviewKeyDown" />
 
                 <!--  Watched path  -->
-                <Label x:Name="WatchedLabel"
-                       Grid.Row="1"
+                <Label Grid.Row="1"
                        Grid.Column="0"
                        Content="Watched files to: "
                        Style="{DynamicResource LabelStyle}"
                        ToolTip="Path where watched episodes will be moved to." />
-                <TextBox x:Name="WatchedTextbox"
-                         Grid.Row="1"
+                <TextBox Grid.Row="1"
                          Grid.Column="1"
                          KeyDown="Textbox_KeyDown"
                          Style="{DynamicResource TextboxStyle}"
@@ -87,14 +83,12 @@
                          PreviewKeyDown="Textbox_OnPreviewKeyDown" />
 
                 <!--  Torrent  -->
-                <Label x:Name="TorrentLabel"
-                       Grid.Row="2"
+                <Label Grid.Row="2"
                        Grid.Column="0"
                        Content="Torrent downloads to: "
                        Style="{DynamicResource LabelStyle}"
                        ToolTip="Path to the folder that all .torrent files will be downloaded into." />
-                <TextBox x:Name="TorrentTextbox"
-                         Grid.Row="2"
+                <TextBox Grid.Row="2"
                          Grid.Column="1"
                          KeyDown="Textbox_KeyDown"
                          Style="{DynamicResource TextboxStyle}"
@@ -102,14 +96,12 @@
                          PreviewKeyDown="Textbox_OnPreviewKeyDown" />
 
                 <!--  Download  -->
-                <Label x:Name="UtorrentLabel"
-                       Grid.Row="3"
+                <Label Grid.Row="3"
                        Grid.Column="0"
                        Content="uTorrent exe file: "
                        Style="{DynamicResource LabelStyle}"
                        ToolTip="Path to uTorrent.exe." />
-                <TextBox x:Name="UtorrentTextbox"
-                         Grid.Row="3"
+                <TextBox Grid.Row="3"
                          Grid.Column="1"
                          KeyDown="Textbox_KeyDown"
                          Style="{DynamicResource TextboxStyle}"
@@ -117,14 +109,12 @@
                          PreviewKeyDown="Textbox_OnPreviewKeyDown" />
 
                 <!--  Subgroups  -->
-                <Label x:Name="SubgroupsLabel"
-                       Grid.Row="4"
+                <Label Grid.Row="4"
                        Grid.Column="0"
                        Content="Whitelist subgroups: "
                        Style="{DynamicResource LabelStyle}"
                        ToolTip="A comma + space (', ') separated list of preferred subgroups, e.g. '{subgroup1}, {subgroup2}, {subgroup3}'" />
-                <TextBox x:Name="SubgroupsTextbox"
-                         Grid.Row="4"
+                <TextBox Grid.Row="4"
                          Grid.Column="1"
                          KeyDown="Textbox_KeyDown"
                          Style="{DynamicResource TextboxStyle}"
@@ -137,7 +127,7 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
-                <Grid Name="LeftSide" Column="0">
+                <Grid Column="0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="1*" />
@@ -149,14 +139,12 @@
                     </Grid.RowDefinitions>
 
                     <!--  Exit  -->
-                    <Label x:Name="ExitLabel"
-                           Grid.Row="0"
+                    <Label Grid.Row="0"
                            Grid.Column="0"
                            Content="Exit to tray:"
                            Style="{DynamicResource LabelStyle}"
                            ToolTip="Instead of closing the program on exit, it is brought to the tray." />
-                    <CheckBox x:Name="TrayExitCheckbox"
-                              Grid.Row="0"
+                    <CheckBox Grid.Row="0"
                               Grid.Column="1"
                               IsChecked="{Binding Path=Flags.ExitOnClose,
                                                   Converter={StaticResource NotConverter}}"
@@ -164,20 +152,18 @@
                               Style="{DynamicResource CheckboxStyle}" />
 
                     <!--  AlwaysTray  -->
-                    <Label x:Name="AlwaysTrayLabel"
-                           Grid.Row="1"
+                    <Label Grid.Row="1"
                            Grid.Column="0"
                            Content="Keep tray open:"
                            Style="{DynamicResource LabelStyle}"
                            ToolTip="Always have the tray enabled." />
-                    <CheckBox x:Name="AlwaysTrayCheckbox"
-                              Grid.Row="1"
+                    <CheckBox Grid.Row="1"
                               Grid.Column="1"
                               Click="AlwaysTrayCheckbox_OnClick"
                               IsChecked="{Binding Flags.AlwaysShowTray}"
                               Style="{DynamicResource CheckboxStyle}" />
                 </Grid>
-                <Grid Name="RightSide" Column="1">
+                <Grid Column="1">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />
@@ -189,29 +175,25 @@
                     </Grid.ColumnDefinitions>
 
                     <!--  Whitelisted  -->
-                    <Label x:Name="OnlyWhitelistedLabel"
-                           Grid.Row="0"
+                    <Label Grid.Row="0"
                            Grid.Column="0"
                            Content="Only whitelisted subs: "
                            Style="{DynamicResource LabelStyle}"
                            ToolTip="Whether or not to only download from subgroups that are on the whitelisted subgroups list." />
-                    <CheckBox x:Name="OnlyWhitelistedCheckbox"
-                              Grid.Row="0"
+                    <CheckBox Grid.Row="0"
                               Grid.Column="1"
                               IsChecked="{Binding Flags.OnlyWhitelisted}"
                               Click="Checkbox_OnClick"
                               Style="{DynamicResource CheckboxStyle}" />
 
                     <!--  Named folders  -->
-                    <Label x:Name="IndividualShowLabel"
-                           Grid.Row="1"
+                    <Label Grid.Row="1"
                            Grid.Column="0"
                            VerticalAlignment="Top"
                            Content="Show named folders:"
                            Style="{DynamicResource LabelStyle}"
                            ToolTip="Put each episode inside a folder named after the show" />
-                    <CheckBox x:Name="IndividualShowCheckbox"
-                              Grid.Row="1"
+                    <CheckBox Grid.Row="1"
                               Grid.Column="1"
                               IsChecked="{Binding Flags.IndividualShowFolders}"
                               Click="Checkbox_OnClick"
@@ -229,10 +211,9 @@
                     <Italic>*Unsaved changes pending</Italic>
                 </TextBlock>
             </Label>
-            <Button x:Name="ApplyChangesButton"
-                    HorizontalAlignment="Right"
+            <Button HorizontalAlignment="Right"
                     Click="ApplyChangesButton_OnClick"
-                    Content="Apply"
+                    Content="{Binding SubmitText}"
                     Style="{DynamicResource ConfirmationButtonStyle}" />
         </DockPanel>
 

@@ -3,6 +3,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using anime_downloader.Classes;
 using System.Windows.Input;
 using anime_downloader.Annotations;
@@ -24,11 +25,24 @@ namespace anime_downloader.Views
             InitializeComponent();
         }
 
+        private string _submitText;
+
+        public string SubmitText
+        {
+            get { return _submitText; }
+            set
+            {
+                if (value == _submitText) return;
+                _submitText = value;
+                OnPropertyChanged();
+            }
+        }
+
         public void New()
         {
             _viewMode = ViewMode.Adding;
 
-            MainWindow.Window.ToggleButtons();
+            MainWindow.Window.GetAll<ToggleButton>().Toggle();
 
             var path = Path.Combine(Directory.GetCurrentDirectory(), "anime-downloader");
 
@@ -46,16 +60,14 @@ namespace anime_downloader.Views
 
             SettingsGrid.DataContext = settings;
             _settings = settings;
-
-            ApplyChangesButton.Content = "Create";
-            ApplyChangesButton.Toggle();
-
+            SubmitText = "Create";
         }
 
         public void Load(Classes.Settings settings)
         {
             _viewMode = ViewMode.Editing;
             _settings = settings;
+            SubmitText = "Edit";
             SettingsGrid.DataContext = settings;
         }
 
@@ -63,29 +75,31 @@ namespace anime_downloader.Views
         {
             if (e.Key == Key.Enter)
             {
-                ApplyChangesButton.Press();
+                ApplyChangesButton_OnClick(sender, e);
             }
         }
 
         private void ApplyChangesButton_OnClick(object sender, RoutedEventArgs e)
         {
-            if (_viewMode == ViewMode.Editing)
-                _settings.Save();
 
-            else if (_viewMode == ViewMode.Adding)
+            if (_settings.Paths.EpisodeDirectory.Equals("") ||
+                _settings.Paths.TorrentFilesDirectory.Equals("") ||
+                _settings.Paths.UtorrentFile.Equals(""))
             {
-                if (EpisodeTextbox.Empty() || TorrentTextbox.Empty() || UtorrentTextbox.Empty())
-                    Methods.Alert("You must enter in the episode, torrent files and utorrent path information.");
-                else
-                {
-                    _settings.Save();
-                    MainWindow.Window.ToggleButtons();
-                    MainWindow.Window.InitializeSettings();
-                }
+                Methods.Alert("You must enter in the episode, torrent files and utorrent path information.");
+                return;
             }
+
+            _settings.Save();
 
             if (UnsavedChanges)
                 UnsavedChanges = false;
+
+            if (_viewMode == ViewMode.Adding)
+            {
+                MainWindow.Window.GetAll<ToggleButton>().Toggle();
+                MainWindow.Window.InitializeSettings();
+            }
         }
 
         private void AlwaysTrayCheckbox_OnClick(object sender, RoutedEventArgs e)

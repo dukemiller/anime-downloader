@@ -114,7 +114,7 @@ namespace anime_downloader.Views
             );
         }
 
-        private void GotoProfile_OnClick(object sender, RoutedEventArgs e) => Process.Start($"http://myanimelist.net/profile/{UsernameTextbox.Text}");
+        private void GotoProfile_OnClick(object sender, RoutedEventArgs e) => Process.Start($"http://myanimelist.net/profile/{LoginDetails.Username}");
 
         private void Search_OnClick(object sender, RoutedEventArgs e)
         {
