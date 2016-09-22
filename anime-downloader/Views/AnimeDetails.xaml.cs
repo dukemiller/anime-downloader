@@ -186,7 +186,7 @@ namespace anime_downloader.Views
         {
             MainWindow.Window.ToggleButtons();
             var credentials = Api.GetCredentials(MainWindow.Window.Settings);
-            var animeResults = await Api.FindAsync(credentials, HttpUtility.UrlEncode(_anime.Title));
+            var animeResults = await Api.FindAsync(credentials, HttpUtility.UrlEncode(_anime.MyAnimeList.Title));
             var result = animeResults.FirstOrDefault(r => r.Id.Equals(_anime.MyAnimeList.Id));
 
             if (result != null)
@@ -198,6 +198,11 @@ namespace anime_downloader.Views
                 _anime.MyAnimeList.Synopsis = result.Synopsis;
                 _anime.MyAnimeList.TotalEpisodes = result.TotalEpisodes;
                 Methods.Alert("Updated any information about this show");
+            }
+
+            else
+            {
+                Methods.Alert("Had trouble finding this show on MAL.");
             }
 
             MainWindow.Window.ToggleButtons();
