@@ -49,17 +49,15 @@ namespace anime_downloader.Classes.File
         /// <summary>
         ///     Moves all selected items in listbox from old to new directory returning a list containing tuples of (old, new).
         /// </summary>
-        public static IEnumerable<Tuple<AnimeFile, AnimeFile>> MoveEpisodesToDestination(ListBox list, string oldDirectory, string newDirectory)
+        public static IEnumerable<MovedAnimeFile> MoveAnimeFiles(IEnumerable<AnimeFile> animeFiles, string oldDirectory, string newDirectory)
         {
-
-            var episodes = list.SelectedItems.Cast<AnimeFile>();
-            var newEpisodes = new List<Tuple<AnimeFile, AnimeFile>>();
-
-            foreach (var episode in episodes)
+            var newEpisodes = new List<MovedAnimeFile>();
+            
+            foreach (var animeFile in animeFiles)
             {
                 try
                 {
-                    var fullPath = episode.Path.Replace(oldDirectory, "").Substring(1);
+                    var fullPath = animeFile.Path.Replace(oldDirectory, "").Substring(1);
                     var fragments = fullPath.Split(Path.DirectorySeparatorChar);
 
                     var oldPath = oldDirectory;
@@ -91,7 +89,8 @@ namespace anime_downloader.Classes.File
                             }
                     }
 
-                    newEpisodes.Add(new Tuple<AnimeFile, AnimeFile>(episode, new AnimeFile(newPath)));
+                    var moved = new MovedAnimeFile {Old = animeFile, Latest= new AnimeFile(newPath)};
+                    newEpisodes.Add(moved);
                 }
 
                 catch (Exception)
@@ -234,5 +233,11 @@ namespace anime_downloader.Classes.File
 
             }
         }
+    }
+
+    public class MovedAnimeFile
+    {
+        public AnimeFile Old { get; set; }
+        public AnimeFile Latest { get; set; }
     }
 }

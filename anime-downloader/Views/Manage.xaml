@@ -7,12 +7,9 @@
              xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
              d:DesignHeight="360"
              d:DesignWidth="680"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}"
              mc:Ignorable="d">
     <UserControl.Resources>
-        <Style x:Key="ListboxStyle" TargetType="ListBox">
-            <Setter Property="FontFamily" Value="{StaticResource MainFont}" />
-            <Setter Property="FontSize" Value="16" />
-        </Style>
         <Style x:Key="FilterTextbox" TargetType="TextBox">
             <Setter Property="Width" Value="150" />
             <Setter Property="Height" Value="25" />
@@ -51,11 +48,49 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <ContextMenu x:Key="RightClickMenu">
+            <MenuItem Click="Context_Move_Click" Header="Move to watched" />
+            <MenuItem Click="Context_Profile_Click" Header="Go to profile" />
+            <MenuItem Click="Context_Open_Click" Header="Open" />
+            <MenuItem Click="Context_Delete_Click" Header="Delete" />
+        </ContextMenu>
+
+        <Style x:Key="EpisodeHolder" TargetType="{x:Type ListBox}">
+            <Setter Property="FontFamily" Value="{StaticResource MainFont}" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="xaml:DragSelectionHelper.IsDragSelecting" Value="False" />
+            <Setter Property="ContextMenu" Value="{StaticResource RightClickMenu}" />
+            <Setter Property="ItemTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <TextBlock d:DataContext="{d:DesignInstance Type=file:AnimeFile}" Text="{Binding StrippedFilename}" />
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="ListBoxItem">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="xaml:DragSelectionHelper.IsDragSelecting" Value="True" />
+                            </Trigger>
+                        </Style.Triggers>
+                        <EventSetter Event="GotFocus" Handler="ListBoxItem_GotFocus" />
+                    </Style>
+                </Setter.Value>
+            </Setter>
+            <EventSetter Event="KeyUp" Handler="Listbox_KeyUp" />
+            <EventSetter Event="MouseDoubleClick" Handler="Context_MouseDoubleClick" />
+
+        </Style>
+
         <Style x:Key="LabelStyle" TargetType="Label">
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="FontSize" Value="18" />
             <Setter Property="FontFamily" Value="Segoe UI Symbol" />
         </Style>
+
         <Style x:Key="DescriptionStyle" TargetType="Label">
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="VerticalAlignment" Value="Center" />
@@ -64,7 +99,8 @@
             <Setter Property="FontSize" Value="14" />
             <Setter Property="FontFamily" Value="Segoe UI Symbol" />
         </Style>
-        <Style x:Key="MoveButton" TargetType="Rectangle">
+
+        <Style TargetType="Rectangle">
             <Setter Property="Height" Value="25" />
             <Setter Property="Width" Value="25" />
             <Setter Property="HorizontalAlignment" Value="Left" />
@@ -77,15 +113,8 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-        <Style TargetType="{x:Type ListBoxItem}">
-            <Setter Property="xaml:DragSelectionHelper.IsDragSelecting" Value="False" />
-            <Style.Triggers>
-                <Trigger Property="ListBoxItem.IsMouseOver" Value="True">
-                    <Setter Property="xaml:DragSelectionHelper.IsDragSelecting" Value="True" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
     </UserControl.Resources>
+
     <Grid>
         <Grid.Background>White</Grid.Background>
         <Grid>
@@ -115,35 +144,21 @@
                         <RowDefinition Height="13*" />
                         <RowDefinition Height="2*" />
                     </Grid.RowDefinitions>
+
                     <DockPanel Grid.Row="0" Grid.Column="0">
                         <Label Content="Unwatched"
-                               MouseUp="Unwatched_OnMouseUp"
+                               MouseUp="Unwatched_Label_OnMouseUp"
                                Style="{DynamicResource LabelStyle}" />
-                        <Label Name="UnwatchedFilesLabel" Style="{DynamicResource DescriptionStyle}" />
+                        <Label Content="{Binding UnwatchedLabel}" Style="{DynamicResource DescriptionStyle}" />
                     </DockPanel>
-                    <ListBox x:Name="UnwatchedList"
+
+                    <ListBox x:Name="Unwatched"
                              Grid.Row="1"
                              Grid.Column="0"
                              xaml:DragSelectionHelper.IsDragSelectionEnabled="true"
-                             KeyUp="Listbox_KeyUp"
-                             MouseDoubleClick="Context_MouseDoubleClick"
-                             Style="{StaticResource ListboxStyle}">
-                        <ListBox.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem Click="Context_Move_Click" Header="Move to watched" />
-                                <MenuItem Click="Context_Profile_Click" Header="Go to profile" />
-                                <MenuItem Click="Context_Open_Click" Header="Open" />
-                                <MenuItem Click="Context_Delete_Click" Header="Delete" />
-                            </ContextMenu>
-                        </ListBox.ContextMenu>
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <WrapPanel d:DataContext="{d:DesignInstance Type=file:AnimeFile}">
-                                    <TextBlock Text="{Binding StrippedFilename}" />
-                                </WrapPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                             ItemsSource="{Binding UnwatchedEpisodes}"
+                             Style="{StaticResource EpisodeHolder}" />
+
                     <Grid Grid.Row="2" Grid.Column="0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*" />
@@ -156,7 +171,7 @@
 
                         <Grid Grid.Column="1">
                             <DockPanel>
-                                <Rectangle MouseDown="Button_Move_Click" Style="{DynamicResource MoveButton}">
+                                <Rectangle MouseDown="Button_Move_Click">
                                     <Rectangle.Fill>
                                         <ImageBrush ImageSource="../Resources/Images/right.png" />
                                     </Rectangle.Fill>
@@ -174,30 +189,15 @@
                     </Grid.RowDefinitions>
                     <Label Grid.Row="0"
                            Content="Watched"
-                           MouseUp="Watched_OnMouseUp"
+                           MouseUp="Watched_Label_OnMouseUp"
                            Style="{DynamicResource LabelStyle}" />
-                    <ListBox x:Name="WatchedList"
+
+                    <ListBox x:Name="Watched"
                              Grid.Row="1"
                              xaml:DragSelectionHelper.IsDragSelectionEnabled="true"
-                             KeyUp="Listbox_KeyUp"
-                             MouseDoubleClick="Context_MouseDoubleClick"
-                             Style="{StaticResource ListboxStyle}">
-                        <ListBox.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem Click="Context_Move_Click" Header="Move to unwatched" />
-                                <MenuItem Click="Context_Profile_Click" Header="Go to profile" />
-                                <MenuItem Click="Context_Open_Click" Header="Open" />
-                                <MenuItem Click="Context_Delete_Click" Header="Delete" />
-                            </ContextMenu>
-                        </ListBox.ContextMenu>
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <WrapPanel d:DataContext="{d:DesignInstance Type=file:AnimeFile}">
-                                    <TextBlock Text="{Binding StrippedFilename}" />
-                                </WrapPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                             ItemsSource="{Binding WatchedEpisodes}"
+                             Style="{StaticResource EpisodeHolder}" />
+
                     <Grid Grid.Row="2">
 
                         <Grid.ColumnDefinitions>
@@ -209,7 +209,7 @@
 
                         <Grid Grid.Column="1">
                             <DockPanel>
-                                <Rectangle MouseDown="Button_Move_Click" Style="{DynamicResource MoveButton}">
+                                <Rectangle MouseDown="Button_Move_Click">
                                     <Rectangle.Fill>
                                         <ImageBrush ImageSource="../Resources/Images/left.png" />
                                     </Rectangle.Fill>

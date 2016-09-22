@@ -1,12 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Shapes;
+using anime_downloader.Annotations;
 using anime_downloader.Classes;
 using anime_downloader.Classes.File;
 using anime_downloader.Enums;
@@ -16,290 +19,262 @@ namespace anime_downloader.Views
     /// <summary>
     ///     Interaction logic for Manage.xaml
     /// </summary>
-    public partial class Manage
+    public partial class Manage : INotifyPropertyChanged
     {
+        private ListBox SelectedListBox => this.GetAll<ListBox>().FirstOrDefault(lb => lb.SelectedItems.Count > 0);
+
+        private List<AnimeFile> SelectedAnimeFiles => SelectedListBox?.SelectedItems.Cast<AnimeFile>().ToList() ?? new List<AnimeFile>();
+
+        private AnimeFile SelectedAnimeFile => SelectedListBox?.SelectedItems.Cast<AnimeFile>().FirstOrDefault();
+
         public Manage()
         {
+            GetData();
             InitializeComponent();
-            SetInitialValues();
         }
 
-        private ObservableCollection<AnimeFile> Watched { get; set; }
+        // 
 
-        private ObservableCollection<AnimeFile> Unwatched { get; set; }
-
-        private ObservableCollection<AnimeFile> UnwatchedWindow
+        private async void GetData()
         {
-            get { return _watchedWindow; }
+            _allUnwatched = await MainWindow.Window.AnimeFileCollection.GetEpisodesAsync(EpisodeStatus.Unwatched);
+            _allWatched = await MainWindow.Window.AnimeFileCollection.GetEpisodesAsync(EpisodeStatus.Watched);
+            WatchedEpisodes = new ObservableCollection<AnimeFile>(_allWatched);
+            UnwatchedEpisodes = new ObservableCollection<AnimeFile>(_allUnwatched);
+            
+        }
 
+        private string _unwatchedLabel;
+
+        public string UnwatchedLabel
+        {
+            get { return _unwatchedLabel; }
             set
             {
-                _watchedWindow = value;
-                UnwatchedFilesLabel.Content = $"({value.Count} files)";
-                UnwatchedList.ItemsSource = value;
-                UnwatchedList.Items.Refresh();
+                if (value == _unwatchedLabel) return;
+                _unwatchedLabel = value;
+                OnPropertyChanged();
             }
         }
 
-        private ObservableCollection<AnimeFile> WatchedWindow
+        public ObservableCollection<AnimeFile> UnwatchedEpisodes
         {
-            get { return _unwatchedWindow; }
-
+            get { return _unwatchedEpisodes; }
             set
             {
-                _unwatchedWindow = value;
-                WatchedList.ItemsSource = value;
-                WatchedList.Items.Refresh();
+                if (Equals(value, _unwatchedEpisodes)) return;
+                _unwatchedEpisodes = value;
+                OnPropertyChanged();
+                UnwatchedLabel = $"({UnwatchedEpisodes.Count} files)";
             }
         }
 
-        private ObservableCollection<AnimeFile> _watchedWindow;
-
-        private ObservableCollection<AnimeFile> _unwatchedWindow;
-
-        private static Classes.Settings Settings => MainWindow.Settings;
-
-        private static MainWindow MainWindow => MainWindow.Window;
-
-        private async void SetInitialValues()
+        public ObservableCollection<AnimeFile> WatchedEpisodes
         {
-            Unwatched = new ObservableCollection<AnimeFile>(await MainWindow.AnimeFileCollection.GetEpisodesAsync(EpisodeStatus.Unwatched));
-            Watched = new ObservableCollection<AnimeFile>(await MainWindow.AnimeFileCollection.GetEpisodesAsync(EpisodeStatus.Watched));
-            UnwatchedWindow = new ObservableCollection<AnimeFile>(Unwatched);
-            WatchedWindow = new ObservableCollection<AnimeFile>(Watched);
+            get { return _watchedEpisodes; }
+            set
+            {
+                if (Equals(value, _watchedEpisodes)) return;
+                _watchedEpisodes = value;
+                OnPropertyChanged();
+            }
         }
 
-        private static Playlist Playlist => MainWindow.Window.Playlist;
+        private ObservableCollection<AnimeFile> _unwatchedEpisodes;
+
+        private ObservableCollection<AnimeFile> _watchedEpisodes;
+
+        private IEnumerable<AnimeFile> _allUnwatched;
+
+        private IEnumerable<AnimeFile> _allWatched;
+
+        private ListBox _lastSelectedListBox;
         
+        // Listbox events
+
+        private void Listbox_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+                OpenSelected();
+            else if (e.Key == Key.Delete)
+                DeleteSelected();
+        }
+
+        private void ListBoxItem_GotFocus(object sender, RoutedEventArgs e)
+        {
+            var parent = (sender as DependencyObject).GetParentUntil<ListBox>();
+            if (_lastSelectedListBox != null && !_lastSelectedListBox.Equals(parent))
+                _lastSelectedListBox.UnselectAll();
+            _lastSelectedListBox = parent;
+        }
+
+        // Findbox
+
         private void FindTextBox_KeyUp(object sender, KeyEventArgs e)
         {
             var textbox = (TextBox) sender;
-            var listbox = ((
-                textbox                   // textbox
-                .Parent as Grid)?         // panel it's contained in
-                .Parent as Grid)?         // entire grid
-                .Children[1] as ListBox;  // element that contains the listbox
-
-            ObservableCollection<AnimeFile> current;
-            Action<ObservableCollection<AnimeFile>> currentWindowSetter;
-
-            if (listbox != null && listbox.Name.Equals(nameof(UnwatchedList)))
-            {
-                current = Unwatched;
-                currentWindowSetter = v => UnwatchedWindow = v;
-            }
-
-            else
-            {
-                current = Watched;
-                currentWindowSetter = v => WatchedWindow = v;
-            }
+            var listbox = (ListBox) ((Grid) ((Grid) textbox.Parent).Parent).Children[1];
 
             if (e.Key == Key.Escape)
-            {
                 textbox.Clear();
-                currentWindowSetter(current);
-            }
 
-            else
-            {
-                var q = textbox.Text.ToLower().Trim();
-                var result = new ObservableCollection<AnimeFile>(current
-                    .Where(a => a.Name.ToLower().Contains(q) || a.Episode.Contains(q))
+            var q = textbox.Text.ToLower().Trim();
+
+            if (listbox.Name.Equals("Unwatched"))
+                UnwatchedEpisodes = SortedFiles(_allUnwatched, q);
+
+            else if (listbox.Name.Equals("Watched"))
+                WatchedEpisodes = SortedFiles(_allWatched, q);
+        }
+
+        private static ObservableCollection<AnimeFile> SortedFiles(IEnumerable<AnimeFile> files, string q)
+        {
+            if (q.Equals(""))
+                return new ObservableCollection<AnimeFile>(files);
+
+            return new ObservableCollection<AnimeFile>(
+                files.Where(a => a.Name.ToLower().Contains(q) || a.Episode.Contains(q))
                     .OrderBy(animeFile => animeFile.Name)
                     .ThenBy(animeFile => animeFile.IntEpisode));
-                currentWindowSetter(result);
-            }
-
         }
 
-        private void Button_Move_Click(object sender, RoutedEventArgs e)
-        {
-            var listbox = (((((
-                sender as Rectangle)?       // button
-                .Parent as DockPanel)?      // panel it's contained in
-                .Parent as Grid)?           // grid half of the bottom panel
-                .Parent as Grid)?           // entire grid
-                .Parent as Grid)?           // parent to the grid
-                .Children[1] as ListBox;    // element that contains the listbox
-            Context_Move_Click(listbox, e);
-        }
+        // 
 
-        private async void Context_Open_Click(object sender, RoutedEventArgs e)
-        {
-            var listBox = sender as ListBox ?? (ListBox) ((ContextMenu) ((MenuItem) sender).Parent).PlacementTarget;
-            var episodes = listBox.SelectedItems.Cast<AnimeFile>().ToList();
+        private void Button_Move_Click(object sender, RoutedEventArgs e) => MoveSelected();
 
-            if (episodes.Count > 1)
+        // Context menu
+
+        private void Context_Open_Click(object sender, RoutedEventArgs e) => OpenSelected();
+
+        private void Context_Delete_Click(object sender, RoutedEventArgs e) => DeleteSelected();
+
+        private void Context_Move_Click(object sender, RoutedEventArgs e) => MoveSelected();
+
+        private void Context_Profile_Click(object sender, RoutedEventArgs e) => GoToProfileOfSelected();
+
+        private void Context_MouseDoubleClick(object sender, MouseButtonEventArgs e) => PlaySelected();
+
+        // Actions
+        
+        private void MoveSelected()
+        {
+            if (SelectedAnimeFiles.Count > 0)
             {
-                Playlist.Refresh(episodes);
-                await Playlist.Save();
+                // Setting up the aliases 
+                Action<AnimeFile> remove, addSorted;
+                string oldPath, newPath;
+
+                // TODO: find a better way to dynamically reference properties
+                if (SelectedListBox.Name.Equals("Unwatched"))
+                {
+                    oldPath = MainWindow.Window.Settings.Paths.EpisodeDirectory;
+                    newPath = MainWindow.Window.Settings.Paths.WatchedDirectory;
+                    addSorted = animeFile => WatchedEpisodes.AddSorted(animeFile);
+                    remove = animeFile => UnwatchedEpisodes.Remove(animeFile);
+                }
+
+                else
+                {
+                    oldPath = MainWindow.Window.Settings.Paths.WatchedDirectory;
+                    newPath = MainWindow.Window.Settings.Paths.EpisodeDirectory;
+                    addSorted = animeFile => UnwatchedEpisodes.AddSorted(animeFile);
+                    remove = animeFile => WatchedEpisodes.Remove(animeFile);
+                }
+
+                // The actual functionality
+                if (Directory.Exists(newPath))
+                {
+                    var movedFiles = EpisodeHandler.MoveAnimeFiles(SelectedAnimeFiles, oldPath, newPath);
+                    foreach (var animeFile in movedFiles)
+                    {
+                        remove(animeFile.Old);
+                        addSorted(animeFile.Latest);
+                    }
+                }
+
+                UnwatchedLabel = $"({UnwatchedEpisodes.Count} files)";
+                
+            }
+        }
+
+        private async void OpenSelected()
+        {
+            if (SelectedAnimeFiles.Count > 1)
+            {
+                MainWindow.Window.Playlist.Refresh(SelectedAnimeFiles);
+                await MainWindow.Window.Playlist.Save();
                 Process.Start(Playlist.PlaylistFile);
             }
 
-            else if (episodes.Count == 1)
+            else if (SelectedAnimeFiles.Count == 1)
             {
-                Process.Start(episodes.First().Path);
+                Process.Start(SelectedAnimeFiles.First().Path);
             }
         }
 
-        private void Context_Delete_Click(object sender, RoutedEventArgs e)
+        private void DeleteSelected()
         {
-            var listBox = sender as ListBox ?? (ListBox) ((ContextMenu) ((MenuItem) sender).Parent).PlacementTarget;
-            var episodes = listBox.SelectedItems.Cast<AnimeFile>().ToList();
-            var details = new ListDetails(listBox, this);
-
-            if (episodes.Count > 0)
+            if (SelectedAnimeFiles.Count > 0)
             {
+                // TODO: find a better way to dynamically reference properties
+                Action<AnimeFile, ListBox> remove = (animeFile, listbox) =>
+                {
+                    if (listbox.Name.Equals("Unwatched"))
+                        UnwatchedEpisodes.Remove(animeFile);
+                    else
+                        WatchedEpisodes.Remove(animeFile);
+                };
+
                 var response = MessageBox.Show(
-                    $"Files to be deleted: \n\n{string.Join("\n", episodes.Select(ep => ep.Path))}\n\n Are you sure?",
+                    $"Files to be deleted: \n\n{string.Join("\n", SelectedAnimeFiles.Select(ep => ep.Path))}\n\n" +
+                    "Are you sure?",
                     "Confirmation",
                     MessageBoxButton.YesNo);
 
                 if (response == MessageBoxResult.Yes)
                 {
-                    foreach (var episode in episodes)
+                    foreach (var episode in SelectedAnimeFiles)
                     {
                         File.Delete(episode.Path);
-                        details.Current.Remove(episode);
-                        details.CurrentWindow.Remove(episode);
+                        remove(episode, SelectedListBox);
                     }
 
-                    UnwatchedFilesLabel.Content = $"({UnwatchedWindow.Count} files)";
+                    UnwatchedLabel = $"({UnwatchedEpisodes.Count} files)";
                 }
             }
         }
 
-        private void Context_Move_Click(object sender, RoutedEventArgs e)
+        private void GoToProfileOfSelected()
         {
-            var listBox = sender as ListBox ?? (ListBox) ((ContextMenu) ((MenuItem) sender).Parent).PlacementTarget;
-            var details = new TransferDetails(listBox, this, Settings);
-
-            if (details.OppositeFolderExists)
+            if (SelectedAnimeFile != null)
             {
-                var episodes = listBox.SelectedItems.Cast<AnimeFile>().ToList();
-                if (episodes.Count >= 1)
-                {
-                    var episodePair = EpisodeHandler.MoveEpisodesToDestination(listBox,
-                        details.CurrentPath,
-                        details.Otherpath
-                    );
-
-                    foreach (var pair in episodePair)
-                    {
-                        var oldEpisode = pair.Item1;
-                        var newEpisode = pair.Item2;
-
-                        details.Details.Current.Remove(oldEpisode);
-                        details.Details.CurrentWindow.Remove(oldEpisode);
-                        details.Details.Other.AddSorted(newEpisode);
-                        details.Details.OtherWindow.AddSorted(newEpisode);
-                    }
-
-                    UnwatchedFilesLabel.Content = $"({Unwatched.Count} files)";
-                }
-            }
-        }
-
-        /// <summary>
-        ///     TODO: I REALLY dislike how this is done
-        /// </summary>
-        private void Context_Profile_Click(object sender, RoutedEventArgs e)
-        {
-            var listBox = sender as ListBox ?? (ListBox) ((ContextMenu) ((MenuItem) sender).Parent).PlacementTarget;
-            var episode = listBox.SelectedItems.Cast<AnimeFile>().FirstOrDefault();
-            if (episode != null)
-            {
-                var anime = Anime.Closest.To(episode, Settings);
+                var anime = Anime.Closest.To(SelectedAnimeFile, MainWindow.Window.Settings);
                 if (anime != null)
                     MainWindow.Window.ChangeDisplay<AnimeDetails>().Load(anime);
                 else
-                    Methods.Alert($"No anime profile found for {episode.Name}.");
+                    Methods.Alert($"No anime profile found for {SelectedAnimeFile.Name}.");
             }
         }
 
-        private void Context_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void PlaySelected()
         {
-            var selected = ((ListBox) sender).SelectedItem;
-
-            if (selected != null)
-            {
-                Process.Start(((AnimeFile) selected).Path);
-            }
+            if (SelectedAnimeFile != null)
+                Process.Start(SelectedAnimeFile.Path);
         }
 
-        private void Listbox_KeyUp(object sender, KeyEventArgs e)
+        // Label
+
+        private void Unwatched_Label_OnMouseUp(object sender, MouseButtonEventArgs e) => Process.Start(MainWindow.Window.Settings.Paths.EpisodeDirectory);
+
+        private void Watched_Label_OnMouseUp(object sender, MouseButtonEventArgs e) => Process.Start(MainWindow.Window.Settings.Paths.WatchedDirectory);
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            if (e.Key == Key.Enter)
-                Context_Open_Click(sender, e);
-            else if (e.Key == Key.Delete)
-                Context_Delete_Click(sender, e);
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
-        private class TransferDetails
-        {
-            public bool OppositeFolderExists { get; }
-
-            public string CurrentPath { get; }
-
-            public string Otherpath { get; }
-
-            public ListDetails Details { get; }
-            
-            public TransferDetails(IFrameworkInputElement listbox, Manage manage, Classes.Settings settings)
-            {
-                Details = new ListDetails(listbox, manage);
-
-                if (listbox.Name.Equals(nameof(UnwatchedList)))
-                {
-                    OppositeFolderExists = Directory.Exists(settings.Paths.WatchedDirectory);
-                    CurrentPath = settings.Paths.EpisodeDirectory;
-                    Otherpath = settings.Paths.WatchedDirectory;
-                }
-
-                else
-                {
-                    OppositeFolderExists = Directory.Exists(settings.Paths.EpisodeDirectory);
-                    CurrentPath = settings.Paths.WatchedDirectory;
-                    Otherpath = settings.Paths.EpisodeDirectory;
-                }
-            }
-        }
-
-        private class ListDetails
-        {
-            public ObservableCollection<AnimeFile> Current { get; }
-
-            public ObservableCollection<AnimeFile> CurrentWindow { get; }
-
-            public ObservableCollection<AnimeFile> Other { get; }
-
-            public ObservableCollection<AnimeFile> OtherWindow { get; }
-
-            public ListDetails(IFrameworkInputElement listbox, Manage window)
-            {
-
-                if (listbox.Name.Equals(nameof(UnwatchedList)))
-                {
-                    Current = window.Unwatched;
-                    CurrentWindow = window.UnwatchedWindow;
-                    Other = window.Watched;
-                    OtherWindow = window.WatchedWindow;
-                }
-
-                else
-                {
-                    Current = window.Watched;
-                    CurrentWindow = window.WatchedWindow;
-                    Other = window.Unwatched;
-                    OtherWindow = window.UnwatchedWindow;
-                }
-
-            }
-        }
-
-        private void Unwatched_OnMouseUp(object sender, MouseButtonEventArgs e) => Process.Start(Settings.Paths.EpisodeDirectory);
-
-        private void Watched_OnMouseUp(object sender, MouseButtonEventArgs e) => Process.Start(Settings.Paths.WatchedDirectory);
     }
+    
 }
