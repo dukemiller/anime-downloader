@@ -1,18 +1,14 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Media;
 
 namespace anime_downloader.Classes
 {
     public static class Extensions
     {
-        public static IEnumerable<Anime> AiringAndWatching(this IEnumerable<Anime> animes)
-        {
-            return animes.Where(a => a.Airing && a.Status.Equals("Watching"));
-        }
 
         /// <summary>
         ///     Check if the container is empty.
@@ -74,12 +70,6 @@ namespace anime_downloader.Classes
             list.Insert(i, item);
         }
         
-        // http://stackoverflow.com/a/33523743
-        public static System.Windows.Media.Brush ToBrush(this Color color)
-        {
-            return new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B));
-        }
-
         public static List<T> GetAll<T>(this object parent) where T : DependencyObject
         {
             var logicalCollection = new List<T>();
@@ -100,6 +90,21 @@ namespace anime_downloader.Classes
                     collection.Add(child as T);
                 GetAll(dependencyObject, collection);
             }
+        }
+
+        public static T GetParentUntil<T>(this DependencyObject child) where T : DependencyObject
+        {
+            var parent = child;
+
+            while (parent != null)
+            {
+                if (parent is ListBox)
+                    break;
+
+                parent = VisualTreeHelper.GetParent(parent);
+            }
+
+            return (T) parent;
         }
         
         public static string OnlyLettersAndSpace(this string input)

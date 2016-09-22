@@ -127,7 +127,7 @@ namespace anime_downloader.Classes.File
 
         public async Task HandleCommand(string command)
         {
-            var airingAnime = MainWindow.Window.AllAnime.AiringAndWatching();
+            var airingAnime = MainWindow.Window.AnimeCollection.AiringAndWatching;
 
             switch (command)
             {

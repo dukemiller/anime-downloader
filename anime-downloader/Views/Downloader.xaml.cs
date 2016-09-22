@@ -162,7 +162,7 @@ namespace anime_downloader.Views
 
             var total =
                 await
-                    MainWindow.Window.Downloader.DownloadAsync(MainWindow.Window.AllAnime.AiringAndWatching(),
+                    MainWindow.Window.Downloader.DownloadAsync(MainWindow.Window.AnimeCollection.AiringAndWatching,
                         animeFileRanges, allEpisodeFiles, TextBox);
 
             TextBox.WriteLine(total > 0 ? $">> Found {total} anime downloads." : ">> No new anime found.");
