@@ -16,6 +16,7 @@
         <xaml:StringLengthVisibilityConverterNot x:Key="StringLengthVisibilityConverterNot" />
         <xaml:StringCompareVisibilityConverter x:Key="StringCompareVisibilityConverter" />
         <xaml:IsNullVisibilityConverter x:Key="IsNullVisibilityConverter" />
+        <xaml:EpisodeConverter x:Key="EpisodeConverter" />
         <Style x:Key="NumberBoxStyle" TargetType="TextBox">
             <Setter Property="Width" Value="40" />
             <Setter Property="HorizontalAlignment" Value="Left" />
@@ -108,14 +109,26 @@
                                Grid.Column="0"
                                Content="Episode: "
                                ToolTip="The last episode you've watched." />
-
-                        <TextBox Grid.Row="0"
-                                 Grid.Column="1"
+                        
+                        <DockPanel Grid.Row="0" Grid.Column="1">
+                            <TextBox 
                                  GotFocus="EpisodeTextbox_GotFocus"
                                  KeyDown="EnterApply"
                                  PreviewTextInput="EpisodeTextbox_PreviewTextInput"
                                  Style="{DynamicResource NumberBoxStyle}"
                                  Text="{Binding Anime.Episode}" />
+                            <TextBox 
+                                Style="{DynamicResource NumberBoxStyle}"
+                                Text="{Binding Anime.MyAnimeList.TotalEpisodes, Converter={StaticResource EpisodeConverter}, StringFormat={}/{0}}"
+                                BorderThickness="0"
+                                IsReadOnly="True"
+                                IsHitTestVisible="False"
+                                Opacity="0.6"
+                                Foreground="Gray"
+                                Visibility="{Binding Anime.MyAnimeList.Id, Converter={StaticResource StringLengthVisibilityConverter}}"/>
+                        </DockPanel>
+
+                        
 
                         <!--  Status  -->
                         <Label Grid.Row="1"
