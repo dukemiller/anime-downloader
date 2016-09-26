@@ -133,8 +133,13 @@ namespace anime_downloader.Views
 
         public static void KeyEscapeBack(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Escape) // || e.Key == Key.Back)
-                MainWindow.Window.Cycle(MainWindow.Window.AnimeList);
+            if (e.Key == Key.Escape)
+            {
+                if (Keyboard.FocusedElement is TextBox || Keyboard.FocusedElement is PasswordBox)
+                    Methods.ClearFocusFrom(Keyboard.FocusedElement as TextBox);
+                else
+                    MainWindow.Window.Cycle(MainWindow.Window.AnimeList);
+            }
         }
 
         public static void MouseEscapeBack(object sender, MouseButtonEventArgs e)
