@@ -180,7 +180,7 @@ namespace anime_downloader
         {
             Verify.Schema(Settings);
             Tray.Initialize();
-            AllAnime = AnimeCollection.FilteredAndSorted();
+            AllAnime = AnimeCollection.FilteredAndSorted;
             ChangeDisplay<Home>();
 
             KeyDown += (o, e) =>

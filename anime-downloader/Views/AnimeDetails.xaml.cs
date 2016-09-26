@@ -103,7 +103,7 @@ namespace anime_downloader.Views
 
         private void GoToNext()
         {
-            var animes = MainWindow.Window.AnimeCollection.FilteredAndSorted().ToList();
+            var animes = MainWindow.Window.AnimeCollection.FilteredAndSorted.ToList();
             var anime = animes.First(an => an.Name.Equals(_anime.Name));
             var position = (animes.IndexOf(anime) + 1) % animes.Count;
             MainWindow.Window.DisplayTransition();
@@ -112,7 +112,7 @@ namespace anime_downloader.Views
 
         private void GoToPrevious()
         {
-            var animes = MainWindow.Window.AnimeCollection.FilteredAndSorted().ToList();
+            var animes = MainWindow.Window.AnimeCollection.FilteredAndSorted.ToList();
             var anime = animes.First(an => an.Name.Equals(_anime.Name));
             var position = animes.IndexOf(anime) - 1 >= 0 ? animes.IndexOf(anime) - 1 : animes.Count - 1;
             MainWindow.Window.DisplayTransition();

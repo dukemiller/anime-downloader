@@ -66,7 +66,7 @@ namespace anime_downloader.Views
         
         public AnimeList()
         {
-            Animes = new ObservableCollection<Anime>(MainWindow.Window.AnimeCollection.FilteredAndSorted());
+            Animes = new ObservableCollection<Anime>(MainWindow.Window.AnimeCollection.FilteredAndSorted);
             Stats = CreateStats();
             InitializeComponent();
 
@@ -125,7 +125,7 @@ namespace anime_downloader.Views
         {
             MainWindow.Window.Settings.FilterBy = FilterText ?? "";
             MainWindow.Window.Settings.Save();
-            Animes = new ObservableCollection<Anime>(MainWindow.Window.AnimeCollection.FilteredAndSorted());
+            Animes = new ObservableCollection<Anime>(MainWindow.Window.AnimeCollection.FilteredAndSorted);
             _find.Close();
         }
 

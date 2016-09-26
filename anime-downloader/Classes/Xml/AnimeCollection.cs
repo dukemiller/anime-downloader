@@ -27,22 +27,25 @@ namespace anime_downloader.Classes.Xml
         ///     Retrieve settings-defined filtered and sorted collection of the anime
         ///     currently in the anime xml as Anime objects.
         /// </summary>
-        public IEnumerable<Anime> FilteredAndSorted()
+        public IEnumerable<Anime> FilteredAndSorted
         {
-            var filters = _settings.FilterBy.Split('/');
+            get
+            {
+                var filters = _settings.FilterBy.Split('/');
 
-            var propertyDescriptor = TypeDescriptor
-                .GetProperties(typeof(Anime))
-                .Find(_settings.SortBy, true);
+                var propertyDescriptor = TypeDescriptor
+                    .GetProperties(typeof(Anime))
+                    .Find(_settings.SortBy, true);
 
-            var animes = Animes;
+                var animes = Animes;
 
-            if (!_settings.FilterBy.IsBlank())
-                animes = animes.Where(a => filters.Any(f => f.Equals(a.Status)));
+                if (!_settings.FilterBy.IsBlank())
+                    animes = animes.Where(a => filters.Any(f => f.Equals(a.Status)));
 
-            return _settings.Flags.SortByReversed
-                ? animes.OrderByDescending(x => propertyDescriptor.GetValue(x))
-                : animes.OrderBy(x => propertyDescriptor.GetValue(x));
+                return _settings.Flags.SortByReversed
+                    ? animes.OrderByDescending(x => propertyDescriptor.GetValue(x))
+                    : animes.OrderBy(x => propertyDescriptor.GetValue(x));
+            }
         }
 
         /// <summary>
