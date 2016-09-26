@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
-using System.Windows.Controls;
 using anime_downloader.Classes.Web.MyAnimeList;
 using anime_downloader.Enums;
 
@@ -102,7 +101,7 @@ namespace anime_downloader.Classes.File
             return newEpisodes;
         }
 
-        public async Task<int> MoveDuplicatesAsync()
+        private async Task<int> MoveDuplicatesAsync()
         {
             var animeEpisodes = (await _animeFileCollection.GetEpisodesAsync(EpisodeStatus.Unwatched)).ToList();
 
