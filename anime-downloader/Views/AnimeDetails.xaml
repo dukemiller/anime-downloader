@@ -57,8 +57,8 @@
                         <RowDefinition Height="1*" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="2*" />
-                        <ColumnDefinition Width="12*" />
+                        <ColumnDefinition Width="4*" />
+                        <ColumnDefinition Width="25.5*" />
                     </Grid.ColumnDefinitions>
 
                     <!--  Name  -->
@@ -81,9 +81,9 @@
                 <Grid Grid.Row="1">
 
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="8*" />
+                        <ColumnDefinition Width="6*" />
                         <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="16*" />
+                        <ColumnDefinition Width="15*" />
                     </Grid.ColumnDefinitions>
 
                     <Grid Grid.Column="0">
@@ -109,26 +109,27 @@
                                Grid.Column="0"
                                Content="Episode: "
                                ToolTip="The last episode you've watched." />
-                        
+
                         <DockPanel Grid.Row="0" Grid.Column="1">
-                            <TextBox 
-                                 GotFocus="EpisodeTextbox_GotFocus"
-                                 KeyDown="EnterApply"
-                                 PreviewTextInput="EpisodeTextbox_PreviewTextInput"
-                                 Style="{DynamicResource NumberBoxStyle}"
-                                 Text="{Binding Anime.Episode}" />
-                            <TextBox 
-                                Style="{DynamicResource NumberBoxStyle}"
-                                Text="{Binding Anime.MyAnimeList.TotalEpisodes, Converter={StaticResource EpisodeConverter}, StringFormat={}/{0}}"
-                                BorderThickness="0"
-                                IsReadOnly="True"
-                                IsHitTestVisible="False"
-                                Opacity="0.6"
-                                Foreground="Gray"
-                                Visibility="{Binding Anime.MyAnimeList.Id, Converter={StaticResource StringLengthVisibilityConverter}}"/>
+                            <TextBox GotFocus="EpisodeTextbox_GotFocus"
+                                     KeyDown="EnterApply"
+                                     PreviewTextInput="EpisodeTextbox_PreviewTextInput"
+                                     Style="{DynamicResource NumberBoxStyle}"
+                                     Text="{Binding Anime.Episode}" />
+                            <TextBox BorderThickness="0"
+                                     Foreground="Gray"
+                                     IsHitTestVisible="False"
+                                     IsReadOnly="True"
+                                     Opacity="0.6"
+                                     Style="{DynamicResource NumberBoxStyle}"
+                                     Text="{Binding Anime.MyAnimeList.TotalEpisodes,
+                                                    Converter={StaticResource EpisodeConverter},
+                                                    StringFormat={}/{0}}"
+                                     Visibility="{Binding Anime.MyAnimeList.Id,
+                                                          Converter={StaticResource StringLengthVisibilityConverter}}" />
                         </DockPanel>
 
-                        
+
 
                         <!--  Status  -->
                         <Label Grid.Row="1"
