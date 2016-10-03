@@ -156,60 +156,6 @@ namespace anime_downloader.Views
                 NameTextbox.Focus();
         }
 
-        private void GotoMalButton_OnClick(object sender, RoutedEventArgs e) => Process.Start($"http://myanimelist.net/anime/{_anime.MyAnimeList.Id}");
-
-        private void ClearMalButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            var response =
-                MessageBox.Show(
-                    "This will delete all MyAnimeList data about this show received from attempting to synchronize.\n" +
-                    "Are you sure?",
-                    "Confirmation",
-                    MessageBoxButton.YesNo);
-
-            if (response == MessageBoxResult.Yes)
-            {
-                _anime.MyAnimeList.Id = "";
-                _anime.MyAnimeList.NeedsUpdating = true;
-                _anime.MyAnimeList.SeriesContinuationEpisode = "";
-                _anime.MyAnimeList.TotalEpisodes = "";
-                _anime.MyAnimeList.English = "";
-                _anime.MyAnimeList.Image = "";
-                _anime.MyAnimeList.Synopsis = "";
-                _anime.MyAnimeList.Title = "";
-                _anime.MyAnimeList.Synonyms = "";
-                Methods.Alert("Cleared all MyAnimeList data about this show.");
-            }
-        }
-
-        private async void RefreshMalButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            MainWindow.Window.ToggleButtons();
-            var credentials = Api.GetCredentials(MainWindow.Window.Settings);
-            var animeResults = await Api.FindAsync(credentials, HttpUtility.UrlEncode(_anime.MyAnimeList.Title));
-            var result = animeResults.FirstOrDefault(r => r.Id.Equals(_anime.MyAnimeList.Id));
-
-            if (result != null)
-            {
-                _anime.MyAnimeList.Synopsis = result.Synopsis;
-                _anime.MyAnimeList.Image = result.Image;
-                _anime.MyAnimeList.Title = result.Title;
-                _anime.MyAnimeList.English = result.English;
-                _anime.MyAnimeList.Synopsis = result.Synopsis;
-                _anime.MyAnimeList.TotalEpisodes = result.TotalEpisodes;
-                Methods.Alert("Updated any information about this show");
-            }
-
-            else
-            {
-                Methods.Alert("Had trouble finding this show on MAL.");
-            }
-
-            MainWindow.Window.ToggleButtons();
-        }
-
-        private void OpenLastButton_OnClick(object sender, RoutedEventArgs e) => Process.Start(Anime.LastEpisode.Path);
-
         private void AnimeDetails_OnKeyDown(object sender, KeyEventArgs e)
         {
             // So you can type without changing the view
@@ -244,6 +190,62 @@ namespace anime_downloader.Views
             Focus();
         }
 
+        // 
+
+        private void OpenLastButton_OnClick(object sender, RoutedEventArgs e) => Process.Start(Anime.LastEpisode.Path);
+
+        private async void RefreshMalButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            MainWindow.Window.ToggleButtons();
+            var credentials = Api.GetCredentials(MainWindow.Window.Settings);
+            var animeResults = await Api.FindAsync(credentials, HttpUtility.UrlEncode(_anime.MyAnimeList.Title));
+            var result = animeResults.FirstOrDefault(r => r.Id.Equals(_anime.MyAnimeList.Id));
+
+            if (result != null)
+            {
+                _anime.MyAnimeList.Synopsis = result.Synopsis;
+                _anime.MyAnimeList.Image = result.Image;
+                _anime.MyAnimeList.Title = result.Title;
+                _anime.MyAnimeList.English = result.English;
+                _anime.MyAnimeList.Synopsis = result.Synopsis;
+                _anime.MyAnimeList.TotalEpisodes = result.TotalEpisodes;
+                Methods.Alert("Updated any information about this show");
+            }
+
+            else
+            {
+                Methods.Alert("Had trouble finding this show on MAL.");
+            }
+
+            MainWindow.Window.ToggleButtons();
+        }
+
+        private void GotoMalButton_OnClick(object sender, RoutedEventArgs e) => Process.Start($"http://myanimelist.net/anime/{_anime.MyAnimeList.Id}");
+
+        private void ClearMalButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            var response =
+                MessageBox.Show(
+                    "This will delete all MyAnimeList data about this show received from attempting to synchronize. " +
+                    "Are you sure?",
+                    "Confirmation",
+                    MessageBoxButton.YesNo);
+
+            if (response == MessageBoxResult.Yes)
+            {
+                _anime.MyAnimeList.Id = "";
+                _anime.MyAnimeList.NeedsUpdating = true;
+                _anime.MyAnimeList.SeriesContinuationEpisode = "";
+                _anime.MyAnimeList.TotalEpisodes = "";
+                _anime.MyAnimeList.English = "";
+                _anime.MyAnimeList.Image = "";
+                _anime.MyAnimeList.Synopsis = "";
+                _anime.MyAnimeList.Title = "";
+                _anime.MyAnimeList.Synonyms = "";
+                Methods.Alert("Cleared all MyAnimeList data about this show.");
+            }
+        }
+
         private async void MalFind_OnClick(object sender, RoutedEventArgs e)
         {
             MainWindow.Window.ToggleButtons();
@@ -253,6 +255,8 @@ namespace anime_downloader.Views
             Methods.Alert($"MAL ID {words} for {_anime.Name}.");
             MainWindow.Window.ToggleButtons();
         }
+
+        // 
 
         public event PropertyChangedEventHandler PropertyChanged;
 
