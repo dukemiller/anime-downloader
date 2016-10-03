@@ -1,7 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Markup;
 using anime_downloader.Enums;
 
 namespace anime_downloader.Classes.Xaml
@@ -13,7 +19,8 @@ namespace anime_downloader.Classes.Xaml
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return string.Join(", ", (string[]) value);
+            var enumerable = (IEnumerable<string>) value;
+            return string.Join(", ", enumerable.Where(s => !string.IsNullOrEmpty(s)));
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -21,7 +28,7 @@ namespace anime_downloader.Classes.Xaml
             return ((string) value).Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
         }
     }
-
+    
     /// <summary>
     ///     Returns opposite of the bool value.
     /// </summary>
@@ -259,4 +266,30 @@ namespace anime_downloader.Classes.Xaml
         }
     }
 
+    public class SynposisSnipConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var synopsis = System.Convert.ToString(value);
+            synopsis = synopsis.Replace("&ndash;", "-");
+            synopsis = new[] {
+                @"\[/?[a-zA-Z0-9=]*\]",                                  // Style tags [b]
+                @"(/)?&\w+;(br)?",                                       // Unescaped html 
+                @"<br />", @"&#[0-9]+;",                                 // HTML break tag
+                @"\([a-zA-Z]+:[a-zA-Z\s-]+\)",                           // Source tag
+                @"[E|e]pisode(s)? [0-9]{1,}(-[0-9]{1,})?(&|,)?.+(\n|$)", // Random information about episode previewing),
+                @"\n$",                                                  // Unneeded linebreak at the end  
+            }
+                .Aggregate(synopsis, (current, pattern) =>
+                        Regex.Replace(current, pattern, ""));
+            synopsis = Regex.Replace(synopsis, @"[\r\n]{2,}", "\n");     // Multiple linebreaks
+            return synopsis;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    
 }

@@ -453,6 +453,7 @@ namespace anime_downloader.Classes
             set
             {
                 _root.Element("synopsis")?.SetValue(value);
+                OnPropertyChanged();
                 _save();
             }
         }
@@ -473,6 +474,7 @@ namespace anime_downloader.Classes
             set
             {
                 _root.Element("title")?.SetValue(value);
+                OnPropertyChanged();
                 _save();
             }
         }
@@ -483,6 +485,7 @@ namespace anime_downloader.Classes
             set
             {
                 _root.Element("english")?.SetValue(value);
+                OnPropertyChanged();
                 _save();
             }
         }
@@ -496,6 +499,8 @@ namespace anime_downloader.Classes
                 _save();
             }
         }
+
+        public IEnumerable<string> TitleAndEnglish => new[] {Title, English};
 
         public IEnumerable<string> SynonymsSplit => Synonyms.Split(';');
         

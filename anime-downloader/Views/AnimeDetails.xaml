@@ -16,7 +16,9 @@
         <xaml:StringLengthVisibilityConverterNot x:Key="StringLengthVisibilityConverterNot" />
         <xaml:StringCompareVisibilityConverter x:Key="StringCompareVisibilityConverter" />
         <xaml:IsNullVisibilityConverter x:Key="IsNullVisibilityConverter" />
+        <xaml:SynposisSnipConverter x:Key="SynposisSnipConverter" />
         <xaml:EpisodeConverter x:Key="EpisodeConverter" />
+        <xaml:StringJoinConverter x:Key="StringJoinConverter" />
         <Style x:Key="NumberBoxStyle" TargetType="TextBox">
             <Setter Property="Width" Value="40" />
             <Setter Property="HorizontalAlignment" Value="Left" />
@@ -33,6 +35,22 @@
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="FontFamily" Value="{StaticResource MainFont}" />
+        </Style>
+        <Style x:Key="UpdateNotification" TargetType="Rectangle">
+            <Setter Property="Width" Value="15" />
+            <Setter Property="Height" Value="15" />
+            <Setter Property="RadiusY" Value="25" />
+            <Setter Property="RadiusX" Value="25" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Style.Triggers>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Path=Anime.MyAnimeList.HasId}" Value="True" />
+                        <Condition Binding="{Binding Path=Anime.MyAnimeList.NeedsUpdating}" Value="True" />
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="Fill" Value="LightGreen" />
+                </MultiDataTrigger>
+            </Style.Triggers>
         </Style>
     </UserControl.Resources>
     <Grid>
@@ -207,45 +225,42 @@
                                   Grid.Column="1"
                                   IsChecked="{Binding Anime.NameStrict}"
                                   Style="{DynamicResource ValueStyle}" />
+
+                        <Rectangle Grid.Row="8"
+                                   Grid.Column="0"
+                                   HorizontalAlignment="Left"
+                                   Style="{StaticResource UpdateNotification}" />
+
                     </Grid>
 
                     <Grid Grid.Column="2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="6*" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="1*" />
-                            <RowDefinition Height="1*" />
-                            <RowDefinition Height="1*" />
-                            <RowDefinition Height="1*" />
-                            <RowDefinition Height="1*" />
-                            <RowDefinition Height="1*" />
-                            <RowDefinition Height="1*" />
-                            <RowDefinition Height="1*" />
-                            <RowDefinition Height="1*" />
-                        </Grid.RowDefinitions>
+                        <DockPanel>
+                            <Label Content="Notes: "
+                                   DockPanel.Dock="Top"
+                                   ToolTip="Notes, tags or comments to give the show to remember it (This is usually loosely used as a way to summarize feelings about the show)" />
+                            <TextBox Height="84"
+                                     HorizontalContentAlignment="Left"
+                                     VerticalContentAlignment="Top"
+                                     DockPanel.Dock="Top"
+                                     FontSize="15"
+                                     KeyDown="EnterApply"
+                                     MaxLength="170"
+                                     Text="{Binding Anime.Notes}"
+                                     TextWrapping="WrapWithOverflow"
+                                     VerticalScrollBarVisibility="Disabled" />
+                            <Label HorizontalAlignment="Center"
+                                   Content="{Binding Anime.MyAnimeList.TitleAndEnglish,
+                                                     Converter={StaticResource StringJoinConverter}}"
+                                   DockPanel.Dock="Top" />
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <TextBlock DockPanel.Dock="Top"
+                                           Text="{Binding Anime.MyAnimeList.Synopsis,
+                                                          Converter={StaticResource SynposisSnipConverter}}"
+                                           TextWrapping="WrapWithOverflow" />
+                            </ScrollViewer>
 
-                        <Label Grid.Row="0"
-                               Grid.Column="0"
-                               Content="Notes: "
-                               ToolTip="Notes, tags or comments to give the show to remember it (This is usually loosely used as a way to summarize feelings about the show)" />
-
-                        <TextBox Grid.Row="0"
-                                 Grid.RowSpan="3"
-                                 Grid.Column="1"
-                                 Height="84"
-                                 HorizontalContentAlignment="Left"
-                                 VerticalContentAlignment="Top"
-                                 FontSize="15"
-                                 KeyDown="EnterApply"
-                                 MaxLength="170"
-                                 Text="{Binding Anime.Notes}"
-                                 VerticalScrollBarVisibility="Disabled"
-                                 TextWrapping="WrapWithOverflow" />
-
+                        </DockPanel>
                     </Grid>
-
                 </Grid>
 
             </Grid>
