@@ -21,10 +21,8 @@ namespace anime_downloader.Classes.Web.MyAnimeList
                 var length = name.Length;
                 while (!animeResults.Any() && length-- > 1)
                 {
-                    animeResults =
-                        await
-                            Api.FindAsync(credentials,
-                                HttpUtility.UrlEncode(string.Join(" ", name.Take(length))));
+                    var newName = string.Join(" ", name.Take(length));
+                    animeResults = await Api.FindAsync(credentials, HttpUtility.UrlEncode(newName));
                 }
 
                 // if after the previous operation there are still no results
