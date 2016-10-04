@@ -475,6 +475,7 @@ namespace anime_downloader.Classes
             {
                 _root.Element("title")?.SetValue(value);
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(TitleAndEnglish));
                 _save();
             }
         }
@@ -486,6 +487,7 @@ namespace anime_downloader.Classes
             {
                 _root.Element("english")?.SetValue(value);
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(TitleAndEnglish));
                 _save();
             }
         }
@@ -520,6 +522,7 @@ namespace anime_downloader.Classes
             set
             {
                 _root.Element("total-episodes")?.SetValue(value);
+                OnPropertyChanged();
                 _save();
             }
         }
