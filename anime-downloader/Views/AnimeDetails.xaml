@@ -268,7 +268,7 @@
 
             <DockPanel Grid.Row="1">
 
-                <Button Click="OpenLastButton_OnClick"
+                <Button Click="LastEpisode_Click"
                         Content="Last episode"
                         Style="{DynamicResource ConfirmationButtonStyle}"
                         Visibility="{Binding Anime.LastEpisode,
@@ -290,25 +290,25 @@
                                    Content="MyAnimeList"
                                    FontSize="16" />
                             <Button Margin="5"
-                                    Click="MalFind_OnClick"
+                                    Click="Find_Click"
                                     Content="Find ID"
                                     Style="{DynamicResource ConfirmationButtonStyle}"
                                     Visibility="{Binding Path=Anime.MyAnimeList.Id,
                                                          Converter={StaticResource StringLengthVisibilityConverterNot}}" />
                             <Button Margin="5"
-                                    Click="GotoMalButton_OnClick"
+                                    Click="Profile_Click"
                                     Content="Open"
                                     Style="{DynamicResource ConfirmationButtonStyle}"
                                     Visibility="{Binding Path=Anime.MyAnimeList.Id,
                                                          Converter={StaticResource StringLengthVisibilityConverter}}" />
                             <Button Margin="5"
-                                    Click="RefreshMalButton_OnClick"
+                                    Click="Refresh_Click"
                                     Content="Refresh"
                                     Style="{DynamicResource ConfirmationButtonStyle}"
                                     Visibility="{Binding Path=Anime.MyAnimeList.Id,
                                                          Converter={StaticResource StringLengthVisibilityConverter}}" />
                             <Button Margin="5"
-                                    Click="ClearMalButton_OnClick"
+                                    Click="Clear_Click"
                                     Content="Clear"
                                     Style="{DynamicResource ConfirmationButtonStyle}"
                                     Visibility="{Binding Path=Anime.MyAnimeList.Id,

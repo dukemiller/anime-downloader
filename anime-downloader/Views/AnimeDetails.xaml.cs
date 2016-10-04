@@ -192,9 +192,9 @@ namespace anime_downloader.Views
 
         // 
 
-        private void OpenLastButton_OnClick(object sender, RoutedEventArgs e) => Process.Start(Anime.LastEpisode.Path);
+        private void LastEpisode_Click(object sender, RoutedEventArgs e) => Process.Start(Anime.LastEpisode.Path);
 
-        private async void RefreshMalButton_OnClick(object sender, RoutedEventArgs e)
+        private async void Refresh_Click(object sender, RoutedEventArgs e)
         {
             MainWindow.Window.ToggleButtons();
             var credentials = Api.GetCredentials(MainWindow.Window.Settings);
@@ -220,9 +220,9 @@ namespace anime_downloader.Views
             MainWindow.Window.ToggleButtons();
         }
 
-        private void GotoMalButton_OnClick(object sender, RoutedEventArgs e) => Process.Start($"http://myanimelist.net/anime/{_anime.MyAnimeList.Id}");
+        private void Profile_Click(object sender, RoutedEventArgs e) => Process.Start($"http://myanimelist.net/anime/{_anime.MyAnimeList.Id}");
 
-        private void ClearMalButton_OnClick(object sender, RoutedEventArgs e)
+        private void Clear_Click(object sender, RoutedEventArgs e)
         {
             var response =
                 MessageBox.Show(
@@ -246,7 +246,7 @@ namespace anime_downloader.Views
             }
         }
 
-        private async void MalFind_OnClick(object sender, RoutedEventArgs e)
+        private async void Find_Click(object sender, RoutedEventArgs e)
         {
             MainWindow.Window.ToggleButtons();
             var credentials = Api.GetCredentials(MainWindow.Window.Settings);
