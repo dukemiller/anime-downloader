@@ -11,7 +11,7 @@ namespace anime_downloader.Classes.Web.MyAnimeList
         public static async Task<bool> GetId(Anime anime, ICredentials credentials)
         {
             // get all results from searching the name
-            var animeResults = await Api.FindAsync(credentials, HttpUtility.UrlEncode(anime.Title));
+            var animeResults = await Api.FindAsync(credentials, HttpUtility.UrlEncode(anime.Title.Replace(":", "")));
 
             // if there were absolutely no results from the query
             if (!animeResults.Any())
