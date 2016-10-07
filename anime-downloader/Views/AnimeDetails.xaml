@@ -140,7 +140,8 @@
                                      IsReadOnly="True"
                                      Opacity="0.6"
                                      Style="{DynamicResource NumberBoxStyle}"
-                                     Text="{Binding Anime.MyAnimeList.TotalEpisodes,
+                                     Text="{Binding Anime.MyAnimeList.Total,
+                                                    Mode=OneWay,
                                                     Converter={StaticResource EpisodeConverter},
                                                     StringFormat={}/{0}}"
                                      Visibility="{Binding Anime.MyAnimeList.Id,

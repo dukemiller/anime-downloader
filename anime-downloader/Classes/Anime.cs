@@ -525,6 +525,7 @@ namespace anime_downloader.Classes
             {
                 _root.Element("total-episodes")?.SetValue(value);
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(Total));
                 _save();
             }
         }
@@ -535,10 +536,14 @@ namespace anime_downloader.Classes
             set
             {
                 _root.Element("overall-total")?.SetValue(value);
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(Total));
                 _save();
             }
         }
 
+        public string Total => IntOverallTotal() > 0 ? OverallTotal : TotalEpisodes;
+        
         public int IntOverallTotal()
         {
             int episodes;
