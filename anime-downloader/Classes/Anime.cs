@@ -422,7 +422,7 @@ namespace anime_downloader.Classes
         
     }
 
-    public class MyAnimeListDetails : INotifyPropertyChanged
+    public sealed class MyAnimeListDetails : INotifyPropertyChanged
     {
         private readonly XElement _root;
 
@@ -443,6 +443,7 @@ namespace anime_downloader.Classes
             {
                 _root.Element("id")?.SetValue(value);
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(HasId));
                 _save();
             }
         }
@@ -512,6 +513,7 @@ namespace anime_downloader.Classes
             set
             {
                 _root.Element("needs-updating")?.SetValue(value);
+                OnPropertyChanged();
                 _save();
             }
         }
@@ -537,7 +539,8 @@ namespace anime_downloader.Classes
             }
         }
 
-        public int IntOverallTotal(){
+        public int IntOverallTotal()
+        {
             int episodes;
             var successful = int.TryParse(OverallTotal, out episodes);
             return successful ? episodes : 0;
@@ -570,7 +573,7 @@ namespace anime_downloader.Classes
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
