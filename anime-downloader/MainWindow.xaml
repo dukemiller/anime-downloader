@@ -18,76 +18,51 @@
                              To="1.0" />
         </Storyboard>
     </Window.Resources>
-    <Grid>
-        <Grid.Background>White</Grid.Background>
-
+    <Grid Background="White">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*" />
             <ColumnDefinition Width="9*" />
         </Grid.ColumnDefinitions>
-
         <Grid Background="{StaticResource BackgroundColor}" Column="0">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="1*" />
-                    <RowDefinition Height="1*" />
-                    <RowDefinition Height="1*" />
-                    <RowDefinition Height="1*" />
-                    <RowDefinition Height="1*" />
-                    <RowDefinition Height="1*" />
-                    <RowDefinition Height="1*" />
-                    <RowDefinition Height="1*" />
-                    <RowDefinition Height="1*" />
-                    <RowDefinition Height="1*" />
-                </Grid.RowDefinitions>
+            <StackPanel>
                 <RadioButton x:Name="Home"
-                             Grid.Row="0"
                              Click="Home_Click"
                              Content="Home"
                              IsChecked="True"
                              Style="{DynamicResource LargeButtonStyle}" />
                 <RadioButton x:Name="AnimeList"
-                             Grid.Row="1"
                              Click="AnimeList_Click"
                              Content="Anime"
                              Style="{DynamicResource LargeButtonStyle}" />
                 <RadioButton x:Name="SettingsButton"
-                             Grid.Row="2"
                              Click="Settings_Click"
                              Content="Settings"
                              Style="{DynamicResource LargeButtonStyle}" />
                 <RadioButton x:Name="Download"
-                             Grid.Row="3"
                              Click="Download_Click"
                              Content="Download"
                              Style="{DynamicResource LargeButtonStyle}" />
                 <RadioButton x:Name="Manage"
-                             Grid.Row="4"
                              Click="Manage_Click"
                              Content="Manage"
                              Style="{DynamicResource LargeButtonStyle}" />
                 <RadioButton x:Name="Playlists"
-                             Grid.Row="5"
                              Click="Playlists_Click"
                              Content="Playlists"
                              Style="{DynamicResource LargeButtonStyle}" />
                 <RadioButton x:Name="Web"
-                             Grid.Row="6"
                              Click="Web_Click"
                              Content="Web"
                              Style="{DynamicResource LargeButtonStyle}" />
                 <RadioButton x:Name="Misc"
-                             Grid.Row="7"
                              Click="Misc_Click"
                              Content="Misc"
                              Style="{DynamicResource LargeButtonStyle}" />
-            </Grid>
+            </StackPanel>
         </Grid>
-
         <Grid x:Name="Display"
-              Margin="20,0,20,0"
-              Column="1">
-            <Grid.Background>White</Grid.Background>
-        </Grid>
+              Margin="20,0"
+              Background="White"
+              Column="1" />
     </Grid>
 </Window>
