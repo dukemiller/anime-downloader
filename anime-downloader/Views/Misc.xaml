@@ -100,7 +100,7 @@
                         <StackPanel>
 
                             <RadioButton Name="SearchMore" KeyDown="Radio_KeyDown">
-                                <TextBlock Text="Regather data for any show that have no total episodes" /> 
+                                <TextBlock Text="Regather data for any show that have no total episodes" />
                             </RadioButton>
 
                         </StackPanel>

@@ -65,9 +65,9 @@
                 <TextBox Grid.Row="0"
                          Grid.Column="1"
                          KeyDown="Textbox_KeyDown"
+                         PreviewKeyDown="Textbox_OnPreviewKeyDown"
                          Style="{DynamicResource TextboxStyle}"
-                         Text="{Binding Paths.EpisodeDirectory}"
-                         PreviewKeyDown="Textbox_OnPreviewKeyDown" />
+                         Text="{Binding Paths.EpisodeDirectory}" />
 
                 <!--  Watched path  -->
                 <Label Grid.Row="1"
@@ -78,9 +78,9 @@
                 <TextBox Grid.Row="1"
                          Grid.Column="1"
                          KeyDown="Textbox_KeyDown"
+                         PreviewKeyDown="Textbox_OnPreviewKeyDown"
                          Style="{DynamicResource TextboxStyle}"
-                         Text="{Binding Paths.WatchedDirectory}"
-                         PreviewKeyDown="Textbox_OnPreviewKeyDown" />
+                         Text="{Binding Paths.WatchedDirectory}" />
 
                 <!--  Torrent  -->
                 <Label Grid.Row="2"
@@ -91,9 +91,9 @@
                 <TextBox Grid.Row="2"
                          Grid.Column="1"
                          KeyDown="Textbox_KeyDown"
+                         PreviewKeyDown="Textbox_OnPreviewKeyDown"
                          Style="{DynamicResource TextboxStyle}"
-                         Text="{Binding Paths.TorrentFilesDirectory}"
-                         PreviewKeyDown="Textbox_OnPreviewKeyDown" />
+                         Text="{Binding Paths.TorrentFilesDirectory}" />
 
                 <!--  Download  -->
                 <Label Grid.Row="3"
@@ -104,9 +104,9 @@
                 <TextBox Grid.Row="3"
                          Grid.Column="1"
                          KeyDown="Textbox_KeyDown"
+                         PreviewKeyDown="Textbox_OnPreviewKeyDown"
                          Style="{DynamicResource TextboxStyle}"
-                         Text="{Binding Paths.UtorrentFile}"
-                         PreviewKeyDown="Textbox_OnPreviewKeyDown" />
+                         Text="{Binding Paths.UtorrentFile}" />
 
                 <!--  Subgroups  -->
                 <Label Grid.Row="4"
@@ -117,10 +117,10 @@
                 <TextBox Grid.Row="4"
                          Grid.Column="1"
                          KeyDown="Textbox_KeyDown"
+                         PreviewKeyDown="Textbox_OnPreviewKeyDown"
                          Style="{DynamicResource TextboxStyle}"
                          Text="{Binding Path=Subgroups,
-                                        Converter={StaticResource Converter}}"
-                         PreviewKeyDown="Textbox_OnPreviewKeyDown" />
+                                        Converter={StaticResource Converter}}" />
             </Grid>
             <Grid Row="1">
                 <Grid.ColumnDefinitions>
@@ -146,9 +146,9 @@
                            ToolTip="Instead of closing the program on exit, it is brought to the tray." />
                     <CheckBox Grid.Row="0"
                               Grid.Column="1"
+                              Click="Checkbox_OnClick"
                               IsChecked="{Binding Path=Flags.ExitOnClose,
                                                   Converter={StaticResource NotConverter}}"
-                              Click="Checkbox_OnClick"
                               Style="{DynamicResource CheckboxStyle}" />
 
                     <!--  AlwaysTray  -->
@@ -182,8 +182,8 @@
                            ToolTip="Whether or not to only download from subgroups that are on the whitelisted subgroups list." />
                     <CheckBox Grid.Row="0"
                               Grid.Column="1"
-                              IsChecked="{Binding Flags.OnlyWhitelisted}"
                               Click="Checkbox_OnClick"
+                              IsChecked="{Binding Flags.OnlyWhitelisted}"
                               Style="{DynamicResource CheckboxStyle}" />
 
                     <!--  Named folders  -->
@@ -195,8 +195,8 @@
                            ToolTip="Put each episode inside a folder named after the show" />
                     <CheckBox Grid.Row="1"
                               Grid.Column="1"
-                              IsChecked="{Binding Flags.IndividualShowFolders}"
                               Click="Checkbox_OnClick"
+                              IsChecked="{Binding Flags.IndividualShowFolders}"
                               Style="{DynamicResource CheckboxStyle}" />
                 </Grid>
             </Grid>

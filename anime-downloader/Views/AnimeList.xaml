@@ -53,9 +53,9 @@
                   ItemsSource="{Binding Animes}"
                   MouseDoubleClick="DataGrid_OnMouseDoubleClick"
                   PreviewKeyDown="DataGrid_OnKeyDown"
-                  Sorting="DataGrid_OnSorting"
                   RowHeaderWidth="0"
                   SelectionUnit="Cell"
+                  Sorting="DataGrid_OnSorting"
                   UseLayoutRounding="False">
             <DataGrid.Resources>
                 <Style TargetType="{x:Type DataGridColumnHeader}">
