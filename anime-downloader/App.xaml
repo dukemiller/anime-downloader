@@ -4,6 +4,14 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
 
+        <!--  Storyboard  -->
+        <Storyboard x:Key="DisplayTransition">
+            <DoubleAnimation Duration="0:0:0.25"
+                             From="0.0"
+                             Storyboard.TargetProperty="Opacity"
+                             To="1.0" />
+        </Storyboard>
+
         <!--  Brush Colors  -->
         <SolidColorBrush x:Key="BackgroundColor" Color="#CAD6F3" />
         <SolidColorBrush x:Key="MouseOverColor" Color="#A2B9F0" />
