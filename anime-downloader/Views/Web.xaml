@@ -107,13 +107,13 @@
                                                LastChildFill="false">
                                         <DockPanel.Resources>
                                             <Style x:Key="Normal"
-                                                   BasedOn="{StaticResource FeatureButtonStyle}"
+                                                   BasedOn="{StaticResource {x:Type Button}}"
                                                    TargetType="Button">
                                                 <Setter Property="Margin" Value="5, 0" />
                                                 <Setter Property="DockPanel.Dock" Value="Right" />
                                             </Style>
                                             <Style x:Key="Special"
-                                                   BasedOn="{StaticResource SpecialButtonStyle}"
+                                                   BasedOn="{StaticResource SpecialButton}"
                                                    TargetType="Button">
                                                 <Setter Property="Margin" Value="5, 0" />
                                                 <Setter Property="Width" Value="90" />
@@ -172,13 +172,11 @@
                                             Margin="5"
                                             Click="Search_OnClick"
                                             Content="Search"
-                                            KeyDown="SearchButton_KeyDown"
-                                            Style="{DynamicResource FeatureButtonStyle}" />
+                                            KeyDown="SearchButton_KeyDown" />
 
                                     <Button Margin="5"
                                             Click="Search_FirstResult_OnClick"
-                                            Content="First Result"
-                                            Style="{DynamicResource FeatureButtonStyle}" />
+                                            Content="First Result" />
                                 </DockPanel>
                             </Grid>
                         </GroupBox>
@@ -190,24 +188,20 @@
                         <StackPanel>
                             <Button Margin="5"
                                     Click="MyanimelistButton_Click"
-                                    Content="MyAnimeList"
-                                    Style="{DynamicResource FeatureButtonStyle}" />
+                                    Content="MyAnimeList" />
                             <Button Margin="5"
                                     Click="AnichartButton_Click"
-                                    Content="Anichart"
-                                    Style="{DynamicResource FeatureButtonStyle}" />
+                                    Content="Anichart" />
                             <Button Margin="5"
                                     Click="NyaaButton_Click"
-                                    Content="Nyaa"
-                                    Style="{DynamicResource FeatureButtonStyle}" />
+                                    Content="Nyaa" />
                         </StackPanel>
                     </GroupBox>
                     <GroupBox VerticalAlignment="Bottom"
                               Header="Usage Notes"
                               Style="{DynamicResource BoxStyle}">
                         <Button Click="UsageNotes_OnClick"
-                                Content="Click me"
-                                Style="{DynamicResource FeatureButtonStyle}" />
+                                Content="Click me" />
                     </GroupBox>
                 </StackPanel>
             </DockPanel>

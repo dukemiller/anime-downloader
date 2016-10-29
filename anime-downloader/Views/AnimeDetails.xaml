@@ -254,8 +254,8 @@
                                                      Converter={StaticResource StringJoinConverter}}"
                                    DockPanel.Dock="Top" />
                             <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                <TextBlock DockPanel.Dock="Top"
-                                           HorizontalAlignment="Center"
+                                <TextBlock HorizontalAlignment="Center"
+                                           DockPanel.Dock="Top"
                                            Text="{Binding Anime.MyAnimeList.Synopsis,
                                                           Converter={StaticResource SynposisSnipConverter}}"
                                            TextWrapping="WrapWithOverflow" />
@@ -271,7 +271,6 @@
 
                 <Button Click="LastEpisode_Click"
                         Content="Last episode"
-                        Style="{DynamicResource ConfirmationButtonStyle}"
                         Visibility="{Binding Anime.LastEpisode,
                                              Converter={StaticResource IsNullVisibilityConverter}}" />
 
@@ -293,25 +292,21 @@
                             <Button Margin="5"
                                     Click="Find_Click"
                                     Content="Find ID"
-                                    Style="{DynamicResource ConfirmationButtonStyle}"
                                     Visibility="{Binding Path=Anime.MyAnimeList.Id,
                                                          Converter={StaticResource StringLengthVisibilityConverterNot}}" />
                             <Button Margin="5"
                                     Click="Profile_Click"
                                     Content="Open"
-                                    Style="{DynamicResource ConfirmationButtonStyle}"
                                     Visibility="{Binding Path=Anime.MyAnimeList.Id,
                                                          Converter={StaticResource StringLengthVisibilityConverter}}" />
                             <Button Margin="5"
                                     Click="Refresh_Click"
                                     Content="Refresh"
-                                    Style="{DynamicResource ConfirmationButtonStyle}"
                                     Visibility="{Binding Path=Anime.MyAnimeList.Id,
                                                          Converter={StaticResource StringLengthVisibilityConverter}}" />
                             <Button Margin="5"
                                     Click="Clear_Click"
                                     Content="Clear"
-                                    Style="{DynamicResource ConfirmationButtonStyle}"
                                     Visibility="{Binding Path=Anime.MyAnimeList.Id,
                                                          Converter={StaticResource StringLengthVisibilityConverter}}" />
                         </StackPanel>
@@ -321,8 +316,7 @@
 
                 <Button x:Name="SubmitButton"
                         HorizontalAlignment="Right"
-                        Content="{Binding ButtonText}"
-                        Style="{DynamicResource ConfirmationButtonStyle}" />
+                        Content="{Binding ButtonText}" />
 
             </DockPanel>
         </Grid>

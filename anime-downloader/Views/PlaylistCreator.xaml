@@ -67,17 +67,17 @@
                 </GroupBox>
             </DockPanel>
         </StackPanel>
-        <Button x:Name="CreateButton"
-                Grid.Row="2"
-                HorizontalAlignment="Right"
-                Click="CreateButton_OnClick"
-                Content="Create"
-                Style="{DynamicResource ConfirmationButtonStyle}" />
-        <Button x:Name="OpenButton"
-                Grid.Row="2"
-                HorizontalAlignment="Left"
-                Click="OpenButton_OnClick"
-                Content="Open"
-                Style="{DynamicResource ConfirmationButtonStyle}" />
+        <DockPanel Grid.Row="2" LastChildFill="False">
+            <Button x:Name="OpenButton"
+                    Click="OpenButton_OnClick"
+                    Content="Open"
+                    DockPanel.Dock="Left" />
+
+            <Button x:Name="CreateButton"
+                    Click="CreateButton_OnClick"
+                    Content="Create"
+                    DockPanel.Dock="Right" />
+        </DockPanel>
+
     </Grid>
 </UserControl>

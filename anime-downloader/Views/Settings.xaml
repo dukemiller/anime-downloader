@@ -213,8 +213,7 @@
             </Label>
             <Button HorizontalAlignment="Right"
                     Click="ApplyChangesButton_OnClick"
-                    Content="{Binding SubmitText}"
-                    Style="{DynamicResource ConfirmationButtonStyle}" />
+                    Content="{Binding SubmitText}" />
         </DockPanel>
 
     </Grid>

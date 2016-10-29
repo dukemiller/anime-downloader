@@ -44,10 +44,16 @@
                     </RadioButton>
                 </StackPanel>
             </GroupBox>
-            <Button x:Name="SearchButton" Style="{DynamicResource ConfirmationButtonStyle}" HorizontalAlignment="Right"
-                    Content="Search" Grid.Row="1" Click="SearchButton_OnClick" />
-            <Button x:Name="LogButton" Style="{DynamicResource ConfirmationButtonStyle}" HorizontalAlignment="Left"
-                    Content="Log" Grid.Row="1" Click="LogButton_OnClick" />
+            <Button x:Name="SearchButton"
+                    Grid.Row="1"
+                    HorizontalAlignment="Right"
+                    Click="SearchButton_OnClick"
+                    Content="Search" />
+            <Button x:Name="LogButton"
+                    Grid.Row="1"
+                    HorizontalAlignment="Left"
+                    Click="LogButton_OnClick"
+                    Content="Log" />
         </Grid>
     </Grid>
 </UserControl>

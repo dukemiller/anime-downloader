@@ -161,8 +161,7 @@
             <Button Grid.Row="3"
                     HorizontalAlignment="Right"
                     Click="SubmitButton_OnClick"
-                    Content="Submit"
-                    Style="{DynamicResource ConfirmationButtonStyle}" />
+                    Content="Submit" />
         </Grid>
     </Grid>
 </UserControl>

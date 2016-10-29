@@ -24,6 +24,42 @@
         <FontFamily x:Key="MainFont">Yu Gothic UI Semilight</FontFamily>
 
         <!--  Button Styles  -->
+
+        <Style TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{StaticResource BorderColor}"
+                                BorderThickness="2"
+                                Padding="5">
+                            <ContentPresenter HorizontalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Background" Value="{StaticResource BackgroundColor}" />
+            <Setter Property="FontFamily" Value="{StaticResource MediumButtonFont}" />
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Width" Value="auto" />
+            <Setter Property="Height" Value="auto" />
+            <Setter Property="Foreground" Value="Black" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="White" />
+                    <Setter Property="Background" Value="{StaticResource MouseOverColor}" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="{StaticResource PressedDownColor}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
         <Style x:Key="LargeButtonStyle" TargetType="{x:Type ToggleButton}">
             <Setter Property="Template">
                 <Setter.Value>
@@ -34,10 +70,11 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-            <Setter Property="IsTabStop" Value="False"></Setter>
+            <Setter Property="IsTabStop" Value="False" />
             <Setter Property="Background" Value="{StaticResource BackgroundColor}" />
             <Setter Property="FontFamily" Value="{StaticResource LargeButtonFont}" />
             <Setter Property="FontSize" Value="28" />
+            <Setter Property="FontWeight" Value="12" />
             <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             <Setter Property="BorderBrush" Value="{x:Null}" />
             <Setter Property="BorderThickness" Value="0" />
@@ -60,73 +97,10 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-        <Style x:Key="ConfirmationButtonStyle" TargetType="{x:Type Button}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Button}">
-                        <Border Background="{TemplateBinding Background}"
-                                BorderBrush="{StaticResource BorderColor}"
-                                BorderThickness="2">
-                            <ContentPresenter Margin="5"
-                                              HorizontalAlignment="Center"
-                                              VerticalAlignment="Center" />
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-            <Setter Property="Background" Value="{StaticResource BackgroundColor}" />
-            <Setter Property="FontFamily" Value="{StaticResource MediumButtonFont}" />
-            <Setter Property="FontSize" Value="18" />
-            <Setter Property="Foreground" Value="Black" />
-            <Setter Property="Width" Value="auto" />
-            <Setter Property="Height" Value="auto" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Foreground" Value="White" />
-                    <Setter Property="Background" Value="{StaticResource MouseOverColor}" />
-                </Trigger>
-                <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Background" Value="{StaticResource PressedDownColor}" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-        <Style x:Key="FeatureButtonStyle" TargetType="{x:Type Button}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Button}">
-                        <Border Background="{TemplateBinding Background}"
-                                BorderBrush="{StaticResource BorderColor}"
-                                BorderThickness="2">
-                            <ContentPresenter Margin="5"
-                                              HorizontalAlignment="Center"
-                                              VerticalAlignment="Center" />
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-            <Setter Property="Background" Value="{StaticResource BackgroundColor}" />
-            <Setter Property="FontFamily" Value="{StaticResource MediumButtonFont}" />
-            <Setter Property="FontSize" Value="18" />
-            <Setter Property="Foreground" Value="Black" />
-            <Setter Property="Width" Value="auto" />
-            <Setter Property="Height" Value="auto" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Foreground" Value="White" />
-                    <Setter Property="Background" Value="{StaticResource MouseOverColor}" />
-                </Trigger>
-                <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Background" Value="{StaticResource PressedDownColor}" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-        <Style x:Key="SpecialButtonStyle" TargetType="{x:Type Button}">
+
+        <Style x:Key="SpecialButton"
+               BasedOn="{StaticResource {x:Type Button}}"
+               TargetType="{x:Type Button}">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
@@ -140,15 +114,7 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             <Setter Property="Background" Value="{StaticResource SpecialBackgroundColor}" />
-            <Setter Property="FontFamily" Value="{StaticResource MediumButtonFont}" />
-            <Setter Property="FontSize" Value="18" />
-            <Setter Property="Foreground" Value="Black" />
-            <Setter Property="Width" Value="auto" />
-            <Setter Property="Height" Value="auto" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Foreground" Value="White" />
