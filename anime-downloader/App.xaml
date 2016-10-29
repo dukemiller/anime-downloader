@@ -5,10 +5,10 @@
     <Application.Resources>
 
         <!--  Brush Colors  -->
-        <SolidColorBrush x:Key="BackgroundColor" Color="#FF7FCEE4" />
-        <SolidColorBrush x:Key="MouseOverColor" Color="#4D9BFF" />
-        <SolidColorBrush x:Key="SelectedColor" Color="#348DFF" />
-        <SolidColorBrush x:Key="PressedDownColor" Color="#3F92FE" />
+        <SolidColorBrush x:Key="BackgroundColor" Color="#CAD6F3" />
+        <SolidColorBrush x:Key="MouseOverColor" Color="#A2B9F0" />
+        <SolidColorBrush x:Key="SelectedColor" Color="#2e51a2" />
+        <SolidColorBrush x:Key="PressedDownColor" Color="#2047A1" />
         <SolidColorBrush x:Key="BorderColor" Color="#A1CAFF" />
 
         <!--  Special Brush Colors  -->
