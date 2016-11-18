@@ -12,6 +12,7 @@ using System.Windows.Media.Animation;
 using anime_downloader.Classes;
 using anime_downloader.Classes.File;
 using anime_downloader.Classes.Xml;
+using anime_downloader.ViewModels;
 using anime_downloader.Views;
 using static anime_downloader.Classes.OperatingSystemApi;
 using Downloader = anime_downloader.Classes.File.Downloader;
@@ -76,6 +77,8 @@ namespace anime_downloader
 
         public MainWindow()
         {
+            DataContext = new MainWindowViewModel(Close);
+
             if (AlreadyOpen)
                 FocusOtherDownloaderAndClose();
             else
@@ -83,7 +86,6 @@ namespace anime_downloader
                 InitializeComponent();
                 InitializeSettings();
             }
-            
         }
         
         private void Window_StateChanged(object sender, EventArgs e)
@@ -189,10 +191,7 @@ namespace anime_downloader
                 if (Keyboard.FocusedElement is TextBox || Keyboard.FocusedElement is PasswordBox)
                     return;
 
-                // Ctrl-X to close
-                if (e.Key == Key.X && Keyboard.IsKeyDown(Key.LeftCtrl))
-                    Close();
-
+                /*
                 // 1-8 to change views
                 if (e.Key == Key.D1 || e.Key == Key.NumPad1)
                     Cycle(Home);
@@ -210,6 +209,7 @@ namespace anime_downloader
                     Cycle(Web);
                 else if (e.Key == Key.D8 || e.Key == Key.NumPad8)
                     Cycle(Misc);
+                    */
             };
         }
 

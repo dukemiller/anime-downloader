@@ -1,8 +1,47 @@
 ﻿<Application x:Class="anime_downloader.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:animeDownloader="clr-namespace:anime_downloader"
+             xmlns:viewModels="clr-namespace:anime_downloader.ViewModels"
+             xmlns:views="clr-namespace:anime_downloader.Views"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
+
+        <animeDownloader:StringEqualsConverter x:Key="StringEqualsConverter" />
+
+        <DataTemplate DataType="{x:Type viewModels:AnimeDetailsViewModel}">
+            <views:AnimeDetails DataContext="{Binding}" />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:AnimeDetailsMultipleViewModel}">
+            <views:AnimeDetailsMultiple DataContext="{Binding}" />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:AnimeListViewModel}">
+            <views:AnimeList DataContext="{Binding}" />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:DownloaderViewModel}">
+            <views:Downloader DataContext="{Binding}" />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:DownloadOptionsViewModel}">
+            <views:DownloadOptions DataContext="{Binding}" />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:HomeViewModel}">
+            <views:Home DataContext="{Binding}" />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:ManageViewModel}">
+            <views:Manage DataContext="{Binding}" />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:MiscViewModel}">
+            <views:Misc DataContext="{Binding}" />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:PlaylistCreatorViewModel}">
+            <views:PlaylistCreator DataContext="{Binding}" />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:SettingsViewModel}">
+            <views:Settings DataContext="{Binding}" />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:WebViewModel}">
+            <views:Web DataContext="{Binding}" />
+        </DataTemplate>
 
         <!--  Storyboard  -->
         <Storyboard x:Key="DisplayTransition">

@@ -3,13 +3,49 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:anime_downloader.ViewModels"
+        xmlns:views="clr-namespace:anime_downloader.Views"
         Title="Anime Downloader"
         Width="920"
         Height="400"
+        d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel}"
         Closing="MainWindow_OnClosing"
         ResizeMode="CanMinimize"
         StateChanged="Window_StateChanged"
         mc:Ignorable="d">
+    <Window.Resources>
+        <!--<Style TargetType="{x:Type ListBox}">
+            <Setter Property="ItemTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <ToggleButton Content="{Binding}" IsChecked="{Binding IsSelected, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}" />
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>-->
+        <Style BasedOn="{StaticResource LargeButtonStyle}" TargetType="RadioButton" />
+    </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Key="X"
+                    Command="{Binding CloseCommand}"
+                    Modifiers="Control" />
+        <KeyBinding Key="D1" Command="{Binding HomeCommand}" />
+        <KeyBinding Key="NumPad1" Command="{Binding HomeCommand}" />
+        <KeyBinding Key="D2" Command="{Binding AnimeListCommand}" />
+        <KeyBinding Key="NumPad2" Command="{Binding AnimeListCommand}" />
+        <KeyBinding Key="D3" Command="{Binding SettingsCommand}" />
+        <KeyBinding Key="NumPad3" Command="{Binding SettingsCommand}" />
+        <KeyBinding Key="D4" Command="{Binding DownloadOptionsCommand}" />
+        <KeyBinding Key="NumPad4" Command="{Binding DownloadOptionsCommand}" />
+        <KeyBinding Key="D5" Command="{Binding ManageCommand}" />
+        <KeyBinding Key="NumPad5" Command="{Binding ManageCommand}" />
+        <KeyBinding Key="D6" Command="{Binding PlaylistCreatorCommand}" />
+        <KeyBinding Key="NumPad6" Command="{Binding PlaylistCreatorCommand}" />
+        <KeyBinding Key="D7" Command="{Binding WebCommand}" />
+        <KeyBinding Key="NumPad7" Command="{Binding WebCommand}" />
+        <KeyBinding Key="D8" Command="{Binding AnimeListCommand}" />
+        <KeyBinding Key="NumPad8" Command="{Binding AnimeListCommand}" />
+    </Window.InputBindings>
     <Grid Background="White">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*" />
@@ -18,43 +54,39 @@
         <Grid Background="{StaticResource BackgroundColor}" Column="0">
             <StackPanel>
                 <RadioButton x:Name="Home"
-                             Click="Home_Click"
-                             Content="Home"
-                             IsChecked="True"
-                             Style="{DynamicResource LargeButtonStyle}" />
+                             Command="{Binding HomeCommand}"
+                             Content="Home" />
                 <RadioButton x:Name="AnimeList"
-                             Click="AnimeList_Click"
-                             Content="Anime"
-                             Style="{DynamicResource LargeButtonStyle}" />
+                             Command="{Binding AnimeListCommand}"
+                             Content="Anime" />
                 <RadioButton x:Name="SettingsButton"
-                             Click="Settings_Click"
-                             Content="Settings"
-                             Style="{DynamicResource LargeButtonStyle}" />
+                             Command="{Binding SettingsCommand}"
+                             Content="Settings" />
                 <RadioButton x:Name="Download"
-                             Click="Download_Click"
-                             Content="Download"
-                             Style="{DynamicResource LargeButtonStyle}" />
+                             Command="{Binding DownloadOptionsCommand}"
+                             Content="Download" />
                 <RadioButton x:Name="Manage"
-                             Click="Manage_Click"
-                             Content="Manage"
-                             Style="{DynamicResource LargeButtonStyle}" />
+                             Command="{Binding ManageCommand}"
+                             Content="Manage" />
                 <RadioButton x:Name="Playlists"
-                             Click="Playlists_Click"
-                             Content="Playlists"
-                             Style="{DynamicResource LargeButtonStyle}" />
+                             Command="{Binding PlaylistCreatorCommand}"
+                             Content="Playlists" />
                 <RadioButton x:Name="Web"
-                             Click="Web_Click"
-                             Content="Web"
-                             Style="{DynamicResource LargeButtonStyle}" />
+                             Command="{Binding WebCommand}"
+                             Content="Web" />
                 <RadioButton x:Name="Misc"
-                             Click="Misc_Click"
-                             Content="Misc"
-                             Style="{DynamicResource LargeButtonStyle}" />
+                             Command="{Binding MiscCommand}"
+                             Content="Misc" />
             </StackPanel>
         </Grid>
         <Grid x:Name="Display"
               Margin="20,0"
               Background="White"
-              Column="1" />
+              Column="1"
+              Opacity="0.0" />
+
+        <ContentPresenter Grid.Column="1"
+                          Margin="20,0"
+                          Content="{Binding CurrentView}" />
     </Grid>
 </Window>
