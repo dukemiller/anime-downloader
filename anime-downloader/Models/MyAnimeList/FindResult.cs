@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Serialization;
 
-namespace anime_downloader.Classes.Web.MyAnimeList
+namespace anime_downloader.Models.MyAnimeList
 {
     [Serializable, XmlRoot("entry")]
     public class FindResult

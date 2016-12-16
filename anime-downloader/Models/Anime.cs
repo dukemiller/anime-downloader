@@ -7,13 +7,14 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using anime_downloader.Annotations;
+using anime_downloader.Classes;
 using anime_downloader.Classes.Distances;
 using anime_downloader.Classes.File;
-using anime_downloader.Classes.Web;
 using anime_downloader.Classes.Xml;
 using anime_downloader.Enums;
+using anime_downloader.Models.MyAnimeList;
 
-namespace anime_downloader.Classes
+namespace anime_downloader.Models
 {
     public class Anime
     {
@@ -323,7 +324,7 @@ namespace anime_downloader.Classes
 
         public AnimeFile LastEpisode => MainWindow.Window.AnimeFileCollection.LastEpisodeOf(this);
 
-        public Web.MyAnimeList.FindResult ClosestMyAnimeListResult(IEnumerable<Web.MyAnimeList.FindResult> results)
+        public FindResult ClosestMyAnimeListResult(IEnumerable<FindResult> results)
         {
             var closestResults = results
                 .Where(result => !result.Type.Equals("OVA")) // I'm sure i'll regret this

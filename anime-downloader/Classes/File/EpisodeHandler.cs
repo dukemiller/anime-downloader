@@ -4,8 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
-using anime_downloader.Classes.Web.MyAnimeList;
 using anime_downloader.Enums;
+using anime_downloader.Models;
+using anime_downloader.Models.MyAnimeList;
 
 namespace anime_downloader.Classes.File
 {
@@ -15,7 +16,6 @@ namespace anime_downloader.Classes.File
     /// </summary>
     public class EpisodeHandler
     {
-
         private readonly AnimeFileCollection _animeFileCollection;
 
         public EpisodeHandler(Settings settings)

@@ -4,9 +4,10 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web;
+using anime_downloader.Classes;
 using HtmlAgilityPack;
 
-namespace anime_downloader.Classes.Web.MyAnimeList
+namespace anime_downloader.Models.MyAnimeList
 {
     public static class WebPage
     {

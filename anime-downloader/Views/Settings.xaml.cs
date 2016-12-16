@@ -16,7 +16,7 @@ namespace anime_downloader.Views
     /// </summary>
     public sealed partial class Settings : INotifyPropertyChanged
     {
-        private Classes.Settings _settings;
+        private Models.Settings _settings;
 
         private ViewMode _viewMode;
 
@@ -47,7 +47,7 @@ namespace anime_downloader.Views
             var path = Path.Combine(Directory.GetCurrentDirectory(), "anime-downloader");
 
             // Default guessed values
-            var settings = new Classes.Settings
+            var settings = new Models.Settings
             {
                 Paths =
                 {
@@ -63,7 +63,7 @@ namespace anime_downloader.Views
             SubmitText = "Create";
         }
 
-        public void Load(Classes.Settings settings)
+        public void Load(Models.Settings settings)
         {
             _viewMode = ViewMode.Editing;
             _settings = settings;

@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Forms;
 using anime_downloader.Views;
 using Application = System.Windows.Application;
+using Settings = anime_downloader.Models.Settings;
 
 namespace anime_downloader.Classes
 {

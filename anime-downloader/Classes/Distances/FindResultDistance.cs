@@ -1,5 +1,5 @@
 using System.Linq;
-using anime_downloader.Classes.Web.MyAnimeList;
+using anime_downloader.Models.MyAnimeList;
 
 namespace anime_downloader.Classes.Distances
 {

@@ -3,8 +3,9 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
+using anime_downloader.Classes;
 
-namespace anime_downloader.Classes.Web.MyAnimeList
+namespace anime_downloader.Models.MyAnimeList
 {
     public static class Synchronizer
     {
@@ -148,6 +149,5 @@ namespace anime_downloader.Classes.Web.MyAnimeList
                     await UpdateMal(anime, credentials);
             }
         }
-
     }
 }

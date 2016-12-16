@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using anime_downloader.Classes.Distances;
 using anime_downloader.Enums;
+using anime_downloader.Models;
 
 namespace anime_downloader.Classes.File
 {

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using anime_downloader.Classes;
+using anime_downloader.Models;
 using GalaSoft.MvvmLight;
 
 namespace anime_downloader.ViewModels

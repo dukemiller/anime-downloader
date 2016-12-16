@@ -7,7 +7,7 @@ using System.Xml.Linq;
 using anime_downloader.Annotations;
 using anime_downloader.Classes.Xml;
 
-namespace anime_downloader.Classes
+namespace anime_downloader.Models
 {
     public class Settings
     {
@@ -271,7 +271,6 @@ namespace anime_downloader.Classes
                 _root.Element("onlyWhitelistedSubs")?.SetValue(value);
             }
         }
-
     }
 
     public class MyAnimeListLoginDetails : INotifyPropertyChanged

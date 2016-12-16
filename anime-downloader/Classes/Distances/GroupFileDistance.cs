@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using anime_downloader.Classes.File;
+using anime_downloader.Models;
 
 namespace anime_downloader.Classes.Distances
 {

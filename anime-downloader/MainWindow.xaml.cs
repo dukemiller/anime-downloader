@@ -12,11 +12,12 @@ using System.Windows.Media.Animation;
 using anime_downloader.Classes;
 using anime_downloader.Classes.File;
 using anime_downloader.Classes.Xml;
+using anime_downloader.Models;
 using anime_downloader.ViewModels;
 using anime_downloader.Views;
 using static anime_downloader.Classes.OperatingSystemApi;
 using Downloader = anime_downloader.Classes.File.Downloader;
-using Settings = anime_downloader.Classes.Settings;
+using Settings = anime_downloader.Models.Settings;
 
 namespace anime_downloader
 {

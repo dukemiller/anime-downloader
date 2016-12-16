@@ -1,12 +1,13 @@
-﻿using HtmlAgilityPack;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using anime_downloader.Classes;
+using HtmlAgilityPack;
 
-namespace anime_downloader.Classes.Web
+namespace anime_downloader.Models
 {
     public class Nyaa : Torrent
     {
@@ -68,7 +69,7 @@ namespace anime_downloader.Classes.Web
         }
         
         /// <summary>
-        ///     Get torrents that qualify as downloadable (according to settings.xml)
+        ///     Get torrents that qualify as downloadable
         /// </summary>
         public static async Task<IEnumerable<Torrent>> GetTorrentsForAsync(Anime anime, string episode)
         {

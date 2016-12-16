@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Xml.Linq;
+using anime_downloader.Models;
 
 namespace anime_downloader.Classes.Xml
 {

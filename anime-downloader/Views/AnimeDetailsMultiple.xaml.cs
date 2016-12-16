@@ -9,6 +9,7 @@ using System.Windows.Input;
 using anime_downloader.Annotations;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
+using anime_downloader.Models;
 
 namespace anime_downloader.Views
 {
@@ -53,11 +54,11 @@ namespace anime_downloader.Views
             }
         }
 
-        public Classes.AnimeDetails Details { get; set; }
+        public Models.AnimeDetails Details { get; set; }
 
         public AnimeDetailsMultiple()
         {
-            Details = new Classes.AnimeDetails();
+            Details = new Models.AnimeDetails();
             InitializeComponent();
             KeyDown += AnimeList.KeyEscapeBack;
             MouseDown += AnimeList.MouseEscapeBack;

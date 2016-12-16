@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Linq;
+using anime_downloader.Classes;
 
-namespace anime_downloader.Classes.File
+namespace anime_downloader.Models
 {
     /// <summary>
     ///     All the details of an anime file as it's interpreted on the filesystem.

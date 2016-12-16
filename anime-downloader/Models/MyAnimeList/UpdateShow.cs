@@ -1,6 +1,7 @@
 ﻿using System.Xml.Linq;
+using anime_downloader.Classes;
 
-namespace anime_downloader.Classes.Web.MyAnimeList
+namespace anime_downloader.Models.MyAnimeList
 {
     public class UpdateShow
     {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using anime_downloader.Models;
 
 namespace anime_downloader.Classes.File
 {

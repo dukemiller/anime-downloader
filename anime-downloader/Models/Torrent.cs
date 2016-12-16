@@ -3,11 +3,11 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using static anime_downloader.Classes.Methods;
+using anime_downloader.Classes;
 
-namespace anime_downloader.Classes.Web
+namespace anime_downloader.Models
 {
-    public abstract class Torrent
+    public class Torrent
     {
         /// <summary>
         ///     The description containing seeder & measurement information.
@@ -84,9 +84,9 @@ namespace anime_downloader.Classes.Web
             }
         }
 
-        public string StrippedName => Strip(Name);
+        public string StrippedName => Methods.Strip(Name);
 
-        public string StrippedWithNoEpisode => Strip(Name, true);
+        public string StrippedWithNoEpisode => Methods.Strip(Name, true);
 
         /// <summary>
         ///     Returns the subgroup from the name of the file.

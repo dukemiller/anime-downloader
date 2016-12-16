@@ -8,8 +8,8 @@ using System.Windows;
 using anime_downloader.Annotations;
 using anime_downloader.Classes;
 using anime_downloader.Classes.File;
-using anime_downloader.Classes.Web;
 using anime_downloader.Enums;
+using anime_downloader.Models;
 using MessageBox = System.Windows.MessageBox;
 
 namespace anime_downloader.Views
@@ -40,9 +40,9 @@ namespace anime_downloader.Views
         {
             Text = ">> No downloads have been logged so far.";
 
-            if (File.Exists(Classes.Settings.LoggingFile))
+            if (File.Exists(Models.Settings.LoggingFile))
             {
-                using (var reader = new StreamReader(Classes.Settings.LoggingFile))
+                using (var reader = new StreamReader(Models.Settings.LoggingFile))
                 {
                     var data = await reader.ReadToEndAsync();
                     Text = await Task.Run(() => string.Join("\n", data.Split('\n').Reverse().Skip(1)));

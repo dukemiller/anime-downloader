@@ -1,5 +1,6 @@
 using System;
 using System.Xml.Linq;
+using anime_downloader.Models;
 
 namespace anime_downloader.Classes.Xml
 {

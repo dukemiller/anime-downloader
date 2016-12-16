@@ -10,7 +10,8 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using anime_downloader.Annotations;
 using anime_downloader.Classes;
-using anime_downloader.Classes.Web.MyAnimeList;
+using anime_downloader.Models;
+using anime_downloader.Models.MyAnimeList;
 
 namespace anime_downloader.Views
 {

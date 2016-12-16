@@ -6,7 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Controls;
-using anime_downloader.Classes.Web;
+using anime_downloader.Models;
 
 namespace anime_downloader.Classes.File
 {

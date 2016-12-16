@@ -10,6 +10,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using anime_downloader.Annotations;
 using anime_downloader.Classes;
+using anime_downloader.Models;
+using anime_downloader.Models.MyAnimeList;
 
 namespace anime_downloader.Views
 {
@@ -201,7 +203,7 @@ namespace anime_downloader.Views
             else
             {
                 MainWindow.Window.ToggleButtons();
-                await Classes.Web.MyAnimeList.WebPage.SearchAndOpenAsync(SelectedAnime().Name);
+                await WebPage.SearchAndOpenAsync(SelectedAnime().Name);
                 MainWindow.Window.ToggleButtons();
             }
         }

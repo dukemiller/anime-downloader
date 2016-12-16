@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using anime_downloader.Annotations;
 
-namespace anime_downloader.Classes
+namespace anime_downloader.Models
 {
     public class AnimeDetails : INotifyPropertyChanged
     {

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using anime_downloader.Models;
 
 namespace anime_downloader.Classes.File
 {

@@ -18,7 +18,7 @@ namespace anime_downloader.Views
         {
             InitializeComponent();
 
-            if (!File.Exists(Classes.Settings.PlaylistFile))
+            if (!File.Exists(Models.Settings.PlaylistFile))
                 OpenButton.Toggle();
 
             _playlist = MainWindow.Window.Playlist;
@@ -70,8 +70,8 @@ namespace anime_downloader.Views
 
         private void OpenButton_OnClick(object sender, RoutedEventArgs e)
         {
-            if (File.Exists(Classes.Settings.PlaylistFile))
-                Process.Start(Classes.Settings.PlaylistFile);
+            if (File.Exists(Models.Settings.PlaylistFile))
+                Process.Start(Models.Settings.PlaylistFile);
         }
     }
 }

@@ -13,6 +13,7 @@ using anime_downloader.Annotations;
 using anime_downloader.Classes;
 using anime_downloader.Classes.File;
 using anime_downloader.Enums;
+using anime_downloader.Models;
 
 namespace anime_downloader.Views
 {
