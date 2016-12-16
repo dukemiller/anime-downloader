@@ -94,6 +94,8 @@
     <Compile Include="Classes\File\AnimeFileRange.cs" />
     <Compile Include="Classes\Distances\GroupFileDistance.cs" />
     <Compile Include="Models\AnimeDetails.cs" />
+    <Compile Include="Models\Settings\FlagConfiguration.cs" />
+    <Compile Include="Models\Settings\MyAnimeListConfiguration.cs" />
     <Compile Include="Models\MyAnimeList\WebPage.cs" />
     <Compile Include="Enums\EpisodeStatus.cs" />
     <Compile Include="Classes\File\Logger.cs" />
@@ -110,6 +112,7 @@
     <Compile Include="Models\MyAnimeList\FindResult.cs" />
     <Compile Include="Models\Nyaa.cs" />
     <Compile Include="Classes\File\Playlist.cs" />
+    <Compile Include="Models\Settings\PathConfiguration.cs" />
     <Compile Include="Models\Settings.cs" />
     <Compile Include="Models\Torrent.cs" />
     <Compile Include="Classes\Xaml\Converters.cs" />
@@ -119,6 +122,18 @@
     <Compile Include="Classes\Xml\Schema.cs" />
     <Compile Include="Classes\Xml\Verify.cs" />
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="Services\AnimeFileService.cs" />
+    <Compile Include="Services\AnimeService.cs" />
+    <Compile Include="Services\IAnimeDownloader.cs" />
+    <Compile Include="Services\IAnimeFileService.cs" />
+    <Compile Include="Services\IAnimeService.cs" />
+    <Compile Include="Services\IMyAnimeListService.cs" />
+    <Compile Include="Services\IPlaylistService.cs" />
+    <Compile Include="Services\ISettingsService.cs" />
+    <Compile Include="Services\MyAnimeListService.cs" />
+    <Compile Include="Services\NyaaService.cs" />
+    <Compile Include="Services\PlaylistService.cs" />
+    <Compile Include="Services\SettingsService.cs" />
     <Compile Include="StringEqualsConverter.cs" />
     <Compile Include="ViewModels\AnimeDetailsMultipleViewModel.cs" />
     <Compile Include="ViewModels\AnimeDetailsViewModel.cs" />
