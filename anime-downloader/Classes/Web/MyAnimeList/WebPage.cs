@@ -20,7 +20,7 @@ namespace anime_downloader.Classes.Web.MyAnimeList
 
             using (var client = new WebClient())
             {
-                var html = await client.DownloadStringTaskAsync(new Uri($"http://myanimelist.net/anime.php?q={q}"));
+                var html = await client.DownloadStringTaskAsync(new Uri($"https://myanimelist.net/anime.php?q={q}"));
                 document.LoadHtml(html);
             }
 

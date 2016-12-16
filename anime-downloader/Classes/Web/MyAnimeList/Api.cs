@@ -11,15 +11,15 @@ namespace anime_downloader.Classes.Web.MyAnimeList
     {
         // http://myanimelist.net/modules.php?go=api
 
-        private const string ApiSearch = "http://myanimelist.net/api/anime/search.xml?q={0}";
+        private const string ApiSearch = "https://myanimelist.net/api/anime/search.xml?q={0}";
 
-        private const string ApiAdd = "http://myanimelist.net/api/animelist/add/{0}.xml";
+        private const string ApiAdd = "https://myanimelist.net/api/animelist/add/{0}.xml";
 
-        private const string ApiUpdate = "http://myanimelist.net/api/animelist/update/{0}.xml";
+        private const string ApiUpdate = "https://myanimelist.net/api/animelist/update/{0}.xml";
 
-        private const string ApiDelete = "http://myanimelist.net/api/animelist/delete/{0}.xml";
+        private const string ApiDelete = "https://myanimelist.net/api/animelist/delete/{0}.xml";
 
-        private const string ApiVerify = "http://myanimelist.net/api/account/verify_credentials.xml";
+        private const string ApiVerify = "https://myanimelist.net/api/account/verify_credentials.xml";
 
         private static readonly XmlSerializer ResultDeserializer = new XmlSerializer(typeof(FindResultRoot));
 
