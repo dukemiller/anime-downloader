@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using anime_downloader.Classes.Distances;
 using anime_downloader.Classes.File;
 using anime_downloader.Models;
 using HtmlAgilityPack;
@@ -63,6 +64,15 @@ namespace anime_downloader.Services
             return true;
         }
 
+        public async Task<IEnumerable<Torrent>> GetNextEpisode(Anime anime)
+        {
+            var result = await GetTorrentsAsync(anime, anime.NextEpisode);
+            return result?
+                .Select(torrent => new StringDistance<Torrent>(torrent, torrent.StrippedWithNoEpisode, anime.Name))
+                .Where(ctd => ctd.Distance <= 25)
+                .Select(ctd => ctd.Item);
+        }
+
         public async Task<bool> ServiceAvailable()
         {
             try
@@ -84,7 +94,7 @@ namespace anime_downloader.Services
             }
         }
 
-        public async Task<IEnumerable<Torrent>> GetTorrentsAsync(Anime anime, string episode)
+        public async Task<IEnumerable<Torrent>> GetTorrentsAsync(Anime anime, int episode)
         {
             var queryDetails = anime.Name.Replace(" ", "+")
                                    .Replace("'s", "")

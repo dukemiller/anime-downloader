@@ -21,15 +21,8 @@ namespace anime_downloader.Models.MyAnimeList
         public string Id { get; set; }
 
         [XmlElement("episodes")]
-        public string TotalEpisodes { get; set; }
-
-        public int IntTotalEpisodes()
-        {
-            int value;
-            var result = int.TryParse(TotalEpisodes, out value);
-            return result ? value : 0;
-        }
-
+        public int TotalEpisodes { get; set; }
+        
         [XmlElement("score")]
         public string Score { get; set; }
 

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using anime_downloader.Classes;
 using anime_downloader.Models;
+using anime_downloader.Models.Configurations;
 
 namespace anime_downloader.Services
 {
@@ -13,7 +14,7 @@ namespace anime_downloader.Services
         string SortBy { get; set; }
         string FilterBy { get; set; }
         List<string> Subgroups { get; set; }
-        List<Anime> Anime { get; set; }
+        List<Anime> Animes { get; set; }
 
         void Save();
     }

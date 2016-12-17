@@ -11,6 +11,7 @@ using System.Windows.Input;
 using anime_downloader.Annotations;
 using anime_downloader.Classes;
 using anime_downloader.Models;
+using anime_downloader.Models.Configurations;
 using anime_downloader.Models.MyAnimeList;
 
 namespace anime_downloader.Views
@@ -35,9 +36,9 @@ namespace anime_downloader.Views
             }
         }
 
-        private MyAnimeListLoginDetails _loginDetails;
+        private MyAnimeListConfiguration _loginDetails;
 
-        public MyAnimeListLoginDetails LoginDetails
+        public MyAnimeListConfiguration LoginDetails
         {
             get { return _loginDetails; }
             set

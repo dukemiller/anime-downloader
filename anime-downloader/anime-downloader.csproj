@@ -94,8 +94,9 @@
     <Compile Include="Classes\File\AnimeFileRange.cs" />
     <Compile Include="Classes\Distances\GroupFileDistance.cs" />
     <Compile Include="Models\AnimeDetails.cs" />
-    <Compile Include="Models\Settings\FlagConfiguration.cs" />
-    <Compile Include="Models\Settings\MyAnimeListConfiguration.cs" />
+    <Compile Include="Models\MyAnimeListDetails.cs" />
+    <Compile Include="Models\Configurations\FlagConfiguration.cs" />
+    <Compile Include="Models\Configurations\MyAnimeListConfiguration.cs" />
     <Compile Include="Models\MyAnimeList\WebPage.cs" />
     <Compile Include="Enums\EpisodeStatus.cs" />
     <Compile Include="Classes\File\Logger.cs" />
@@ -112,7 +113,7 @@
     <Compile Include="Models\MyAnimeList\FindResult.cs" />
     <Compile Include="Models\Nyaa.cs" />
     <Compile Include="Classes\File\Playlist.cs" />
-    <Compile Include="Models\Settings\PathConfiguration.cs" />
+    <Compile Include="Models\Configurations\PathConfiguration.cs" />
     <Compile Include="Models\Settings.cs" />
     <Compile Include="Models\Torrent.cs" />
     <Compile Include="Classes\Xaml\Converters.cs" />
