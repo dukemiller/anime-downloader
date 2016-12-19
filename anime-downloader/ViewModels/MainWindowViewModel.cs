@@ -6,7 +6,7 @@ using GalaSoft.MvvmLight.CommandWpf;
 
 namespace anime_downloader.ViewModels
 {
-    internal class MainWindowViewModel : ViewModelBase
+    public class MainWindowViewModel : ViewModelBase
     {
         private ViewModelBase _currentView;
         private bool _busy;
@@ -57,7 +57,7 @@ namespace anime_downloader.ViewModels
             );
 
             SettingsCommand = new RelayCommand(
-                () => CurrentView = new SettingsViewModel(),
+                () => CurrentView = new SettingsViewModel(Settings),
                 () => !Busy
             );
 
@@ -86,7 +86,9 @@ namespace anime_downloader.ViewModels
         // 
 
         public ISettingsService Settings { get; set; }
+
         public IAnimeAggregateService AnimeAggregate { get; set; }
+
         public Action Close { get; set; }
 
         public ViewModelBase CurrentView

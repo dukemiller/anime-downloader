@@ -124,9 +124,11 @@
     <Compile Include="Classes\Xml\Verify.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Services\AnimeFileService.cs" />
+    <Compile Include="Services\AnimeAggregateService.cs" />
     <Compile Include="Services\AnimeService.cs" />
     <Compile Include="Services\IAnimeDownloaderService.cs" />
     <Compile Include="Services\IAnimeFileService.cs" />
+    <Compile Include="Services\IAnimeAggregateService.cs" />
     <Compile Include="Services\IAnimeService.cs" />
     <Compile Include="Services\IMyAnimeListService.cs" />
     <Compile Include="Services\IPlaylistService.cs" />

@@ -1,28 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using anime_downloader.Classes;
-using anime_downloader.Models;
+﻿using System.ComponentModel;
+using anime_downloader.Services;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 
 namespace anime_downloader.ViewModels
 {
-    class SettingsViewModel: ViewModelBase
+    public class SettingsViewModel: ViewModelBase
     {
+        private ISettingsService _settings;
+        private bool _changeMade;
 
-        private Settings _settings;
-
-        public SettingsViewModel()
+        public ISettingsService Settings
         {
-            
+            get { return _settings; }
+            set { Set(() => Settings, ref _settings, value); }
         }
 
-        public void New()
+        public SettingsViewModel(ISettingsService settings)
         {
-            _settings = new Settings();
+            Settings = settings;
+            SaveCommand = new RelayCommand(() =>
+            {
+                Settings.Save();
+                ChangeMade = false;
+            });
+
+            Settings.MyAnimeListConfig.PropertyChanged += Model_PropertyChanged;
+            Settings.FlagConfig.PropertyChanged += Model_PropertyChanged;
+            Settings.PathConfig.PropertyChanged += Model_PropertyChanged;
         }
+
+        private void Model_PropertyChanged(object sender, PropertyChangedEventArgs e) => ChangeMade = true;
+
+        public bool ChangeMade
+        {
+            get { return _changeMade; }
+            set { Set(() => ChangeMade, ref _changeMade, value); }
+        }
+
+        public RelayCommand SaveCommand { get; set; }
 
     }
 }

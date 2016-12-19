@@ -79,9 +79,10 @@ namespace anime_downloader
         
         // 
 
-        public MainWindow(ISettingsService settings, IAnimeAggregateService animeAggregate)
+        public MainWindow()
         {
-            AnimeAggregate = animeAggregate;
+            var settings = new SettingsService();
+            AnimeAggregate = new AnimeAggregateService(settings);
             DataContext = new MainWindowViewModel(settings, AnimeAggregate, Close);
 
             if (AlreadyOpen)
