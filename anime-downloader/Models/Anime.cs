@@ -29,7 +29,7 @@ namespace anime_downloader.Models
         public Anime()
         {
             Root = Schema.AnimeNode();
-            MyAnimeList = new MyAnimeListDetails(Root.Element("myanimelist"), Save);
+            MyAnimeList = new MyAnimeListDetails();
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace anime_downloader.Models
         {
             Root = root;
             _settings = settings;
-            MyAnimeList = new MyAnimeListDetails(Root.Element("myanimelist"), Save);
+            MyAnimeList = new MyAnimeListDetails();
         }
 
 #region -- XML Related
@@ -92,7 +92,7 @@ namespace anime_downloader.Models
                     MyAnimeList.NeedsUpdating = true;
                     if (!MyAnimeList.SeriesContinuationEpisode.IsBlank())
                         MyAnimeList.SeriesContinuationEpisode =
-                            $"{int.Parse(value) - int.Parse(MyAnimeList.TotalEpisodes):D2}";
+                            $"{int.Parse(value) - MyAnimeList.TotalEpisodes:D2}";
                 }
 
                 Save();
@@ -223,7 +223,7 @@ namespace anime_downloader.Models
             }
         }
 
-        public MyAnimeListDetails MyAnimeList { get; }
+        public MyAnimeListDetails MyAnimeList { get; set; }
 
         public string EpisodeTotal
         {
@@ -234,12 +234,12 @@ namespace anime_downloader.Models
                 {
                     // If it has an overall total, this was a mislabeled show and this
                     // needs to be preferred first
-                    if (MyAnimeList.IntOverallTotal() > 0)
-                        return $"{Episode}/{MyAnimeList.IntOverallTotal():D2}";
+                    if (MyAnimeList.OverallTotal > 0)
+                        return $"{Episode}/{MyAnimeList.OverallTotal:D2}";
 
                     // Else just the actual season total if there is one
-                    if (MyAnimeList.IntTotalEpisodes() > 0)
-                        return $"{Episode}/{MyAnimeList.IntTotalEpisodes():D2}";
+                    if (MyAnimeList.TotalEpisodes > 0)
+                        return $"{Episode}/{MyAnimeList.TotalEpisodes:D2}";
                 }
                 
                 return Episode;
@@ -336,8 +336,8 @@ namespace anime_downloader.Models
                 })
                 .Where(findResult =>
                 {
-                    if (findResult.IntTotalEpisodes() != 0)
-                        return findResult.IntTotalEpisodes() > 2;
+                    if (findResult.TotalEpisodes != 0)
+                        return findResult.TotalEpisodes > 2;
                     return true;
                 })
                 .Select(result => new FindResultDistance(Name, result))
@@ -421,168 +421,6 @@ namespace anime_downloader.Models
             }
         }
         
-    }
-
-    public sealed class MyAnimeListDetails : INotifyPropertyChanged
-    {
-        private readonly XElement _root;
-
-        private readonly Action _save;
-
-        public MyAnimeListDetails(XElement root, Action save)
-        {
-            _root = root;
-            _save = save;
-        }
-
-        public bool HasId => !Id.Equals("");
-
-        public string Id
-        {
-            get { return _root.Element("id")?.Value; }
-            set
-            {
-                _root.Element("id")?.SetValue(value);
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(HasId));
-                _save();
-            }
-        }
-
-        public string Synopsis
-        {
-            get { return _root.Element("synopsis")?.Value; }
-            set
-            {
-                _root.Element("synopsis")?.SetValue(value);
-                OnPropertyChanged();
-                _save();
-            }
-        }
-
-        public string Image
-        {
-            get { return _root.Element("image")?.Value; }
-            set
-            {
-                _root.Element("image")?.SetValue(value);
-                _save();
-            }
-        }
-
-        public string Title
-        {
-            get { return _root.Element("title")?.Value; }
-            set
-            {
-                _root.Element("title")?.SetValue(value);
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(TitleAndEnglish));
-                _save();
-            }
-        }
-
-        public string English
-        {
-            get { return _root.Element("english")?.Value; }
-            set
-            {
-                _root.Element("english")?.SetValue(value);
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(TitleAndEnglish));
-                _save();
-            }
-        }
-
-        public string Synonyms
-        {
-            get { return _root.Element("synonyms")?.Value; }
-            set
-            {
-                _root.Element("synonyms")?.SetValue(value);
-                _save();
-            }
-        }
-
-        public IEnumerable<string> TitleAndEnglish => new[] {Title, English};
-
-        public IEnumerable<string> SynonymsSplit => Synonyms.Split(';');
-        
-        public bool NeedsUpdating
-        {
-            get { return bool.Parse(_root.Element("needs-updating")?.Value ?? bool.FalseString); }
-            set
-            {
-                _root.Element("needs-updating")?.SetValue(value);
-                OnPropertyChanged();
-                _save();
-            }
-        }
-
-        public string TotalEpisodes
-        {
-            get { return _root.Element("total-episodes")?.Value; }
-            set
-            {
-                _root.Element("total-episodes")?.SetValue(value);
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(Total));
-                _save();
-            }
-        }
-
-        public string OverallTotal
-        {
-            get { return _root.Element("overall-total")?.Value; }
-            set
-            {
-                _root.Element("overall-total")?.SetValue(value);
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(Total));
-                _save();
-            }
-        }
-
-        public string Total => IntOverallTotal() > 0 ? OverallTotal : TotalEpisodes;
-        
-        public int IntOverallTotal()
-        {
-            int episodes;
-            var successful = int.TryParse(OverallTotal, out episodes);
-            return successful ? episodes : 0;
-        }
-
-        public int IntTotalEpisodes()
-        {
-            int episodes;
-            var successful = int.TryParse(TotalEpisodes, out episodes);
-            return successful ? episodes : 0;
-        }
-
-        public string SeriesContinuationEpisode
-        {
-            get { return _root.Element("series-continuation-episode")?.Value; }
-            set
-            {
-                _root.Element("series-continuation-episode")?.SetValue(value);
-                _save();
-            }
-        }
-
-        public int IntSeriesContinuationEpisode()
-        {
-            int episodes;
-            var successful = int.TryParse(SeriesContinuationEpisode, out episodes);
-            return successful ? episodes : 0;
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
     }
 
 }

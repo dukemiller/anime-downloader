@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using anime_downloader.Classes.File;
@@ -6,7 +6,7 @@ using anime_downloader.Models;
 
 namespace anime_downloader.Services
 {
-    public interface IAnimeDownloader
+    public interface IAnimeDownloaderService
     {
         Task<bool> ServiceAvailable();
         Task<IEnumerable<Torrent>> GetTorrentsAsync(Anime anime, string episode);

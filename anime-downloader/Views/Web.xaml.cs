@@ -63,7 +63,7 @@ namespace anime_downloader.Views
         public Web()
         {
             UpToDate = !MainWindow.Window.AnimeCollection.NeedsUpdates.Any();
-            LoginDetails = MainWindow.Window.Settings.MyAnimeList;
+            LoginDetails = new MyAnimeListConfiguration();
             SyncText = UpToDate ? "Synced" : "Sync";
             InitializeComponent();
         }

@@ -177,10 +177,10 @@ namespace anime_downloader.Classes.File
                     var names = new List<string>();
                     foreach (var anime in airingAnime
                         .Where(a => a.MyAnimeList.HasId && (
-                                        (a.MyAnimeList.IntOverallTotal() > 0 &&
-                                         a.IntEpisode() == a.MyAnimeList.IntOverallTotal()) ||
-                                        (a.MyAnimeList.IntTotalEpisodes() > 0 &&
-                                         a.IntEpisode() == a.MyAnimeList.IntTotalEpisodes())
+                                        (a.MyAnimeList.OverallTotal > 0 &&
+                                         a.IntEpisode() == a.MyAnimeList.OverallTotal) ||
+                                        (a.MyAnimeList.TotalEpisodes > 0 &&
+                                         a.IntEpisode() == a.MyAnimeList.TotalEpisodes)
                                     )))
                     {
                         anime.Status = "Finished";
@@ -198,7 +198,7 @@ namespace anime_downloader.Classes.File
                     var credentials = Api.GetCredentials(MainWindow.Window.Settings);
                     var updated = new List<string>();
                     var animesMissingTotal = airingAnime
-                        .Where(a => a.MyAnimeList.HasId && (a.MyAnimeList.IntTotalEpisodes() == 0))
+                        .Where(a => a.MyAnimeList.HasId && (a.MyAnimeList.TotalEpisodes == 0))
                         .ToList();
 
                     foreach (var anime in animesMissingTotal)

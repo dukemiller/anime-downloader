@@ -174,19 +174,19 @@ namespace anime_downloader.Services
             }
 
             // check episode details if there is a given total (you can only hope)
-            if (result.IntTotalEpisodes() > 0)
+            if (result.TotalEpisodes > 0)
             {
                 // if you have downloaded more episodes than exists in the show, then you probably mislabeled
                 // this show as a s2 show but i'll go through painstaking effort to make it work anyway
-                if (anime.IntEpisode() > result.IntTotalEpisodes())
+                if (anime.IntEpisode() > result.TotalEpisodes)
                 {
                     // track episode total
-                    var total = result.IntTotalEpisodes();
+                    var total = result.TotalEpisodes;
 
                     // remove current series from list of possible choices
                     animeResults.Remove(result);
                     result = anime.ClosestMyAnimeListResult(animeResults);
-                    total += result?.IntTotalEpisodes() ?? 0;
+                    total += result?.TotalEpisodes ?? 0;
 
                     // if the combination of both this season is still less than your current episode
                     // you've probably mislabeled this show for a few seasons dude, there's no way i can
@@ -196,7 +196,7 @@ namespace anime_downloader.Services
                     {
                         animeResults.Remove(result);
                         result = anime.ClosestMyAnimeListResult(animeResults);
-                        total += result?.IntTotalEpisodes() ?? 0;
+                        total += result?.TotalEpisodes ?? 0;
                     }
 
                     // if we've run out of episodes, games over
@@ -209,7 +209,7 @@ namespace anime_downloader.Services
 
                     // keep track of episodes to update instead in this variable
                     anime.MyAnimeList.SeriesContinuationEpisode = $"{anime.IntEpisode() - total:D2}";
-                    anime.MyAnimeList.OverallTotal = $"{total:D2}";
+                    anime.MyAnimeList.OverallTotal = total;
                 }
 
             }

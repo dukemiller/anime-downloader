@@ -234,15 +234,7 @@ namespace anime_downloader.Views
 
             if (response == MessageBoxResult.Yes)
             {
-                _anime.MyAnimeList.Id = "";
-                _anime.MyAnimeList.NeedsUpdating = true;
-                _anime.MyAnimeList.SeriesContinuationEpisode = "";
-                _anime.MyAnimeList.TotalEpisodes = "";
-                _anime.MyAnimeList.English = "";
-                _anime.MyAnimeList.Image = "";
-                _anime.MyAnimeList.Synopsis = "";
-                _anime.MyAnimeList.Title = "";
-                _anime.MyAnimeList.Synonyms = "";
+                _anime.MyAnimeList = new MyAnimeListDetails {NeedsUpdating = true};
                 Methods.Alert("Cleared all MyAnimeList data about this show.");
             }
         }

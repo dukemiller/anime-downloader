@@ -13,7 +13,7 @@ using HtmlAgilityPack;
 
 namespace anime_downloader.Services
 {
-    public class NyaaService : IAnimeDownloader
+    public class NyaaService : IAnimeDownloaderService
     {
         private const string EnglishTranslated = "1_37";
 
@@ -66,7 +66,7 @@ namespace anime_downloader.Services
 
         public async Task<IEnumerable<Torrent>> GetNextEpisode(Anime anime)
         {
-            var result = await GetTorrentsAsync(anime, anime.NextEpisode);
+            var result = await GetTorrentsAsync(anime, anime.NextEpisode());
             return result?
                 .Select(torrent => new StringDistance<Torrent>(torrent, torrent.StrippedWithNoEpisode, anime.Name))
                 .Where(ctd => ctd.Distance <= 25)
@@ -93,8 +93,8 @@ namespace anime_downloader.Services
                 return false;
             }
         }
-
-        public async Task<IEnumerable<Torrent>> GetTorrentsAsync(Anime anime, int episode)
+        
+        public async Task<IEnumerable<Torrent>> GetTorrentsAsync(Anime anime, string episode)
         {
             var queryDetails = anime.Name.Replace(" ", "+")
                                    .Replace("'s", "")

@@ -15,7 +15,7 @@ namespace anime_downloader.Services
             Settings = settings;
         }
 
-        public IEnumerable<Anime> Animes => Settings.Anime;
+        public IEnumerable<Anime> Animes => Settings.Animes;
 
         public IEnumerable<Anime> FilteredAndSorted
         {
@@ -46,13 +46,13 @@ namespace anime_downloader.Services
 
         public void Add(Anime anime)
         {
-            Settings.Anime.Add(anime);
+            Settings.Animes.Add(anime);
             Settings.Save();
         }
 
         public void Remove(Anime anime)
         {
-            Settings.Anime.Remove(anime);
+            Settings.Animes.Remove(anime);
             Settings.Save();
         }
     }
