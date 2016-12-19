@@ -13,6 +13,7 @@ using anime_downloader.Classes;
 using anime_downloader.Classes.File;
 using anime_downloader.Classes.Xml;
 using anime_downloader.Models;
+using anime_downloader.Services;
 using anime_downloader.ViewModels;
 using anime_downloader.Views;
 using static anime_downloader.Classes.OperatingSystemApi;
@@ -26,6 +27,8 @@ namespace anime_downloader
     /// </summary>
     public partial class MainWindow
     {
+        public IAnimeAggregateService AnimeAggregate { get; set; }
+
         /// <summary>
         ///     A collection of all the anime.
         /// </summary>
@@ -76,9 +79,10 @@ namespace anime_downloader
         
         // 
 
-        public MainWindow()
+        public MainWindow(ISettingsService settings, IAnimeAggregateService animeAggregate)
         {
-            DataContext = new MainWindowViewModel(Close);
+            AnimeAggregate = animeAggregate;
+            DataContext = new MainWindowViewModel(settings, AnimeAggregate, Close);
 
             if (AlreadyOpen)
                 FocusOtherDownloaderAndClose();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using anime_downloader.Services;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 
@@ -12,8 +13,10 @@ namespace anime_downloader.ViewModels
 
         // 
 
-        public MainWindowViewModel(Action close)
+        public MainWindowViewModel(ISettingsService settings, IAnimeAggregateService animeAggregate, Action close)
         {
+            Settings = settings;
+            AnimeAggregate = animeAggregate;
             Close = close;
 
             // 
@@ -81,7 +84,9 @@ namespace anime_downloader.ViewModels
         }
 
         // 
-        
+
+        public ISettingsService Settings { get; set; }
+        public IAnimeAggregateService AnimeAggregate { get; set; }
         public Action Close { get; set; }
 
         public ViewModelBase CurrentView
