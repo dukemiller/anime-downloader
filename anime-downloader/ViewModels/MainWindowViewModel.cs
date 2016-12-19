@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Windows.Input;
+using System.Collections.Generic;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 
@@ -8,7 +8,9 @@ namespace anime_downloader.ViewModels
     internal class MainWindowViewModel : ViewModelBase
     {
         private ViewModelBase _currentView;
-        private string _currentlyChecked;
+        private bool _busy;
+
+        // 
 
         public MainWindowViewModel(Action close)
         {
@@ -21,32 +23,66 @@ namespace anime_downloader.ViewModels
 
             // 
 
-            HomeCommand = new RelayCommand(() => CurrentView = new HomeViewModel());
-            AnimeListCommand = new RelayCommand(() => CurrentView = new AnimeListViewModel());
-            AnimeDetailsCommand = new RelayCommand(() => CurrentView = new AnimeDetailsViewModel());
-            AnimeDetailsMultipleCommand = new RelayCommand(() => CurrentView = new AnimeDetailsMultipleViewModel());
-            DownloaderCommand = new RelayCommand(() => CurrentView = new DownloaderViewModel());
-            DownloadOptionsCommand = new RelayCommand(() => CurrentView = new DownloadOptionsViewModel());
-            ManageCommand = new RelayCommand(() => CurrentView = new ManageViewModel());
-            MiscCommand = new RelayCommand(() => CurrentView = new MiscViewModel());
-            PlaylistCreatorCommand = new RelayCommand(() => CurrentView = new PlaylistCreatorViewModel());
-            SettingsCommand = new RelayCommand(() => CurrentView = new SettingsViewModel());
-            WebCommand = new RelayCommand(() => CurrentView = new WebViewModel());
+            HomeCommand = new RelayCommand(
+                () => CurrentView = new HomeViewModel(),
+                () => !Busy
+            );
+
+            AnimeListCommand = new RelayCommand(
+                () => CurrentView = new AnimeListViewModel(),
+                () => !Busy
+            );
+
+            DownloadOptionsCommand = new RelayCommand(
+                () => CurrentView = new DownloadOptionsViewModel(),
+                () => !Busy
+            );
+
+            ManageCommand = new RelayCommand(
+                () => CurrentView = new ManageViewModel(),
+                () => !Busy
+            );
+
+            MiscCommand = new RelayCommand(
+                () => CurrentView = new MiscViewModel(),
+                () => !Busy
+            );
+
+            PlaylistCreatorCommand = new RelayCommand(
+                () => CurrentView = new PlaylistCreatorViewModel(),
+                () => !Busy
+            );
+
+            SettingsCommand = new RelayCommand(
+                () => CurrentView = new SettingsViewModel(),
+                () => !Busy
+            );
+
+            WebCommand = new RelayCommand(
+                () => CurrentView = new WebViewModel(),
+                () => !Busy
+            );
+
+            // 
+
+            ButtonCommands = new[]
+            {
+                HomeCommand, AnimeListCommand, DownloadOptionsCommand,
+                ManageCommand, MiscCommand, PlaylistCreatorCommand,
+                SettingsCommand, WebCommand
+            };
+
+            // 
+
+            MessengerInstance.Register<WorkMessage>(this, _ =>
+            {
+                Busy = _.Working;
+            });
         }
 
         // 
         
         public Action Close { get; set; }
-
-        public string CurrentlyChecked
-        {
-            get { return _currentlyChecked; }
-            set
-            {
-                _currentlyChecked = value;
-                RaisePropertyChanged();
-            }
-        }
 
         public ViewModelBase CurrentView
         {
@@ -58,32 +94,38 @@ namespace anime_downloader.ViewModels
             }
         }
 
+        private bool Busy
+        {
+            get { return _busy; }
+            set
+            {
+                Set(() => Busy, ref _busy, value);
+                foreach(var _ in ButtonCommands)
+                    _.RaiseCanExecuteChanged();
+            }
+        }
+
+        private IEnumerable<RelayCommand> ButtonCommands { get; }
+
         // 
 
-        public ICommand CloseCommand { get; set; }
+        public RelayCommand CloseCommand { get; set; }
 
-        public ICommand HomeCommand { get; set; }
+        public RelayCommand HomeCommand { get; set; }
 
-        public ICommand AnimeListCommand { get; set; }
+        public RelayCommand AnimeListCommand { get; set; }
 
-        public ICommand AnimeDetailsCommand { get; set; }
+        public RelayCommand DownloadOptionsCommand { get; set; }
 
-        public ICommand AnimeDetailsMultipleCommand { get; set; }
+        public RelayCommand ManageCommand { get; set; }
 
-        public ICommand DownloaderCommand { get; set; }
+        public RelayCommand MiscCommand { get; set; }
 
-        public ICommand DownloadOptionsCommand { get; set; }
+        public RelayCommand PlaylistCreatorCommand { get; set; }
 
-        public ICommand ManageCommand { get; set; }
+        public RelayCommand SettingsCommand { get; set; }
 
-        public ICommand MiscCommand { get; set; }
-
-        public ICommand PlaylistCreatorCommand { get; set; }
-
-        public ICommand SettingsCommand { get; set; }
-
-        public ICommand WebCommand { get; set; }
-
-
+        public RelayCommand WebCommand { get; set; }
+        
     }
 }
