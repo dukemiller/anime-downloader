@@ -8,17 +8,17 @@ namespace anime_downloader.Services
 {
     public class AnimeAggregateService: IAnimeAggregateService
     {
-        public IAnimeService Anime { get; set; }
+        public IAnimeService Animes { get; set; }
         public IAnimeFileService Files { get; set; }
         public IAnimeDownloaderService Downloader { get; set; }
         public IMyAnimeListService Mal { get; set; }
 
         public AnimeAggregateService(ISettingsService settings)
         {
-            Anime = new AnimeService(settings);
+            Animes = new AnimeService(settings);
             Files = new AnimeFileService(settings);
             Downloader = new NyaaService(settings);
-            Mal = new MyAnimeListService(settings, Anime);
+            Mal = new MyAnimeListService(settings, Animes);
         }
     }
 }
