@@ -36,8 +36,8 @@ namespace anime_downloader.ViewModels
                 () => !Busy
             );
 
-            DownloadOptionsCommand = new RelayCommand(
-                () => CurrentView = new DownloadOptionsViewModel(),
+            DownloadCommand = new RelayCommand(
+                () => CurrentView = new DownloadViewModel(Settings, AnimeAggregate),
                 () => !Busy
             );
 
@@ -70,7 +70,7 @@ namespace anime_downloader.ViewModels
 
             ButtonCommands = new[]
             {
-                HomeCommand, AnimeListCommand, DownloadOptionsCommand,
+                HomeCommand, AnimeListCommand, DownloadCommand,
                 ManageCommand, MiscCommand, PlaylistCreatorCommand,
                 SettingsCommand, WebCommand
             };
@@ -80,6 +80,24 @@ namespace anime_downloader.ViewModels
             MessengerInstance.Register<WorkMessage>(this, _ =>
             {
                 Busy = _.Working;
+            });
+
+            MessengerInstance.Register<Enums.Views>(this, _ =>
+            {
+                if (_ == Enums.Views.Home)
+                    HomeCommand.Execute(1);
+                else if (_ == Enums.Views.AnimeList)
+                    AnimeListCommand.Execute(1);
+                else if (_ == Enums.Views.Download)
+                    DownloadCommand.Execute(1);
+                else if (_ == Enums.Views.Manage)
+                    ManageCommand.Execute(1);
+                else if (_ == Enums.Views.Misc)
+                    MiscCommand.Execute(1);
+                else if (_ == Enums.Views.Playlist)
+                    PlaylistCreatorCommand.Execute(1);
+                else if (_ == Enums.Views.Web)
+                    WebCommand.Execute(1);
             });
         }
 
@@ -122,7 +140,7 @@ namespace anime_downloader.ViewModels
 
         public RelayCommand AnimeListCommand { get; set; }
 
-        public RelayCommand DownloadOptionsCommand { get; set; }
+        public RelayCommand DownloadCommand { get; set; }
 
         public RelayCommand ManageCommand { get; set; }
 

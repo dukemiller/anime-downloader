@@ -85,6 +85,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Classes\NeedsUpdatingAttribute.cs" />
+    <Compile Include="Enums\Views.cs" />
     <Compile Include="Models\Anime.cs" />
     <Compile Include="Classes\Distances\StringDistance.cs" />
     <Compile Include="Models\AnimeFile.cs" />

@@ -35,8 +35,8 @@
         <KeyBinding Key="NumPad2" Command="{Binding AnimeListCommand}" />
         <KeyBinding Key="D3" Command="{Binding SettingsCommand}" />
         <KeyBinding Key="NumPad3" Command="{Binding SettingsCommand}" />
-        <KeyBinding Key="D4" Command="{Binding DownloadOptionsCommand}" />
-        <KeyBinding Key="NumPad4" Command="{Binding DownloadOptionsCommand}" />
+        <KeyBinding Key="D4" Command="{Binding DownloadCommand}" />
+        <KeyBinding Key="NumPad4" Command="{Binding DownloadCommand}" />
         <KeyBinding Key="D5" Command="{Binding ManageCommand}" />
         <KeyBinding Key="NumPad5" Command="{Binding ManageCommand}" />
         <KeyBinding Key="D6" Command="{Binding PlaylistCreatorCommand}" />
@@ -63,7 +63,7 @@
                              Command="{Binding SettingsCommand}"
                              Content="Settings" />
                 <RadioButton x:Name="Download"
-                             Command="{Binding DownloadOptionsCommand}"
+                             Command="{Binding DownloadCommand}"
                              Content="Download" />
                 <RadioButton x:Name="Manage"
                              Command="{Binding ManageCommand}"
