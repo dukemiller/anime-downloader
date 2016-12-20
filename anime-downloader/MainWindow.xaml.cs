@@ -18,6 +18,7 @@ using anime_downloader.ViewModels;
 using anime_downloader.Views;
 using static anime_downloader.Classes.OperatingSystemApi;
 using Downloader = anime_downloader.Classes.File.Downloader;
+using DownloadOptions = anime_downloader.Views.Components.DownloadOptions;
 using Settings = anime_downloader.Models.Settings;
 
 namespace anime_downloader
@@ -139,7 +140,7 @@ namespace anime_downloader
 
         private void AnimeList_Click(object sender, RoutedEventArgs e) => ChangeDisplay<AnimeList>();
 
-        private void Settings_Click(object sender, RoutedEventArgs e) => ChangeDisplay<Views.Settings>().Load(Settings);
+        private void Settings_Click(object sender, RoutedEventArgs e) => ChangeDisplay<Views.Settings>(); // .Load(Settings);
 
         private void Download_Click(object sender, RoutedEventArgs e) => ChangeDisplay<DownloadOptions>();
 
@@ -161,8 +162,8 @@ namespace anime_downloader
             if (!Directory.Exists(Settings.ApplicationDirectory))
                 Directory.CreateDirectory(Settings.ApplicationDirectory);
 
-            if (!File.Exists(Settings.SettingsXml))
-                ChangeDisplay<Views.Settings>().New();
+            if (!File.Exists(Settings.SettingsXml)) ;
+            // ChangeDisplay<Views.Settings>().New();
 
             else
             {

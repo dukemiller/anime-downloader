@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Forms;
 using anime_downloader.Views;
 using Application = System.Windows.Application;
+using DownloadOptions = anime_downloader.Views.Components.DownloadOptions;
 using Settings = anime_downloader.Models.Settings;
 
 namespace anime_downloader.Classes
@@ -89,6 +90,7 @@ namespace anime_downloader.Classes
             }
         }
 
+        [NeedsUpdating]
         private void CreateContextMenu()
         {
             _trayContextMenu = new ContextMenu();
@@ -98,7 +100,8 @@ namespace anime_downloader.Classes
                 {
                     BringWindowToFocus();
                     _mainWindow.Download.Press();
-                    (_mainWindow.CurrentDisplay as DownloadOptions)?.SearchButton.Press();
+                    // TODO
+                    // (_mainWindow.CurrentDisplay as DownloadOptions)?.SearchButton.Press();
                 }));
 
             _trayContextMenu.MenuItems.Add(

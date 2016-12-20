@@ -113,20 +113,20 @@ namespace anime_downloader.Services
 
         /* Static */
 
-        public static IEnumerable<AnimeFile> LastEpisodesOf(IEnumerable<AnimeFile> episodes)
+        public IEnumerable<AnimeFile> LastEpisodes(IEnumerable<AnimeFile> files)
         {
             var latest = new List<AnimeFile>();
-            var reversed = episodes.OrderByDescending(animeFile => animeFile.IntEpisode);
+            var reversed = files.OrderByDescending(animeFile => animeFile.IntEpisode);
             foreach (var anime in reversed)
                 if (!latest.Any(af => af.Name.Equals(anime.Name)))
                     latest.Add(anime);
             return latest.OrderBy(af => af.Name);
         }
 
-        public static IEnumerable<AnimeFile> FirstEpisodesOf(IEnumerable<AnimeFile> episodes)
+        public IEnumerable<AnimeFile> FirstEpisodes(IEnumerable<AnimeFile> files)
         {
             var earliest = new List<AnimeFile>();
-            foreach (var anime in episodes)
+            foreach (var anime in files)
                 if (!earliest.Any(af => af.Name.Equals(anime.Name)))
                     earliest.Add(anime);
             return earliest.OrderBy(af => af.Name);

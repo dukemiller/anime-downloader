@@ -11,6 +11,8 @@ namespace anime_downloader.Services
         FlagConfiguration FlagConfig { get; set; }
         MyAnimeListConfiguration MyAnimeListConfig { get; set; }
 
+        bool CrucialDirectoriesExist();
+
         string SortBy { get; set; }
         string FilterBy { get; set; }
         List<string> Subgroups { get; set; }

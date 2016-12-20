@@ -7,7 +7,6 @@ namespace anime_downloader.Services
 {
     public interface IAnimeFileService
     {
-
         IEnumerable<AnimeFile> GetEpisodes(EpisodeStatus episodeStatus);
         IEnumerable<AnimeFile> GetEpisodes(Anime anime, EpisodeStatus episodeStatus);
         Task<IEnumerable<AnimeFile>> GetEpisodesAsync(EpisodeStatus episodeStatus);
@@ -15,5 +14,9 @@ namespace anime_downloader.Services
 
         AnimeFile FirstEpisode(Anime anime);
         AnimeFile LastEpisode(Anime anime);
+
+        // First/last of everything in sequence
+        IEnumerable<AnimeFile> FirstEpisodes(IEnumerable<AnimeFile> files);
+        IEnumerable<AnimeFile> LastEpisodes(IEnumerable<AnimeFile> files);
     }
 }

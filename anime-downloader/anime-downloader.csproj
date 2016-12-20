@@ -144,8 +144,10 @@
     <Compile Include="ViewModels\AnimeDetailsMultipleViewModel.cs" />
     <Compile Include="ViewModels\AnimeDetailsViewModel.cs" />
     <Compile Include="ViewModels\AnimeListViewModel.cs" />
-    <Compile Include="ViewModels\DownloaderViewModel.cs" />
-    <Compile Include="ViewModels\DownloadOptionsViewModel.cs" />
+    <Compile Include="ViewModels\Components\DownloaderViewModel.cs" />
+    <Compile Include="ViewModels\Components\DownloadLogViewModel.cs" />
+    <Compile Include="ViewModels\Components\DownloadOptionsViewModel.cs" />
+    <Compile Include="ViewModels\DownloadViewModel.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\ManageViewModel.cs" />
@@ -162,11 +164,17 @@
     <Compile Include="Views\AnimeList.xaml.cs">
       <DependentUpon>AnimeList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\DownloadOptions.xaml.cs">
+    <Compile Include="Views\Components\DownloadLog.xaml.cs">
+      <DependentUpon>DownloadLog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Components\DownloadOptions.xaml.cs">
       <DependentUpon>DownloadOptions.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Downloader.xaml.cs">
+    <Compile Include="Views\Components\Downloader.xaml.cs">
       <DependentUpon>Downloader.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Download.xaml.cs">
+      <DependentUpon>Download.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Home.xaml.cs">
       <DependentUpon>Home.xaml</DependentUpon>
@@ -212,11 +220,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\DownloadOptions.xaml">
+    <Page Include="Views\Components\DownloadLog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Downloader.xaml">
+    <Page Include="Views\Components\DownloadOptions.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Components\Downloader.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Download.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
