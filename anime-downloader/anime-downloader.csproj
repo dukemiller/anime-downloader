@@ -84,6 +84,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Classes\NeedsUpdatingAttribute.cs" />
     <Compile Include="Models\Anime.cs" />
     <Compile Include="Classes\Distances\StringDistance.cs" />
     <Compile Include="Models\AnimeFile.cs" />
@@ -114,6 +115,7 @@
     <Compile Include="Models\Nyaa.cs" />
     <Compile Include="Classes\File\Playlist.cs" />
     <Compile Include="Models\Configurations\PathConfiguration.cs" />
+    <Compile Include="Models\RadioModel.cs" />
     <Compile Include="Models\Settings.cs" />
     <Compile Include="Models\Torrent.cs" />
     <Compile Include="Classes\Xaml\Converters.cs" />
