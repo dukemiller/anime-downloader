@@ -26,11 +26,11 @@ namespace anime_downloader.Services
 
         // 
 
-        public void Refresh() => Episodes = AnimeFile.GetEpisodes(EpisodeStatus.Watched);
+        public void Refresh() => Episodes = AnimeFile.GetEpisodes(EpisodeStatus.Unwatched);
 
         public void OrderByEpisodeNumber() => Episodes = Episodes.OrderBy(f => f.IntEpisode);
 
-        public void OrderByDate() => Episodes = Episodes.OrderBy(e => System.IO.File.GetCreationTime(e.Path));
+        public void OrderByDate() => Episodes = Episodes.OrderBy(e => File.GetCreationTime(e.Path));
 
         public void ReverseOrder() => Episodes = Episodes.Reverse();
 

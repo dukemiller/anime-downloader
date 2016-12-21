@@ -8,22 +8,6 @@ namespace anime_downloader.ViewModels.Components
 {
     public class DownloadOptionsViewModel : ViewModelBase
     {
-        public ObservableCollection<RadioModel> Options
-        {
-            get { return _options; }
-            set { Set(() => Options, ref _options, value); }
-        }
-
-        private ObservableCollection<RadioModel> _options;
-
-        private RadioModel _selectedRadio;
-
-        public RadioModel SelectedRadio
-        {
-            get { return _selectedRadio; }
-            set { Set(() => SelectedRadio, ref _selectedRadio, value); }
-        }
-
         private static readonly RadioModel NextEpisode = new RadioModel
         {
             Header = "Next Found Episode",
@@ -41,7 +25,13 @@ namespace anime_downloader.ViewModels.Components
             Header = "Any missing episodes between first and last episode",
             Tag = "Missing"
         };
-        
+
+        private ObservableCollection<RadioModel> _options;
+
+        private RadioModel _selectedRadio;
+
+        // 
+
         public DownloadOptionsViewModel()
         {
             Options = new ObservableCollection<RadioModel> {NextEpisode, Continually, Missing};
@@ -50,9 +40,22 @@ namespace anime_downloader.ViewModels.Components
             LogCommand = new RelayCommand(() => MessengerInstance.Send("download_log"));
         }
 
+        // 
+
+        public ObservableCollection<RadioModel> Options
+        {
+            get { return _options; }
+            set { Set(() => Options, ref _options, value); }
+        }
+
+        public RadioModel SelectedRadio
+        {
+            get { return _selectedRadio; }
+            set { Set(() => SelectedRadio, ref _selectedRadio, value); }
+        }
+
         public RelayCommand SearchCommand { get; set; }
 
         public RelayCommand LogCommand { get; set; }
-
     }
 }

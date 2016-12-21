@@ -12,6 +12,7 @@ namespace anime_downloader.Services
         public IAnimeFileService Files { get; set; }
         public IAnimeDownloaderService Downloader { get; set; }
         public IMyAnimeListService Mal { get; set; }
+        public IPlaylistService Playlist { get; set; }
 
         public AnimeAggregateService(ISettingsService settings)
         {
@@ -19,6 +20,7 @@ namespace anime_downloader.Services
             Files = new AnimeFileService(settings);
             Downloader = new NyaaService(settings);
             Mal = new MyAnimeListService(settings, Animes);
+            Playlist = new PlaylistService(settings, Files);
         }
     }
 }

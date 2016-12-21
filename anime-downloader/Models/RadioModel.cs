@@ -22,8 +22,6 @@ namespace anime_downloader.Models
         }
         #endregion ToolTip
 
-        public int Purpose { get; set; }
-
         public string Tag { get; set; }
 
         public bool Equals(RadioModel obj)

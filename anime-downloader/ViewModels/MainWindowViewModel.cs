@@ -52,7 +52,7 @@ namespace anime_downloader.ViewModels
             );
 
             PlaylistCreatorCommand = new RelayCommand(
-                () => CurrentView = new PlaylistCreatorViewModel(),
+                () => CurrentView = new PlaylistCreatorViewModel(Settings, AnimeAggregate.Playlist),
                 () => !Busy
             );
 
