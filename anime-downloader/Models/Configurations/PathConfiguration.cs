@@ -12,8 +12,6 @@ namespace anime_downloader.Models.Configurations
         private string _watched;
         private string _torrents;
         private string _torrentDownloader;
-        private string _playlist;
-        private string _logging;
 
         [XmlAttribute("unwatched")]
         public string Unwatched
@@ -42,23 +40,27 @@ namespace anime_downloader.Models.Configurations
             get { return _torrentDownloader; }
             set { Set(() => TorrentDownloader, ref _torrentDownloader, value); }
         }
-
-        [XmlAttribute("playlist")]
-        public string Playlist
-        {
-            get { return _playlist; }
-            set { Set(() => Playlist, ref _playlist, value); }
-        }
-
-        [XmlAttribute("log")]
-        public string Logging
-        {
-            get { return _logging; }
-            set { Set(() => Logging, ref _logging, value); }
-        }
+        
+        /// <summary>
+        ///     The path to the folder containing all settings and configuration files.
+        /// </summary>
+        private static string ApplicationDirectory => Path.Combine(Environment
+            .GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "anime_downloader");
 
         public static string DuplicatesDirectory => Path.Combine(Environment
             .GetFolderPath(Environment.SpecialFolder.MyVideos),
             "Duplicates");
+
+        /// <summary>
+        ///     The path to the playlist file.
+        /// </summary>
+        public string Playlist => Path.Combine(ApplicationDirectory, "playlist.m3u");
+
+        /// <summary>
+        ///     The path to the log text file.
+        /// </summary>
+        public string Logging => Path.Combine(ApplicationDirectory, "log.txt");
+
     }
 }
