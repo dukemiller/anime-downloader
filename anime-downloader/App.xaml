@@ -12,7 +12,7 @@
 
         <xaml:StringJoinConverter x:Key="Converter" />
         <xaml:NotConverter x:Key="NotConverter" />
-        <xaml:BooleanVisibilityConverter x:Key="VisbilityConverter" />
+        <xaml:BooleanVisibilityConverter x:Key="VisibilityConverter" />
         <xaml:BooleanSymbolConverter x:Key="BooleanSymbolConverter" />
         <xaml:BooleanColorConverter x:Key="BooleanColorConverter" />
         <xaml:BooleanOpacityConverterNot x:Key="BooleanOpacityConverterNot" />
@@ -92,6 +92,12 @@
         <SolidColorBrush x:Key="PressedDownColor" Color="#2047A1" />
         <SolidColorBrush x:Key="BorderColor" Color="#A1CAFF" />
 
+        <!--  Disabled Brush Colors  -->
+
+        <SolidColorBrush x:Key="DisabledBorderColor" Color="#F3F3F3" />
+        <SolidColorBrush x:Key="DisabledBackgroundColor" Color="#EBEDF3" />
+        <SolidColorBrush x:Key="DisabledForegroundColor" Color="LightSlateGray" />
+
         <!--  Special Brush Colors  -->
 
         <SolidColorBrush x:Key="SpecialBackgroundColor" Color="#10D910" />
@@ -99,6 +105,12 @@
         <SolidColorBrush x:Key="SpecialSelectedColor" Color="#139E13" />
         <SolidColorBrush x:Key="SpecialPressedDownColor" Color="#0B8E0B" />
         <SolidColorBrush x:Key="SpecialBorderColor" Color="#2CF12C" />
+
+        <!--  Disabled Brush Colors  -->
+
+        <SolidColorBrush x:Key="SpecialDisabledBorderColor" Color="#94D994" />
+        <SolidColorBrush x:Key="SpecialDisabledBackgroundColor" Color="#7EF17E" />
+        <SolidColorBrush x:Key="SpecialDisabledForegroundColor" Color="LightSlateGray" />
 
         <!--  Fonts  -->
 
@@ -114,10 +126,19 @@
                     <ControlTemplate TargetType="{x:Type Button}">
                         <Border Background="{TemplateBinding Background}"
                                 BorderBrush="{StaticResource BorderColor}"
-                                BorderThickness="2"
-                                Padding="5">
-                            <ContentPresenter HorizontalAlignment="Center" />
+                                BorderThickness="0"
+                                >
+                            <ContentPresenter Margin="5" HorizontalAlignment="Center" />
                         </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Border.Opacity" Value="0.75" />
+                                <Setter Property="Border.Background" Value="{StaticResource DisabledBackgroundColor}" />
+                                <Setter Property="Border.BorderBrush" Value="{StaticResource DisabledBorderColor}" />
+                                <Setter Property="Background" Value="{StaticResource DisabledBackgroundColor}" />
+                                <Setter Property="Foreground" Value="{StaticResource DisabledForegroundColor}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -150,6 +171,15 @@
                         <Border Background="{TemplateBinding Background}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Border.Opacity" Value="0.75" />
+                                <Setter Property="Border.Background" Value="{StaticResource DisabledBackgroundColor}" />
+                                <Setter Property="Border.BorderBrush" Value="{StaticResource DisabledBorderColor}" />
+                                <Setter Property="Background" Value="{StaticResource DisabledBackgroundColor}" />
+                                <Setter Property="Foreground" Value="{StaticResource DisabledForegroundColor}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -189,11 +219,21 @@
                     <ControlTemplate TargetType="{x:Type Button}">
                         <Border Background="{TemplateBinding Background}"
                                 BorderBrush="{StaticResource SpecialBorderColor}"
-                                BorderThickness="2">
+                                BorderThickness="0">
                             <ContentPresenter Margin="5"
                                               HorizontalAlignment="Center"
                                               VerticalAlignment="Center" />
+
                         </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Border.Opacity" Value="0.75" />
+                                <Setter Property="Border.Background" Value="{StaticResource SpecialDisabledBackgroundColor}" />
+                                <Setter Property="Background" Value="{StaticResource SpecialDisabledBackgroundColor}" />
+                                <Setter Property="Border.BorderBrush" Value="{StaticResource DisabledBorderColor}" />
+                                <Setter Property="Foreground" Value="{StaticResource SpecialDisabledForegroundColor}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
