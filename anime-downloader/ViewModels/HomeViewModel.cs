@@ -7,7 +7,7 @@ using GalaSoft.MvvmLight;
 
 namespace anime_downloader.ViewModels
 {
-    class HomeViewModel : ViewModelBase
+    public class HomeViewModel : ViewModelBase
     {
     }
 }
