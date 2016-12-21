@@ -13,6 +13,10 @@
         <xaml:StringJoinConverter x:Key="Converter" />
         <xaml:NotConverter x:Key="NotConverter" />
         <xaml:BooleanVisibilityConverter x:Key="VisbilityConverter" />
+        <xaml:BooleanSymbolConverter x:Key="BooleanSymbolConverter" />
+        <xaml:BooleanColorConverter x:Key="BooleanColorConverter" />
+        <xaml:BooleanOpacityConverterNot x:Key="BooleanOpacityConverterNot" />
+        <xaml:BooleanOpacityConverter x:Key="BooleanOpacityConverter" />
         <animeDownloader:StringEqualsConverter x:Key="StringEqualsConverter" />
 
         <!--  Views  -->
@@ -204,6 +208,6 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-        
+
     </Application.Resources>
 </Application>

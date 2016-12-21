@@ -86,7 +86,6 @@
               Background="White"
               Column="1"
               Opacity="0.0" />
-
         <ContentPresenter Grid.Column="1"
                           Margin="20,0"
                           Content="{Binding CurrentView}" />
