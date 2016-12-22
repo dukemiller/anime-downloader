@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using anime_downloader.Models;
 
 namespace anime_downloader.Services
 {
@@ -7,6 +9,8 @@ namespace anime_downloader.Services
         // List 
         int Length { get; }
         void Refresh();
+        void Set(IEnumerable<AnimeFile> files);
+        string Path { get; }
 
         // List discrimination
         void OrderByEpisodeNumber();

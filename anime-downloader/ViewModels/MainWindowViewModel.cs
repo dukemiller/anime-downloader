@@ -42,7 +42,7 @@ namespace anime_downloader.ViewModels
             );
 
             ManageCommand = new RelayCommand(
-                () => CurrentView = new ManageViewModel(),
+                () => CurrentView = new ManageViewModel(Settings, AnimeAggregate),
                 () => !Busy
             );
 

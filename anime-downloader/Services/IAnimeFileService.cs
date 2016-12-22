@@ -18,5 +18,9 @@ namespace anime_downloader.Services
         // First/last of everything in sequence
         IEnumerable<AnimeFile> FirstEpisodes(IEnumerable<AnimeFile> files);
         IEnumerable<AnimeFile> LastEpisodes(IEnumerable<AnimeFile> files);
+
+        // Closest
+        AnimeFile ClosestFile(IEnumerable<AnimeFile> files, string name);
+        Anime ClosestAnime(IEnumerable<Anime> animes, AnimeFile file);
     }
 }

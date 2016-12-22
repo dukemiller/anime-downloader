@@ -44,63 +44,7 @@ namespace anime_downloader.Classes.File
                     anime.Episode = firstEpisode.Episode;
             }
         }
-
-        /// <summary>
-        ///     Moves all selected items in listbox from old to new directory returning a list containing tuples of (old, new).
-        /// </summary>
-        public static IEnumerable<MovedAnimeFile> MoveAnimeFiles(IEnumerable<AnimeFile> animeFiles, string oldDirectory, string newDirectory)
-        {
-            var newEpisodes = new List<MovedAnimeFile>();
-            
-            foreach (var animeFile in animeFiles)
-            {
-                try
-                {
-                    var fullPath = animeFile.Path.Replace(oldDirectory, "").Substring(1);
-                    var fragments = fullPath.Split(Path.DirectorySeparatorChar);
-
-                    var oldPath = oldDirectory;
-                    var newPath = newDirectory;
-
-                    // If file is a directory, create in new folder, else move file
-                    foreach (var fragment in fragments)
-                    {
-                        oldPath = Path.Combine(oldPath, fragment);
-                        newPath = Path.Combine(newPath, fragment);
-
-                        if (Directory.Exists(oldPath))
-                            Directory.CreateDirectory(newPath);
-                        else if (System.IO.File.Exists(oldPath))
-                            System.IO.File.Move(oldPath, newPath);
-                    }
-
-                    // Delete all old folders (this would only work on the latest one because it's the only
-                    // path that would be empty, TODO: fix that
-                    oldPath = oldDirectory;
-                    foreach (var fragment in fragments)
-                    {
-                        oldPath = Path.Combine(oldPath, fragment);
-                        if (Directory.Exists(oldPath))
-                            if (Directory.GetFiles(oldPath).Length == 0)
-                            {
-                                Directory.Delete(oldPath);
-                                break;
-                            }
-                    }
-
-                    var moved = new MovedAnimeFile {Old = animeFile, Latest= new AnimeFile(newPath)};
-                    newEpisodes.Add(moved);
-                }
-
-                catch (Exception)
-                {
-                    //
-                }
-            }
-
-            return newEpisodes;
-        }
-
+        
         private async Task<int> MoveDuplicatesAsync()
         {
             var animeEpisodes = (await _animeFileCollection.GetEpisodesAsync(EpisodeStatus.Unwatched)).ToList();

@@ -75,6 +75,10 @@
             <components:DownloadLog DataContext="{Binding}" />
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type viewModelComponents:FileListViewModel}">
+            <components:FileList DataContext="{Binding}" />
+        </DataTemplate>
+
         <!--  Storyboard  -->
 
         <Storyboard x:Key="DisplayTransition">
@@ -126,8 +130,7 @@
                     <ControlTemplate TargetType="{x:Type Button}">
                         <Border Background="{TemplateBinding Background}"
                                 BorderBrush="{StaticResource BorderColor}"
-                                BorderThickness="0"
-                                >
+                                BorderThickness="0">
                             <ContentPresenter Margin="5" HorizontalAlignment="Center" />
                         </Border>
                         <ControlTemplate.Triggers>

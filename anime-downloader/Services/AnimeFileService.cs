@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using anime_downloader.Classes;
 using anime_downloader.Classes.Distances;
 using anime_downloader.Classes.File;
 using anime_downloader.Enums;
@@ -141,5 +142,26 @@ namespace anime_downloader.Services
         {
             return animeEpisodes?.OrderBy(ep => ep.IntEpisode).LastOrDefault();
         }
+
+        /* Closest */
+
+        public AnimeFile ClosestFile(IEnumerable<AnimeFile> files, string name)
+        {
+            return files
+                .Select(a => new { Anime = a, Distance = Methods.LevenshteinDistance(a.Name, name) })
+                .Where(ap => ap.Distance <= 10)
+                .OrderBy(ap => ap.Distance)
+                .FirstOrDefault()?.Anime;
+        }
+
+        public Anime ClosestAnime(IEnumerable<Anime> animes, AnimeFile file)
+        {
+            return animes
+                .Select(a => new StringDistance<Anime>(a, file.Name, a.Name))
+                .Where(ap => ap.Distance <= 10)
+                .OrderBy(ap => ap.Distance)
+                .FirstOrDefault()?.Item;
+        }
+        
     }
 }

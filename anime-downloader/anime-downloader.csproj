@@ -85,6 +85,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Classes\NeedsUpdatingAttribute.cs" />
+    <Compile Include="Classes\Xaml\AttachedProperties.cs" />
     <Compile Include="Enums\Views.cs" />
     <Compile Include="Models\Anime.cs" />
     <Compile Include="Classes\Distances\StringDistance.cs" />
@@ -147,6 +148,7 @@
     <Compile Include="ViewModels\Components\DownloaderViewModel.cs" />
     <Compile Include="ViewModels\Components\DownloadLogViewModel.cs" />
     <Compile Include="ViewModels\Components\DownloadOptionsViewModel.cs" />
+    <Compile Include="ViewModels\Components\FileListViewModel.cs" />
     <Compile Include="ViewModels\DownloadViewModel.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
@@ -172,6 +174,9 @@
     </Compile>
     <Compile Include="Views\Components\Downloader.xaml.cs">
       <DependentUpon>Downloader.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Components\FileList.xaml.cs">
+      <DependentUpon>FileList.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Download.xaml.cs">
       <DependentUpon>Download.xaml</DependentUpon>
@@ -229,6 +234,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Components\Downloader.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Components\FileList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

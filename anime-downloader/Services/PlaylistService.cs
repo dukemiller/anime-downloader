@@ -24,9 +24,16 @@ namespace anime_downloader.Services
 
         public int Length => Episodes.Count();
 
+        public string Path => Settings.PathConfig.Playlist;
+
         // 
 
         public void Refresh() => Episodes = AnimeFile.GetEpisodes(EpisodeStatus.Unwatched);
+
+        public void Set(IEnumerable<AnimeFile> files)
+        {
+            Episodes = files;
+        }
 
         public void OrderByEpisodeNumber() => Episodes = Episodes.OrderBy(f => f.IntEpisode);
 
