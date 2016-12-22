@@ -11,6 +11,7 @@
     <Application.Resources>
 
         <xaml:StringJoinConverter x:Key="Converter" />
+        <xaml:StringCompareConverter x:Key="CompareConverter" />
         <xaml:NotConverter x:Key="NotConverter" />
         <xaml:BooleanVisibilityConverter x:Key="VisibilityConverter" />
         <xaml:BooleanSymbolConverter x:Key="BooleanSymbolConverter" />

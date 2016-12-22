@@ -18,6 +18,7 @@ namespace anime_downloader.Services
         Task Update(Anime anime);
         Task Add(Anime anime);
         Task<bool> GetId(Anime anime);
+        Task<List<FindResult>> Find(string q);
 
         // Bulk update
         Task Synchronize();

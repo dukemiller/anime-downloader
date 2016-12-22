@@ -101,6 +101,8 @@ namespace anime_downloader.Services
 
         public NetworkCredential GetCredentials() => new NetworkCredential(Settings.MyAnimeListConfig.Username, Settings.MyAnimeListConfig.Password);
 
+        public async Task<List<FindResult>> Find(string q) => await FindAsync(q);
+
         public async Task<bool> VerifyCredentialsAsync()
         {
             const string url = ApiVerify;

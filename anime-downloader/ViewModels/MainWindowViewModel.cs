@@ -47,7 +47,7 @@ namespace anime_downloader.ViewModels
             );
 
             MiscCommand = new RelayCommand(
-                () => CurrentView = new MiscViewModel(),
+                () => CurrentView = new MiscViewModel(AnimeAggregate.Animes, AnimeAggregate.Files, AnimeAggregate.Mal),
                 () => !Busy
             );
 

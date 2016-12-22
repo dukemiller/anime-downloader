@@ -48,9 +48,7 @@ namespace anime_downloader.Models.Configurations
             .GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "anime_downloader");
 
-        public static string DuplicatesDirectory => Path.Combine(Environment
-            .GetFolderPath(Environment.SpecialFolder.MyVideos),
-            "Duplicates");
+        public string DuplicatesDirectory => Environment.GetFolderPath(Environment.SpecialFolder.MyVideos);
 
         /// <summary>
         ///     The path to the playlist file.

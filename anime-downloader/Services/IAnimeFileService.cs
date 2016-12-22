@@ -22,5 +22,8 @@ namespace anime_downloader.Services
         // Closest
         AnimeFile ClosestFile(IEnumerable<AnimeFile> files, string name);
         Anime ClosestAnime(IEnumerable<Anime> animes, AnimeFile file);
+
+        // 
+        Task<int> MoveDuplicatesAsync();
     }
 }

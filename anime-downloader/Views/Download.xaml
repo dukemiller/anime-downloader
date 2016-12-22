@@ -8,7 +8,7 @@
              d:DataContext="{d:DesignInstance viewModels:DownloadViewModel}"
              d:DesignHeight="300"
              d:DesignWidth="300"
-             Background="BlanchedAlmond"
+             Background="White"
              mc:Ignorable="d">
     <ContentPresenter Content="{Binding Display}" />
 </UserControl>

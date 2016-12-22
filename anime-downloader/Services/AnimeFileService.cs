@@ -162,6 +162,28 @@ namespace anime_downloader.Services
                 .OrderBy(ap => ap.Distance)
                 .FirstOrDefault()?.Item;
         }
-        
+
+        [NeedsUpdating]
+        public async Task<int> MoveDuplicatesAsync()
+        {
+            var animeEpisodes = (await GetEpisodesAsync(EpisodeStatus.Unwatched)).ToList();
+
+            // if there's another anime with the same name and episode count,
+            // and it's not in the duplicate list already
+            var duplicates = animeEpisodes.Where(episode =>
+                animeEpisodes.Any(otherEpisode => episode != otherEpisode &&
+                                                  episode.Name.Equals(otherEpisode.Name) &&
+                                                  episode.IntEpisode == otherEpisode.IntEpisode
+                    )).ToList();
+
+            if (duplicates.Any())
+            {
+                foreach (var duplicate in duplicates)
+                    File.Move(duplicate.Path,
+                        Path.Combine(Settings.PathConfig.DuplicatesDirectory, duplicate.FileName));
+            }
+
+            return duplicates.Count;
+        }
     }
 }
