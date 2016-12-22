@@ -82,7 +82,7 @@ namespace anime_downloader.Views
                 Anime.PreferredSubgroup = Anime.PreferredSubgroup.Equals("(None)") ? "" : Anime.PreferredSubgroup;
                 Anime.Episode = Anime.Episode.Length > 0 ? $"{int.Parse(Anime.Episode):D2}" : "00";
                 MainWindow.Window.AnimeCollection.Add(Anime);
-                MainWindow.Window.AnimeList.Press();
+                // TODO MainWindow.Window.AnimeList.Press();
             }
         }
 
@@ -96,7 +96,7 @@ namespace anime_downloader.Views
                 _anime.PreferredSubgroup = subgroup.Equals("(None)") ? "" : subgroup;
                 if (_anime.Status.Equals("Finished") && _anime.Airing)
                     _anime.Airing = false;
-                MainWindow.Window.Cycle(MainWindow.Window.AnimeList);
+                // TODO MainWindow.Window.Cycle(MainWindow.Window.AnimeList);
             }
         }
 

@@ -10,6 +10,13 @@ namespace anime_downloader.ViewModels
     {
         private ViewModelBase _currentView;
         private bool _busy;
+        private int _selectedIndex;
+
+        public int SelectedIndex
+        {
+            get { return _selectedIndex; }
+            set { Set(() => SelectedIndex, ref _selectedIndex, value); }
+        }
 
         // 
 
@@ -18,7 +25,7 @@ namespace anime_downloader.ViewModels
             Settings = settings;
             AnimeAggregate = animeAggregate;
             Close = close;
-
+            
             // 
 
             CloseCommand = new RelayCommand(Close);
@@ -27,42 +34,74 @@ namespace anime_downloader.ViewModels
             // 
 
             HomeCommand = new RelayCommand(
-                () => CurrentView = new HomeViewModel(),
+                () => 
+                {
+                    CurrentView = new HomeViewModel();
+                    SelectedIndex = 1;
+                },
                 () => !Busy
             );
 
             AnimeListCommand = new RelayCommand(
-                () => CurrentView = new AnimeListViewModel(),
-                () => !Busy
-            );
-
-            DownloadCommand = new RelayCommand(
-                () => CurrentView = new DownloadViewModel(Settings, AnimeAggregate),
-                () => !Busy
-            );
-
-            ManageCommand = new RelayCommand(
-                () => CurrentView = new ManageViewModel(Settings, AnimeAggregate),
-                () => !Busy
-            );
-
-            MiscCommand = new RelayCommand(
-                () => CurrentView = new MiscViewModel(AnimeAggregate.Animes, AnimeAggregate.Files, AnimeAggregate.Mal),
-                () => !Busy
-            );
-
-            PlaylistCreatorCommand = new RelayCommand(
-                () => CurrentView = new PlaylistCreatorViewModel(Settings, AnimeAggregate.Playlist),
+                () =>
+                {
+                    CurrentView = new AnimeListViewModel();
+                    SelectedIndex = 2;
+                },
                 () => !Busy
             );
 
             SettingsCommand = new RelayCommand(
-                () => CurrentView = new SettingsViewModel(Settings),
+                () =>
+                {
+                    CurrentView = new SettingsViewModel(Settings);
+                    SelectedIndex = 3;
+                },
+                () => !Busy
+            );
+
+            DownloadCommand = new RelayCommand(
+                () =>
+                {
+                    CurrentView = new DownloadViewModel(Settings, AnimeAggregate);
+                    SelectedIndex = 4;
+                },
+                () => !Busy
+            );
+
+            ManageCommand = new RelayCommand(
+                () =>
+                {
+                    CurrentView = new ManageViewModel(Settings, AnimeAggregate);
+                    SelectedIndex = 5;
+                },
+                () => !Busy
+            );
+
+            PlaylistCreatorCommand = new RelayCommand(
+                () =>
+                {
+                    CurrentView = new PlaylistCreatorViewModel(Settings, AnimeAggregate.Playlist);
+                    SelectedIndex = 6;
+                },
                 () => !Busy
             );
 
             WebCommand = new RelayCommand(
-                () => CurrentView = new WebViewModel(Settings, AnimeAggregate.Animes, AnimeAggregate.Mal),
+                () =>
+                {
+                    CurrentView = new WebViewModel(Settings, AnimeAggregate.Animes, AnimeAggregate.Mal);
+                    SelectedIndex = 7;
+                },
+                () => !Busy
+            );
+
+            MiscCommand = new RelayCommand(
+                () =>
+                {
+                    CurrentView = new MiscViewModel(AnimeAggregate.Animes, AnimeAggregate.Files, AnimeAggregate.Mal);
+                    SelectedIndex = 8;
+                },
                 () => !Busy
             );
 
@@ -99,8 +138,11 @@ namespace anime_downloader.ViewModels
                 else if (_ == Enums.Views.Web)
                     WebCommand.Execute(1);
             });
-        }
 
+            HomeCommand.Execute(1);
+
+        }
+        
         // 
 
         public ISettingsService Settings { get; set; }
@@ -112,11 +154,7 @@ namespace anime_downloader.ViewModels
         public ViewModelBase CurrentView
         {
             get { return _currentView; }
-            set
-            {
-                _currentView = value;
-                RaisePropertyChanged();
-            }
+            set { Set(() => CurrentView, ref _currentView, value); }
         }
 
         private bool Busy

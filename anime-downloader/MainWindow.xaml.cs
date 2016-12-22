@@ -195,8 +195,8 @@ namespace anime_downloader
             KeyDown += (o, e) =>
             {
                 // So you can type without changing the view
-                if (Keyboard.FocusedElement is TextBox || Keyboard.FocusedElement is PasswordBox)
-                    return;
+                // if (Keyboard.FocusedElement is TextBox || Keyboard.FocusedElement is PasswordBox)
+                //     return;
 
                 /*
                 // 1-8 to change views
@@ -252,7 +252,7 @@ namespace anime_downloader
         /// </summary>
         public void Cycle(ToggleButton button)
         {
-            Home.Press();
+            // Home.Press();
             button.Press();
             button.IsChecked = true;
         }

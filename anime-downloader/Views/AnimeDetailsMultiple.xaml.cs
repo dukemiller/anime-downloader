@@ -114,7 +114,7 @@ namespace anime_downloader.Views
                     anime.Resolution = Details.Resolution;
                 }
 
-                MainWindow.Window.AnimeList.Press();
+                // TODO MainWindow.Window.AnimeList.Press();
             }
 
             // Adding multiple
@@ -141,7 +141,7 @@ namespace anime_downloader.Views
                             Resolution = Details.Resolution
                         });
                     }
-                    MainWindow.Window.AnimeList.Press();
+                    // TODO MainWindow.Window.AnimeList.Press();
                 }
             }
         }

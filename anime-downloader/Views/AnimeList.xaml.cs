@@ -139,15 +139,15 @@ namespace anime_downloader.Views
             {
                 if (Keyboard.FocusedElement is TextBox || Keyboard.FocusedElement is PasswordBox)
                     Methods.ClearFocusFrom(Keyboard.FocusedElement as TextBox);
-                else
-                    MainWindow.Window.Cycle(MainWindow.Window.AnimeList);
+                else ;
+                // TODO MainWindow.Window.Cycle(MainWindow.Window.AnimeList);
             }
         }
 
         public static void MouseEscapeBack(object sender, MouseButtonEventArgs e)
         {
-            if (e.ChangedButton.Equals(MouseButton.XButton1))
-                MainWindow.Window.Cycle(MainWindow.Window.AnimeList);
+            if (e.ChangedButton.Equals(MouseButton.XButton1)) ;
+            // TODO MainWindow.Window.Cycle(MainWindow.Window.AnimeList);
         }
 
         // Datagrid

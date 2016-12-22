@@ -99,8 +99,8 @@ namespace anime_downloader.Classes
                 new MenuItem("&Download latest...", (sender, args) =>
                 {
                     BringWindowToFocus();
-                    _mainWindow.Download.Press();
                     // TODO
+                    // _mainWindow.Download.Press();
                     // (_mainWindow.CurrentDisplay as DownloadOptions)?.SearchButton.Press();
                 }));
 
@@ -108,7 +108,8 @@ namespace anime_downloader.Classes
                 new MenuItem("&Sync MyAnimeList...", (sender, args) =>
                 {
                     BringWindowToFocus();
-                    _mainWindow.Web.Press();
+                    // TODO
+                    // _mainWindow.Web.Press();
                     if (_settings.MyAnimeList.Works)
                         (_mainWindow.CurrentDisplay as Views.Web)?.SyncButton.Press();
                 }));
