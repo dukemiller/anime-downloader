@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using anime_downloader.Models;
 
-namespace anime_downloader.Classes.File
+namespace anime_downloader.Models
 {
     /// <summary>
     ///     The difference between an anime's first and last episode with identifying information

@@ -84,36 +84,32 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ActionMessage.cs" />
-    <Compile Include="Classes\NeedsUpdatingAttribute.cs" />
+    <Compile Include="Classes\Attributes.cs" />
+    <Compile Include="Classes\Distances.cs" />
+    <Compile Include="Classes\Messages.cs" />
     <Compile Include="Classes\Xaml\AttachedProperties.cs" />
     <Compile Include="Enums\Views.cs" />
     <Compile Include="Models\Anime.cs" />
-    <Compile Include="Classes\Distances\StringDistance.cs" />
     <Compile Include="Models\AnimeFile.cs" />
     <Compile Include="Classes\Extensions.cs" />
-    <Compile Include="Classes\File\AnimeFileRange.cs" />
-    <Compile Include="Classes\Distances\GroupFileDistance.cs" />
     <Compile Include="Models\AnimeDetails.cs" />
+    <Compile Include="Models\AnimeFileRange.cs" />
     <Compile Include="Models\MyAnimeListDetails.cs" />
     <Compile Include="Models\Configurations\FlagConfiguration.cs" />
     <Compile Include="Models\Configurations\MyAnimeListConfiguration.cs" />
-    <Compile Include="Models\MyAnimeList\WebPage.cs" />
     <Compile Include="Enums\EpisodeStatus.cs" />
     <Compile Include="Classes\File\Logger.cs" />
-    <Compile Include="Classes\File\MultipleAnimeFiles.cs" />
     <Compile Include="Classes\FindPopup.cs" />
     <Compile Include="Classes\Methods.cs" />
     <Compile Include="Classes\OperatingSystemApi.cs" />
     <Compile Include="Classes\Tray.cs" />
-    <Compile Include="Classes\Distances\FindResultDistance.cs" />
     <Compile Include="Models\MyAnimeList\FindResultRoot.cs" />
     <Compile Include="Models\MyAnimeList\UpdateShow.cs" />
     <Compile Include="Models\MyAnimeList\FindResult.cs" />
     <Compile Include="Models\Configurations\PathConfiguration.cs" />
     <Compile Include="Models\RadioModel.cs" />
     <Compile Include="Models\Torrent.cs" />
-    <Compile Include="Classes\Xaml\Converters.cs" />
+    <Compile Include="Classes\Converters.cs" />
     <Compile Include="Classes\Xaml\DragSelectionHelper.cs" />
     <Compile Include="Classes\Xaml\PasswordBoxAssistant.cs" />
     <Compile Include="Properties\Annotations.cs" />
@@ -131,7 +127,6 @@
     <Compile Include="Services\NyaaService.cs" />
     <Compile Include="Services\PlaylistService.cs" />
     <Compile Include="Services\SettingsService.cs" />
-    <Compile Include="StringEqualsConverter.cs" />
     <Compile Include="ViewModels\AnimeDetailsMultipleViewModel.cs" />
     <Compile Include="ViewModels\AnimeDetailsViewModel.cs" />
     <Compile Include="ViewModels\AnimeListViewModel.cs" />
@@ -190,7 +185,6 @@
     <Compile Include="Views\Web.xaml.cs">
       <DependentUpon>Web.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WorkMessage.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

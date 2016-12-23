@@ -7,7 +7,6 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using anime_downloader.Classes;
-using anime_downloader.Classes.Distances;
 using anime_downloader.Classes.File;
 using anime_downloader.Models;
 using HtmlAgilityPack;

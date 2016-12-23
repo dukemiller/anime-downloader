@@ -30,7 +30,7 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-        <xaml:StringCompareConverter x:Key="StringCompareConverter" />
+        <classes:StringCompareConverter x:Key="StringCompareConverter" />
     </UserControl.Resources>
     <Grid>
         <Grid.Background>White</Grid.Background>

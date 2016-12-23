@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Windows;
 using System.Windows.Controls.Primitives;
@@ -12,6 +14,7 @@ using anime_downloader.Services;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using HtmlAgilityPack;
 
 namespace anime_downloader.ViewModels
 {
@@ -173,7 +176,7 @@ namespace anime_downloader.ViewModels
             if (text.Length > 0)
             {
                 MessengerInstance.Send(new WorkMessage { Working = true });
-                await WebPage.SearchAndOpenAsync(text);
+                await SearchAndOpenAsync(text);
                 MessengerInstance.Send(new WorkMessage { Working = false });
             }
         }
@@ -198,6 +201,28 @@ namespace anime_downloader.ViewModels
             RaiseCommandExecutions();
             UpToDate = Animes.Animes.Any() && !Animes.NeedsUpdates.Any();
             SyncText = UpToDate ? "Synced" : "Sync";
+        }
+
+        public static async Task SearchAndOpenAsync(string text)
+        {
+            var q = HttpUtility.UrlEncode(text);
+            var document = new HtmlDocument();
+
+            using (var client = new WebClient())
+            {
+                var html = await client.DownloadStringTaskAsync(new Uri($"https://myanimelist.net/anime.php?q={q}"));
+                document.LoadHtml(html);
+            }
+
+            var link = document.DocumentNode?
+                .SelectSingleNode("//div[@class=\"js-categories-seasonal js-block-list list\"]/table/tr[2]/td[1]")?
+                .Descendants("a")?
+                .FirstOrDefault();
+
+            if (link != null)
+                Process.Start(link.Attributes["href"].Value);
+            else
+                Methods.Alert("No results found.");
         }
     }
 }

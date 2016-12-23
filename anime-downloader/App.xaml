@@ -7,18 +7,19 @@
              xmlns:viewModels="clr-namespace:anime_downloader.ViewModels"
              xmlns:views="clr-namespace:anime_downloader.Views"
              xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
+             xmlns:classes="clr-namespace:anime_downloader.Classes"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
 
-        <xaml:StringJoinConverter x:Key="Converter" />
-        <xaml:StringCompareConverter x:Key="CompareConverter" />
-        <xaml:NotConverter x:Key="NotConverter" />
-        <xaml:BooleanVisibilityConverter x:Key="VisibilityConverter" />
-        <xaml:BooleanSymbolConverter x:Key="BooleanSymbolConverter" />
-        <xaml:BooleanColorConverter x:Key="BooleanColorConverter" />
-        <xaml:BooleanOpacityConverterNot x:Key="BooleanOpacityConverterNot" />
-        <xaml:BooleanOpacityConverter x:Key="BooleanOpacityConverter" />
-        <animeDownloader:StringEqualsConverter x:Key="StringEqualsConverter" />
+        <classes:StringJoinConverter x:Key="Converter" />
+        <classes:StringCompareConverter x:Key="CompareConverter" />
+        <classes:NotConverter x:Key="NotConverter" />
+        <classes:BooleanVisibilityConverter x:Key="VisibilityConverter" />
+        <classes:BooleanSymbolConverter x:Key="BooleanSymbolConverter" />
+        <classes:BooleanColorConverter x:Key="BooleanColorConverter" />
+        <classes:BooleanOpacityConverterNot x:Key="BooleanOpacityConverterNot" />
+        <classes:BooleanOpacityConverter x:Key="BooleanOpacityConverter" />
+        <classes:StringEqualsConverter x:Key="StringEqualsConverter" />
 
         <!--  Views  -->
 

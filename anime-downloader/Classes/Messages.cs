@@ -1,4 +1,4 @@
-﻿namespace anime_downloader
+﻿namespace anime_downloader.Classes
 {
     public class WorkMessage
     {

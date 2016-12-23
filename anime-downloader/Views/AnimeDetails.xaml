@@ -4,6 +4,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
+             xmlns:classes="clr-namespace:anime_downloader.Classes"
              d:DesignHeight="360"
              d:DesignWidth="680"
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
@@ -11,14 +12,14 @@
              Loaded="AnimeDetails_OnLoaded"
              mc:Ignorable="d">
     <UserControl.Resources>
-        <xaml:StringCompareConverter x:Key="StringCompareConverter" />
-        <xaml:StringLengthVisibilityConverter x:Key="StringLengthVisibilityConverter" />
-        <xaml:StringLengthVisibilityConverterNot x:Key="StringLengthVisibilityConverterNot" />
-        <xaml:StringCompareVisibilityConverter x:Key="StringCompareVisibilityConverter" />
-        <xaml:IsNullVisibilityConverter x:Key="IsNullVisibilityConverter" />
-        <xaml:SynposisSnipConverter x:Key="SynposisSnipConverter" />
-        <xaml:EpisodeConverter x:Key="EpisodeConverter" />
-        <xaml:StringJoinConverter x:Key="StringJoinConverter" />
+        <classes:StringCompareConverter x:Key="StringCompareConverter" />
+        <classes:StringLengthVisibilityConverter x:Key="StringLengthVisibilityConverter" />
+        <classes:StringLengthVisibilityConverterNot x:Key="StringLengthVisibilityConverterNot" />
+        <classes:StringCompareVisibilityConverter x:Key="StringCompareVisibilityConverter" />
+        <classes:IsNullVisibilityConverter x:Key="IsNullVisibilityConverter" />
+        <classes:SynposisSnipConverter x:Key="SynposisSnipConverter" />
+        <classes:EpisodeConverter x:Key="EpisodeConverter" />
+        <classes:StringJoinConverter x:Key="StringJoinConverter" />
         <Style x:Key="NumberBoxStyle" TargetType="TextBox">
             <Setter Property="Width" Value="40" />
             <Setter Property="HorizontalAlignment" Value="Left" />

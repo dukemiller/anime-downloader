@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
-using anime_downloader.Classes.Distances;
 using anime_downloader.Models.MyAnimeList;
 using GalaSoft.MvvmLight;
 
