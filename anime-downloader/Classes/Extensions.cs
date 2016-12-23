@@ -50,7 +50,7 @@ namespace anime_downloader.Classes
         /// <summary>
         ///     Toggle opacity and visibility of all buttons inside the MainWindow.
         /// </summary>
-        public static void ToggleButtons(this MainWindow window)
+        public static void ToggleButtons(this Views.MainWindow window)
         {
             foreach (var button in window.GetAll<ToggleButton>()) //.Union(window.GetAll<Button>(window)))
                 button.Toggle();

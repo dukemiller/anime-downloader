@@ -13,7 +13,7 @@ namespace anime_downloader.Classes
 {
     public class Tray: ViewModelBase
     {
-        private readonly MainWindow _mainWindow;
+        private readonly Views.MainWindow _mainWindow;
 
         private readonly ISettingsService _settings;
 
@@ -27,7 +27,7 @@ namespace anime_downloader.Classes
         /// </summary>
         private NotifyIcon _trayIcon;
 
-        public Tray(MainWindow mainWindow, ISettingsService settings)
+        public Tray(Views.MainWindow mainWindow, ISettingsService settings)
         {
             _mainWindow = mainWindow;
             _settings = settings;

@@ -4,14 +4,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Windows;
-using System.Windows.Media.Animation;
 using anime_downloader.Classes;
 using anime_downloader.Services;
 using anime_downloader.ViewModels;
-using anime_downloader.Views;
-using static anime_downloader.Classes.OperatingSystemApi;
 
-namespace anime_downloader
+namespace anime_downloader.Views
 {
     /// <summary>
     ///     Interaction logic for MainWindow.xaml
@@ -96,9 +93,9 @@ namespace anime_downloader
         private void FocusOtherDownloaderAndClose()
         {
             const int restore = 9;
-            var hwnd = FindWindow(null, "Anime Downloader");
-            ShowWindow(hwnd, restore);
-            SetForegroundWindow(hwnd);
+            var hwnd = OperatingSystemApi.FindWindow(null, "Anime Downloader");
+            OperatingSystemApi.ShowWindow(hwnd, restore);
+            OperatingSystemApi.SetForegroundWindow(hwnd);
             Close();
         }
 

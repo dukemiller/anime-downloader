@@ -8,7 +8,7 @@
              xmlns:views="clr-namespace:anime_downloader.Views"
              xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
              xmlns:classes="clr-namespace:anime_downloader.Classes"
-             StartupUri="MainWindow.xaml">
+             StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
 
         <classes:StringJoinConverter x:Key="Converter" />
