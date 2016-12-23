@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using anime_downloader.Classes.File;
 using anime_downloader.Models;
 
-namespace anime_downloader.Services
+namespace anime_downloader.Services.Interfaces
 {
     public interface IAnimeDownloaderService
     {

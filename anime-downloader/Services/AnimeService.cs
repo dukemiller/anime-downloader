@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using anime_downloader.Classes;
 using anime_downloader.Models;
+using anime_downloader.Services.Interfaces;
 
 namespace anime_downloader.Services
 {

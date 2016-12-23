@@ -3,6 +3,7 @@ using System.Linq;
 using System.Web;
 using anime_downloader.Classes;
 using anime_downloader.Services;
+using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 

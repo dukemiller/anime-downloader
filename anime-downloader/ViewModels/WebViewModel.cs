@@ -11,6 +11,7 @@ using anime_downloader.Classes;
 using anime_downloader.Models.Configurations;
 using anime_downloader.Models.MyAnimeList;
 using anime_downloader.Services;
+using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;

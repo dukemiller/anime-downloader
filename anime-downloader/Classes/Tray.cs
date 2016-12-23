@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Forms;
 using anime_downloader.Services;
+using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
 using Application = System.Windows.Application;

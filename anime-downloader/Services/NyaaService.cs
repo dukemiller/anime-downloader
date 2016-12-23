@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using anime_downloader.Classes;
 using anime_downloader.Classes.File;
 using anime_downloader.Models;
+using anime_downloader.Services.Interfaces;
 using HtmlAgilityPack;
 
 namespace anime_downloader.Services

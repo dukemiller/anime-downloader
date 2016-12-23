@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using anime_downloader.Models;
 
-namespace anime_downloader.Services
+namespace anime_downloader.Services.Interfaces
 {
     public interface IPlaylistService
     {

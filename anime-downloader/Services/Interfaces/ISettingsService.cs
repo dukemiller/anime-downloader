@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using anime_downloader.Classes;
 using anime_downloader.Models;
 using anime_downloader.Models.Configurations;
 
-namespace anime_downloader.Services
+namespace anime_downloader.Services.Interfaces
 {
     public interface ISettingsService
     {

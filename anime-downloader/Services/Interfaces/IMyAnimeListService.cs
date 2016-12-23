@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
-using anime_downloader.Classes;
 using anime_downloader.Models;
 using anime_downloader.Models.MyAnimeList;
 
-namespace anime_downloader.Services
+namespace anime_downloader.Services.Interfaces
 {
     public interface IMyAnimeListService
     {

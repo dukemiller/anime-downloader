@@ -1,4 +1,6 @@
-﻿namespace anime_downloader.Services
+﻿using anime_downloader.Services.Interfaces;
+
+namespace anime_downloader.Services
 {
     public class AnimeAggregateService: IAnimeAggregateService
     {

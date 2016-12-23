@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using anime_downloader.Services;
+using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 

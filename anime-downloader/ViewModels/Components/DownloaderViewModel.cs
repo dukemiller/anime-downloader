@@ -7,6 +7,7 @@ using anime_downloader.Classes.File;
 using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Services;
+using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 
 namespace anime_downloader.ViewModels.Components

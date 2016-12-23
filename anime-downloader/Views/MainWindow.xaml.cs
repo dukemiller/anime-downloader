@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Windows;
 using anime_downloader.Classes;
 using anime_downloader.Services;
+using anime_downloader.Services.Interfaces;
 using anime_downloader.ViewModels;
 
 namespace anime_downloader.Views

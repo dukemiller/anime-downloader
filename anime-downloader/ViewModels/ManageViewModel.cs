@@ -1,5 +1,6 @@
 ﻿using anime_downloader.Enums;
 using anime_downloader.Services;
+using anime_downloader.Services.Interfaces;
 using anime_downloader.ViewModels.Components;
 using GalaSoft.MvvmLight;
 

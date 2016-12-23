@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using anime_downloader.Services;
+using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 
 namespace anime_downloader.ViewModels.Components
