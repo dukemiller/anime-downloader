@@ -30,6 +30,9 @@ namespace anime_downloader.ViewModels
             {
                 if (_.Equals("download_log"))
                     Display = new DownloadLogViewModel(Settings);
+
+                else if (_.Equals("tray_download"))
+                    Display = new DownloaderViewModel(Settings, AnimeAggregate, new RadioModel {Tag = "Next"});
             });
 
             MessengerInstance.Register<RadioModel>(this, _ =>

@@ -87,7 +87,7 @@ namespace anime_downloader.Models
         }
 
         [XmlAttribute("series_continuation_episode")]
-        public string SeriesContinuationEpisode { get; set; }
+        public int? SeriesContinuationEpisode { get; set; }
 
         // 
 

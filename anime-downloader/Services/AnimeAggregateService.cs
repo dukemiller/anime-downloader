@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace anime_downloader.Services
+﻿namespace anime_downloader.Services
 {
     public class AnimeAggregateService: IAnimeAggregateService
     {
@@ -18,7 +12,7 @@ namespace anime_downloader.Services
         {
             Animes = new AnimeService(settings);
             Files = new AnimeFileService(settings);
-            Downloader = new NyaaService(settings);
+            Downloader = new NyaaService(settings, Files);
             Mal = new MyAnimeListService(settings, Animes);
             Playlist = new PlaylistService(settings, Files);
         }

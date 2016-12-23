@@ -45,7 +45,7 @@ namespace anime_downloader.Views
             InitializeComponent();
             KeyDown += AnimeList.KeyEscapeBack;
             MouseDown += AnimeList.MouseEscapeBack;
-            MainWindow.Window.Settings.Subgroups.ToList().ForEach(s => SubgroupComboBox.Items.Add(s));
+            // TODO MainWindow.Window.Settings.Subgroups.ToList().ForEach(s => SubgroupComboBox.Items.Add(s));
         }
 
         public void Load(Anime anime)
@@ -64,7 +64,7 @@ namespace anime_downloader.Views
             // Default template
             Anime = new Anime
             {
-                Episode = "00",
+                Episode = 0,
                 Status = "Considering",
                 Resolution = "720",
                 Airing = true
@@ -80,8 +80,8 @@ namespace anime_downloader.Views
             else
             {
                 Anime.PreferredSubgroup = Anime.PreferredSubgroup.Equals("(None)") ? "" : Anime.PreferredSubgroup;
-                Anime.Episode = Anime.Episode.Length > 0 ? $"{int.Parse(Anime.Episode):D2}" : "00";
-                MainWindow.Window.AnimeCollection.Add(Anime);
+                Anime.Episode = Anime.Episode;
+                // MainWindow.Window.AnimeCollection.Add(Anime);
                 // TODO MainWindow.Window.AnimeList.Press();
             }
         }
@@ -104,20 +104,24 @@ namespace anime_downloader.Views
 
         private void GoToNext()
         {
+            /*
             var animes = MainWindow.Window.AnimeCollection.FilteredAndSorted.ToList();
             var anime = animes.First(an => an.Name.Equals(_anime.Name));
             var position = (animes.IndexOf(anime) + 1) % animes.Count;
             MainWindow.Window.DisplayTransition();
             MainWindow.Window.ChangeDisplay<AnimeDetails>().Load(animes.ElementAt(position));
+            */
         }
 
         private void GoToPrevious()
         {
+            /*
             var animes = MainWindow.Window.AnimeCollection.FilteredAndSorted.ToList();
             var anime = animes.First(an => an.Name.Equals(_anime.Name));
             var position = animes.IndexOf(anime) - 1 >= 0 ? animes.IndexOf(anime) - 1 : animes.Count - 1;
             MainWindow.Window.DisplayTransition();
             MainWindow.Window.ChangeDisplay<AnimeDetails>().Load(animes.ElementAt(position));
+            */
         }
 
         // 
@@ -193,10 +197,10 @@ namespace anime_downloader.Views
 
         // 
 
-        private void LastEpisode_Click(object sender, RoutedEventArgs e) => Process.Start(Anime.LastEpisode.Path);
+        private void LastEpisode_Click(object sender, RoutedEventArgs e) {} // Process.Start(Anime.LastEpisode.Path);
 
         private async void Refresh_Click(object sender, RoutedEventArgs e)
-        {
+        {/*
             MainWindow.Window.ToggleButtons();
             var credentials = Api.GetCredentials(MainWindow.Window.Settings);
             var animeResults = await Api.FindAsync(credentials, HttpUtility.UrlEncode(_anime.MyAnimeList.Title));
@@ -219,6 +223,7 @@ namespace anime_downloader.Views
             }
 
             MainWindow.Window.ToggleButtons();
+            */
         }
 
         private void Profile_Click(object sender, RoutedEventArgs e) => Process.Start($"http://myanimelist.net/anime/{_anime.MyAnimeList.Id}");
@@ -241,12 +246,14 @@ namespace anime_downloader.Views
 
         private async void Find_Click(object sender, RoutedEventArgs e)
         {
+            /*
             MainWindow.Window.ToggleButtons();
             var credentials = Api.GetCredentials(MainWindow.Window.Settings);
             var id = await Synchronizer.GetId(_anime, credentials);
             var words = id ? "found" : "not found";
             Methods.Alert($"MAL ID {words} for {_anime.Name}.");
             MainWindow.Window.ToggleButtons();
+            */
         }
 
         // 

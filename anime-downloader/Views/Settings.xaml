@@ -151,6 +151,7 @@
                            ToolTip="Always have the tray enabled." />
                     <CheckBox Grid.Row="1"
                               Grid.Column="1"
+                              Command="{Binding TrayToggleCommand}"
                               IsChecked="{Binding Settings.FlagConfig.AlwaysShowTray,
                                                   UpdateSourceTrigger=PropertyChanged}"
                               Style="{DynamicResource CheckboxStyle}" />

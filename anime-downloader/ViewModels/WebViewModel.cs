@@ -11,6 +11,7 @@ using anime_downloader.Models.MyAnimeList;
 using anime_downloader.Services;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace anime_downloader.ViewModels
 {
@@ -59,6 +60,13 @@ namespace anime_downloader.ViewModels
             SearchFirstResultCommand = new RelayCommand(SearchFirstResult);
             LoginCommand = new RelayCommand(Login);
             UsageNotesCommand = new RelayCommand(UsageNotes);
+
+            // Only called by the tray
+            MessengerInstance.Register<NotificationMessage>(this, _ =>
+            {
+                if (_.Notification.Equals("tray_sync"))
+                    SyncCommand.Execute(1);
+            });
         }
 
         // 

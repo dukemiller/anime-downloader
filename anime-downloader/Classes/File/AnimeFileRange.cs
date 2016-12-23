@@ -11,15 +11,11 @@ namespace anime_downloader.Classes.File
     {
         public AnimeFileRange(AnimeFile start, AnimeFile end)
         {
-
-            EpisodeRange = Enumerable
-                .Range(start.IntEpisode, end.IntEpisode - start.IntEpisode + 1)
-                .Select(n => $"{n:00}");
-
+            EpisodeRange = Enumerable.Range(start.Episode, end.Episode - start.Episode + 1);
             Name = start.Name;
         }
 
-        public IEnumerable<string> EpisodeRange { get; }
+        public IEnumerable<int> EpisodeRange { get; }
 
         public string Name { get; }
     }

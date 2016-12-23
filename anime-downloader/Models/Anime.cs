@@ -1,231 +1,169 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using System.Xml.Linq;
-using anime_downloader.Annotations;
-using anime_downloader.Classes;
+using System.Xml.Serialization;
 using anime_downloader.Classes.Distances;
-using anime_downloader.Classes.File;
-using anime_downloader.Classes.Xml;
-using anime_downloader.Enums;
 using anime_downloader.Models.MyAnimeList;
+using GalaSoft.MvvmLight;
 
 namespace anime_downloader.Models
 {
-    public class Anime
+    [Serializable]
+    public class Anime : ObservableObject
     {
-        private readonly Settings _settings;
-
-        /// <summary>
-        ///     Create an empty anime xml node.
-        /// </summary>
-        /// <remarks>
-        ///     Must be explicitly added to the schema with the AnimeCollection.
-        /// </remarks>
-        public Anime()
-        {
-            Root = Schema.AnimeNode();
-            MyAnimeList = new MyAnimeListDetails();
-        }
-
-        /// <summary>
-        ///     Create an anime object with explicit xml nodes.
-        /// </summary>
-        /// <remarks>
-        ///     Preferably read from the already existing schema and
-        ///     instantiated from the AnimeCollection.
-        /// </remarks>
-        public Anime(XContainer root, Settings settings)
-        {
-            Root = root;
-            _settings = settings;
-            MyAnimeList = new MyAnimeListDetails();
-        }
-
-#region -- XML Related
-
-        public XContainer Root { get; }
-
         /// <summary>
         ///     A variable used sort of like a bit flag for sorting in the data grid.
         /// </summary>
         public static int SortedRateFlag;
 
+        private string _name;
+        private string _status;
+        private string _resolution;
+        private bool _airing;
+        private bool _nameStrict;
+        private string _preferredSubgroup;
+        private string _notes;
+        private int _episode;
+        private int? _rating;
+
+        // 
+        
+        public Anime()
+        {
+            MyAnimeList = new MyAnimeListDetails();
+        }
+
+        // 
+
         /// <summary>
         ///     Main referenced title.
         /// </summary>
+        [XmlAttribute("name")]
         public string Name
         {
-            get { return Root.Element("name")?.Value; }
-            set
-            {
-                if (value.Equals(Name))
-                    return;
-                Root.Element("name")?.SetValue(value);
-                Save();
-            }
+            get { return _name; }
+            set { Set(() => Name, ref _name, value); }
         }
 
         /// <summary>
         ///     User's current watched episode.
         /// </summary>
-        public string Episode
+        [XmlAttribute("episode")]
+        public int Episode
         {
-            get { return Root.Element("episode")?.Value; }
+            get { return _episode; }
             set
             {
-                if (value.Equals(Episode))
-                    return;
-
-                int intValue;
-                if (!int.TryParse(value, out intValue) || intValue < 0)
-                    return;
-
-                Root.Element("episode")?.SetValue($"{intValue:D2}");
-
+                Set(() => Episode, ref _episode, value);
                 if (MyAnimeList.HasId)
-                {
                     MyAnimeList.NeedsUpdating = true;
-                    if (!MyAnimeList.SeriesContinuationEpisode.IsBlank())
-                        MyAnimeList.SeriesContinuationEpisode =
-                            $"{int.Parse(value) - MyAnimeList.TotalEpisodes:D2}";
-                }
-
-                Save();
             }
         }
 
         /// <summary>
         ///     User's status on watching the anime.
         /// </summary>
+        [XmlAttribute("status")]
         public string Status
         {
-            get { return Root.Element("status")?.Value; }
+            get { return _status; }
             set
             {
-                if (value.Equals(Status))
-                    return;
-                Root.Element("status")?.SetValue(value);
+                Set(() => Status, ref _status, value);
                 if (MyAnimeList.HasId)
                     MyAnimeList.NeedsUpdating = true;
-                Save();
             }
         }
-        
+
         /// <summary>
         ///     The quality to be downloaded.
         /// </summary>
+        [XmlAttribute("resolution")]
         public string Resolution
         {
-            get { return Root.Element("resolution")?.Value; }
-            set
-            {
-                if (value.Equals(Resolution))
-                    return;
-                Root.Element("resolution")?.SetValue(value);
-                Save();
-            }
+            get { return _resolution; }
+            set { Set(() => Resolution, ref _resolution, value); }
         }
 
         /// <summary>
         ///     If the anime is ongoing and currently airing.
         /// </summary>
+        [XmlAttribute("airing")]
         public bool Airing
         {
-            get { return bool.Parse(Root.Element("airing")?.Value ?? bool.FalseString); }
-            set
-            {
-                if (value == Airing)
-                    return;
-                Root.Element("airing")?.SetValue(value);
-                Save();
-            }
+            get { return _airing; }
+            set { Set(() => Airing, ref _airing, value); }
         }
-
-        public string AiringSymbol => Airing ? "✓" : "";
 
         /// <summary>
         ///     if searching for the anime should contain exclusively it's own name with no fragments.
         /// </summary>
+        [XmlAttribute("name_strict")]
         public bool NameStrict
         {
-            get { return bool.Parse(Root.Element("name-strict")?.Value ?? bool.FalseString); }
-            set
-            {
-                if (value == NameStrict)
-                    return;
-                Root.Element("name-strict")?.SetValue(value);
-                Save();
-            }
+            get { return _nameStrict; }
+            set { Set(() => NameStrict, ref _nameStrict, value); }
         }
 
         /// <summary>
         ///     If searching for the anime should only download from a specific subgroup if chosen
         /// </summary>
+        [XmlAttribute("preferred_subgroup")]
         public string PreferredSubgroup
         {
-            get { return Root.Element("preferredSubgroup")?.Value; }
-            set
-            {
-                if (value.Equals(PreferredSubgroup))
-                    return;
-                Root.Element("preferredSubgroup")?.SetValue(value);
-                Save();
-            }
+            get { return _preferredSubgroup; }
+            set { Set(() => PreferredSubgroup, ref _preferredSubgroup, value); }
         }
 
         /// <summary>
         ///     The personal rating given for the series.
         /// </summary>
-        public string Rating
+        [XmlAttribute("rating")]
+        public int? Rating
         {
-            get { return Root.Element("rating")?.Value; }
-            set
-            {
-                if (value.Equals(Rating))
-                    return;
-                if (!value.All(char.IsNumber) && !value.Equals(""))
-                    return;
-                Root.Element("rating")?.SetValue(value);
-                if (MyAnimeList.HasId)
-                    MyAnimeList.NeedsUpdating = true;
-                Save();
-            }
+            get { return _rating; }
+            set { Set(() => Rating, ref _rating, value); }
         }
 
-        public bool HasRating => !Rating.Equals("");
-
-        /// <summary>
-        ///     Returns rating if able to retrieve, else -1
-        /// </summary>
-        public int IntRating()
-        {
-            int rating;
-            var successful = int.TryParse(Rating, out rating);
-            return successful ? rating : -1;
-        }
-
-        /// <summary>
-        ///     A property used for sorting the rating in the datagrid
-        /// </summary>
-        public int SortedRating
-        {
-            get
-            {
-                int val;
-                if (int.TryParse(Rating, out val))
-                    return val;
-                return 13 * SortedRateFlag - 2;
-            }
-        }
-
+        [XmlElement("my_anime_list")]
         public MyAnimeListDetails MyAnimeList { get; set; }
 
-        public string EpisodeTotal
+        [XmlAttribute("notes")]
+        public string Notes
+        {
+            get { return _notes; }
+            set
+            {
+                Set(() => Notes, ref _notes, value);
+                if (MyAnimeList.HasId)
+                    MyAnimeList.NeedsUpdating = true;
+            }
+        }
+
+        //////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////
+        /* Getters */
+
+        /// <summary>
+        ///     Proper title name of anime.
+        /// </summary>
+        /// <returns>A title</returns>
+        public string Title => new CultureInfo("en-US", false).TextInfo.ToTitleCase(Name);
+
+        /// <summary>
+        ///     A zero padded string of the number of the next episode.
+        /// </summary>
+        /// <returns>A padded string representation of the next episode in sequence.</returns>
+        public int NextEpisode => Episode + 1;
+
+        public string AiringSymbol => Airing ? "✓" : "";
+
+        public bool HasRating => Rating != null;
+
+        public int EpisodeTotal
         {
             get
             {
@@ -235,74 +173,21 @@ namespace anime_downloader.Models
                     // If it has an overall total, this was a mislabeled show and this
                     // needs to be preferred first
                     if (MyAnimeList.OverallTotal > 0)
-                        return $"{Episode}/{MyAnimeList.OverallTotal:D2}";
+                        return Episode/MyAnimeList.OverallTotal;
 
                     // Else just the actual season total if there is one
                     if (MyAnimeList.TotalEpisodes > 0)
-                        return $"{Episode}/{MyAnimeList.TotalEpisodes:D2}";
+                        return Episode/MyAnimeList.TotalEpisodes;
                 }
-                
+
                 return Episode;
             }
         }
 
-        public string Notes
-        {
-            get { return Root.Element("notes")?.Value; }
-            set
-            {
-                if (value.Equals(Name))
-                    return;
-                Root.Element("notes")?.SetValue(value);
-                if (MyAnimeList.HasId)
-                    MyAnimeList.NeedsUpdating = true;
-                Save();
-            }
-        }
-
-        /* */
-        
         /// <summary>
-        ///     Returns episode count if able to retrieve, else -1
+        ///     A property used for sorting the rating in the datagrid
         /// </summary>
-        public int IntEpisode()
-        {
-            int episode;
-            var successful = int.TryParse(Episode, out episode);
-            return successful ? episode : -1;
-        }
-
-        /// <summary>
-        ///     Proper title name of anime.
-        /// </summary>
-        /// <returns>A title</returns>
-        public string Title => new CultureInfo("en-US", false).TextInfo.ToTitleCase(Name);
-
-        /* */
-
-        private void Save()
-        {
-            if (_settings == null || !AnimeCollection.AutoSave)
-                return;
-            AnimeCollection.SaveAnime(_settings.AnimeDocument);
-        }
-
-#endregion
-
-        public IEnumerable<AnimeFile> GetEpisodes(Settings settings)
-        {
-            var episodes = new AnimeFileCollection(settings).GetEpisodes(EpisodeStatus.All).ToList();
-
-            var name = episodes
-                .Select(e => e.Name)
-                .Distinct()
-                .Select(e => new { Name = e, Distance = Methods.LevenshteinDistance(Name, e) })
-                .OrderBy(e => e.Distance)
-                .First()
-                .Name;
-
-            return episodes.Where(e => e.Name.Equals(name));
-        }
+        public int SortedRating => Rating ?? 13*SortedRateFlag - 2;
 
         public IEnumerable<string> NameCollection
         {
@@ -319,108 +204,7 @@ namespace anime_downloader.Models
                     names = Title.Split().Distinct();
 
                 return names.Where(c => c.Length > 0);
-            }  
-        }
-
-        public AnimeFile LastEpisode => MainWindow.Window.AnimeFileCollection.LastEpisodeOf(this);
-
-        public FindResult ClosestMyAnimeListResult(IEnumerable<FindResult> results)
-        {
-            var closestResults = results
-                .Where(result => !result.Type.Equals("OVA")) // I'm sure i'll regret this
-                .Where(result =>
-                {
-                    if (!NameStrict)
-                        return true;
-                    return result.NameCollection.Any(r => r.ToLower().Replace(" (tv)", "").Equals(Name.ToLower()));
-                })
-                .Where(findResult =>
-                {
-                    if (findResult.TotalEpisodes != 0)
-                        return findResult.TotalEpisodes > 2;
-                    return true;
-                })
-                .Select(result => new FindResultDistance(Name, result))
-                .OrderBy(resultDistance => resultDistance.Distance);
-
-            var closest = closestResults.FirstOrDefault();
-
-            // if any values have the same exact distance
-            if (closestResults.Any(c => closest?.Distance == c.Distance))
-            {
-                // get the most recently airing show
-                closest = closestResults.Where(c => c.Distance == closest?.Distance)
-                    .OrderByDescending(r => DateTime.Parse(r.FindResult.StartDate))
-                    .FirstOrDefault();
-            }
-
-            return closest?.FindResult;
-        }
-
-        /// <summary>
-        ///     A zero padded string of the number of the next episode.
-        /// </summary>
-        /// <returns>A padded string representation of the next episode in sequence.</returns>
-        public string NextEpisode() => $"{IntEpisode() + 1:D2}";
-        
-        /// <summary>
-        ///     Seeks the next episode for the current anime on Nyaa.eu (according to individual.xml)
-        /// </summary>
-        /// <returns>
-        ///     An enumerable of Nyaa objects containing information about the file downloads.
-        /// </returns>
-        public async Task<IEnumerable<Torrent>> GetLinksToNextEpisode()
-        {
-            var result = await Nyaa.GetTorrentsForAsync(this, NextEpisode());
-            return result?
-                .Select(n => new StringDistance<Torrent>(n, n.StrippedWithNoEpisode, Name))
-                .Where(ctd => ctd.Distance <= 25)
-                .Select(ctd => ctd.Item);
-        }
-
-        /// <summary>
-        ///     A set of static retrieval methods for finding anime in the collection without needing to strum up
-        ///     linq methods, getting the best guess to what the anime is based solely on the given input string
-        /// </summary>
-        public static class Closest
-        {
-            public static Anime To(string name, IEnumerable<Anime> animes)
-            {
-                return animes
-                    .Select(a => new StringDistance<Anime>(a, name, a.Name))
-                    .OrderBy(ap => ap.Distance)
-                    .FirstOrDefault()?.Item;
-            }
-
-            public static Anime To(string name, Settings settings)
-            {
-                return To(name, new AnimeCollection(settings).Animes);
-            }
-
-            public static Anime To(AnimeFile individual, IEnumerable<Anime> animes)
-            {
-                return animes
-                    .Select(a => new StringDistance<Anime>(a, individual.Name, a.Name))
-                    .Where(ap => ap.Distance <= 10)
-                    .OrderBy(ap => ap.Distance)
-                    .FirstOrDefault()?.Item;
-            }
-
-            public static Anime To(AnimeFile animeFile, Settings settings)
-            {
-                return To(animeFile, new AnimeCollection(settings).Animes);
-            }
-
-            public static AnimeFile To(string name, IEnumerable<AnimeFile> animeEpisodes)
-            {
-                return animeEpisodes
-                    .Select(a => new { Anime = a, Distance = Methods.LevenshteinDistance(a.Name, name) })
-                    .Where(ap => ap.Distance <= 10)
-                    .OrderBy(ap => ap.Distance)
-                    .FirstOrDefault()?.Anime;
             }
         }
-        
     }
-
 }

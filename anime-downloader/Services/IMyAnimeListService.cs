@@ -13,6 +13,7 @@ namespace anime_downloader.Services
         // Service settings
         NetworkCredential GetCredentials();
         Task<bool> VerifyCredentialsAsync();
+        FindResult ClosestResult(Anime anime, IEnumerable<FindResult> results);
 
         // Api Operations
         Task Update(Anime anime);

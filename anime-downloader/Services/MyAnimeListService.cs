@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Xml.Serialization;
 using anime_downloader.Classes;
+using anime_downloader.Classes.Distances;
 using anime_downloader.Models;
 using anime_downloader.Models.MyAnimeList;
 
@@ -111,10 +113,40 @@ namespace anime_downloader.Services
             var response = await client.GetAsync(url);
             return response.StatusCode == HttpStatusCode.OK;
         }
+        
+        public FindResult ClosestResult(Anime anime, IEnumerable<FindResult> results)
+        {
+            var closestResults = results
+                .Where(result => !result.Type.Equals("OVA")) // I'm sure i'll regret this
+                .Where(result =>
+                {
+                    if (!anime.NameStrict)
+                        return true;
+                    return result.NameCollection.Any(r => r.ToLower().Replace(" (tv)", "").Equals(anime.Name.ToLower()));
+                })
+                .Where(findResult =>
+                {
+                    if (findResult.TotalEpisodes != 0)
+                        return findResult.TotalEpisodes > 2;
+                    return true;
+                })
+                .Select(result => new FindResultDistance(anime.Name, result))
+                .OrderBy(resultDistance => resultDistance.Distance);
+
+            var closest = closestResults.FirstOrDefault();
+
+            // if any values have the same exact distance
+            if (closestResults.Any(c => closest?.Distance == c.Distance))
+                closest = closestResults.Where(c => c.Distance == closest?.Distance)
+                    .OrderByDescending(r => DateTime.Parse(r.FindResult.StartDate))
+                    .FirstOrDefault();
+
+            return closest?.FindResult;
+        }
 
         public async Task Update(Anime anime)
         {
-            var myAnimeListNode = !anime.MyAnimeList.SeriesContinuationEpisode.IsBlank()
+            var myAnimeListNode = anime.MyAnimeList.SeriesContinuationEpisode != null
                 ? new UpdateShow(anime, anime.MyAnimeList.SeriesContinuationEpisode)
                 : new UpdateShow(anime);
             await UpdateAsync(anime.MyAnimeList.Id, myAnimeListNode.ToString());
@@ -123,7 +155,7 @@ namespace anime_downloader.Services
 
         public async Task Add(Anime anime)
         {
-            var myAnimeListNode = !anime.MyAnimeList.SeriesContinuationEpisode.IsBlank()
+            var myAnimeListNode = anime.MyAnimeList.SeriesContinuationEpisode != null
                 ? new UpdateShow(anime, anime.MyAnimeList.SeriesContinuationEpisode)
                 : new UpdateShow(anime);
             await AddAsync(anime.MyAnimeList.Id, myAnimeListNode.ToString());
@@ -157,14 +189,14 @@ namespace anime_downloader.Services
             }
 
             // make an estimation as to what is the closest result related to the anime
-            var result = anime.ClosestMyAnimeListResult(animeResults);
+            var result = ClosestResult(anime, animeResults);
 
             // if there was no good guess
             if (result == null)
             {
                 // try slapping a (TV) infront of it because the MAL api is weird sometimes
                 animeResults = await FindAsync(HttpUtility.UrlEncode(anime.Title + " (TV)"));
-                result = anime.ClosestMyAnimeListResult(animeResults);
+                result = ClosestResult(anime, animeResults);
 
                 // if still no result
                 if (result == null)
@@ -180,24 +212,24 @@ namespace anime_downloader.Services
             {
                 // if you have downloaded more episodes than exists in the show, then you probably mislabeled
                 // this show as a s2 show but i'll go through painstaking effort to make it work anyway
-                if (anime.IntEpisode() > result.TotalEpisodes)
+                if (anime.Episode > result.TotalEpisodes)
                 {
                     // track episode total
                     var total = result.TotalEpisodes;
 
                     // remove current series from list of possible choices
                     animeResults.Remove(result);
-                    result = anime.ClosestMyAnimeListResult(animeResults);
+                    result = ClosestResult(anime, animeResults);
                     total += result?.TotalEpisodes ?? 0;
 
                     // if the combination of both this season is still less than your current episode
                     // you've probably mislabeled this show for a few seasons dude, there's no way i can
                     // accurately guess which series is yours so i'll continue going through results until
                     // hopefully i can reach a point that it isnt
-                    while (result != null && total < anime.IntEpisode())
+                    while (result != null && total < anime.Episode)
                     {
                         animeResults.Remove(result);
-                        result = anime.ClosestMyAnimeListResult(animeResults);
+                        result = ClosestResult(anime, animeResults);
                         total += result?.TotalEpisodes ?? 0;
                     }
 
@@ -205,12 +237,12 @@ namespace anime_downloader.Services
                     if (result == null)
                     {
                         Methods.Alert($"3. Episode mismatch and no new series match for {anime.Title}.\n" +
-                              $"Given total: {total}, current episode: {anime.IntEpisode()}");
+                              $"Given total: {total}, current episode: {anime.Episode}");
                         return false;
                     }
 
                     // keep track of episodes to update instead in this variable
-                    anime.MyAnimeList.SeriesContinuationEpisode = $"{anime.IntEpisode() - total:D2}";
+                    anime.MyAnimeList.SeriesContinuationEpisode = anime.Episode - total;
                     anime.MyAnimeList.OverallTotal = total;
                 }
 

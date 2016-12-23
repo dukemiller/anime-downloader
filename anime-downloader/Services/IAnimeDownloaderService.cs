@@ -9,7 +9,7 @@ namespace anime_downloader.Services
     public interface IAnimeDownloaderService
     {
         Task<bool> ServiceAvailable();
-        Task<IEnumerable<Torrent>> GetTorrentsAsync(Anime anime, string episode);
+        Task<IEnumerable<Torrent>> GetTorrentsAsync(Anime anime, int episode);
         Task<int> DownloadAsync(IEnumerable<Anime> animes, Action<string> output);
         Task<int> DownloadAsync(IEnumerable<Anime> animes, IEnumerable<AnimeFileRange> ranges,
             IEnumerable<AnimeFile> files, Action<string> output);

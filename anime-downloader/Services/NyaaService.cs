@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using anime_downloader.Classes;
 using anime_downloader.Classes.Distances;
 using anime_downloader.Classes.File;
 using anime_downloader.Models;
@@ -28,13 +29,16 @@ namespace anime_downloader.Services
 
         private readonly WebClient _client;
 
-        public NyaaService(ISettingsService settings)
+        public NyaaService(ISettingsService settings, IAnimeFileService files)
         {
             Settings = settings;
+            Files = files;
             _client = new WebClient();
         }
 
         private ISettingsService Settings { get; }
+
+        public IAnimeFileService Files { get; set; }
 
         // 
 
@@ -66,7 +70,7 @@ namespace anime_downloader.Services
 
         public async Task<IEnumerable<Torrent>> GetNextEpisode(Anime anime)
         {
-            var result = await GetTorrentsAsync(anime, anime.NextEpisode());
+            var result = await GetTorrentsAsync(anime, anime.NextEpisode);
             return result?
                 .Select(torrent => new StringDistance<Torrent>(torrent, torrent.StrippedWithNoEpisode, anime.Name))
                 .Where(ctd => ctd.Distance <= 25)
@@ -94,7 +98,7 @@ namespace anime_downloader.Services
             }
         }
         
-        public async Task<IEnumerable<Torrent>> GetTorrentsAsync(Anime anime, string episode)
+        public async Task<IEnumerable<Torrent>> GetTorrentsAsync(Anime anime, int episode)
         {
             var queryDetails = anime.Name.Replace(" ", "+")
                                    .Replace("'s", "")
@@ -123,10 +127,10 @@ namespace anime_downloader.Services
                 .Select(CreateTorrent)
                 .Where(n => n.Measurement.Equals("MiB")
                             && (n.Size > 5)
-                            && n.StrippedName.Contains(episode)
+                            && n.StrippedName.Contains(episode.ToString("D2"))
                             && (n.Seeders > 0));
 
-            if (anime.NameCollection.Any(c => c.Contains(episode)))
+            if (anime.NameCollection.Any(c => c.Contains(episode.ToString("D2"))))
             {
                 // To account for the case that a show contains a number (e.g. 12-sai - ep 12) that is 
                 // relevant to the title and or also might contain the year in case of rework/reboot 
@@ -135,7 +139,7 @@ namespace anime_downloader.Services
                 result = result?
                     .Where(nyaa => nyaa.StrippedName.Split()
                                        .Select(c => Regex.Replace(c, fullYearPattern, ""))
-                                       .Count(c => c.Contains(episode))
+                                       .Count(c => c.Contains(episode.ToString("D2")))
                                    >= 2);
 
                 /* TODO
@@ -150,10 +154,10 @@ namespace anime_downloader.Services
         public async Task<int> DownloadAsync(IEnumerable<Anime> animes, Action<string> output)
         {
             var downloaded = 0;
-
+            
             foreach (var anime in animes)
             {
-                var downloadSuccessful = await DownloadEpisodeAsync(await anime.GetLinksToNextEpisode(), anime, output);
+                var downloadSuccessful = await DownloadEpisodeAsync(await GetNextEpisode(anime), anime, output);
                 if (downloadSuccessful)
                     downloaded++;
             }
@@ -161,6 +165,7 @@ namespace anime_downloader.Services
             return downloaded;
         }
 
+        [NeedsUpdating]
         public async Task<int> DownloadAsync(IEnumerable<Anime> animes, IEnumerable<AnimeFileRange> ranges, IEnumerable<AnimeFile> files, Action<string> output)
         {
             var downloaded = 0;
@@ -169,19 +174,17 @@ namespace anime_downloader.Services
 
             foreach (var animeFile in ranges)
             {
-                var animeBase = Anime.Closest.To(animeFile.Name, animeList);
+                var animeBase = Files.ClosestAnime(animeList, animeFile.Name);
                 foreach (var episode in animeFile.EpisodeRange)
                 {
-                    if (await Task.Run(() => files.Any(a => a.Name.Equals(animeFile.Name) && a.Episode.Equals(episode))))
+                    if (await Task.Run(() => files.Any(a => a.Name.Equals(animeFile.Name) && a.Episode == episode)))
                         continue;
-
-                    var previousEpisode = $"{int.Parse(episode) - 1:D2}";
 
                     // TODO: make a copy constructor?
                     var anime = new Anime
                     {
                         Name = animeFile.Name,
-                        Episode = previousEpisode,
+                        Episode = episode - 1,
                         Airing = animeBase.Airing,
                         Resolution = animeBase.Resolution,
                         PreferredSubgroup = animeBase.PreferredSubgroup,
@@ -189,7 +192,8 @@ namespace anime_downloader.Services
                     };
 
                     var downloadSuccessful =
-                        await DownloadEpisodeAsync(await anime.GetLinksToNextEpisode(), anime, output);
+                        await DownloadEpisodeAsync(await GetNextEpisode(anime), anime, output);
+
                     if (downloadSuccessful)
                         downloaded++;
                 }
@@ -212,12 +216,12 @@ namespace anime_downloader.Services
 
         public async Task<bool> DownloadTorrentAsync(Torrent torrent, Anime anime, Action<string> output)
         {
-            output($"Downloading '{anime.Title}' episode '{anime.NextEpisode()}'.");
+            output($"Downloading '{anime.Title}' episode '{anime.NextEpisode}'.");
 
             var fileWasDownloaded = await DownloadFileAsync(torrent, anime);
 
             if (fileWasDownloaded)
-                anime.Episode = anime.NextEpisode();
+                anime.Episode = anime.NextEpisode;
 
             else
                 output($"Download of '{anime.Title}' failed.");

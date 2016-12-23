@@ -31,9 +31,11 @@ namespace anime_downloader.Classes
 
             textbox.KeyUp += delegate
             {
+                /*
                 var q = textbox.Text.ToLower().Trim();
                 var result = MainWindow.Window.AnimeCollection.FilteredAndSorted.Where(a => a.Name.ToLower().Contains(q));
                 _animeList.DataGrid.ItemsSource = result;
+                */
             };
 
             // TODO MainWindow.Window.AnimeList.Click += CloseOnRepeatedView;
@@ -49,6 +51,8 @@ namespace anime_downloader.Classes
 
         private void Create()
         {
+            _textBox = CreateTextBox();
+            /*
             if (_textBox != null)
                 return;
 
@@ -59,6 +63,7 @@ namespace anime_downloader.Classes
             MainWindow.Window.KeyDown += FindKeyDown;
 
             _textBox.Focus();
+            */
         }
 
         private void FindKeyDown(object sender, KeyEventArgs args)
@@ -85,6 +90,7 @@ namespace anime_downloader.Classes
         
         public void Close()
         {
+            /*
             if (_textBox != null)
                 MainWindow.Window.Display.Children.Remove(_textBox);
 
@@ -94,6 +100,7 @@ namespace anime_downloader.Classes
             _textBox = null;
             _animeList.DataGrid.ItemsSource = MainWindow.Window.AnimeCollection.FilteredAndSorted;
             _animeList.DataGrid.Focus();
+            */
         }
 
         public void Toggle()

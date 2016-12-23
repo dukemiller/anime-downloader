@@ -31,7 +31,7 @@ namespace anime_downloader.Models
         /// <summary>
         ///     The episode gathered from the filename, e.g. "Show - {01}.mp4".
         /// </summary>
-        public string Episode
+        public int Episode
         {
             get
             {
@@ -42,14 +42,9 @@ namespace anime_downloader.Models
                 int number;
                 var result = int.TryParse(_, out number);
                 var value = result ? number : 0;
-                return $"{value:D2}";
+                return value;
             }
         }
-
-        /// <summary>
-        ///     Integer parsed episode.
-        /// </summary>
-        public int IntEpisode => int.Parse(Episode);
 
         /// <summary>
         ///     The meta information stripped filename (no seeders, subgroups, etc)

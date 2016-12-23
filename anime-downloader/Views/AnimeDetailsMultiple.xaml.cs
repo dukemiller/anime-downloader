@@ -100,6 +100,7 @@ namespace anime_downloader.Views
 
         private void SubmitButton_OnClick(object sender, RoutedEventArgs e)
         {
+            /*
             // Editing multiple
             if (_currentViewMode == ViewMode.Editing)
             {
@@ -144,6 +145,7 @@ namespace anime_downloader.Views
                     // TODO MainWindow.Window.AnimeList.Press();
                 }
             }
+            */
         }
 
         private void InputTextBox_OnLoaded(object sender, RoutedEventArgs e)

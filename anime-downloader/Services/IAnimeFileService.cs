@@ -7,6 +7,7 @@ namespace anime_downloader.Services
 {
     public interface IAnimeFileService
     {
+        IEnumerable<AnimeFile> GetEpisodes(Anime anime);
         IEnumerable<AnimeFile> GetEpisodes(EpisodeStatus episodeStatus);
         IEnumerable<AnimeFile> GetEpisodes(Anime anime, EpisodeStatus episodeStatus);
         Task<IEnumerable<AnimeFile>> GetEpisodesAsync(EpisodeStatus episodeStatus);
@@ -21,6 +22,7 @@ namespace anime_downloader.Services
 
         // Closest
         AnimeFile ClosestFile(IEnumerable<AnimeFile> files, string name);
+        Anime ClosestAnime(IEnumerable<Anime> animes, string name);
         Anime ClosestAnime(IEnumerable<Anime> animes, AnimeFile file);
 
         // 

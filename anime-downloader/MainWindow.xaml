@@ -27,9 +27,8 @@
     </Window.Resources>
     <Window.InputBindings>
         <KeyBinding Key="X"
-                    Modifiers="Control"
                     Command="{Binding CloseCommand}"
-                     />
+                    Modifiers="Control" />
     </Window.InputBindings>
     <Grid Background="White">
         <Grid.ColumnDefinitions>
@@ -98,11 +97,6 @@
                                                  ConverterParameter=8}" />
             </StackPanel>
         </Grid>
-        <Grid x:Name="Display"
-              Margin="20,0"
-              Background="White"
-              Column="1"
-              Opacity="0.0" />
         <ContentPresenter Grid.Column="1"
                           Margin="20,0"
                           Content="{Binding CurrentView}" />

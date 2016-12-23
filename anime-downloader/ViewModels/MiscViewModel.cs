@@ -46,8 +46,8 @@ namespace anime_downloader.ViewModels
                     .Where(
                         a =>
                             a.MyAnimeList.HasId &&
-                            (((a.MyAnimeList.OverallTotal > 0) && (a.IntEpisode() == a.MyAnimeList.OverallTotal)) ||
-                             ((a.MyAnimeList.TotalEpisodes > 0) && (a.IntEpisode() == a.MyAnimeList.TotalEpisodes)))))
+                            (((a.MyAnimeList.OverallTotal > 0) && (a.Episode == a.MyAnimeList.OverallTotal)) ||
+                             ((a.MyAnimeList.TotalEpisodes > 0) && (a.Episode == a.MyAnimeList.TotalEpisodes)))))
                 {
                     anime.Status = "Finished";
                     anime.Airing = false;

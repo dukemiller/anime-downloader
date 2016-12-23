@@ -84,15 +84,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ActionMessage.cs" />
     <Compile Include="Classes\NeedsUpdatingAttribute.cs" />
     <Compile Include="Classes\Xaml\AttachedProperties.cs" />
     <Compile Include="Enums\Views.cs" />
     <Compile Include="Models\Anime.cs" />
     <Compile Include="Classes\Distances\StringDistance.cs" />
     <Compile Include="Models\AnimeFile.cs" />
-    <Compile Include="Classes\File\AnimeFileCollection.cs" />
-    <Compile Include="Classes\File\EpisodeHandler.cs" />
-    <Compile Include="Classes\File\Downloader.cs" />
     <Compile Include="Classes\Extensions.cs" />
     <Compile Include="Classes\File\AnimeFileRange.cs" />
     <Compile Include="Classes\Distances\GroupFileDistance.cs" />
@@ -109,23 +107,15 @@
     <Compile Include="Classes\OperatingSystemApi.cs" />
     <Compile Include="Classes\Tray.cs" />
     <Compile Include="Classes\Distances\FindResultDistance.cs" />
-    <Compile Include="Models\MyAnimeList\Api.cs" />
     <Compile Include="Models\MyAnimeList\FindResultRoot.cs" />
-    <Compile Include="Models\MyAnimeList\Synchronizer.cs" />
     <Compile Include="Models\MyAnimeList\UpdateShow.cs" />
     <Compile Include="Models\MyAnimeList\FindResult.cs" />
-    <Compile Include="Models\Nyaa.cs" />
-    <Compile Include="Classes\File\Playlist.cs" />
     <Compile Include="Models\Configurations\PathConfiguration.cs" />
     <Compile Include="Models\RadioModel.cs" />
-    <Compile Include="Models\Settings.cs" />
     <Compile Include="Models\Torrent.cs" />
     <Compile Include="Classes\Xaml\Converters.cs" />
     <Compile Include="Classes\Xaml\DragSelectionHelper.cs" />
     <Compile Include="Classes\Xaml\PasswordBoxAssistant.cs" />
-    <Compile Include="Classes\Xml\AnimeCollection.cs" />
-    <Compile Include="Classes\Xml\Schema.cs" />
-    <Compile Include="Classes\Xml\Verify.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Services\AnimeFileService.cs" />
     <Compile Include="Services\AnimeAggregateService.cs" />

@@ -145,11 +145,11 @@ namespace anime_downloader.ViewModels
         
         // 
 
-        public ISettingsService Settings { get; set; }
+        private ISettingsService Settings { get; }
 
-        public IAnimeAggregateService AnimeAggregate { get; set; }
+        private IAnimeAggregateService AnimeAggregate { get; }
 
-        public Action Close { get; set; }
+        private Action Close { get; }
 
         public ViewModelBase CurrentView
         {

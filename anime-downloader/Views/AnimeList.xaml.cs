@@ -58,16 +58,21 @@ namespace anime_downloader.Views
 
         private static string CreateStats()
         {
+            /*
             var anime = MainWindow.Window.AnimeCollection.Animes.ToList();
             return $"{anime.Count} total. " +
                     $"{anime.Count(a => a.Airing && a.Status.Equals("Watching"))} airing/watching, " +
                     $"{anime.Count(a => a.Status.Equals("Finished"))} finished, " +
                     $"{anime.Count(a => a.Status.Equals("On Hold") || a.Status.Equals("Considering"))} on hold/considering, " +
                     $"{anime.Count(a => a.Status.Equals("Dropped"))} dropped.";
+                    */
+            return "";
         }
         
         public AnimeList()
         {
+            _find = new FindPopup(this);
+            /*
             Animes = new ObservableCollection<Anime>(MainWindow.Window.AnimeCollection.FilteredAndSorted);
             Stats = CreateStats();
             InitializeComponent();
@@ -78,15 +83,18 @@ namespace anime_downloader.Views
             
             _find = new FindPopup(this);
             FilterText = MainWindow.Window.Settings.FilterBy;
+            */
         }
 
         private void EditAnime()
         {
+            /*
             if (DataGrid.SelectedCells.Count > 1)
                 MainWindow.Window.ChangeDisplay<AnimeDetailsMultiple>().Load(SelectedAnimes().ToList());
 
             else if (DataGrid.SelectedCells.Count == 1)
                 MainWindow.Window.ChangeDisplay<AnimeDetails>().Load(SelectedAnime());
+                */
         }
 
         private void RelegateAnime()
@@ -98,10 +106,11 @@ namespace anime_downloader.Views
 
         private void DeleteProcedure(IEnumerable<Anime> selectedAnime)
         {
+            /*
             foreach (var anime in selectedAnime)
             {
                 if (!anime.Status.Equals("Dropped") &&
-                    (anime.MyAnimeList.HasId || anime.IntEpisode() > 0 || anime.HasRating))
+                    (anime.MyAnimeList.HasId || anime.Episode > 0 || anime.HasRating))
                 {
                     anime.Status = "Dropped";
                     anime.Airing = false;
@@ -113,6 +122,7 @@ namespace anime_downloader.Views
                     Animes.Remove(anime);
                 }
             }
+            */
         }
 
         // Find
@@ -125,10 +135,12 @@ namespace anime_downloader.Views
 
         private void FilterComboBox_OnDropDownClosed(object sender, EventArgs e)
         {
+            /*
             MainWindow.Window.Settings.FilterBy = FilterText ?? "";
             MainWindow.Window.Settings.Save();
             Animes = new ObservableCollection<Anime>(MainWindow.Window.AnimeCollection.FilteredAndSorted);
             _find.Close();
+            */
         }
 
         // 
@@ -154,6 +166,7 @@ namespace anime_downloader.Views
 
         private void DataGrid_OnSorting(object sender, DataGridSortingEventArgs e)
         {
+            /*
             // there's some problem with sorting the rating, this fixes it
             var column = e.Column;
             var header = column.Header.ToString().ToLower();
@@ -171,6 +184,7 @@ namespace anime_downloader.Views
             MainWindow.Window.Settings.SortBy = header.Equals("rating") ? "sortedrating" : header;
             MainWindow.Window.Settings.Flags.SortByReversed = column.SortDirection == ListSortDirection.Ascending;
             MainWindow.Window.Settings.Save();
+            */
         }
 
         private void DataGrid_OnKeyDown(object sender, KeyEventArgs e)
@@ -202,17 +216,19 @@ namespace anime_downloader.Views
                 Process.Start($"http://myanimelist.net/anime/{SelectedAnime().MyAnimeList.Id}");
             else
             {
+                /*
                 MainWindow.Window.ToggleButtons();
                 await WebPage.SearchAndOpenAsync(SelectedAnime().Name);
                 MainWindow.Window.ToggleButtons();
+                */
             }
         }
 
-        private void Edit_OnClick(object sender, RoutedEventArgs e) => MainWindow.Window.ChangeDisplay<AnimeDetails>().Load(SelectedAnime());
+        private void Edit_OnClick(object sender, RoutedEventArgs e) {} // MainWindow.Window.ChangeDisplay<AnimeDetails>().Load(SelectedAnime());
 
-        private void Add_OnClick(object sender, RoutedEventArgs e) => MainWindow.Window.ChangeDisplay<AnimeDetails>().New();
+        private void Add_OnClick(object sender, RoutedEventArgs e) {} // MainWindow.Window.ChangeDisplay<AnimeDetails>().New();
 
-        private void AddMultiple_OnClick(object sender, RoutedEventArgs e) => MainWindow.Window.ChangeDisplay<AnimeDetailsMultiple>().New();
+        private void AddMultiple_OnClick(object sender, RoutedEventArgs e) {} // MainWindow.Window.ChangeDisplay<AnimeDetailsMultiple>().New();
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]

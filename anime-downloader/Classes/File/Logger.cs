@@ -9,6 +9,7 @@ namespace anime_downloader.Classes.File
     {
         public static async Task WriteLineAsync(string message)
         {
+            /*
             var timestamp = $"{DateTime.Now:[M/d/yyyy @ hh:mm:ss tt]}";
 
             using (var streamWriter = new StreamWriter(Settings.LoggingFile, true))
@@ -16,6 +17,7 @@ namespace anime_downloader.Classes.File
                 await streamWriter.WriteLineAsync($"{timestamp} - {message}");
                 streamWriter.Close();
             }
+            */
         }
     }
 }

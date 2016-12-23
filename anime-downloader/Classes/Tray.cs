@@ -4,18 +4,18 @@ using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Forms;
-using anime_downloader.Views;
+using anime_downloader.Services;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Messaging;
 using Application = System.Windows.Application;
-using DownloadOptions = anime_downloader.Views.Components.DownloadOptions;
-using Settings = anime_downloader.Models.Settings;
 
 namespace anime_downloader.Classes
 {
-    public class Tray
+    public class Tray: ViewModelBase
     {
         private readonly MainWindow _mainWindow;
 
-        private readonly Settings _settings;
+        private readonly ISettingsService _settings;
 
         /// <summary>
         ///     The menu for the system tray.
@@ -27,10 +27,44 @@ namespace anime_downloader.Classes
         /// </summary>
         private NotifyIcon _trayIcon;
 
-        public Tray(MainWindow mainWindow, Settings settings)
+        public Tray(MainWindow mainWindow, ISettingsService settings)
         {
             _mainWindow = mainWindow;
             _settings = settings;
+            CreateTray();
+            CreateContextMenu();
+            if (_settings.FlagConfig.AlwaysShowTray)
+                Visible = true;
+
+            _settings.FlagConfig.PropertyChanged += (sender, args) =>
+            {
+                if (_settings.FlagConfig.AlwaysShowTray)
+                {
+                    if (!Visible)
+                        Visible = true;
+                }
+
+                if (_settings.FlagConfig.AlwaysShowTray)
+                {
+                    if (!Visible)
+                        Visible = true;
+                }
+
+                else if (!_settings.FlagConfig.AlwaysShowTray)
+                {
+                    if (_mainWindow.WindowState == WindowState.Minimized)
+                    {
+                        Visible = true;
+                    }
+                    else if (_mainWindow.WindowState == WindowState.Normal)
+                    {
+                        if (Visible)
+                        {
+                            Visible = false;
+                        }
+                    }
+                }
+            };
         }
 
         public bool FullExit { get; private set; }
@@ -38,16 +72,7 @@ namespace anime_downloader.Classes
         public bool Visible
         {
             get { return _trayIcon.Visible; }
-
             set { _trayIcon.Visible = value; }
-        }
-
-        public void Initialize()
-        {
-            CreateTray();
-            CreateContextMenu();
-            if (_settings.Flags.AlwaysShowTray)
-                Visible = true;
         }
 
         private void CreateTray()
@@ -99,19 +124,19 @@ namespace anime_downloader.Classes
                 new MenuItem("&Download latest...", (sender, args) =>
                 {
                     BringWindowToFocus();
-                    // TODO
-                    // _mainWindow.Download.Press();
-                    // (_mainWindow.CurrentDisplay as DownloadOptions)?.SearchButton.Press();
+                    MessengerInstance.Send(Enums.Views.Download);
+                    MessengerInstance.Send("tray_download");
                 }));
 
             _trayContextMenu.MenuItems.Add(
                 new MenuItem("&Sync MyAnimeList...", (sender, args) =>
                 {
                     BringWindowToFocus();
-                    // TODO
-                    // _mainWindow.Web.Press();
-                    if (_settings.MyAnimeList.Works)
-                        (_mainWindow.CurrentDisplay as Views.Web)?.SyncButton.Press();
+                    if (_settings.MyAnimeListConfig.Works)
+                    {
+                        MessengerInstance.Send(Enums.Views.Web);
+                        MessengerInstance.Send(new NotificationMessage("tray_sync"));
+                    }
                 }));
 
             _trayContextMenu.MenuItems.Add("-");
@@ -119,22 +144,22 @@ namespace anime_downloader.Classes
             _trayContextMenu.MenuItems.Add(
                 new MenuItem("Open &episode folder...", (sender, args) =>
                 {
-                    if (_settings != null && Directory.Exists(_settings.Paths.EpisodeDirectory))
-                        Process.Start(_settings.Paths.EpisodeDirectory);
+                    if (_settings != null && Directory.Exists(_settings.PathConfig.Unwatched))
+                        Process.Start(_settings.PathConfig.Unwatched);
                 }));
 
             _trayContextMenu.MenuItems.Add(
                 new MenuItem("Open &watched folder...", (sender, args) =>
                 {
-                    if (_settings != null && Directory.Exists(_settings.Paths.WatchedDirectory))
-                        Process.Start(_settings.Paths.WatchedDirectory);
+                    if (_settings != null && Directory.Exists(_settings.PathConfig.Watched))
+                        Process.Start(_settings.PathConfig.Watched);
                 }));
 
             _trayContextMenu.MenuItems.Add(
                 new MenuItem("Open &application folder...", (sender, args) =>
                 {
                     if (_settings != null)
-                        Process.Start(Settings.ApplicationDirectory);
+                        Process.Start(_settings.PathConfig.ApplicationDirectory);
                 }));
 
             _trayContextMenu.MenuItems.Add("-");
@@ -148,30 +173,6 @@ namespace anime_downloader.Classes
                 }));
 
             _trayIcon.ContextMenu = _trayContextMenu;
-        }
-
-        public void CheckVisibility()
-        {
-            if (_settings.Flags.AlwaysShowTray)
-            {
-                if (!Visible)
-                    Visible = true;
-            }
-
-            else if (!_settings.Flags.AlwaysShowTray)
-            {
-                if (_mainWindow.WindowState == WindowState.Minimized)
-                {
-                    Visible = true;
-                }
-                else if (_mainWindow.WindowState == WindowState.Normal)
-                {
-                    if (Visible)
-                    {
-                        Visible = false;
-                    }
-                }
-            }
         }
     }
 }

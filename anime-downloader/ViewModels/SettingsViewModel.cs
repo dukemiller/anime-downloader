@@ -19,6 +19,8 @@ namespace anime_downloader.ViewModels
         public SettingsViewModel(ISettingsService settings)
         {
             Settings = settings;
+
+            TrayToggleCommand = new RelayCommand(() => {});
             SaveCommand = new RelayCommand(() =>
             {
                 Settings.Save();
@@ -39,6 +41,8 @@ namespace anime_downloader.ViewModels
         }
 
         public RelayCommand SaveCommand { get; set; }
+
+        public RelayCommand TrayToggleCommand { get; set; }
 
     }
 }

@@ -35,7 +35,7 @@ namespace anime_downloader.Services
             Episodes = files;
         }
 
-        public void OrderByEpisodeNumber() => Episodes = Episodes.OrderBy(f => f.IntEpisode);
+        public void OrderByEpisodeNumber() => Episodes = Episodes.OrderBy(f => f.Episode);
 
         public void OrderByDate() => Episodes = Episodes.OrderBy(e => File.GetCreationTime(e.Path));
 
