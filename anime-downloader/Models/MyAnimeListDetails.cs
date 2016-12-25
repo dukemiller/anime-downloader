@@ -14,6 +14,8 @@ namespace anime_downloader.Models
         private string _title;
         private int _totalEpisodes;
         private int _overallTotal;
+        private string _synopsis;
+        private string _synonyms;
 
         [XmlAttribute("id")]
         public string Id
@@ -27,7 +29,11 @@ namespace anime_downloader.Models
         }
 
         [XmlAttribute("synopsis")]
-        public string Synopsis { get; set; }
+        public string Synopsis
+        {
+            get { return _synopsis; }
+            set { Set(() => Synonyms, ref _synopsis, value); }
+        }
 
         [XmlAttribute("image")]
         public string Image { get; set; }
@@ -55,7 +61,15 @@ namespace anime_downloader.Models
         }
 
         [XmlAttribute("synonyms")]
-        public string Synonyms { get; set; }
+        public string Synonyms
+        {
+            get { return _synonyms; }
+            set
+            {
+                Set(() => Synonyms, ref _synonyms, value);
+                RaisePropertyChanged(nameof(SynonymsSplit));
+            }
+        }
 
         [XmlAttribute("needs_updates")]
         public bool NeedsUpdating
@@ -86,17 +100,22 @@ namespace anime_downloader.Models
             }
         }
 
+        // [XmlAttribute("series_continuation_episode")]
         [XmlAttribute("series_continuation_episode")]
-        public int? SeriesContinuationEpisode { get; set; }
-
+        public string SeriesContinuationEpisode { get; set; }
+        
         // 
 
+        [XmlIgnore]
         public int Total => OverallTotal > 0 ? OverallTotal : TotalEpisodes;
 
+        [XmlIgnore]
         public bool HasId => !string.IsNullOrEmpty(Id);
 
+        [XmlIgnore]
         public IEnumerable<string> TitleAndEnglish => new[] { Title, English };
 
+        [XmlIgnore]
         public IEnumerable<string> SynonymsSplit => Synonyms.Split(';');
     }
 }

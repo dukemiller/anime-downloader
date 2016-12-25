@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using anime_downloader.Classes;
 using anime_downloader.Services;
 using anime_downloader.Services.Interfaces;
+using anime_downloader.ViewModels.Components;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 
@@ -44,10 +45,10 @@ namespace anime_downloader.ViewModels
                 () => !Busy
             );
 
-            AnimeListCommand = new RelayCommand(
+            AnimeCommand = new RelayCommand(
                 () =>
                 {
-                    CurrentView = new AnimeListViewModel();
+                    CurrentView = new AnimeDisplayViewModel(Settings, AnimeAggregate);
                     SelectedIndex = 2;
                 },
                 () => !Busy
@@ -111,7 +112,7 @@ namespace anime_downloader.ViewModels
 
             ButtonCommands = new[]
             {
-                HomeCommand, AnimeListCommand, DownloadCommand,
+                HomeCommand, AnimeCommand, DownloadCommand,
                 ManageCommand, MiscCommand, PlaylistCreatorCommand,
                 SettingsCommand, WebCommand
             };
@@ -127,8 +128,8 @@ namespace anime_downloader.ViewModels
             {
                 if (_ == Enums.Views.Home)
                     HomeCommand.Execute(1);
-                else if (_ == Enums.Views.AnimeList)
-                    AnimeListCommand.Execute(1);
+                else if (_ == Enums.Views.AnimeDisplay)
+                    AnimeCommand.Execute(1);
                 else if (_ == Enums.Views.Download)
                     DownloadCommand.Execute(1);
                 else if (_ == Enums.Views.Manage)
@@ -178,7 +179,7 @@ namespace anime_downloader.ViewModels
 
         public RelayCommand HomeCommand { get; set; }
 
-        public RelayCommand AnimeListCommand { get; set; }
+        public RelayCommand AnimeCommand { get; set; }
 
         public RelayCommand DownloadCommand { get; set; }
 

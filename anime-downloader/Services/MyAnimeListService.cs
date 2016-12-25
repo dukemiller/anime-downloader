@@ -242,7 +242,7 @@ namespace anime_downloader.Services
                     }
 
                     // keep track of episodes to update instead in this variable
-                    anime.MyAnimeList.SeriesContinuationEpisode = anime.Episode - total;
+                    anime.MyAnimeList.SeriesContinuationEpisode = (anime.Episode - total).ToString();
                     anime.MyAnimeList.OverallTotal = total;
                 }
 

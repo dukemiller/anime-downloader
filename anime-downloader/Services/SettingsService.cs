@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using anime_downloader.Classes;
 using anime_downloader.Models;
 using anime_downloader.Models.Configurations;
 using anime_downloader.Services.Interfaces;
+using GalaSoft.MvvmLight;
 using Settings = anime_downloader.Properties.Settings;
 
 namespace anime_downloader.Services

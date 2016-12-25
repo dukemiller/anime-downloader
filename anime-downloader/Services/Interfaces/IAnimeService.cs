@@ -9,7 +9,7 @@ namespace anime_downloader.Services.Interfaces
         IEnumerable<Anime> Animes { get; }
 
         // The most accessed group types
-        IEnumerable<Anime> FilteredAndSorted { get; }
+        IEnumerable<Anime> FilteredAndSorted();
         IEnumerable<Anime> AiringAndWatching { get; }
         IEnumerable<Anime> Watching { get; }
         IEnumerable<Anime> NeedsUpdates { get; }

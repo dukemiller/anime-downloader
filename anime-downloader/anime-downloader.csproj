@@ -88,18 +88,21 @@
     <Compile Include="Classes\Distances.cs" />
     <Compile Include="Classes\Messages.cs" />
     <Compile Include="Classes\Xaml\AttachedProperties.cs" />
+    <Compile Include="Classes\Xaml\CustomDataGrid.cs" />
+    <Compile Include="Classes\Xaml\FocusExtension.cs" />
+    <Compile Include="Classes\Xaml\MouseBindings.cs" />
+    <Compile Include="Classes\Xaml\MyMultiSelectBehavior.cs" />
     <Compile Include="Enums\Views.cs" />
     <Compile Include="Models\Anime.cs" />
     <Compile Include="Models\AnimeFile.cs" />
     <Compile Include="Classes\Extensions.cs" />
-    <Compile Include="Models\AnimeDetails.cs" />
+    <Compile Include="Models\MultipleAnimeDetails.cs" />
     <Compile Include="Models\AnimeFileRange.cs" />
     <Compile Include="Models\MyAnimeListDetails.cs" />
     <Compile Include="Models\Configurations\FlagConfiguration.cs" />
     <Compile Include="Models\Configurations\MyAnimeListConfiguration.cs" />
     <Compile Include="Enums\EpisodeStatus.cs" />
     <Compile Include="Classes\File\Logger.cs" />
-    <Compile Include="Classes\FindPopup.cs" />
     <Compile Include="Classes\Methods.cs" />
     <Compile Include="Classes\OperatingSystemApi.cs" />
     <Compile Include="Classes\Tray.cs" />
@@ -127,13 +130,16 @@
     <Compile Include="Services\NyaaService.cs" />
     <Compile Include="Services\PlaylistService.cs" />
     <Compile Include="Services\SettingsService.cs" />
-    <Compile Include="ViewModels\AnimeDetailsMultipleViewModel.cs" />
-    <Compile Include="ViewModels\AnimeDetailsViewModel.cs" />
-    <Compile Include="ViewModels\AnimeListViewModel.cs" />
+    <Compile Include="ViewModels\AnimeDisplayViewModel.cs" />
+    <Compile Include="ViewModels\Components\AnimeDetailsMultipleViewModel.cs" />
+    <Compile Include="ViewModels\Components\AnimeDetailsViewModel.cs" />
+    <Compile Include="ViewModels\Components\AnimeListViewModel.cs" />
     <Compile Include="ViewModels\Components\DownloaderViewModel.cs" />
     <Compile Include="ViewModels\Components\DownloadLogViewModel.cs" />
     <Compile Include="ViewModels\Components\DownloadOptionsViewModel.cs" />
     <Compile Include="ViewModels\Components\FileListViewModel.cs" />
+    <Compile Include="ViewModels\Components\FindViewModel.cs" />
+    <Compile Include="ViewModels\Components\MyAnimeListBarViewModel.cs" />
     <Compile Include="ViewModels\DownloadViewModel.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
@@ -142,13 +148,16 @@
     <Compile Include="ViewModels\PlaylistCreatorViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\WebViewModel.cs" />
-    <Compile Include="Views\AnimeDetails.xaml.cs">
+    <Compile Include="Views\AnimeDisplay.xaml.cs">
+      <DependentUpon>AnimeDisplay.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Components\AnimeDetails.xaml.cs">
       <DependentUpon>AnimeDetails.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\AnimeDetailsMultiple.xaml.cs">
+    <Compile Include="Views\Components\AnimeDetailsMultiple.xaml.cs">
       <DependentUpon>AnimeDetailsMultiple.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\AnimeList.xaml.cs">
+    <Compile Include="Views\Components\AnimeList.xaml.cs">
       <DependentUpon>AnimeList.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Components\DownloadLog.xaml.cs">
@@ -162,6 +171,12 @@
     </Compile>
     <Compile Include="Views\Components\FileList.xaml.cs">
       <DependentUpon>FileList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Components\Find.xaml.cs">
+      <DependentUpon>Find.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Components\MyAnimeListBar.xaml.cs">
+      <DependentUpon>MyAnimeListBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Download.xaml.cs">
       <DependentUpon>Download.xaml</DependentUpon>
@@ -185,6 +200,18 @@
     <Compile Include="Views\Web.xaml.cs">
       <DependentUpon>Web.xaml</DependentUpon>
     </Compile>
+    <Page Include="Views\AnimeDisplay.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Components\Find.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Components\MyAnimeListBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -197,15 +224,15 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\AnimeDetails.xaml">
+    <Page Include="Views\Components\AnimeDetails.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\AnimeDetailsMultiple.xaml">
+    <Page Include="Views\Components\AnimeDetailsMultiple.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\AnimeList.xaml">
+    <Page Include="Views\Components\AnimeList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

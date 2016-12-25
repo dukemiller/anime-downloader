@@ -2,13 +2,12 @@
 
 namespace anime_downloader.Models
 {
-    public class AnimeDetails : ObservableObject
+    public class MultipleAnimeDetails : ObservableObject
     {
         private bool _airing;
         private string _episode;
         private string _rating;
         private string _resolution;
-
         private string _status;
 
         public string Resolution

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using anime_downloader.Classes;
 using anime_downloader.Models;
 using anime_downloader.Services.Interfaces;
 
@@ -9,7 +8,7 @@ namespace anime_downloader.Services
 {
     public class AnimeService: IAnimeService
     {
-        public ISettingsService Settings { get; set; }
+        private ISettingsService Settings { get; }
 
         public AnimeService(ISettingsService settings)
         {
@@ -18,25 +17,23 @@ namespace anime_downloader.Services
 
         public IEnumerable<Anime> Animes => Settings.Animes;
 
-        public IEnumerable<Anime> FilteredAndSorted
+        public IEnumerable<Anime> FilteredAndSorted()
         {
-            get
+            var propertyDescriptor = TypeDescriptor
+                .GetProperties(typeof(Anime))
+                .Find(Settings.SortBy, true);
+
+            var animes = Animes;
+
+            if (!string.IsNullOrEmpty(Settings.FilterBy))
             {
                 var filters = Settings.FilterBy.Split('/');
-
-                var propertyDescriptor = TypeDescriptor
-                    .GetProperties(typeof(Anime))
-                    .Find(Settings.SortBy, true);
-
-                var animes = Animes;
-
-                if (!Settings.FilterBy.IsBlank())
-                    animes = animes.Where(a => filters.Any(f => f.Equals(a.Status)));
-
-                return Settings.FlagConfig.SortByReversed
-                    ? animes.OrderByDescending(x => propertyDescriptor.GetValue(x))
-                    : animes.OrderBy(x => propertyDescriptor.GetValue(x));
+                animes = animes.Where(a => filters.Any(f => f.Equals(a.Status)));
             }
+
+            return Settings.FlagConfig.SortByReversed
+                ? animes.OrderByDescending(x => propertyDescriptor.GetValue(x))
+                : animes.OrderBy(x => propertyDescriptor.GetValue(x));
         }
 
         public IEnumerable<Anime> AiringAndWatching => Animes.Where(a => a.Airing && a.Status == "Watching");

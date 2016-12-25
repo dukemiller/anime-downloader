@@ -2,18 +2,27 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:animeDownloader="clr-namespace:anime_downloader"
+             xmlns:classes="clr-namespace:anime_downloader.Classes"
              xmlns:components="clr-namespace:anime_downloader.Views.Components"
              xmlns:viewModelComponents="clr-namespace:anime_downloader.ViewModels.Components"
              xmlns:viewModels="clr-namespace:anime_downloader.ViewModels"
              xmlns:views="clr-namespace:anime_downloader.Views"
              xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
-             xmlns:classes="clr-namespace:anime_downloader.Classes"
              StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
 
+        <classes:StringLengthVisibilityConverter x:Key="StringLengthVisibilityConverter" />
+        <classes:StringLengthVisibilityConverterNot x:Key="StringLengthVisibilityConverterNot" />
+        <classes:StringCompareVisibilityConverter x:Key="StringCompareVisibilityConverter" />
+        <classes:IsNullVisibilityConverter x:Key="IsNullVisibilityConverter" />
+        <classes:SynposisSnipConverter x:Key="SynposisSnipConverter" />
+        <classes:EpisodeConverter x:Key="EpisodeConverter" />
+        <classes:StringJoinConverter x:Key="StringJoinConverter" />
+        <classes:StringCompareConverter x:Key="StringCompareConverter" />
         <classes:StringJoinConverter x:Key="Converter" />
         <classes:StringCompareConverter x:Key="CompareConverter" />
         <classes:NotConverter x:Key="NotConverter" />
+        <classes:ReverseVisibilityConverter x:Key="ReverseVisibilityConverter" />
         <classes:BooleanVisibilityConverter x:Key="VisibilityConverter" />
         <classes:BooleanSymbolConverter x:Key="BooleanSymbolConverter" />
         <classes:BooleanColorConverter x:Key="BooleanColorConverter" />
@@ -25,6 +34,10 @@
 
         <DataTemplate DataType="{x:Type viewModels:HomeViewModel}">
             <views:Home DataContext="{Binding}" />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewModels:AnimeDisplayViewModel}">
+            <views:AnimeDisplay DataContext="{Binding}" />
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type viewModels:DownloadViewModel}">
@@ -53,16 +66,16 @@
 
         <!--  Components  -->
 
-        <DataTemplate DataType="{x:Type viewModels:AnimeDetailsViewModel}">
-            <views:AnimeDetails DataContext="{Binding}" />
+        <DataTemplate DataType="{x:Type viewModelComponents:AnimeDetailsViewModel}">
+            <components:AnimeDetails DataContext="{Binding}" />
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type viewModels:AnimeDetailsMultipleViewModel}">
-            <views:AnimeDetailsMultiple DataContext="{Binding}" />
+        <DataTemplate DataType="{x:Type viewModelComponents:AnimeDetailsMultipleViewModel}">
+            <components:AnimeDetailsMultiple DataContext="{Binding}" />
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type viewModels:AnimeListViewModel}">
-            <views:AnimeList DataContext="{Binding}" />
+        <DataTemplate DataType="{x:Type viewModelComponents:AnimeListViewModel}">
+            <components:AnimeList DataContext="{Binding}" />
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type viewModelComponents:DownloaderViewModel}">
@@ -79,6 +92,14 @@
 
         <DataTemplate DataType="{x:Type viewModelComponents:FileListViewModel}">
             <components:FileList DataContext="{Binding}" />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewModelComponents:FindViewModel}">
+            <components:Find DataContext="{Binding}" />
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type viewModelComponents:MyAnimeListBarViewModel}">
+            <components:MyAnimeListBar DataContext="{Binding}" />
         </DataTemplate>
 
         <!--  Storyboard  -->

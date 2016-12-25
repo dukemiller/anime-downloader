@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using anime_downloader.Models;
 using anime_downloader.Models.Configurations;
 

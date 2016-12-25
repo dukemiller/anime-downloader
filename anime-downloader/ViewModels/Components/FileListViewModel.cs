@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -24,6 +25,7 @@ namespace anime_downloader.ViewModels.Components
         private string _movePath;
         private string _startPath;
         private string _title;
+        private AnimeFile _selectedFile;
 
         // 
 
@@ -76,7 +78,11 @@ namespace anime_downloader.ViewModels.Components
             set { Set(() => FilteredFiles, ref _filteredFiles, value); }
         }
 
-        public AnimeFile SelectedFile { get; set; }
+        public AnimeFile SelectedFile
+        {
+            get { return _selectedFile; }
+            set { Set(() => SelectedFile, ref _selectedFile, value); }
+        }
 
         public ObservableCollection<AnimeFile> SelectedFiles { get; set; } = new ObservableCollection<AnimeFile>();
 
@@ -211,18 +217,20 @@ namespace anime_downloader.ViewModels.Components
                 Process.Start(PlaylistService.Path);
             }
 
-            else if (SelectedFiles.Count == 1)
+            else if (SelectedFile != null)
                 Process.Start(SelectedFile.Path);
         }
-
-        [NeedsUpdating]
+        
         private void Profile()
         {
             if (SelectedFile != null)
             {
                 var anime = FileService.ClosestAnime(AnimeService.Animes, SelectedFile);
-                if (anime != null) ;
-                // MainWindow.Window.ChangeDisplay<AnimeDetails>().Load(anime);
+                if (anime != null)
+                {
+                    MessengerInstance.Send(Enums.Views.AnimeDisplay);
+                    MessengerInstance.Send(anime);
+                }
                 else
                     Methods.Alert($"No anime profile found for {SelectedFile.Name}.");
             }

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Serialization;
 using anime_downloader.Models.MyAnimeList;
 using GalaSoft.MvvmLight;
@@ -24,8 +26,9 @@ namespace anime_downloader.Models
         private bool _nameStrict;
         private string _preferredSubgroup;
         private string _notes;
+        private string _rating;
         private int _episode;
-        private int? _rating;
+        private MyAnimeListDetails _myAnimeList;
 
         // 
         
@@ -120,14 +123,26 @@ namespace anime_downloader.Models
         ///     The personal rating given for the series.
         /// </summary>
         [XmlAttribute("rating")]
-        public int? Rating
+        public string Rating
         {
             get { return _rating; }
-            set { Set(() => Rating, ref _rating, value); }
+            set
+            {
+                if (value != null)
+                {
+                    var number = int.Parse(value);
+                    number = Math.Min(Math.Max(number, 0), 10);
+                    Set(() => Rating, ref _rating, number.ToString());
+                }
+            }
         }
 
         [XmlElement("my_anime_list")]
-        public MyAnimeListDetails MyAnimeList { get; set; }
+        public MyAnimeListDetails MyAnimeList
+        {
+            get { return _myAnimeList; }
+            set { Set(() => MyAnimeList, ref _myAnimeList, value); }
+        }
 
         [XmlAttribute("notes")]
         public string Notes
@@ -150,18 +165,23 @@ namespace anime_downloader.Models
         ///     Proper title name of anime.
         /// </summary>
         /// <returns>A title</returns>
+        [XmlIgnore]
         public string Title => new CultureInfo("en-US", false).TextInfo.ToTitleCase(Name);
 
         /// <summary>
         ///     A zero padded string of the number of the next episode.
         /// </summary>
         /// <returns>A padded string representation of the next episode in sequence.</returns>
+        [XmlIgnore]
         public int NextEpisode => Episode + 1;
 
+        [XmlIgnore]
         public string AiringSymbol => Airing ? "✓" : "";
 
+        [XmlIgnore]
         public bool HasRating => Rating != null;
 
+        [XmlIgnore]
         public int EpisodeTotal
         {
             get
@@ -186,8 +206,10 @@ namespace anime_downloader.Models
         /// <summary>
         ///     A property used for sorting the rating in the datagrid
         /// </summary>
-        public int SortedRating => Rating ?? 13*SortedRateFlag - 2;
+        [XmlIgnore]
+        public int SortedRating => string.IsNullOrEmpty(Rating) ? 13*SortedRateFlag - 2 : int.Parse(Rating);
 
+        [XmlIgnore]
         public IEnumerable<string> NameCollection
         {
             get

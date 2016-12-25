@@ -8,8 +8,13 @@ namespace anime_downloader.Enums
 {
     public enum Views
     {
-        Home, AnimeList, Download,
-        Manage, Misc, Playlist,
-        Settings, Web
+        Home,
+        AnimeDisplay,
+        Download,
+        Manage,
+        Misc,
+        Playlist,
+        Settings,
+        Web
     }
 }

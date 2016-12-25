@@ -40,8 +40,8 @@
                 <StackPanel.InputBindings>
                     <KeyBinding Key="D1" Command="{Binding HomeCommand}" />
                     <KeyBinding Key="NumPad1" Command="{Binding HomeCommand}" />
-                    <KeyBinding Key="D2" Command="{Binding AnimeListCommand}" />
-                    <KeyBinding Key="NumPad2" Command="{Binding AnimeListCommand}" />
+                    <KeyBinding Key="D2" Command="{Binding AnimeCommand}" />
+                    <KeyBinding Key="NumPad2" Command="{Binding AnimeCommand}" />
                     <KeyBinding Key="D3" Command="{Binding SettingsCommand}" />
                     <KeyBinding Key="NumPad3" Command="{Binding SettingsCommand}" />
                     <KeyBinding Key="D4" Command="{Binding DownloadCommand}" />
@@ -60,7 +60,7 @@
                              IsChecked="{Binding SelectedIndex,
                                                  Converter={StaticResource CompareConverter},
                                                  ConverterParameter=1}" />
-                <RadioButton Command="{Binding AnimeListCommand}"
+                <RadioButton Command="{Binding AnimeCommand}"
                              Content="Anime"
                              IsChecked="{Binding SelectedIndex,
                                                  Converter={StaticResource CompareConverter},

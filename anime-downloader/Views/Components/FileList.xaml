@@ -89,6 +89,7 @@
         <Style TargetType="{x:Type ListBoxItem}">
             <Setter Property="xaml:DragSelectionHelper.IsDragSelecting" Value="False" />
             <Style.Triggers>
+                
                 <Trigger Property="ListBoxItem.IsMouseOver" Value="True">
                     <Setter Property="xaml:DragSelectionHelper.IsDragSelecting" Value="True" />
                 </Trigger>
@@ -119,11 +120,16 @@
                  xaml:DragSelectionHelper.IsDragSelectionEnabled="true"
                  ItemsSource="{Binding FilteredFiles,
                                        UpdateSourceTrigger=PropertyChanged}"
-                 SelectedItem="{Binding SelectedFile}"
+                 SelectedItem="{Binding SelectedFile,
+                                        UpdateSourceTrigger=PropertyChanged}"
                  SelectionMode="Multiple"
                  Style="{StaticResource Episodes}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDoubleClick">
+                    <i:InvokeCommandAction Command="{Binding OpenCommand}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
             <ListBox.InputBindings>
-                <MouseBinding Command="{Binding OpenCommand}" MouseAction="LeftDoubleClick" />
                 <KeyBinding Key="Return" Command="{Binding OpenCommand}" />
                 <KeyBinding Key="Delete" Command="{Binding DeleteCommand}" />
             </ListBox.InputBindings>

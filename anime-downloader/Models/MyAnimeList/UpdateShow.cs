@@ -7,7 +7,7 @@ namespace anime_downloader.Models.MyAnimeList
     {
         private readonly XDocument _document;
         
-        public UpdateShow(Anime anime, int? episode = null)
+        public UpdateShow(Anime anime, string episode = null)
         {
             var details = new AnimeDetailGroup(anime, episode);
 
@@ -42,11 +42,11 @@ namespace anime_downloader.Models.MyAnimeList
 
         public int Episode { get; set; }
 
-        public int? Score { get; set; }
+        public string Score { get; set; }
 
-        public AnimeDetailGroup(Anime anime, int? episode)
+        public AnimeDetailGroup(Anime anime, string episode)
         {
-            Episode = episode ?? anime.Episode;
+            Episode = !string.IsNullOrEmpty(episode) ? int.Parse(episode) : anime.Episode;
             Status = GetStatus(anime);
             Score = anime.Rating;
         }

@@ -33,12 +33,12 @@ namespace anime_downloader.Classes
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return !(bool) value;
+            return !System.Convert.ToBoolean(value);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return !(bool) value;
+            return !System.Convert.ToBoolean(value);
         }
     }
 
@@ -268,7 +268,9 @@ namespace anime_downloader.Classes
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var synopsis = System.Convert.ToString(value);
+            var synopsis = value as string;
+            if (synopsis == null)
+                return "";
             synopsis = synopsis.Replace("&ndash;", "-");
             synopsis = new[] {
                 @"\[/?[a-zA-Z0-9=]*\]",                                  // Style tags [b]
@@ -296,6 +298,20 @@ namespace anime_downloader.Classes
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return System.Convert.ToString(value).Equals(System.Convert.ToString(parameter));
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class ReverseVisibilityConverter : IValueConverter
+    {
+        // CurrentlyChecked
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (Visibility) value == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
