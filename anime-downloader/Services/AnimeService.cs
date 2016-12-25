@@ -36,11 +36,12 @@ namespace anime_downloader.Services
                 : animes.OrderBy(x => propertyDescriptor.GetValue(x));
         }
 
-        public IEnumerable<Anime> AiringAndWatching => Animes.Where(a => a.Airing && a.Status == "Watching");
+        public IEnumerable<Anime> AiringAndWatching => Watching.Where(a => a.Airing);
 
-        public IEnumerable<Anime> Watching => Animes.Where(a => a.Status == "Watching");
+        public IEnumerable<Anime> Watching => Animes.Where(a => a.Status.Equals("Watching"));
 
-        public IEnumerable<Anime> NeedsUpdates => Animes.Where(a => a.MyAnimeList.NeedsUpdating && !a.Status.Equals("Considering"));
+        public IEnumerable<Anime> NeedsUpdates => Animes.Where(a => a.MyAnimeList.NeedsUpdating 
+                                                                    && !a.Status.Equals("Considering"));
 
         public void Add(Anime anime)
         {

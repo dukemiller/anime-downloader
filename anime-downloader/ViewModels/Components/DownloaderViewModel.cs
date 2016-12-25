@@ -77,9 +77,22 @@ namespace anime_downloader.ViewModels.Components
         /// </summary>
         private async Task CheckForLatestAsync()
         {
-            Text += ">> Searching for currently airing anime episodes ...\n";
-            var downloaded = await AnimeAggregate.Downloader.DownloadAsync(AnimeAggregate.Animes.AiringAndWatching, s => Text += s + '\n');
-            Text += downloaded > 0 ? $">> Found {downloaded} anime downloads." : ">> No new anime found.";
+            var animes = AnimeAggregate.Animes.AiringAndWatching.Where(anime =>
+            {
+                if (anime.MyAnimeList.HasId && anime.MyAnimeList.Total != 0)
+                    return anime.Episode != anime.MyAnimeList.Total;
+                return true;
+            }).ToList();
+
+            if (animes.Any())
+            {
+                Text += ">> Searching for currently airing anime episodes ...\n";
+                var downloaded = await AnimeAggregate.Downloader.DownloadAsync(animes, s => Text += s + '\n');
+                Text += downloaded > 0 ? $">> Found {downloaded} anime downloads." : ">> No new anime found.";
+            }
+
+            else
+                Text += ">> No animes need to be downloaded.";
         }
 
         /// <summary>

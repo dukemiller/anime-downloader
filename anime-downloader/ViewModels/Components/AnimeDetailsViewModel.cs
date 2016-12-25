@@ -112,7 +112,7 @@ namespace anime_downloader.ViewModels.Components
                 };
             }
         }
-
+        
         // 
 
         private void Edit()
