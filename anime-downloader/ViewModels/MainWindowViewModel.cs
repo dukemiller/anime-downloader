@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using anime_downloader.Classes;
-using anime_downloader.Services;
 using anime_downloader.Services.Interfaces;
-using anime_downloader.ViewModels.Components;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 

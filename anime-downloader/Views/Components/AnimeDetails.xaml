@@ -89,6 +89,7 @@
                              Height="27"
                              VerticalAlignment="Center"
                              FontSize="18.667"
+                             xaml:FocusBehavior.IsFocused="{Binding Anime.Name, Converter={StaticResource StringIsEmptyOrNullConverter}}"
                              Text="{Binding Anime.Name,
                                             UpdateSourceTrigger=PropertyChanged}">
                         <TextBox.InputBindings>

@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:anime_downloader.ViewModels"
         xmlns:views="clr-namespace:anime_downloader.Views"
+        xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
         Title="Anime Downloader"
         Width="920"
         Height="400"
@@ -57,6 +58,7 @@
                 </StackPanel.InputBindings>
                 <RadioButton Command="{Binding HomeCommand}"
                              Content="Home"
+                             xaml:FocusBehavior.IsFocused="True"
                              IsChecked="{Binding SelectedIndex,
                                                  Converter={StaticResource CompareConverter},
                                                  ConverterParameter=1}" />

@@ -89,7 +89,7 @@
     <Compile Include="Classes\Messages.cs" />
     <Compile Include="Classes\Xaml\AttachedProperties.cs" />
     <Compile Include="Classes\Xaml\CustomDataGrid.cs" />
-    <Compile Include="Classes\Xaml\FocusExtension.cs" />
+    <Compile Include="Classes\Xaml\FocusBehavior.cs" />
     <Compile Include="Classes\Xaml\MouseBindings.cs" />
     <Compile Include="Classes\Xaml\MyMultiSelectBehavior.cs" />
     <Compile Include="Enums\Views.cs" />

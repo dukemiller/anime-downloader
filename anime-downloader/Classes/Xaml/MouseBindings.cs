@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using System.Windows.Input;
 using System.Windows.Markup;
 
 namespace anime_downloader.Classes.Xaml
 {
+    // https://social.msdn.microsoft.com/Forums/vstudio/en-US/465edb64-e0ee-4fe4-8e69-02a805c902e7/mousebinding-gesture-for-xbutton1?forum=wpf
     public class ExtendedMouseBinding : MouseBinding
     {
         [ValueSerializer(typeof(MouseGestureValueSerializer)), TypeConverter(typeof(ExtendedMouseGestureConverter))]

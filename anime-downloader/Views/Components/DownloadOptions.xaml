@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:models="clr-namespace:anime_downloader.Models"
+             xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
              d:DataContext="{d:DesignInstance components:DownloadOptionsViewModel}"
              d:DesignHeight="360"
              d:DesignWidth="680"
@@ -57,6 +58,7 @@
             </GroupBox>
             <Button Grid.Row="1"
                     HorizontalAlignment="Right"
+                    xaml:FocusBehavior.IsFocused="True"
                     Command="{Binding SearchCommand}"
                     Content="Search" />
             <Button Grid.Row="1"

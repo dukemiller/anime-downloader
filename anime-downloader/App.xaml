@@ -11,6 +11,7 @@
              StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
 
+        <classes:StringIsEmptyOrNullConverter x:Key="StringIsEmptyOrNullConverter" />
         <classes:StringLengthVisibilityConverter x:Key="StringLengthVisibilityConverter" />
         <classes:StringLengthVisibilityConverterNot x:Key="StringLengthVisibilityConverterNot" />
         <classes:StringCompareVisibilityConverter x:Key="StringCompareVisibilityConverter" />
@@ -97,7 +98,7 @@
         <DataTemplate DataType="{x:Type viewModelComponents:FindViewModel}">
             <components:Find DataContext="{Binding}" />
         </DataTemplate>
-        
+
         <DataTemplate DataType="{x:Type viewModelComponents:MyAnimeListBarViewModel}">
             <components:MyAnimeListBar DataContext="{Binding}" />
         </DataTemplate>
