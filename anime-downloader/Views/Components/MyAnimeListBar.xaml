@@ -31,7 +31,7 @@
                         Visibility="{Binding HasId,
                                              Converter={StaticResource ReverseVisibilityConverter}}" />
                 <Button Command="{Binding ProfileCommand}"
-                        Content="Open"
+                        Content="Profile"
                         Visibility="{Binding HasId}" />
                 <Button Command="{Binding RefreshCommand}"
                         Content="Refresh"

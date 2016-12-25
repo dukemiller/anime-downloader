@@ -30,6 +30,14 @@
         <KeyBinding Key="X"
                     Command="{Binding CloseCommand}"
                     Modifiers="Control" />
+        <KeyBinding Modifiers="Control" Key="D1" Command="{Binding HomeCommand}" />
+        <KeyBinding Modifiers="Control" Key="D2" Command="{Binding AnimeCommand}" />
+        <KeyBinding Modifiers="Control" Key="D3" Command="{Binding SettingsCommand}" />
+        <KeyBinding Modifiers="Control" Key="D4" Command="{Binding DownloadCommand}" />
+        <KeyBinding Modifiers="Control" Key="D5" Command="{Binding ManageCommand}" />
+        <KeyBinding Modifiers="Control" Key="D6" Command="{Binding PlaylistCreatorCommand}" />
+        <KeyBinding Modifiers="Control" Key="D7" Command="{Binding WebCommand}" />
+        <KeyBinding Modifiers="Control" Key="D8" Command="{Binding MiscCommand}" />
     </Window.InputBindings>
     <Grid Background="White">
         <Grid.ColumnDefinitions>
