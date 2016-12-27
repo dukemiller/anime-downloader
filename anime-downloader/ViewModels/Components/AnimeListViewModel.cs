@@ -35,9 +35,9 @@ namespace anime_downloader.ViewModels.Components
         {
             Settings = settings;
             AnimeAggregate = animeAggregate;
-            
-            // 
 
+            // 
+            
             Find = new FindViewModel();
             Find.PropertyChanged += (sender, args) =>
             {
@@ -55,10 +55,10 @@ namespace anime_downloader.ViewModels.Components
             FilterText = Settings.FilterBy;
             Animes = new ObservableCollection<Anime>(AnimeAggregate.Animes.FilteredAndSorted());
             
-
             // 
 
             FindToggleCommand = new RelayCommand(() => Find.Toggle());
+
             AddCommand = new RelayCommand(Add);
             AddMultipleCommand = new RelayCommand(AddMultiple);
             EditCommand = new RelayCommand(Edit);

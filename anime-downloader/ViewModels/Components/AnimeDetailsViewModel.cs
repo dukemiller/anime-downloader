@@ -1,8 +1,4 @@
-﻿using System.Diagnostics;
-using System.Linq;
-using System.Web;
-using System.Windows;
-using anime_downloader.Classes;
+﻿using System.Linq;
 using anime_downloader.Models;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;

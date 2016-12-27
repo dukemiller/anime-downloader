@@ -1,6 +1,4 @@
-﻿using System.Windows;
-
-namespace anime_downloader.Views.Components
+﻿namespace anime_downloader.Views.Components
 {
     /// <summary>
     ///     Interaction logic for DownloadOptions.xaml

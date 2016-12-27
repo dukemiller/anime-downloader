@@ -3,8 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:components="clr-namespace:anime_downloader.ViewModels.Components"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
              d:DataContext="{d:DesignInstance components:AnimeDetailsViewModel}"
              d:DesignHeight="360"
@@ -12,14 +12,14 @@
              FocusVisualStyle="{x:Null}"
              Loaded="AnimeDetails_OnLoaded"
              mc:Ignorable="d">
-    
+
     <UserControl.InputBindings>
         <KeyBinding Key="Enter" Command="{Binding ButtonCommand}" />
         <KeyBinding Key="Escape" Command="{Binding ExitCommand}"/>
         <xaml:ExtendedMouseBinding Gesture="XButton1"  Command="{Binding ExitCommand}" />
     </UserControl.InputBindings>
     <UserControl.Resources>
-        
+
         <Style x:Key="NumberBoxStyle" TargetType="TextBox">
             <Setter Property="Width" Value="40" />
             <Setter Property="HorizontalAlignment" Value="Left" />
@@ -55,7 +55,7 @@
         </Style>
     </UserControl.Resources>
     <Grid Background="White">
-        
+
         <Grid>
 
             <Grid.RowDefinitions>
@@ -88,8 +88,9 @@
                              Grid.Column="1"
                              Height="27"
                              VerticalAlignment="Center"
+                             xaml:FocusBehavior.IsFocused="{Binding Anime.Name,
+                                                                    Converter={StaticResource StringIsEmptyOrNullConverter}}"
                              FontSize="18.667"
-                             xaml:FocusBehavior.IsFocused="{Binding Anime.Name, Converter={StaticResource StringIsEmptyOrNullConverter}}"
                              Text="{Binding Anime.Name,
                                             UpdateSourceTrigger=PropertyChanged}">
                         <TextBox.InputBindings>
@@ -292,7 +293,7 @@
                                              Converter={StaticResource IsNullVisibilityConverter}}" />-->
 
                 <!--  Only visible when not editing  -->
-                <ContentPresenter Margin="30,5" Content="{Binding MyAnimeListBar}"/>
+                <ContentPresenter Margin="30,5" Content="{Binding MyAnimeListBar}" />
 
                 <Button HorizontalAlignment="Right"
                         Command="{Binding ButtonCommand}"
