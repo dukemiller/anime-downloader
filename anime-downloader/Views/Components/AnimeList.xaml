@@ -115,7 +115,7 @@
                                     Binding="{Binding Title}"
                                     Header="Name" />
                 <DataGridTextColumn Width="auto"
-                                    Binding="{Binding Episode}"
+                                    Binding="{Binding EpisodeTotal}"
                                     CellStyle="{StaticResource CenterStyle}"
                                     Header="Episode"
                                     SortMemberPath="Episode" />

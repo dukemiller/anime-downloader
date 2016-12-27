@@ -182,7 +182,7 @@ namespace anime_downloader.Models
         public bool HasRating => Rating != null;
 
         [XmlIgnore]
-        public int EpisodeTotal
+        public string EpisodeTotal
         {
             get
             {
@@ -192,14 +192,14 @@ namespace anime_downloader.Models
                     // If it has an overall total, this was a mislabeled show and this
                     // needs to be preferred first
                     if (MyAnimeList.OverallTotal > 0)
-                        return Episode/MyAnimeList.OverallTotal;
+                        return $"{Episode}/{MyAnimeList.OverallTotal}";
 
                     // Else just the actual season total if there is one
                     if (MyAnimeList.TotalEpisodes > 0)
-                        return Episode/MyAnimeList.TotalEpisodes;
+                        return $"{Episode}/{MyAnimeList.TotalEpisodes}";
                 }
 
-                return Episode;
+                return Episode.ToString();
             }
         }
 
