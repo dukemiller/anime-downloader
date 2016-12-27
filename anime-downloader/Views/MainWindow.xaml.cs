@@ -50,9 +50,12 @@ namespace anime_downloader.Views
             switch (WindowState)
             {
                 case WindowState.Normal:
+                    if (!Settings.FlagConfig.AlwaysShowTray && _tray.Visible)
+                        _tray.Visible = false;
                     Show();
                     break;
                 case WindowState.Minimized:
+                    _tray.Visible = true;
                     Hide();
                     break;
             }
@@ -70,6 +73,7 @@ namespace anime_downloader.Views
 
             else
             {
+                _tray.Visible = true;
                 WindowState = WindowState.Minimized;
                 e.Cancel = true;
             }

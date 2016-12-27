@@ -32,38 +32,25 @@ namespace anime_downloader.Classes
         {
             _mainWindow = mainWindow;
             _settings = settings;
+
             CreateTray();
             CreateContextMenu();
+
             if (_settings.FlagConfig.AlwaysShowTray)
                 Visible = true;
 
             _settings.FlagConfig.PropertyChanged += (sender, args) =>
             {
                 if (_settings.FlagConfig.AlwaysShowTray)
-                {
-                    if (!Visible)
-                        Visible = true;
-                }
-
-                if (_settings.FlagConfig.AlwaysShowTray)
-                {
-                    if (!Visible)
-                        Visible = true;
-                }
-
-                else if (!_settings.FlagConfig.AlwaysShowTray)
+                    Visible = true;
+                else
                 {
                     if (_mainWindow.WindowState == WindowState.Minimized)
-                    {
                         Visible = true;
-                    }
+
                     else if (_mainWindow.WindowState == WindowState.Normal)
-                    {
                         if (Visible)
-                        {
                             Visible = false;
-                        }
-                    }
                 }
             };
         }
