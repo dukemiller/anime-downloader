@@ -15,13 +15,14 @@ namespace anime_downloader.Classes
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var enumerable = (IEnumerable<string>) value;
+            var enumerable = value as IEnumerable<string> ?? new List<string>();
             return string.Join(", ", enumerable.Where(s => !string.IsNullOrEmpty(s)));
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return ((string) value).Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+            var str = value as string ?? "";
+            return str.Split(new[] {", "}, StringSplitOptions.RemoveEmptyEntries);
         }
     }
     

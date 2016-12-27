@@ -110,9 +110,7 @@
                 <TextBox Grid.Row="4"
                          Grid.Column="1"
                          Style="{DynamicResource TextboxStyle}"
-                         Text="{Binding Path=Settings.Subgroups,
-                                        UpdateSourceTrigger=PropertyChanged,
-                                        Converter={StaticResource Converter}}" />
+                         Text="{Binding Subgroups}" />
             </Grid>
             <Grid Row="1">
                 <Grid.ColumnDefinitions>
