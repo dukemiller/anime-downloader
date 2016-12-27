@@ -22,7 +22,7 @@ namespace anime_downloader.ViewModels.Components
             Visible = Visibility.Collapsed;
             ClearCommand = new RelayCommand(() =>
             {
-                if (Text.Length > 0)
+                if (Text?.Length > 0)
                     Text = string.Empty;
                 else
                     Close();

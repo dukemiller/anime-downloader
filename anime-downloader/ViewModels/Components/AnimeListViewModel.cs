@@ -44,7 +44,7 @@ namespace anime_downloader.ViewModels.Components
                 if (args.PropertyName.Equals("Text"))
                 {
                     if (Find.Text.Equals(""))
-                        Animes = new ObservableCollection<Anime>(AnimeAggregate.Animes.Animes);
+                        Animes = new ObservableCollection<Anime>(AnimeAggregate.Animes.FilteredAndSorted());
                     else
                         Animes =
                             new ObservableCollection<Anime>(
