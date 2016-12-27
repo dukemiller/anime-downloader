@@ -196,7 +196,6 @@
     <Compile Include="Views\Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Enums\ViewMode.cs" />
     <Compile Include="Views\Web.xaml.cs">
       <DependentUpon>Web.xaml</DependentUpon>
     </Compile>

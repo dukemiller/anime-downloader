@@ -11,8 +11,6 @@
              d:DesignWidth="680"
              mc:Ignorable="d">
     <UserControl.Resources>
-        <classes:ViewModeIsEditingBooleanConverter x:Key="ViewModeIsAddingConverterNot" />
-        <classes:ViewModeIsEditingOpacityConverter x:Key="ViewModeOpacityConverterNot" />
         <classes:StringCompareConverter x:Key="StringCompareConverter" />
         <Style TargetType="{x:Type Label}">
             <Setter Property="FontSize" Value="16" />

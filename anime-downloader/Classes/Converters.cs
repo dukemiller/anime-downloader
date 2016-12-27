@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Data;
-using anime_downloader.Enums;
 
 namespace anime_downloader.Classes
 {
@@ -216,32 +215,6 @@ namespace anime_downloader.Classes
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return value != null ? Visibility.Visible : Visibility.Hidden;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-    
-    public class ViewModeIsEditingBooleanConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return (ViewMode) value != ViewMode.Adding;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-    
-    public class ViewModeIsEditingOpacityConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return (ViewMode) value == ViewMode.Adding ? 0.4 : 1.0;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
