@@ -8,11 +8,15 @@
              xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
              d:DataContext="{d:DesignInstance components:FindViewModel}"
              mc:Ignorable="d">
-    <TextBox Width="400"
+    <TextBox Name="Textbox"
+             Width="400"
              Height="30"
              VerticalContentAlignment="Center"
+             Focusable="True"
              FontSize="18"
-             Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
+             IsVisibleChanged="UIElement_OnIsVisibleChanged"
+             Text="{Binding Text,
+                            UpdateSourceTrigger=PropertyChanged}"
              Visibility="{Binding Visible}">
         <TextBox.InputBindings>
             <KeyBinding Key="Escape" Command="{Binding ClearCommand}" />
