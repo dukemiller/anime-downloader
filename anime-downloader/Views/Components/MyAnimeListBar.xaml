@@ -15,7 +15,8 @@
             <Setter Property="Foreground" Value="White" />
         </Style>
     </UserControl.Resources>
-    <DockPanel>
+
+    <DockPanel IsHitTestVisible="{Binding LoggedIntoMal}" Opacity="{Binding LoggedIntoMal, Converter={StaticResource BooleanOpacityConverter}}">
         <Border Background="White"
                 BorderBrush="#2e51a2"
                 BorderThickness="0, 2"

@@ -89,7 +89,7 @@ namespace anime_downloader.Models
             }
         }
 
-        [XmlAttribute("overall_title")]
+        [XmlAttribute("overall_total")]
         public int OverallTotal
         {
             get { return _overallTotal; }

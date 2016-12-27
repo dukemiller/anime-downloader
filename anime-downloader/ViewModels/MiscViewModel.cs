@@ -23,7 +23,9 @@ namespace anime_downloader.ViewModels
         }
 
         public IAnimeService Animes { get; set; }
+
         public IAnimeFileService FileService { get; set; }
+
         public IMyAnimeListService MalService { get; set; }
 
         public int SelectedIndex
@@ -38,6 +40,7 @@ namespace anime_downloader.ViewModels
 
         private async void DoAction()
         {
+            MessengerInstance.Send(new WorkMessage {Working = true});
             // Mark fully watched as completed
             if (SelectedIndex == 1)
             {
@@ -96,6 +99,7 @@ namespace anime_downloader.ViewModels
                 else
                     Methods.Alert($"No shows were updated for an attempted {needsUpdating.Count} shows.");
             }
+            MessengerInstance.Send(new WorkMessage { Working = false });
         }
 
         // 

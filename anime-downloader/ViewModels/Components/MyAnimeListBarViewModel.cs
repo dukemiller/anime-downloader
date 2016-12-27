@@ -32,9 +32,17 @@ namespace anime_downloader.ViewModels.Components
                 if (args.PropertyName.Equals("Id"))
                     RaisePropertyChanged(nameof(HasId));
             };
+
+            Settings.MyAnimeListConfig.PropertyChanged += (sender, args) =>
+            {
+                if (args.PropertyName.Equals("Works"))
+                    RaisePropertyChanged(nameof(LoggedIntoMal));
+            };
         }
 
         // 
+
+        public bool LoggedIntoMal => Settings.MyAnimeListConfig.Works;
 
         public Visibility HasId => Anime.MyAnimeList.HasId ? Visibility.Visible : Visibility.Collapsed;
 
