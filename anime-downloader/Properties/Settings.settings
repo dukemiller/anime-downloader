@@ -1,5 +1,5 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="anime_downloader.Properties" GeneratedClassTitle="Settings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="anime_downloader.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
     <Setting Name="SortBy" Type="System.String" Scope="User">
@@ -8,7 +8,7 @@
     <Setting Name="FilterBy" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="Animes" Type="System.Collections.Generic.List&lt;anime_downloader.Models.Animes&gt;" Scope="User">
+    <Setting Name="Animes" Type="System.Collections.Generic.List&lt;anime_downloader.Models.Anime&gt;" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="Subgroups" Type="System.Collections.Generic.List&lt;System.String&gt;" Scope="User">
