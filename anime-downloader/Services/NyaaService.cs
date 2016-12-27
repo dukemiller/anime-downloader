@@ -7,7 +7,6 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using anime_downloader.Classes;
-using anime_downloader.Classes.File;
 using anime_downloader.Models;
 using anime_downloader.Services.Interfaces;
 using HtmlAgilityPack;
@@ -221,12 +220,26 @@ namespace anime_downloader.Services
             var fileWasDownloaded = await DownloadFileAsync(torrent, anime);
 
             if (fileWasDownloaded)
+            {
+                await Log(anime);
                 anime.Episode = anime.NextEpisode;
+            }
 
             else
                 output($"Download of '{anime.Title}' failed.");
 
             return fileWasDownloaded;
+        }
+
+        private async Task Log(Anime anime)
+        {
+            var timestamp = $"{DateTime.Now:[M/d/yyyy @ hh:mm:ss tt]}";
+            var message = $"Downloaded '{anime.Title}' episode {anime.NextEpisode}.";
+            using (var streamWriter = new StreamWriter(Settings.PathConfig.Logging, true))
+            {
+                await streamWriter.WriteLineAsync($"{timestamp} - {message}");
+                streamWriter.Close();
+            }
         }
 
         public async Task<bool> DownloadFileAsync(Torrent torrent, Anime anime)

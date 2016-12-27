@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using anime_downloader.Classes;
-using anime_downloader.Classes.File;
 using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Services;

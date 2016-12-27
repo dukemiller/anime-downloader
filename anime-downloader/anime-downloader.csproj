@@ -102,7 +102,6 @@
     <Compile Include="Models\Configurations\FlagConfiguration.cs" />
     <Compile Include="Models\Configurations\MyAnimeListConfiguration.cs" />
     <Compile Include="Enums\EpisodeStatus.cs" />
-    <Compile Include="Classes\File\Logger.cs" />
     <Compile Include="Classes\Methods.cs" />
     <Compile Include="Classes\OperatingSystemApi.cs" />
     <Compile Include="Classes\Tray.cs" />
