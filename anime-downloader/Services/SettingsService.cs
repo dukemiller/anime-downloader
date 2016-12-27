@@ -22,7 +22,7 @@ namespace anime_downloader.Services
             if (Settings.Default.PathConfiguration == null)
                 Settings.Default.PathConfiguration = new PathConfiguration();
             if (Settings.Default.FlagConfiguration == null)
-                Settings.Default.FlagConfiguration = new FlagConfiguration();
+                Settings.Default.FlagConfiguration = new FlagConfiguration {AlwaysShowTray = true, ExitOnClose = false} ;
             if (Settings.Default.MyAnimeListConfiguration == null)
                 Settings.Default.MyAnimeListConfiguration = new MyAnimeListConfiguration();
         }
