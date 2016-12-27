@@ -82,19 +82,7 @@ namespace anime_downloader.Classes
 
             return Regex.Replace(text.Trim(), @"\s+", " ");
         }
-
-        /// <summary>
-        ///     Completely clear focus from an element.
-        /// </summary>
-        public static void ClearFocusFrom(FrameworkElement element)
-        {
-            var parent = (FrameworkElement) element.Parent;
-            while (parent != null && !((IInputElement) parent).Focusable)
-                parent = (FrameworkElement) parent.Parent;
-            var scope = FocusManager.GetFocusScope(element);
-            FocusManager.SetFocusedElement(scope, parent);
-        }
-
+        
         /// <summary>
         ///     Display an alert message (currently a messagebox).
         /// </summary>
