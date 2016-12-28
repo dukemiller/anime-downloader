@@ -3,6 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:anime_downloader.ViewModels"
+             d:DataContext="{d:DesignInstance viewModels:HomeViewModel}"
              d:DesignHeight="360"
              d:DesignWidth="680"
              mc:Ignorable="d">
@@ -52,5 +54,12 @@
         <Label Grid.Row="7"
                Content="Other options and features."
                Style="{DynamicResource LabelStyle}" />
+        <Label Grid.Row="9"
+               HorizontalAlignment="Right"
+               VerticalAlignment="Bottom"
+               Content="{Binding Version}"
+               FontStyle="Italic"
+               Foreground="DarkSlateGray"
+               Opacity="0.6" />
     </Grid>
 </UserControl>
