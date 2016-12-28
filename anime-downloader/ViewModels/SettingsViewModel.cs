@@ -29,7 +29,7 @@ namespace anime_downloader.ViewModels
         public SettingsViewModel(ISettingsService settings)
         {
             Settings = settings;
-            
+
             Subgroups = string.Join(", ", Settings.Subgroups);
 
             TrayToggleCommand = new RelayCommand(() => {});

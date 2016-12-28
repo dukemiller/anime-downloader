@@ -92,7 +92,7 @@ namespace anime_downloader.ViewModels
 
                 if (updated.Count > 0)
                 {
-                    var updateResult = string.Join(", and ", updated);
+                    var updateResult = string.Join(", ", updated);
                     Methods.Alert($"Updated total episodes for {updateResult}.");
                 }
 
