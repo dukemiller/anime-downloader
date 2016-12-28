@@ -22,6 +22,11 @@ namespace anime_downloader.Services
 
         public XmlSettingsService()
         {
+            // The directory won't be automatically created without using WPF Settings, 
+            // so this is probably necessary
+            if (!Directory.Exists(PathConfiguration.ApplicationDirectory))
+                Directory.CreateDirectory(PathConfiguration.ApplicationDirectory);
+
             if (!_reading && File.Exists(SettingsPath))
             {
                 _reading = true;
@@ -41,7 +46,10 @@ namespace anime_downloader.Services
 
             else
             {
-                PathConfig = new PathConfiguration();
+                PathConfig = new PathConfiguration
+                {
+                    TorrentDownloader = @"C:\Program Files (x86)\uTorrent\uTorrent.exe"
+                };
                 FlagConfig = new FlagConfiguration {AlwaysShowTray = true, ExitOnClose = true};
                 MyAnimeListConfig = new MyAnimeListConfiguration();
                 Animes = new List<Anime>();
