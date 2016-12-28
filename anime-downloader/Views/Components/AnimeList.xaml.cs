@@ -1,9 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Windows.Controls;
 using anime_downloader.Models;
-using anime_downloader.Services;
-using anime_downloader.Services.Interfaces;
-using anime_downloader.ViewModels;
 using anime_downloader.ViewModels.Components;
 
 namespace anime_downloader.Views.Components
@@ -34,7 +31,7 @@ namespace anime_downloader.Views.Components
 
             // 
 
-            var settings = (DataContext as AnimeListViewModel)?.Settings as SettingsService;
+            var settings = (DataContext as AnimeListViewModel)?.Settings;
             if (settings != null)
             {
                 settings.SortBy = header.Equals("rating") ? "sortedrating" : header;

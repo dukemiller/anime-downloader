@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Forms;
+using anime_downloader.Models.Configurations;
 using anime_downloader.Services;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
@@ -147,7 +148,7 @@ namespace anime_downloader.Classes
                 new MenuItem("Open &application folder...", (sender, args) =>
                 {
                     if (_settings != null)
-                        Process.Start(_settings.PathConfig.ApplicationDirectory);
+                        Process.Start(PathConfiguration.ApplicationDirectory);
                 }));
 
             _trayContextMenu.MenuItems.Add("-");

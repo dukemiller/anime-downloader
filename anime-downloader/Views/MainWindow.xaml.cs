@@ -29,7 +29,7 @@ namespace anime_downloader.Views
 
         public MainWindow()
         {
-            Settings = new SettingsService();
+            Settings = new XmlSettingsService();
             AnimeAggregate = new AnimeAggregateService(Settings);
             DataContext = new MainWindowViewModel(Settings, AnimeAggregate, Close);
 

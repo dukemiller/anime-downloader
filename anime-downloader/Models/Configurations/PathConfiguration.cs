@@ -44,7 +44,7 @@ namespace anime_downloader.Models.Configurations
         /// <summary>
         ///     The path to the folder containing all settings and configuration files.
         /// </summary>
-        public string ApplicationDirectory => Path.Combine(Environment
+        public static string ApplicationDirectory => Path.Combine(Environment
             .GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "anime_downloader");
 

@@ -8,9 +8,9 @@ using Settings = anime_downloader.Properties.Settings;
 
 namespace anime_downloader.Services
 {
-    public class SettingsService: ISettingsService
+    public class ApplicationSettingsService: ISettingsService
     {
-        public SettingsService()
+        public ApplicationSettingsService()
         {
             if (Settings.Default.Animes == null)
                 Settings.Default.Animes = new List<Anime>();
