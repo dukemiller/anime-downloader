@@ -11,6 +11,7 @@
              d:DataContext="{d:DesignInstance components:AnimeDetailsViewModel}"
              d:DesignHeight="360"
              d:DesignWidth="680"
+             MouseDown="OnMouseDown"
              FocusVisualStyle="{x:Null}"
              mc:Ignorable="d">
     <UserControl.InputBindings>
@@ -56,7 +57,7 @@
             </Style.Triggers>
         </Style>
     </UserControl.Resources>
-    <Grid Background="White">
+    <Grid Background="White" >
 
         <Grid>
 

@@ -11,24 +11,6 @@ namespace anime_downloader.Views.Components
         {
             InitializeComponent();
         }
-        
-        private void Edit(object sender, RoutedEventArgs routedEventArgs)
-        {
-            /*
-            if (NameTextbox.Empty())
-                Methods.Alert("There needs to be a name.");
-            else
-            {
-                var subgroup = SubgroupComboBox.Text;
-                _anime.PreferredSubgroup = subgroup.Equals("(None)") ? "" : subgroup;
-                if (_anime.Status.Equals("Finished") && _anime.Airing)
-                    _anime.Airing = false;
-                // TODO MainWindow.Window.Cycle(MainWindow.Window.AnimeList);
-            }
-            */
-        }
-
-        // 
 
         // 
         
@@ -46,32 +28,19 @@ namespace anime_downloader.Views.Components
             }
         }
         
-        private void AnimeDetails_OnKeyDown(object sender, KeyEventArgs e)
-        {
-            /*
-            // So you can type without changing the view
-            if (Keyboard.FocusedElement is TextBox || Keyboard.FocusedElement is PasswordBox)
-                return;
-
-            if (ButtonText.Equals("Edit"))
-            {
-                if (e.Key == Key.Right)
-                {
-                    GoToNext();
-                    e.Handled = true;
-                }
-                else if (e.Key == Key.Left)
-                {
-                    GoToPrevious();
-                    e.Handled = true;
-                }
-            }
-            */
-        }
-        
         // 
 
         private void LastEpisode_Click(object sender, RoutedEventArgs e) {} // Process.Start(Anime.LastEpisode.Path);
-        
+
+
+        /// <summary>
+        ///     This is necessary to defocus from currently selected textboxes on other elements that aren't
+        ///     inputs e.g. the grid, to allow input bindings set on the user control
+        /// </summary>
+        private void OnMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Keyboard.ClearFocus();
+            Focus();
+        }
     }
 }
