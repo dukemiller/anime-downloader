@@ -15,7 +15,7 @@ namespace anime_downloader.Views.Components
 
         private void UIElement_OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if (IsVisible)
+            if (IsLoaded && IsVisible)
                 Textbox.Focus();
         }
     }
