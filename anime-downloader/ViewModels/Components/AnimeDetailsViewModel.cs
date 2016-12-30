@@ -32,7 +32,11 @@ namespace anime_downloader.ViewModels.Components
                 () => !AnimeAggregate.AnimeService.Animes.Except(new []{Anime}).Any(a => a.Name.ToLower().Trim().Equals(Anime?.Name?.ToLower().Trim()))
                       && Anime?.Name?.Length > 0
             );
-            ExitCommand = new RelayCommand(() => MessengerInstance.Send(Enums.Views.AnimeDisplay));
+            ExitCommand = new RelayCommand(() =>
+            {
+                Settings.Save();
+                MessengerInstance.Send(Enums.Views.AnimeDisplay);
+            });
             MyAnimeListBar = new MyAnimeListBarViewModel(Anime, Settings, AnimeAggregate);
             NextCommand = new RelayCommand(Next);
             PreviousCommand = new RelayCommand(Previous);
@@ -133,6 +137,7 @@ namespace anime_downloader.ViewModels.Components
 
         private void Next()
         {
+            Settings.Save();
             var animes = AnimeAggregate.AnimeService.FilteredAndSorted().ToList();
             var anime = animes.First(an => an.Name.Equals(Anime.Name));
             var position = (animes.IndexOf(anime) + 1) % animes.Count;
@@ -141,6 +146,7 @@ namespace anime_downloader.ViewModels.Components
 
         private void Previous()
         {
+            Settings.Save();
             var animes = AnimeAggregate.AnimeService.FilteredAndSorted().ToList();
             var anime = animes.First(an => an.Name.Equals(Anime.Name));
             var position = animes.IndexOf(anime) - 1 >= 0 ? animes.IndexOf(anime) - 1 : animes.Count - 1;
