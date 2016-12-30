@@ -30,14 +30,22 @@
         <KeyBinding Key="X"
                     Command="{Binding CloseCommand}"
                     Modifiers="Control" />
-        <KeyBinding Modifiers="Control" Key="D1" Command="{Binding HomeCommand}" />
-        <KeyBinding Modifiers="Control" Key="D2" Command="{Binding AnimeCommand}" />
-        <KeyBinding Modifiers="Control" Key="D3" Command="{Binding SettingsCommand}" />
-        <KeyBinding Modifiers="Control" Key="D4" Command="{Binding DownloadCommand}" />
-        <KeyBinding Modifiers="Control" Key="D5" Command="{Binding ManageCommand}" />
-        <KeyBinding Modifiers="Control" Key="D6" Command="{Binding PlaylistCreatorCommand}" />
-        <KeyBinding Modifiers="Control" Key="D7" Command="{Binding WebCommand}" />
-        <KeyBinding Modifiers="Control" Key="D8" Command="{Binding MiscCommand}" />
+        <KeyBinding Key="D1" Modifiers="Alt" Command="{Binding HomeCommand}" />
+        <KeyBinding Key="NumPad1" Command="{Binding HomeCommand}" />
+        <KeyBinding Key="D2" Modifiers="Alt" Command="{Binding AnimeCommand}" />
+        <KeyBinding Key="NumPad2" Command="{Binding AnimeCommand}" />
+        <KeyBinding Key="D3" Modifiers="Alt" Command="{Binding SettingsCommand}" />
+        <KeyBinding Key="NumPad3" Command="{Binding SettingsCommand}" />
+        <KeyBinding Key="D4" Modifiers="Alt" Command="{Binding DownloadCommand}" />
+        <KeyBinding Key="NumPad4" Command="{Binding DownloadCommand}" />
+        <KeyBinding Key="D5" Modifiers="Alt" Command="{Binding ManageCommand}" />
+        <KeyBinding Key="NumPad5" Command="{Binding ManageCommand}" />
+        <KeyBinding Key="D6" Modifiers="Alt" Command="{Binding PlaylistCreatorCommand}" />
+        <KeyBinding Key="NumPad6" Command="{Binding PlaylistCreatorCommand}" />
+        <KeyBinding Key="D7" Modifiers="Alt" Command="{Binding WebCommand}" />
+        <KeyBinding Key="NumPad7" Command="{Binding WebCommand}" />
+        <KeyBinding Key="D8" Modifiers="Alt" Command="{Binding MiscCommand}" />
+        <KeyBinding Key="NumPad8" Command="{Binding MiscCommand}" />
     </Window.InputBindings>
     <Grid Background="White">
         <Grid.ColumnDefinitions>
@@ -46,24 +54,6 @@
         </Grid.ColumnDefinitions>
         <Grid Background="{StaticResource BackgroundColor}" Column="0">
             <StackPanel>
-                <StackPanel.InputBindings>
-                    <KeyBinding Key="D1" Command="{Binding HomeCommand}" />
-                    <KeyBinding Key="NumPad1" Command="{Binding HomeCommand}" />
-                    <KeyBinding Key="D2" Command="{Binding AnimeCommand}" />
-                    <KeyBinding Key="NumPad2" Command="{Binding AnimeCommand}" />
-                    <KeyBinding Key="D3" Command="{Binding SettingsCommand}" />
-                    <KeyBinding Key="NumPad3" Command="{Binding SettingsCommand}" />
-                    <KeyBinding Key="D4" Command="{Binding DownloadCommand}" />
-                    <KeyBinding Key="NumPad4" Command="{Binding DownloadCommand}" />
-                    <KeyBinding Key="D5" Command="{Binding ManageCommand}" />
-                    <KeyBinding Key="NumPad5" Command="{Binding ManageCommand}" />
-                    <KeyBinding Key="D6" Command="{Binding PlaylistCreatorCommand}" />
-                    <KeyBinding Key="NumPad6" Command="{Binding PlaylistCreatorCommand}" />
-                    <KeyBinding Key="D7" Command="{Binding WebCommand}" />
-                    <KeyBinding Key="NumPad7" Command="{Binding WebCommand}" />
-                    <KeyBinding Key="D8" Command="{Binding MiscCommand}" />
-                    <KeyBinding Key="NumPad8" Command="{Binding MiscCommand}" />
-                </StackPanel.InputBindings>
                 <RadioButton Command="{Binding HomeCommand}"
                              Content="Home"
                              xaml:FocusBehavior.IsFocused="True"
