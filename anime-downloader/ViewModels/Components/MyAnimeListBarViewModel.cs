@@ -97,7 +97,6 @@ namespace anime_downloader.ViewModels.Components
                 Anime.MyAnimeList.English = result.English;
                 Anime.MyAnimeList.Synopsis = result.Synopsis;
                 Anime.MyAnimeList.TotalEpisodes = result.TotalEpisodes;
-                Methods.Alert("Updated any information about this show");
             }
 
             else

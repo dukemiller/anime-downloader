@@ -33,12 +33,15 @@
                                              Converter={StaticResource ReverseVisibilityConverter}}" />
                 <Button Command="{Binding ProfileCommand}"
                         Content="Profile"
+                        ToolTip="Go to the MyAnimeList profile of this show."
                         Visibility="{Binding HasId}" />
                 <Button Command="{Binding RefreshCommand}"
                         Content="Refresh"
+                        ToolTip="Refresh/update any information since the last time it was gathered."
                         Visibility="{Binding HasId}" />
                 <Button Command="{Binding ClearCommand}"
                         Content="Clear"
+                        ToolTip="Remove all MyAnimeList data about this show."
                         Visibility="{Binding HasId}" />
             </StackPanel>
         </Border>

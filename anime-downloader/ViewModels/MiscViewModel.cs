@@ -57,7 +57,7 @@ namespace anime_downloader.ViewModels
             // Move duplicates to My Videos
             else if (SelectedIndex == 2)
             {
-                var moveCount = AnimeAggregate.FileService.MoveDuplicatesAsync();
+                var moveCount = await AnimeAggregate.FileService.MoveDuplicatesAsync();
                 Methods.Alert($"Moved {moveCount} files to duplicate folder.");
             }
 
