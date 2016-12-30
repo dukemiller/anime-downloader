@@ -82,7 +82,7 @@ namespace anime_downloader.ViewModels
             PlaylistCreatorCommand = new RelayCommand(
                 () =>
                 {
-                    CurrentView = new PlaylistCreatorViewModel(Settings, AnimeAggregate.Playlist);
+                    CurrentView = new PlaylistCreatorViewModel(Settings, AnimeAggregate.PlaylistService);
                     SelectedIndex = 6;
                 },
                 () => !Busy
@@ -91,7 +91,7 @@ namespace anime_downloader.ViewModels
             WebCommand = new RelayCommand(
                 () =>
                 {
-                    CurrentView = new WebViewModel(Settings, AnimeAggregate.Animes, AnimeAggregate.Mal);
+                    CurrentView = new WebViewModel(Settings, AnimeAggregate.AnimeService, AnimeAggregate.MalService);
                     SelectedIndex = 7;
                 },
                 () => !Busy
@@ -100,7 +100,7 @@ namespace anime_downloader.ViewModels
             MiscCommand = new RelayCommand(
                 () =>
                 {
-                    CurrentView = new MiscViewModel(AnimeAggregate.Animes, AnimeAggregate.Files, AnimeAggregate.Mal);
+                    CurrentView = new MiscViewModel(Settings, AnimeAggregate);
                     SelectedIndex = 8;
                 },
                 () => !Busy

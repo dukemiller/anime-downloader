@@ -5,9 +5,17 @@ using anime_downloader.Models;
 
 namespace anime_downloader.Services.Interfaces
 {
+    /// <summary>
+    ///     The logic for a downloading host provider for anime episodes, usually in 
+    ///     the form of a torrent host.
+    /// </summary>
     public interface IAnimeDownloaderService
     {
+        // 
+        string ServiceName { get; }
         Task<bool> ServiceAvailable();
+
+        // 
         Task<IEnumerable<Torrent>> GetTorrentsAsync(Anime anime, int episode);
         Task<int> DownloadAsync(IEnumerable<Anime> animes, Action<string> output);
         Task<int> DownloadAsync(IEnumerable<Anime> animes, IEnumerable<AnimeFileRange> ranges,

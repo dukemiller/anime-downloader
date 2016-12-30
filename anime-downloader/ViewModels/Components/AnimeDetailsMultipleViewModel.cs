@@ -105,13 +105,13 @@ namespace anime_downloader.ViewModels.Components
                     .ToList();
             if (names.Distinct().Count() != names.Count)
                 Methods.Alert("Names have to be unique.");
-            else if (AnimeAggregate.Animes.Animes.Select(a => a.Name.ToLower()).Intersect(names).Any())
+            else if (AnimeAggregate.AnimeService.Animes.Select(a => a.Name.ToLower()).Intersect(names).Any())
                 Methods.Alert("A title entered already exists in the anime list.");
             else
             {
                 foreach (var name in names)
                 {
-                    AnimeAggregate.Animes.Add(new Anime
+                    AnimeAggregate.AnimeService.Add(new Anime
                     {
                         Name = name,
                         Airing = Details.Airing,

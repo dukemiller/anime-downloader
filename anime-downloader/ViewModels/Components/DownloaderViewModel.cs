@@ -37,13 +37,13 @@ namespace anime_downloader.ViewModels.Components
         {
             if (!Settings.CrucialDirectoriesExist())
             {
-                Text += "Not all paths have been correctly configured.";
+                Text += ">> Not all paths have been correctly configured.";
                 return;
             }
 
             MessengerInstance.Send(new WorkMessage {Working = true});
 
-            if (await AnimeAggregate.Downloader.ServiceAvailable())
+            if (await AnimeAggregate.DownloadService.ServiceAvailable())
             {
                 try
                 {
@@ -65,7 +65,7 @@ namespace anime_downloader.ViewModels.Components
 
             else
             {
-                Text += ">> Nyaa is currently offline. Try checking later.";
+                Text += $">> {AnimeAggregate.DownloadService.ServiceName} is currently offline. Try checking later.";
             }
 
             MessengerInstance.Send(new WorkMessage { Working = false });
@@ -76,17 +76,12 @@ namespace anime_downloader.ViewModels.Components
         /// </summary>
         private async Task CheckForLatestAsync()
         {
-            var animes = AnimeAggregate.Animes.AiringAndWatching.Where(anime =>
-            {
-                if (anime.MyAnimeList.HasId && anime.MyAnimeList.Total != 0)
-                    return anime.Episode != anime.MyAnimeList.Total;
-                return true;
-            }).ToList();
+            var animes = AnimeAggregate.AnimeService.AiringAndWatchingAndNotCompleted().ToList();
 
             if (animes.Any())
             {
                 Text += ">> Searching for currently airing anime episodes ...\n";
-                var downloaded = await AnimeAggregate.Downloader.DownloadAsync(animes, s => Text += s + '\n');
+                var downloaded = await AnimeAggregate.DownloadService.DownloadAsync(animes, s => Text += s + '\n');
                 Text += downloaded > 0 ? $">> Found {downloaded} anime downloads." : ">> No new anime found.";
             }
 
@@ -112,13 +107,13 @@ namespace anime_downloader.ViewModels.Components
             {
                 var total = 0;
                 Text += ">> Attempting to catch up on airing anime episodes ...\n";
-                foreach (var anime in AnimeAggregate.Animes.Animes.ToList())
+                foreach (var anime in AnimeAggregate.AnimeService.Animes.ToList())
                 {
                     bool downloaded;
                     do
                     {
-                        var links = await AnimeAggregate.Downloader.GetTorrentsAsync(anime, anime.NextEpisode);
-                        downloaded = await AnimeAggregate.Downloader.DownloadEpisodeAsync(links, anime, s => Text += s + '\n');
+                        var links = await AnimeAggregate.DownloadService.GetTorrentsAsync(anime, anime.NextEpisode);
+                        downloaded = await AnimeAggregate.DownloadService.DownloadEpisodeAsync(links, anime, s => Text += s + '\n');
                         if (downloaded)
                             total++;
                     } while (downloaded);
@@ -145,20 +140,20 @@ namespace anime_downloader.ViewModels.Components
             Text += ">> Finding all missing episodes ...\n";
 
             var allEpisodeFiles =
-                (await AnimeAggregate.Files.GetEpisodesAsync(EpisodeStatus.All)).ToList();
+                (await AnimeAggregate.FileService.GetEpisodesAsync(EpisodeStatus.All)).ToList();
 
             var firstEpisodeFiles =
-                await Task.Run(() => AnimeAggregate.Files.FirstEpisodes(allEpisodeFiles).OrderBy(a => a.Name));
+                await Task.Run(() => AnimeAggregate.FileService.FirstEpisodes(allEpisodeFiles).OrderBy(a => a.Name));
 
             var lastEpisodeFiles =
-                await Task.Run(() => AnimeAggregate.Files.LastEpisodes(allEpisodeFiles).OrderBy(a => a.Name));
+                await Task.Run(() => AnimeAggregate.FileService.LastEpisodes(allEpisodeFiles).OrderBy(a => a.Name));
 
             var animeFileRanges =
                 await Task.Run(() => firstEpisodeFiles.Zip(lastEpisodeFiles, (a, b) => new AnimeFileRange(a, b)));
 
             var total =
                 await
-                    AnimeAggregate.Downloader.DownloadAsync(AnimeAggregate.Animes.AiringAndWatching, animeFileRanges,
+                    AnimeAggregate.DownloadService.DownloadAsync(AnimeAggregate.AnimeService.AiringAndWatching, animeFileRanges,
                         allEpisodeFiles, s => Text += s + '\n');
 
             Text += total > 0 ? $">> Found {total} anime downloads." : ">> No new anime found.";

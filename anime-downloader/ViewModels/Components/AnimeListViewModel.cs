@@ -44,16 +44,16 @@ namespace anime_downloader.ViewModels.Components
                 if (args.PropertyName.Equals("Text"))
                 {
                     if (Find.Text.Equals(""))
-                        Animes = new ObservableCollection<Anime>(AnimeAggregate.Animes.FilteredAndSorted());
+                        Animes = new ObservableCollection<Anime>(AnimeAggregate.AnimeService.FilteredAndSorted());
                     else
                         Animes =
                             new ObservableCollection<Anime>(
-                                AnimeAggregate.Animes.Animes.Where(a => a.Name.ToLower().Contains(Find.Text.ToLower())));
+                                AnimeAggregate.AnimeService.Animes.Where(a => a.Name.ToLower().Contains(Find.Text.ToLower())));
                 }
             };
 
             FilterText = Settings.FilterBy;
-            Animes = new ObservableCollection<Anime>(AnimeAggregate.Animes.FilteredAndSorted());
+            Animes = new ObservableCollection<Anime>(AnimeAggregate.AnimeService.FilteredAndSorted());
             
             // 
 
@@ -81,14 +81,14 @@ namespace anime_downloader.ViewModels.Components
                 _filterText = value;
                 Settings.FilterBy = value;
                 Settings.Save();
-                Animes = new ObservableCollection<Anime>(AnimeAggregate.Animes.FilteredAndSorted());
+                Animes = new ObservableCollection<Anime>(AnimeAggregate.AnimeService.FilteredAndSorted());
             }
         }
 
         public string Stats
         {
             get {
-                var anime = AnimeAggregate.Animes.Animes.ToList();
+                var anime = AnimeAggregate.AnimeService.Animes.ToList();
                 return $"{anime.Count} total. " +
                        $"{anime.Count(a => a.Airing && a.Status.Equals("Watching"))} airing/watching, " +
                        $"{anime.Count(a => a.Status.Equals("Finished"))} finished, " +
@@ -166,7 +166,7 @@ namespace anime_downloader.ViewModels.Components
 
                 else
                 {
-                    AnimeAggregate.Animes.Remove(anime);
+                    AnimeAggregate.AnimeService.Remove(anime);
                     Animes.Remove(anime);
                 }
             }

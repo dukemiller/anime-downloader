@@ -17,6 +17,16 @@ namespace anime_downloader.Services
 
         public IEnumerable<Anime> Animes => Settings.Animes;
 
+        public IEnumerable<Anime> FullyWatched()
+        {
+            return AiringAndWatching
+                .Where(
+                    anime =>
+                        anime.MyAnimeList.HasId &&
+                        (anime.MyAnimeList.OverallTotal > 0 && anime.Episode == anime.MyAnimeList.OverallTotal ||
+                         anime.MyAnimeList.TotalEpisodes > 0 && anime.Episode == anime.MyAnimeList.TotalEpisodes));
+        }
+
         public IEnumerable<Anime> FilteredAndSorted()
         {
             var propertyDescriptor = TypeDescriptor
@@ -34,6 +44,17 @@ namespace anime_downloader.Services
             return Settings.FlagConfig.SortByReversed
                 ? animes.OrderByDescending(x => propertyDescriptor.GetValue(x))
                 : animes.OrderBy(x => propertyDescriptor.GetValue(x));
+        }
+
+        public IEnumerable<Anime> AiringAndWatchingAndNotCompleted()
+        {
+            return AiringAndWatching
+                .Where(anime =>
+                {
+                    if (anime.MyAnimeList.HasId && anime.MyAnimeList.Total != 0)
+                        return anime.Episode != anime.MyAnimeList.Total;
+                    return true;
+                });
         }
 
         public IEnumerable<Anime> AiringAndWatching => Watching.Where(a => a.Airing);
@@ -54,5 +75,14 @@ namespace anime_downloader.Services
             Settings.Animes.Remove(anime);
             Settings.Save();
         }
+
+        public void Remove(string name)
+        {
+            var anime = Animes.First(a => a.Name.ToLower().Equals(name.ToLower()));
+            if (anime != null)
+                Remove(anime);
+        }
+
+        
     }
 }

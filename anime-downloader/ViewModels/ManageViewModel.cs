@@ -19,7 +19,7 @@ namespace anime_downloader.ViewModels
             Settings = settings;
             AnimeAggregate = animeAggregate;
 
-            Unwatched = new FileListViewModel(AnimeAggregate.Files, animeAggregate.Animes, animeAggregate.Playlist)
+            Unwatched = new FileListViewModel(AnimeAggregate.FileService, animeAggregate.AnimeService, animeAggregate.PlaylistService)
             {
                 Title = "Unwatched",
                 ImageResourcePath = "../Resources/Images/right.png",
@@ -28,7 +28,7 @@ namespace anime_downloader.ViewModels
                 MovePath = Settings.PathConfig.Watched
             };
 
-            Watched = new FileListViewModel(AnimeAggregate.Files, animeAggregate.Animes, animeAggregate.Playlist)
+            Watched = new FileListViewModel(AnimeAggregate.FileService, animeAggregate.AnimeService, animeAggregate.PlaylistService)
             {
                 Title = "Watched",
                 ImageResourcePath = "../Resources/Images/left.png",

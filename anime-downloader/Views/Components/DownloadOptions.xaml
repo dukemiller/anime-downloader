@@ -58,8 +58,8 @@
             </GroupBox>
             <Button Grid.Row="1"
                     HorizontalAlignment="Right"
-                    xaml:FocusBehavior.IsFocused="True"
                     Command="{Binding SearchCommand}"
+                    xaml:FocusBehavior.IsFocused="True"
                     Content="Search" />
             <Button Grid.Row="1"
                     HorizontalAlignment="Left"

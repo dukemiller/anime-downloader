@@ -59,7 +59,7 @@ namespace anime_downloader.ViewModels.Components
         private async void Find()
         {
             MessengerInstance.Send(new WorkMessage { Working = true });
-            var id = await AnimeAggregate.Mal.GetId(Anime);
+            var id = await AnimeAggregate.MalService.GetId(Anime);
             RaisePropertyChanged(nameof(HasId));
             Settings.Save();
             if (!id)
@@ -86,7 +86,7 @@ namespace anime_downloader.ViewModels.Components
         {
             MessengerInstance.Send(new WorkMessage { Working = true });
 
-            var animeResults = await AnimeAggregate.Mal.Find(HttpUtility.UrlEncode(Anime.MyAnimeList.Title));
+            var animeResults = await AnimeAggregate.MalService.Find(HttpUtility.UrlEncode(Anime.MyAnimeList.Title));
             var result = animeResults.FirstOrDefault(r => r.Id.Equals(Anime.MyAnimeList.Id));
 
             if (result != null)

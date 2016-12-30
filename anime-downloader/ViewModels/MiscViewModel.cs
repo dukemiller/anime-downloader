@@ -13,20 +13,17 @@ namespace anime_downloader.ViewModels
     {
         private int _selectedIndex;
 
-        public MiscViewModel(IAnimeService animes, IAnimeFileService fileService, IMyAnimeListService malService)
+        public MiscViewModel(ISettingsService settings, IAnimeAggregateService animeAggregate)
         {
-            Animes = animes;
-            FileService = fileService;
-            MalService = malService;
+            Settings = settings;
+            AnimeAggregate = animeAggregate;
             SelectedIndex = 0;
             SubmitCommand = new RelayCommand(DoAction);
         }
 
-        public IAnimeService Animes { get; set; }
+        private ISettingsService Settings { get; }
 
-        public IAnimeFileService FileService { get; set; }
-
-        public IMyAnimeListService MalService { get; set; }
+        private IAnimeAggregateService AnimeAggregate { get; }
 
         public int SelectedIndex
         {
@@ -45,19 +42,14 @@ namespace anime_downloader.ViewModels
             if (SelectedIndex == 1)
             {
                 var names = new List<string>();
-                foreach (var anime in Animes
-                    .AiringAndWatching
-                    .Where(
-                        a =>
-                            a.MyAnimeList.HasId &&
-                            (((a.MyAnimeList.OverallTotal > 0) && (a.Episode == a.MyAnimeList.OverallTotal)) ||
-                             ((a.MyAnimeList.TotalEpisodes > 0) && (a.Episode == a.MyAnimeList.TotalEpisodes)))))
+                foreach (var anime in AnimeAggregate.AnimeService.FullyWatched())
                 {
                     anime.Status = "Finished";
                     anime.Airing = false;
                     names.Add(anime.Title);
                 }
 
+                Settings.Save();
                 var result = names.Count > 0 ? string.Join(", ", names) : "no shows";
                 Methods.Alert($"Marked {result} as finished. ");
             }
@@ -65,7 +57,7 @@ namespace anime_downloader.ViewModels
             // Move duplicates to My Videos
             else if (SelectedIndex == 2)
             {
-                var moveCount = FileService.MoveDuplicatesAsync();
+                var moveCount = AnimeAggregate.FileService.MoveDuplicatesAsync();
                 Methods.Alert($"Moved {moveCount} files to duplicate folder.");
             }
 
@@ -74,16 +66,16 @@ namespace anime_downloader.ViewModels
             {
                 var updated = new List<string>();
 
-                var needsUpdating = Animes
+                var needsUpdating = AnimeAggregate.AnimeService
                     .AiringAndWatching
                     .Where(a => a.MyAnimeList.HasId && (a.MyAnimeList.TotalEpisodes == 0))
                     .ToList();
 
                 foreach (var anime in needsUpdating)
                 {
-                    var results = await MalService.Find(HttpUtility.UrlEncode(anime.Title));
+                    var results = await AnimeAggregate.MalService.Find(HttpUtility.UrlEncode(anime.Title));
                     var closest = results.FirstOrDefault(r => r.Id.Equals(anime.MyAnimeList.Id));
-                    if ((closest != null) && !anime.MyAnimeList.TotalEpisodes.Equals(closest.TotalEpisodes))
+                    if (closest != null && !anime.MyAnimeList.TotalEpisodes.Equals(closest.TotalEpisodes))
                     {
                         updated.Add(anime.Title);
                         anime.MyAnimeList.TotalEpisodes = closest.TotalEpisodes;

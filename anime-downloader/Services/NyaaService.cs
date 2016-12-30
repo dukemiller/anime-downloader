@@ -39,6 +39,8 @@ namespace anime_downloader.Services
 
         public IAnimeFileService Files { get; set; }
 
+        public string ServiceName => "Nyaa";
+
         // 
 
         public bool CanDownload(Torrent torrent, Anime anime)

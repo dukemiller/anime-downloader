@@ -29,7 +29,7 @@ namespace anime_downloader.ViewModels.Components
             ButtonText = "Edit";
             ButtonCommand = new RelayCommand(
                 Edit,
-                () => !AnimeAggregate.Animes.Animes.Except(new []{Anime}).Any(a => a.Name.ToLower().Trim().Equals(Anime?.Name?.ToLower().Trim()))
+                () => !AnimeAggregate.AnimeService.Animes.Except(new []{Anime}).Any(a => a.Name.ToLower().Trim().Equals(Anime?.Name?.ToLower().Trim()))
                       && Anime?.Name?.Length > 0
             );
             ExitCommand = new RelayCommand(() => MessengerInstance.Send(Enums.Views.AnimeDisplay));
@@ -53,7 +53,7 @@ namespace anime_downloader.ViewModels.Components
             ButtonText = "Add";
             ButtonCommand = new RelayCommand(
                 Create,
-                () => !AnimeAggregate.Animes.Animes.Any(a => a.Name.ToLower().Trim().Equals(Anime?.Name?.ToLower().Trim()))
+                () => !AnimeAggregate.AnimeService.Animes.Any(a => a.Name.ToLower().Trim().Equals(Anime?.Name?.ToLower().Trim()))
                       && Anime?.Name?.Length > 0
             );
             ExitCommand = new RelayCommand(() => MessengerInstance.Send(Enums.Views.AnimeDisplay));

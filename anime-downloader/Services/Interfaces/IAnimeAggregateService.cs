@@ -1,11 +1,14 @@
 ﻿namespace anime_downloader.Services.Interfaces
 {
+    /// <summary>
+    ///     A collection of the main services used throughout the application.
+    /// </summary>
     public interface IAnimeAggregateService
     {
-        IAnimeService Animes { get; set; }
-        IAnimeFileService Files { get; set; }
-        IAnimeDownloaderService Downloader { get; set; }
-        IMyAnimeListService Mal { get; set; }
-        IPlaylistService Playlist { get; set; }
+        IAnimeService AnimeService { get; set; }
+        IAnimeFileService FileService { get; set; }
+        IAnimeDownloaderService DownloadService { get; set; }
+        IMyAnimeListService MalService { get; set; }
+        IPlaylistService PlaylistService { get; set; }
     }
 }
