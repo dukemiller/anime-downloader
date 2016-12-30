@@ -30,22 +30,30 @@
         <KeyBinding Key="X"
                     Command="{Binding CloseCommand}"
                     Modifiers="Control" />
-        <KeyBinding Key="D1" Modifiers="Alt" Command="{Binding HomeCommand}" />
-        <KeyBinding Key="NumPad1" Command="{Binding HomeCommand}" />
-        <KeyBinding Key="D2" Modifiers="Alt" Command="{Binding AnimeCommand}" />
-        <KeyBinding Key="NumPad2" Command="{Binding AnimeCommand}" />
-        <KeyBinding Key="D3" Modifiers="Alt" Command="{Binding SettingsCommand}" />
-        <KeyBinding Key="NumPad3" Command="{Binding SettingsCommand}" />
-        <KeyBinding Key="D4" Modifiers="Alt" Command="{Binding DownloadCommand}" />
-        <KeyBinding Key="NumPad4" Command="{Binding DownloadCommand}" />
-        <KeyBinding Key="D5" Modifiers="Alt" Command="{Binding ManageCommand}" />
-        <KeyBinding Key="NumPad5" Command="{Binding ManageCommand}" />
-        <KeyBinding Key="D6" Modifiers="Alt" Command="{Binding PlaylistCreatorCommand}" />
-        <KeyBinding Key="NumPad6" Command="{Binding PlaylistCreatorCommand}" />
-        <KeyBinding Key="D7" Modifiers="Alt" Command="{Binding WebCommand}" />
-        <KeyBinding Key="NumPad7" Command="{Binding WebCommand}" />
-        <KeyBinding Key="D8" Modifiers="Alt" Command="{Binding MiscCommand}" />
-        <KeyBinding Key="NumPad8" Command="{Binding MiscCommand}" />
+        <KeyBinding Key="D1"
+                    Command="{Binding HomeCommand}"
+                    Modifiers="Alt" />
+        <KeyBinding Key="D2"
+                    Command="{Binding AnimeCommand}"
+                    Modifiers="Alt" />
+        <KeyBinding Key="D3"
+                    Command="{Binding SettingsCommand}"
+                    Modifiers="Alt" />
+        <KeyBinding Key="D4"
+                    Command="{Binding DownloadCommand}"
+                    Modifiers="Alt" />
+        <KeyBinding Key="D5"
+                    Command="{Binding ManageCommand}"
+                    Modifiers="Alt" />
+        <KeyBinding Key="D6"
+                    Command="{Binding PlaylistCreatorCommand}"
+                    Modifiers="Alt" />
+        <KeyBinding Key="D7"
+                    Command="{Binding WebCommand}"
+                    Modifiers="Alt" />
+        <KeyBinding Key="D8"
+                    Command="{Binding MiscCommand}"
+                    Modifiers="Alt" />
     </Window.InputBindings>
     <Grid Background="White">
         <Grid.ColumnDefinitions>
@@ -54,9 +62,9 @@
         </Grid.ColumnDefinitions>
         <Grid Background="{StaticResource BackgroundColor}" Column="0">
             <StackPanel>
-                <RadioButton Command="{Binding HomeCommand}"
+                <RadioButton xaml:FocusBehavior.IsFocused="True"
+                             Command="{Binding HomeCommand}"
                              Content="Home"
-                             xaml:FocusBehavior.IsFocused="True"
                              IsChecked="{Binding SelectedIndex,
                                                  Converter={StaticResource CompareConverter},
                                                  ConverterParameter=1}" />
