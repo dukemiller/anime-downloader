@@ -34,6 +34,8 @@ namespace anime_downloader.ViewModels.Components
             );
             ExitCommand = new RelayCommand(() => MessengerInstance.Send(Enums.Views.AnimeDisplay));
             MyAnimeListBar = new MyAnimeListBarViewModel(Anime, Settings, AnimeAggregate);
+            NextCommand = new RelayCommand(Next);
+            PreviousCommand = new RelayCommand(Previous);
         }
 
         /// <summary>
@@ -83,6 +85,10 @@ namespace anime_downloader.ViewModels.Components
 
         public RelayCommand ExitCommand { get; set; }
 
+        public RelayCommand NextCommand { get; set; }
+
+        public RelayCommand PreviousCommand { get; set; }
+
         public MyAnimeListBarViewModel MyAnimeListBar
         {
             get { return _myAnimeListBar; }
@@ -123,6 +129,22 @@ namespace anime_downloader.ViewModels.Components
                 Anime.PreferredSubgroup = SelectedSubgroup;
             Settings.Animes.Add(Anime);
             MessengerInstance.Send(new NotificationMessage("anime_list"));
+        }
+
+        private void Next()
+        {
+            var animes = AnimeAggregate.AnimeService.FilteredAndSorted().ToList();
+            var anime = animes.First(an => an.Name.Equals(Anime.Name));
+            var position = (animes.IndexOf(anime) + 1) % animes.Count;
+            MessengerInstance.Send(animes.ElementAt(position));
+        }
+
+        private void Previous()
+        {
+            var animes = AnimeAggregate.AnimeService.FilteredAndSorted().ToList();
+            var anime = animes.First(an => an.Name.Equals(Anime.Name));
+            var position = animes.IndexOf(anime) - 1 >= 0 ? animes.IndexOf(anime) - 1 : animes.Count - 1;
+            MessengerInstance.Send(animes.ElementAt(position));
         }
     }
 }

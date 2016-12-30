@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Input;
-using anime_downloader.Classes;
 
 namespace anime_downloader.Views.Components
 {
@@ -12,22 +11,7 @@ namespace anime_downloader.Views.Components
         {
             InitializeComponent();
         }
-
-        private void Add(object sender, RoutedEventArgs routedEventArgs)
-        {
-            /*
-            if (NameTextbox.Empty())
-                Methods.Alert("There needs to be a name.");
-            else
-            {
-                Anime.PreferredSubgroup = Anime.PreferredSubgroup.Equals("(None)") ? "" : Anime.PreferredSubgroup;
-                Anime.Episode = Anime.Episode;
-                // MainWindow.Window.AnimeCollection.Add(Anime);
-                // TODO MainWindow.Window.AnimeList.Press();
-            }
-            */
-        }
-
+        
         private void Edit(object sender, RoutedEventArgs routedEventArgs)
         {
             /*
@@ -45,28 +29,6 @@ namespace anime_downloader.Views.Components
         }
 
         // 
-
-        private void GoToNext()
-        {
-            /*
-            var animes = MainWindow.Window.AnimeCollection.FilteredAndSorted.ToList();
-            var anime = animes.First(an => an.Name.Equals(_anime.Name));
-            var position = (animes.IndexOf(anime) + 1) % animes.Count;
-            MainWindow.Window.DisplayTransition();
-            MainWindow.Window.ChangeDisplay<AnimeDetails>().Load(animes.ElementAt(position));
-            */
-        }
-
-        private void GoToPrevious()
-        {
-            /*
-            var animes = MainWindow.Window.AnimeCollection.FilteredAndSorted.ToList();
-            var anime = animes.First(an => an.Name.Equals(_anime.Name));
-            var position = animes.IndexOf(anime) - 1 >= 0 ? animes.IndexOf(anime) - 1 : animes.Count - 1;
-            MainWindow.Window.DisplayTransition();
-            MainWindow.Window.ChangeDisplay<AnimeDetails>().Load(animes.ElementAt(position));
-            */
-        }
 
         // 
         
@@ -105,13 +67,6 @@ namespace anime_downloader.Views.Components
                 }
             }
             */
-        }
-
-        private void AnimeDetails_OnLoaded(object sender, RoutedEventArgs e)
-        {
-            PreviewKeyDown += AnimeDetails_OnKeyDown;
-            Focusable = true;
-            Focus();
         }
         
         // 

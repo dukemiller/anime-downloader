@@ -100,7 +100,6 @@ namespace anime_downloader.Models
             }
         }
 
-        // [XmlAttribute("series_continuation_episode")]
         [XmlAttribute("series_continuation_episode")]
         public string SeriesContinuationEpisode { get; set; }
         

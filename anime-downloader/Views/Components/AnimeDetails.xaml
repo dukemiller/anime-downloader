@@ -6,17 +6,19 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
+             Focusable="True"
+             xaml:FocusBehavior.IsFocused="True"
              d:DataContext="{d:DesignInstance components:AnimeDetailsViewModel}"
              d:DesignHeight="360"
              d:DesignWidth="680"
              FocusVisualStyle="{x:Null}"
-             Loaded="AnimeDetails_OnLoaded"
              mc:Ignorable="d">
-
     <UserControl.InputBindings>
         <KeyBinding Key="Enter" Command="{Binding ButtonCommand}" />
-        <KeyBinding Key="Escape" Command="{Binding ExitCommand}"/>
-        <xaml:ExtendedMouseBinding Gesture="XButton1"  Command="{Binding ExitCommand}" />
+        <KeyBinding Key="Escape" Command="{Binding ExitCommand}" />
+        <KeyBinding Key="Right" Command="{Binding NextCommand}"/>
+        <KeyBinding Key="Left" Command="{Binding PreviousCommand}"/>
+        <xaml:ExtendedMouseBinding Command="{Binding ExitCommand}" Gesture="XButton1" />
     </UserControl.InputBindings>
     <UserControl.Resources>
 
