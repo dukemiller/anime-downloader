@@ -171,6 +171,7 @@
                 <ComboBoxItem Content="On Hold" IsSelected="{Binding FilterText, Converter={StaticResource StringCompareConverter}, ConverterParameter='On Hold'}" />
                 <ComboBoxItem Content="Considering" IsSelected="{Binding FilterText, Converter={StaticResource StringCompareConverter}, ConverterParameter=Considering}" />
                 <ComboBoxItem Content="Dropped" IsSelected="{Binding FilterText, Converter={StaticResource StringCompareConverter}, ConverterParameter=Dropped}" />
+                <ComboBoxItem Content="Needs Synchronize" IsSelected="{Binding FilterText, Converter={StaticResource StringCompareConverter}, ConverterParameter='Needs Synchronize'}" />
             </ComboBox>
         </Grid>
     </Grid>

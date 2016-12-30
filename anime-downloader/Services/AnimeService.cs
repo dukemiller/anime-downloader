@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Windows.Media;
 using anime_downloader.Models;
 using anime_downloader.Services.Interfaces;
 
@@ -29,16 +30,21 @@ namespace anime_downloader.Services
 
         public IEnumerable<Anime> FilteredAndSorted()
         {
+            var animes = Animes;
+
             var propertyDescriptor = TypeDescriptor
                 .GetProperties(typeof(Anime))
                 .Find(Settings.SortBy, true);
 
-            var animes = Animes;
-
             if (!string.IsNullOrEmpty(Settings.FilterBy))
             {
-                var filters = Settings.FilterBy.Split('/');
-                animes = animes.Where(a => filters.Any(f => f.Equals(a.Status)));
+                if (Settings.FilterBy.Equals("Needs Synchronize"))
+                    animes = animes.Where(anime => anime.MyAnimeList.HasId && anime.MyAnimeList.NeedsUpdating);
+                else
+                {
+                    var filters = Settings.FilterBy.Split('/');
+                    animes = animes.Where(a => filters.Any(f => f.Equals(a.Status)));
+                }
             }
 
             return Settings.FlagConfig.SortByReversed
