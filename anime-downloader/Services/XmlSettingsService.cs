@@ -16,20 +16,31 @@ namespace anime_downloader.Services
         private static readonly string SettingsPath = Path.Combine(PathConfiguration.ApplicationDirectory,
             "settings.xml");
 
-        private static bool _reading;
-
         // 
 
         public XmlSettingsService()
+        {
+            PathConfig = new PathConfiguration
+            {
+                TorrentDownloader = @"C:\Program Files (x86)\uTorrent\uTorrent.exe"
+            };
+            FlagConfig = new FlagConfiguration {AlwaysShowTray = true, ExitOnClose = true};
+            MyAnimeListConfig = new MyAnimeListConfiguration();
+            Animes = new List<Anime>();
+            Subgroups = new List<string>();
+            SortBy = "name";
+            FilterBy = "";
+        }
+
+        public XmlSettingsService Load()
         {
             // The directory won't be automatically created without using WPF Settings, 
             // so this is probably necessary
             if (!Directory.Exists(PathConfiguration.ApplicationDirectory))
                 Directory.CreateDirectory(PathConfiguration.ApplicationDirectory);
 
-            if (!_reading && File.Exists(SettingsPath))
+            if (File.Exists(SettingsPath))
             {
-                _reading = true;
                 using (var sw = new StreamReader(SettingsPath))
                 {
                     var xmls = new XmlSerializer(typeof(XmlSettingsService));
@@ -43,20 +54,7 @@ namespace anime_downloader.Services
                     Animes = settings?.Animes;
                 }
             }
-
-            else
-            {
-                PathConfig = new PathConfiguration
-                {
-                    TorrentDownloader = @"C:\Program Files (x86)\uTorrent\uTorrent.exe"
-                };
-                FlagConfig = new FlagConfiguration {AlwaysShowTray = true, ExitOnClose = true};
-                MyAnimeListConfig = new MyAnimeListConfiguration();
-                Animes = new List<Anime>();
-                Subgroups = new List<string>();
-                SortBy = "name";
-                FilterBy = "";
-            }
+            return this;
         }
 
         // 
