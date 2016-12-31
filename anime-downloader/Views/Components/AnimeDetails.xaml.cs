@@ -30,9 +30,6 @@ namespace anime_downloader.Views.Components
         
         // 
 
-        private void LastEpisode_Click(object sender, RoutedEventArgs e) {} // Process.Start(Anime.LastEpisode.Path);
-
-
         /// <summary>
         ///     This is necessary to defocus from currently selected textboxes on other elements that aren't
         ///     inputs e.g. the grid, to allow input bindings set on the user control

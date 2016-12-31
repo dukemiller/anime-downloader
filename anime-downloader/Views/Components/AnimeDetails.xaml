@@ -288,18 +288,20 @@
 
             <DockPanel Grid.Row="1">
 
-                <!--<Button Click="LastEpisode_Click"
-                        Content="Last episode"
-                        Visibility="{Binding Anime.LastEpisode,
-                                             Converter={StaticResource IsNullVisibilityConverter}}" />-->
-
                 <!--  Only visible when not editing  -->
-                <ContentPresenter Margin="30,5" Content="{Binding MyAnimeListBar}" />
+                <ContentPresenter Margin="5" Content="{Binding MyAnimeListBar}" />
 
-                <Button HorizontalAlignment="Right"
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button 
+                        Margin="5"
+                        Command="{Binding LastEpisodeCommand}"
+                        Content="Last episode" />
+
+                    <Button 
+                        Margin="5"
                         Command="{Binding ButtonCommand}"
                         Content="{Binding ButtonText}" />
-
+                </StackPanel>
             </DockPanel>
         </Grid>
     </Grid>

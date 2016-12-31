@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Threading;
 using anime_downloader.Models;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
@@ -19,6 +23,7 @@ namespace anime_downloader.ViewModels.Components
         private string _selectedSubgroup;
         private ISettingsService _settings;
         private MyAnimeListBarViewModel _myAnimeListBar;
+        private bool _lastEpisodeAvailable;
 
         // 
 
@@ -31,19 +36,33 @@ namespace anime_downloader.ViewModels.Components
             AnimeAggregate = animeAggregate;
             Anime = anime;
             ButtonText = "Edit";
+
             ButtonCommand = new RelayCommand(
                 Edit,
                 () => !AnimeAggregate.AnimeService.Animes.Except(new []{Anime}).Any(a => a.Name.ToLower().Trim().Equals(Anime?.Name?.ToLower().Trim()))
                       && Anime?.Name?.Length > 0
             );
+
             ExitCommand = new RelayCommand(() =>
             {
                 Settings.Save();
                 MessengerInstance.Send(Enums.Views.AnimeDisplay);
             });
+
             MyAnimeListBar = new MyAnimeListBarViewModel(Anime, Settings, AnimeAggregate);
             NextCommand = new RelayCommand(Next);
             PreviousCommand = new RelayCommand(Previous);
+
+
+            // Default of true to avoid the flicker on the majority case that the file is found
+            LastEpisodeAvailable = true;
+            LastEpisodeCommand = new RelayCommand(
+                PlayLastEpisode,
+                () => LastEpisodeAvailable
+            );
+            // It's an expensive operation so it has to be async or creating the view makes an upward
+            // of 400ms delay
+            GetLastEpisode();
         }
 
         /// <summary>
@@ -81,6 +100,12 @@ namespace anime_downloader.ViewModels.Components
 
         private IAnimeAggregateService AnimeAggregate { get; }
 
+        private bool LastEpisodeAvailable
+        {
+            get { return _lastEpisodeAvailable; }
+            set { Set(() => LastEpisodeAvailable, ref _lastEpisodeAvailable, value); }
+        }
+
         public string ButtonText
         {
             get { return _buttonText; }
@@ -92,6 +117,8 @@ namespace anime_downloader.ViewModels.Components
             get { return _buttonCommand; }
             set { Set(() => ButtonCommand, ref _buttonCommand, value); }
         }
+
+        public RelayCommand LastEpisodeCommand { get; set; }
 
         public RelayCommand ExitCommand { get; set; }
 
@@ -126,6 +153,18 @@ namespace anime_downloader.ViewModels.Components
         }
         
         // 
+
+        private async void GetLastEpisode()
+        {
+            await Task.Run(() =>
+            {
+                var path = AnimeAggregate.FileService.LastEpisode(Anime);
+                LastEpisodeAvailable = path != null;
+                Application.Current.Dispatcher.InvokeAsync(() => LastEpisodeCommand.RaiseCanExecuteChanged());
+            });
+        }
+
+        private void PlayLastEpisode() => Process.Start(AnimeAggregate.FileService.LastEpisode(Anime).Path);
 
         private void Edit()
         {
