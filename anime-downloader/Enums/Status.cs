@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using anime_downloader.Classes;
 
 namespace anime_downloader.Enums
 {
+    [TypeConverter(typeof(EnumDescriptionTypeConverter))]
     [Serializable]
     public enum Status
     {

@@ -120,7 +120,7 @@
                                     Header="Episode"
                                     SortMemberPath="Episode" />
                 <DataGridTextColumn Width="auto"
-                                    Binding="{Binding StatusString}"
+                                    Binding="{Binding Status}"
                                     CellStyle="{StaticResource CenterStyle}"
                                     Header="Status" />
                 <DataGridTextColumn Width="auto"

@@ -171,12 +171,6 @@ namespace anime_downloader.Models
         public string Title => new CultureInfo("en-US", false).TextInfo.ToTitleCase(Name);
 
         /// <summary>
-        ///     The string representation of the status.
-        /// </summary>
-        [XmlIgnore]
-        public string StatusString => Status.Description();
-
-        /// <summary>
         ///     A zero padded string of the number of the next episode.
         /// </summary>
         /// <returns>A padded string representation of the next episode in sequence.</returns>
