@@ -59,23 +59,23 @@ namespace anime_downloader.Models.MyAnimeList
 
             switch (anime.Status)
             {
-                case "Finished":
+                case Enums.Status.Finished:
                     status = "completed";
                     break;
 
-                case "Watching":
+                case Enums.Status.Watching:
                     status = "watching";
                     break;
 
-                case "On Hold":
+                case Enums.Status.OnHold:
                     status = "onhold";
                     break;
 
-                case "Dropped":
+                case Enums.Status.Dropped:
                     status = "dropped";
                     break;
 
-                case "Considering":
+                case Enums.Status.Considering:
                     status = "plantowatch";
                     break;
 

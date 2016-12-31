@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -32,6 +34,18 @@ namespace anime_downloader.Classes
         public static bool IsBlank(this string str)
         {
             return str == null || str.Equals("");
+        }
+
+        // http://www.pavey.me/2015/04/aspnet-c-extension-method-to-get-enum.html
+        public static string Description(this Enum value)
+        {
+            // variables  
+            var enumType = value.GetType();
+            var field = enumType.GetField(value.ToString());
+            var attributes = field.GetCustomAttributes(typeof(DescriptionAttribute), false);
+
+            // return  
+            return attributes.Length == 0 ? value.ToString() : ((DescriptionAttribute)attributes[0]).Description;
         }
     }
 }

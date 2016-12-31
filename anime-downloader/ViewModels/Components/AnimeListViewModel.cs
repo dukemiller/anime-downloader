@@ -11,6 +11,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using anime_downloader.Classes;
+using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
@@ -90,10 +91,10 @@ namespace anime_downloader.ViewModels.Components
             get {
                 var anime = AnimeAggregate.AnimeService.Animes.ToList();
                 return $"{anime.Count} total. " +
-                       $"{anime.Count(a => a.Airing && a.Status.Equals("Watching"))} airing/watching, " +
-                       $"{anime.Count(a => a.Status.Equals("Finished"))} finished, " +
-                       $"{anime.Count(a => a.Status.Equals("On Hold") || a.Status.Equals("Considering"))} on hold/considering, " +
-                       $"{anime.Count(a => a.Status.Equals("Dropped"))} dropped.";
+                       $"{anime.Count(a => a.Airing && a.Status == Status.Watching)} airing/watching, " +
+                       $"{anime.Count(a => a.Status == Status.Finished)} finished, " +
+                       $"{anime.Count(a => a.Status == Status.OnHold || a.Status == Status.Considering)} on hold/considering, " +
+                       $"{anime.Count(a => a.Status == Status.Dropped)} dropped.";
             }
         }
 
@@ -158,9 +159,9 @@ namespace anime_downloader.ViewModels.Components
         {
             foreach (var anime in new List<Anime>(SelectedAnimes))
             {
-                if (!anime.Status.Equals("Dropped") && (anime.MyAnimeList.HasId || anime.Episode > 0 || anime.HasRating))
+                if (anime.Status != Status.Dropped && (anime.MyAnimeList.HasId || anime.Episode > 0 || anime.HasRating))
                 {
-                    anime.Status = "Dropped";
+                    anime.Status = Status.Dropped;
                     anime.Airing = false;
                 }
 

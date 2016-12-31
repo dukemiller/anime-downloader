@@ -1,4 +1,5 @@
-﻿using GalaSoft.MvvmLight;
+﻿using anime_downloader.Enums;
+using GalaSoft.MvvmLight;
 
 namespace anime_downloader.Models
 {
@@ -8,7 +9,7 @@ namespace anime_downloader.Models
         private string _episode;
         private string _rating;
         private string _resolution;
-        private string _status;
+        private Status _status;
 
         public string Resolution
         {
@@ -22,7 +23,7 @@ namespace anime_downloader.Models
             set { Set(() => Airing, ref _airing, value); }
         }
 
-        public string Status
+        public Status Status
         {
             get { return _status; }
             set { Set(() => Status, ref _status, value); }

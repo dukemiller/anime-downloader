@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Web;
 using anime_downloader.Classes;
+using anime_downloader.Enums;
 using anime_downloader.Services;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
@@ -44,7 +45,7 @@ namespace anime_downloader.ViewModels
                 var names = new List<string>();
                 foreach (var anime in AnimeAggregate.AnimeService.FullyWatched())
                 {
-                    anime.Status = "Finished";
+                    anime.Status = Status.Finished;
                     anime.Airing = false;
                     names.Add(anime.Title);
                 }

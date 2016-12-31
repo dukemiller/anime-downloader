@@ -2,6 +2,8 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Media;
+using anime_downloader.Classes;
+using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Services.Interfaces;
 
@@ -43,7 +45,7 @@ namespace anime_downloader.Services
                 else
                 {
                     var filters = Settings.FilterBy.Split('/');
-                    animes = animes.Where(a => filters.Any(f => f.Equals(a.Status)));
+                    animes = animes.Where(a => filters.Any(f => f.Equals(a.Status.Description())));
                 }
             }
 
@@ -65,10 +67,10 @@ namespace anime_downloader.Services
 
         public IEnumerable<Anime> AiringAndWatching => Watching.Where(a => a.Airing);
 
-        public IEnumerable<Anime> Watching => Animes.Where(a => a.Status.Equals("Watching"));
+        public IEnumerable<Anime> Watching => Animes.Where(a => a.Status == Status.Watching);
 
         public IEnumerable<Anime> NeedsUpdates => Animes.Where(a => a.MyAnimeList.NeedsUpdating 
-                                                                    && !a.Status.Equals("Considering"));
+                                                                    && a.Status != Status.Considering);
 
         public void Add(Anime anime)
         {

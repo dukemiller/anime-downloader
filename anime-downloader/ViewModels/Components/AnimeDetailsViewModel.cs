@@ -1,9 +1,11 @@
-﻿using System.Linq;
+﻿using System.Collections.ObjectModel;
+using System.Linq;
 using anime_downloader.Models;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using anime_downloader.Enums;
 
 namespace anime_downloader.ViewModels.Components
 {
@@ -52,7 +54,7 @@ namespace anime_downloader.ViewModels.Components
             Anime = new Anime
             {
                 Episode = 0,
-                Status = "Watching",
+                Status = Status.Watching,
                 Resolution = "720",
                 Airing = true
             };
@@ -66,6 +68,15 @@ namespace anime_downloader.ViewModels.Components
         }
 
         // 
+
+        public static ObservableCollection<Status> Statuses => new ObservableCollection<Status>
+        {
+            Status.Watching,
+            Status.Considering,
+            Status.Finished,
+            Status.OnHold,
+            Status.Dropped
+        };
 
         public ISettingsService Settings
         {

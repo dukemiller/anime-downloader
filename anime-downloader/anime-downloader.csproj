@@ -92,6 +92,7 @@
     <Compile Include="Classes\Xaml\FocusBehavior.cs" />
     <Compile Include="Classes\Xaml\MouseBindings.cs" />
     <Compile Include="Classes\Xaml\MyMultiSelectBehavior.cs" />
+    <Compile Include="Enums\Status.cs" />
     <Compile Include="Enums\Views.cs" />
     <Compile Include="Models\Anime.cs" />
     <Compile Include="Models\AnimeFile.cs" />

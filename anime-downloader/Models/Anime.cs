@@ -6,6 +6,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
+using anime_downloader.Classes;
+using anime_downloader.Enums;
 using anime_downloader.Models.MyAnimeList;
 using GalaSoft.MvvmLight;
 
@@ -20,7 +22,7 @@ namespace anime_downloader.Models
         public static int SortedRateFlag;
 
         private string _name;
-        private string _status;
+        private Status _status;
         private string _resolution;
         private bool _airing;
         private bool _nameStrict;
@@ -68,7 +70,7 @@ namespace anime_downloader.Models
         ///     User's status on watching the anime.
         /// </summary>
         [XmlAttribute("status")]
-        public string Status
+        public Status Status
         {
             get { return _status; }
             set
@@ -167,6 +169,12 @@ namespace anime_downloader.Models
         /// <returns>A title</returns>
         [XmlIgnore]
         public string Title => new CultureInfo("en-US", false).TextInfo.ToTitleCase(Name);
+
+        /// <summary>
+        ///     The string representation of the status.
+        /// </summary>
+        [XmlIgnore]
+        public string StatusString => Status.Description();
 
         /// <summary>
         ///     A zero padded string of the number of the next episode.

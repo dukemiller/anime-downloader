@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using anime_downloader.Classes;
+using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Services.Interfaces;
 using anime_downloader.Views;
@@ -62,7 +63,7 @@ namespace anime_downloader.ViewModels.Components
                 Resolution = "720",
                 Episode = "0",
                 Airing = true,
-                Status = "Considering"
+                Status = Status.Considering
             };
 
             SubmitCommand = new RelayCommand(Create);
