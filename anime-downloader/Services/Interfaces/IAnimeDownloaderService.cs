@@ -16,7 +16,7 @@ namespace anime_downloader.Services.Interfaces
         Task<bool> ServiceAvailable();
 
         // 
-        Task<IEnumerable<Torrent>> GetTorrentsAsync(Anime anime, int episode);
+        Task<IEnumerable<Torrent>> FindTorrentsAsync(Anime anime, int episode);
         Task<int> DownloadAsync(IEnumerable<Anime> animes, Action<string> output);
         Task<int> DownloadAsync(IEnumerable<Anime> animes, IEnumerable<AnimeFileRange> ranges,
             IEnumerable<AnimeFile> files, Action<string> output);

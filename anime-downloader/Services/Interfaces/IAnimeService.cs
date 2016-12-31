@@ -58,5 +58,12 @@ namespace anime_downloader.Services.Interfaces
         ///     Remove from the collection (matching by name).
         /// </summary>
         void Remove(string name);
+
+        // Misc
+
+        /// <summary>
+        ///     The anime in the collection with the name closest to the input string.
+        /// </summary>
+        Anime ClosestAnime(string name);
     }
 }

@@ -72,6 +72,15 @@ namespace anime_downloader.Services
         public IEnumerable<Anime> NeedsUpdates => Animes.Where(a => a.MyAnimeList.NeedsUpdating 
                                                                     && a.Status != Status.Considering);
 
+        public Anime ClosestAnime(string name)
+        {
+            return Animes
+                .Select(a => new StringDistance<Anime>(a, name, a.Name))
+                .Where(ap => ap.Distance <= 10)
+                .OrderBy(ap => ap.Distance)
+                .FirstOrDefault()?.Item;
+        }
+
         public void Add(Anime anime)
         {
             Settings.Animes.Add(anime);

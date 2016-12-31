@@ -112,7 +112,7 @@ namespace anime_downloader.ViewModels.Components
                     bool downloaded;
                     do
                     {
-                        var links = await AnimeAggregate.DownloadService.GetTorrentsAsync(anime, anime.NextEpisode);
+                        var links = await AnimeAggregate.DownloadService.FindTorrentsAsync(anime, anime.NextEpisode);
                         downloaded = await AnimeAggregate.DownloadService.DownloadEpisodeAsync(links, anime, s => Text += s + '\n');
                         if (downloaded)
                             total++;
