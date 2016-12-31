@@ -8,7 +8,7 @@ namespace anime_downloader.Views.Components
     /// <summary>
     ///     Interaction logic for AnimeList.xaml
     /// </summary>
-    public partial class AnimeList 
+    public partial class AnimeList
     {
         public AnimeList()
         {
@@ -22,12 +22,10 @@ namespace anime_downloader.Views.Components
             var header = column.Header.ToString().ToLower();
 
             if (header.Equals("rating"))
-            {
                 if (column.SortDirection == null)
                     Anime.SortedRateFlag = 1;
                 else
                     Anime.SortedRateFlag ^= 1;
-            }
 
             // 
 

@@ -16,8 +16,8 @@
         </Style>
     </UserControl.Resources>
     <UserControl.InputBindings>
-        <KeyBinding Key="Enter" Command="{Binding SearchCommand}"/>
-        <KeyBinding Key="Return" Command="{Binding SearchCommand}"/>
+        <KeyBinding Key="Enter" Command="{Binding SearchCommand}" />
+        <KeyBinding Key="Return" Command="{Binding SearchCommand}" />
     </UserControl.InputBindings>
     <Grid Background="White">
         <Grid>

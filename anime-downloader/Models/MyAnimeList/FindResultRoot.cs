@@ -4,7 +4,8 @@ using System.Xml.Serialization;
 
 namespace anime_downloader.Models.MyAnimeList
 {
-    [Serializable, XmlRoot("anime")]
+    [Serializable]
+    [XmlRoot("anime")]
     public class FindResultRoot
     {
         [XmlElement("entry")]

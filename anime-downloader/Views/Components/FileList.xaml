@@ -38,7 +38,8 @@
                                     <Style TargetType="{x:Type TextBox}">
                                         <Setter Property="Foreground" Value="Transparent" />
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Path=Text, Source={x:Reference textSource}}" Value="">
+                                            <DataTrigger Binding="{Binding Path=Text, Source={x:Reference textSource}}"
+                                                         Value="">
                                                 <Setter Property="Foreground" Value="LightGray" />
                                             </DataTrigger>
                                         </Style.Triggers>
@@ -89,7 +90,7 @@
         <Style TargetType="{x:Type ListBoxItem}">
             <Setter Property="xaml:DragSelectionHelper.IsDragSelecting" Value="False" />
             <Style.Triggers>
-                
+
                 <Trigger Property="ListBoxItem.IsMouseOver" Value="True">
                     <Setter Property="xaml:DragSelectionHelper.IsDragSelecting" Value="True" />
                 </Trigger>
@@ -135,7 +136,8 @@
             </ListBox.InputBindings>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock d:DataContext="{d:DesignInstance Type=models:AnimeFile}" Text="{Binding StrippedFilename}" />
+                    <TextBlock d:DataContext="{d:DesignInstance Type=models:AnimeFile}"
+                               Text="{Binding StrippedFilename}" />
                 </DataTemplate>
             </ListBox.ItemTemplate>
             <ListBox.ContextMenu>

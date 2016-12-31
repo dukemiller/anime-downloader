@@ -3,7 +3,6 @@ using System.Linq;
 using System.Web;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
-using anime_downloader.Services;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -71,7 +70,7 @@ namespace anime_downloader.ViewModels
 
                 var needsUpdating = AnimeAggregate.AnimeService
                     .AiringAndWatching
-                    .Where(a => a.MyAnimeList.HasId && (a.MyAnimeList.TotalEpisodes == 0))
+                    .Where(a => a.MyAnimeList.HasId && a.MyAnimeList.TotalEpisodes == 0)
                     .ToList();
 
                 foreach (var anime in needsUpdating)
@@ -92,9 +91,11 @@ namespace anime_downloader.ViewModels
                 }
 
                 else
+                {
                     Methods.Alert($"No shows were updated for an attempted {needsUpdating.Count} shows.");
+                }
             }
-            MessengerInstance.Send(new WorkMessage { Working = false });
+            MessengerInstance.Send(new WorkMessage {Working = false});
         }
 
         // 

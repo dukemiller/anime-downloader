@@ -3,7 +3,7 @@
 namespace anime_downloader.Views.Components
 {
     /// <summary>
-    /// Interaction logic for MyAnimeListBar.xaml
+    ///     Interaction logic for MyAnimeListBar.xaml
     /// </summary>
     public partial class MyAnimeListBar : UserControl
     {

@@ -9,13 +9,13 @@ namespace anime_downloader.Models
     public sealed class MyAnimeListDetails : ObservableObject
     {
         private string _english;
-        private bool _needsUpdating;
         private string _id;
+        private bool _needsUpdating;
+        private int _overallTotal;
+        private string _synonyms;
+        private string _synopsis;
         private string _title;
         private int _totalEpisodes;
-        private int _overallTotal;
-        private string _synopsis;
-        private string _synonyms;
 
         [XmlAttribute("id")]
         public string Id
@@ -102,7 +102,7 @@ namespace anime_downloader.Models
 
         [XmlAttribute("series_continuation_episode")]
         public string SeriesContinuationEpisode { get; set; }
-        
+
         // 
 
         [XmlIgnore]
@@ -112,7 +112,7 @@ namespace anime_downloader.Models
         public bool HasId => !string.IsNullOrEmpty(Id);
 
         [XmlIgnore]
-        public IEnumerable<string> TitleAndEnglish => new[] { Title, English };
+        public IEnumerable<string> TitleAndEnglish => new[] {Title, English};
 
         [XmlIgnore]
         public IEnumerable<string> SynonymsSplit => Synonyms.Split(';');

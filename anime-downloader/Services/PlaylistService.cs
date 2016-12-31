@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,7 +16,7 @@ namespace anime_downloader.Services
             AnimeFile = animeFile;
         }
 
-        private ISettingsService Settings { get; set; }
+        private ISettingsService Settings { get; }
 
         public IAnimeFileService AnimeFile { get; set; }
 

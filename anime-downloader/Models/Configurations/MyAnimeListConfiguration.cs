@@ -5,10 +5,10 @@ using GalaSoft.MvvmLight;
 namespace anime_downloader.Models.Configurations
 {
     [Serializable]
-    public class MyAnimeListConfiguration: ObservableObject
+    public class MyAnimeListConfiguration : ObservableObject
     {
-        private string _username;
         private string _password;
+        private string _username;
         private bool _works;
 
         [XmlAttribute("username")]

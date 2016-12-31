@@ -32,31 +32,6 @@ namespace anime_downloader.Services
             FilterBy = "";
         }
 
-        public XmlSettingsService Load()
-        {
-            // The directory won't be automatically created without using WPF Settings, 
-            // so this is probably necessary
-            if (!Directory.Exists(PathConfiguration.ApplicationDirectory))
-                Directory.CreateDirectory(PathConfiguration.ApplicationDirectory);
-
-            if (File.Exists(SettingsPath))
-            {
-                using (var sw = new StreamReader(SettingsPath))
-                {
-                    var xmls = new XmlSerializer(typeof(XmlSettingsService));
-                    var settings = xmls.Deserialize(sw) as XmlSettingsService;
-                    PathConfig = settings?.PathConfig;
-                    FlagConfig = settings?.FlagConfig;
-                    MyAnimeListConfig = settings?.MyAnimeListConfig;
-                    SortBy = settings?.SortBy;
-                    FilterBy = settings?.FilterBy;
-                    Subgroups = settings?.Subgroups;
-                    Animes = settings?.Animes;
-                }
-            }
-            return this;
-        }
-
         // 
 
         [XmlElement("Paths")]
@@ -108,6 +83,29 @@ namespace anime_downloader.Services
                 var xmls = new XmlSerializer(typeof(XmlSettingsService));
                 xmls.Serialize(sw, this);
             }
+        }
+
+        public XmlSettingsService Load()
+        {
+            // The directory won't be automatically created without using WPF Settings, 
+            // so this is probably necessary
+            if (!Directory.Exists(PathConfiguration.ApplicationDirectory))
+                Directory.CreateDirectory(PathConfiguration.ApplicationDirectory);
+
+            if (File.Exists(SettingsPath))
+                using (var sw = new StreamReader(SettingsPath))
+                {
+                    var xmls = new XmlSerializer(typeof(XmlSettingsService));
+                    var settings = xmls.Deserialize(sw) as XmlSettingsService;
+                    PathConfig = settings?.PathConfig;
+                    FlagConfig = settings?.FlagConfig;
+                    MyAnimeListConfig = settings?.MyAnimeListConfig;
+                    SortBy = settings?.SortBy;
+                    FilterBy = settings?.FilterBy;
+                    Subgroups = settings?.Subgroups;
+                    Animes = settings?.Animes;
+                }
+            return this;
         }
     }
 }

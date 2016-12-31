@@ -22,8 +22,8 @@ namespace anime_downloader.Models
             get
             {
                 return string.Join("-",
-                    StrippedFilename.Split('-')
-                        .Take(StrippedFilename.Count(x => x == '-')))
+                        StrippedFilename.Split('-')
+                            .Take(StrippedFilename.Count(x => x == '-')))
                     .Trim();
             }
         }

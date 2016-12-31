@@ -14,24 +14,24 @@ namespace anime_downloader.Services.Interfaces
         /// </summary>
         IEnumerable<Anime> Animes { get; }
 
-        // The most accessed group types
-
-        /// <summary>
-        ///     The collection that is most likely to be used for displaying, 
-        ///     a list that is filtered and sorted by the users preferences
-        /// </summary>
-        IEnumerable<Anime> FilteredAndSorted();
-
         /// <summary>
         ///     All shows that are currently airing and are being watched.
         /// </summary>
         IEnumerable<Anime> AiringAndWatching { get; }
 
         /// <summary>
-        ///    All shows that are flagged for needing an update.
+        ///     All shows that are flagged for needing an update.
         /// </summary>
         IEnumerable<Anime> NeedsUpdates { get; }
-        
+
+        // The most accessed group types
+
+        /// <summary>
+        ///     The collection that is most likely to be used for displaying,
+        ///     a list that is filtered and sorted by the users preferences
+        /// </summary>
+        IEnumerable<Anime> FilteredAndSorted();
+
         /// <summary>
         ///     All shows that have been fully watched but are not marked as finished.
         /// </summary>

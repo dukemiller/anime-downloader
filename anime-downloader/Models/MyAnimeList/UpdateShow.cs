@@ -1,12 +1,11 @@
 ﻿using System.Xml.Linq;
-using anime_downloader.Classes;
 
 namespace anime_downloader.Models.MyAnimeList
 {
     public class UpdateShow
     {
         private readonly XDocument _document;
-        
+
         public UpdateShow(Anime anime, string episode = null)
         {
             var details = new AnimeDetailGroup(anime, episode);
@@ -29,8 +28,8 @@ namespace anime_downloader.Models.MyAnimeList
                     new XElement("comments", ""),
                     new XElement("fansub_group", ""),
                     new XElement("tags", anime.Notes)
-                    )
-                );
+                )
+            );
         }
 
         public override string ToString() => _document.Declaration + "\r\n" + _document;
@@ -38,18 +37,18 @@ namespace anime_downloader.Models.MyAnimeList
 
     internal class AnimeDetailGroup
     {
-        public string Status { get; set; }
-
-        public int Episode { get; set; }
-
-        public string Score { get; set; }
-
         public AnimeDetailGroup(Anime anime, string episode)
         {
             Episode = !string.IsNullOrEmpty(episode) ? int.Parse(episode) : anime.Episode;
             Status = GetStatus(anime);
             Score = anime.Rating;
         }
+
+        public string Status { get; set; }
+
+        public int Episode { get; set; }
+
+        public string Score { get; set; }
 
         private static string GetStatus(Anime anime)
         {
@@ -86,6 +85,5 @@ namespace anime_downloader.Models.MyAnimeList
 
             return status;
         }
-
     }
 }

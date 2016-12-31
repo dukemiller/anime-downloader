@@ -180,9 +180,12 @@
                                   Grid.Column="1"
                                   VerticalAlignment="Center"
                                   FontSize="14">
-                            <ComboBoxItem Content="480" IsSelected="{Binding Path=Anime.Resolution, Converter={StaticResource StringCompareConverter}, ConverterParameter=480}" />
-                            <ComboBoxItem Content="720" IsSelected="{Binding Path=Anime.Resolution, Converter={StaticResource StringCompareConverter}, ConverterParameter=720}" />
-                            <ComboBoxItem Content="1080" IsSelected="{Binding Path=Anime.Resolution, Converter={StaticResource StringCompareConverter}, ConverterParameter=1080}" />
+                            <ComboBoxItem Content="480"
+                                          IsSelected="{Binding Path=Anime.Resolution, Converter={StaticResource StringCompareConverter}, ConverterParameter=480}" />
+                            <ComboBoxItem Content="720"
+                                          IsSelected="{Binding Path=Anime.Resolution, Converter={StaticResource StringCompareConverter}, ConverterParameter=720}" />
+                            <ComboBoxItem Content="1080"
+                                          IsSelected="{Binding Path=Anime.Resolution, Converter={StaticResource StringCompareConverter}, ConverterParameter=1080}" />
                         </ComboBox>
 
                         <!--  Subgroup  -->

@@ -59,9 +59,9 @@
                                     <TextBox Grid.Row="0"
                                              Grid.Column="1"
                                              VerticalAlignment="Center"
-                                             Text="{Binding Settings.MyAnimeListConfig.Username}" >
+                                             Text="{Binding Settings.MyAnimeListConfig.Username}">
                                         <TextBox.InputBindings>
-                                            <KeyBinding Key="Enter" Command="{Binding LoginCommand}"/>
+                                            <KeyBinding Key="Enter" Command="{Binding LoginCommand}" />
                                         </TextBox.InputBindings>
                                     </TextBox>
 
@@ -74,9 +74,9 @@
                                                  xaml:PasswordBoxAssistant.BindPassword="True"
                                                  xaml:PasswordBoxAssistant.BoundPassword="{Binding Path=Settings.MyAnimeListConfig.Password,
                                                                                                    Mode=TwoWay,
-                                                                                                   UpdateSourceTrigger=PropertyChanged}" >
+                                                                                                   UpdateSourceTrigger=PropertyChanged}">
                                         <PasswordBox.InputBindings>
-                                            <KeyBinding Key="Enter" Command="{Binding LoginCommand}"/>
+                                            <KeyBinding Key="Enter" Command="{Binding LoginCommand}" />
                                         </PasswordBox.InputBindings>
                                     </PasswordBox>
 
@@ -118,11 +118,12 @@
                                             </Style>
                                         </DockPanel.Resources>
 
-                                        <Label Content="{Binding Path=UpToDate,
+                                        <Label
+                                            Content="{Binding Path=UpToDate,
                                                                  Converter={StaticResource BooleanSymbolConverter}}"
-                                               DockPanel.Dock="Left"
-                                               FontSize="22"
-                                               Foreground="{Binding Path=UpToDate,
+                                            DockPanel.Dock="Left"
+                                            FontSize="22"
+                                            Foreground="{Binding Path=UpToDate,
                                                                     Converter={StaticResource BooleanColorConverter}}" />
 
                                         <Button x:Name="SyncButton"

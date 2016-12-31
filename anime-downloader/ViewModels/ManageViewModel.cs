@@ -1,5 +1,4 @@
 ﻿using anime_downloader.Enums;
-using anime_downloader.Services;
 using anime_downloader.Services.Interfaces;
 using anime_downloader.ViewModels.Components;
 using GalaSoft.MvvmLight;
@@ -19,7 +18,8 @@ namespace anime_downloader.ViewModels
             Settings = settings;
             AnimeAggregate = animeAggregate;
 
-            Unwatched = new FileListViewModel(AnimeAggregate.FileService, animeAggregate.AnimeService, animeAggregate.PlaylistService)
+            Unwatched = new FileListViewModel(AnimeAggregate.FileService, animeAggregate.AnimeService,
+                animeAggregate.PlaylistService)
             {
                 Title = "Unwatched",
                 ImageResourcePath = "../Resources/Images/right.png",
@@ -28,7 +28,8 @@ namespace anime_downloader.ViewModels
                 MovePath = Settings.PathConfig.Watched
             };
 
-            Watched = new FileListViewModel(AnimeAggregate.FileService, animeAggregate.AnimeService, animeAggregate.PlaylistService)
+            Watched = new FileListViewModel(AnimeAggregate.FileService, animeAggregate.AnimeService,
+                animeAggregate.PlaylistService)
             {
                 Title = "Watched",
                 ImageResourcePath = "../Resources/Images/left.png",

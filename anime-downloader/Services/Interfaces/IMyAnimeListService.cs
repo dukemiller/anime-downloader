@@ -7,7 +7,7 @@ using anime_downloader.Models.MyAnimeList;
 namespace anime_downloader.Services.Interfaces
 {
     /// <summary>
-    ///     The logic around using the MyAnimeList API for various tasks. The main 
+    ///     The logic around using the MyAnimeList API for various tasks. The main
     ///     provided services are to add and update anime on a users animelist and
     ///     to get more detailed information about the users anime.
     /// </summary>

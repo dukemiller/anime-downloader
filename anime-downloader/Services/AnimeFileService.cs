@@ -10,10 +10,8 @@ using anime_downloader.Services.Interfaces;
 
 namespace anime_downloader.Services
 {
-    public class AnimeFileService: IAnimeFileService
+    public class AnimeFileService : IAnimeFileService
     {
-        private ISettingsService Settings { get; }
-
         private static readonly string[] FileExtensions =
         {
             ".mkv", ".mp4", ".avi"
@@ -24,6 +22,8 @@ namespace anime_downloader.Services
             Settings = settings;
         }
 
+        private ISettingsService Settings { get; }
+
         /* Easy debug functions */
 
         public IEnumerable<AnimeFile> AllEpisodes => GetEpisodes(EpisodeStatus.All);
@@ -32,23 +32,6 @@ namespace anime_downloader.Services
 
         public IEnumerable<AnimeFile> WatchedEpisodes => GetEpisodes(EpisodeStatus.Watched);
 
-        /* */
-
-        private IEnumerable<string> GetFilesFromStatus(EpisodeStatus episodeStatus)
-        {
-            IEnumerable<string> files;
-
-            if (episodeStatus == EpisodeStatus.Unwatched)
-                files = Directory.GetFiles(Settings.PathConfig.Unwatched, "*", SearchOption.AllDirectories);
-            else if (episodeStatus == EpisodeStatus.Watched)
-                files = Directory.GetFiles(Settings.PathConfig.Watched, "*", SearchOption.AllDirectories);
-            else // (EpisodeStatus == Episode.All)
-                files = Directory.GetFiles(Settings.PathConfig.Watched, "*", SearchOption.AllDirectories)
-                    .Union(Directory.GetFiles(Settings.PathConfig.Unwatched, "*", SearchOption.AllDirectories));
-
-            return files;
-        }
-
         public IEnumerable<AnimeFile> GetEpisodes(Anime anime)
         {
             var episodes = GetEpisodes(EpisodeStatus.All).ToList();
@@ -56,7 +39,7 @@ namespace anime_downloader.Services
             var name = episodes
                 .Select(e => e.Name)
                 .Distinct()
-                .Select(e => new { Name = e, Distance = Methods.LevenshteinDistance(anime.Name, e) })
+                .Select(e => new {Name = e, Distance = Methods.LevenshteinDistance(anime.Name, e)})
                 .OrderBy(e => e.Distance)
                 .First()
                 .Name;
@@ -135,24 +118,14 @@ namespace anime_downloader.Services
             return earliest.OrderBy(af => af.Name);
         }
 
-        public static AnimeFile FirstEpisode(IEnumerable<AnimeFile> animeEpisodes)
-        {
-            return animeEpisodes?.OrderBy(ep => ep.Episode).FirstOrDefault();
-        }
-
-        public static AnimeFile LastEpisode(IEnumerable<AnimeFile> animeEpisodes)
-        {
-            return animeEpisodes?.OrderBy(ep => ep.Episode).LastOrDefault();
-        }
-
         /* Closest */
-        ///  A set of static retrieval methods for finding anime in the collection without needing to strum up
-        ///  linq methods, getting the best guess to what the anime is based solely on the given input string
 
+        /// A set of static retrieval methods for finding anime in the collection without needing to strum up
+        /// linq methods, getting the best guess to what the anime is based solely on the given input string
         public AnimeFile ClosestFile(IEnumerable<AnimeFile> files, string name)
         {
             return files
-                .Select(a => new { Anime = a, Distance = Methods.LevenshteinDistance(a.Name, name) })
+                .Select(a => new {Anime = a, Distance = Methods.LevenshteinDistance(a.Name, name)})
                 .Where(ap => ap.Distance <= 10)
                 .OrderBy(ap => ap.Distance)
                 .FirstOrDefault()?.Anime;
@@ -187,16 +160,41 @@ namespace anime_downloader.Services
                 animeEpisodes.Any(otherEpisode => episode != otherEpisode &&
                                                   episode.Name.Equals(otherEpisode.Name) &&
                                                   episode.Episode == otherEpisode.Episode
-                    )).ToList();
+                )).ToList();
 
             if (duplicates.Any())
-            {
                 foreach (var duplicate in duplicates)
                     File.Move(duplicate.Path,
                         Path.Combine(Settings.PathConfig.DuplicatesDirectory, duplicate.FileName));
-            }
 
             return duplicates.Count;
+        }
+
+        /* */
+
+        private IEnumerable<string> GetFilesFromStatus(EpisodeStatus episodeStatus)
+        {
+            IEnumerable<string> files;
+
+            if (episodeStatus == EpisodeStatus.Unwatched)
+                files = Directory.GetFiles(Settings.PathConfig.Unwatched, "*", SearchOption.AllDirectories);
+            else if (episodeStatus == EpisodeStatus.Watched)
+                files = Directory.GetFiles(Settings.PathConfig.Watched, "*", SearchOption.AllDirectories);
+            else // (EpisodeStatus == Episode.All)
+                files = Directory.GetFiles(Settings.PathConfig.Watched, "*", SearchOption.AllDirectories)
+                    .Union(Directory.GetFiles(Settings.PathConfig.Unwatched, "*", SearchOption.AllDirectories));
+
+            return files;
+        }
+
+        public static AnimeFile FirstEpisode(IEnumerable<AnimeFile> animeEpisodes)
+        {
+            return animeEpisodes?.OrderBy(ep => ep.Episode).FirstOrDefault();
+        }
+
+        public static AnimeFile LastEpisode(IEnumerable<AnimeFile> animeEpisodes)
+        {
+            return animeEpisodes?.OrderBy(ep => ep.Episode).LastOrDefault();
         }
     }
 }

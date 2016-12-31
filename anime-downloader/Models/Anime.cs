@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using System.Threading.Tasks;
-using System.Xml;
 using System.Xml.Serialization;
-using anime_downloader.Classes;
 using anime_downloader.Enums;
-using anime_downloader.Models.MyAnimeList;
 using GalaSoft.MvvmLight;
 
 namespace anime_downloader.Models
@@ -21,19 +16,20 @@ namespace anime_downloader.Models
         /// </summary>
         public static int SortedRateFlag;
 
-        private string _name;
-        private Status _status;
-        private string _resolution;
         private bool _airing;
-        private bool _nameStrict;
-        private string _preferredSubgroup;
-        private string _notes;
-        private string _rating;
         private int _episode;
         private MyAnimeListDetails _myAnimeList;
 
+        private string _name;
+        private bool _nameStrict;
+        private string _notes;
+        private string _preferredSubgroup;
+        private string _rating;
+        private string _resolution;
+        private Status _status;
+
         // 
-        
+
         public Anime()
         {
             MyAnimeList = new MyAnimeListDetails();
@@ -209,7 +205,7 @@ namespace anime_downloader.Models
         ///     A property used for sorting the rating in the datagrid
         /// </summary>
         [XmlIgnore]
-        public int SortedRating => string.IsNullOrEmpty(Rating) ? 13*SortedRateFlag - 2 : int.Parse(Rating);
+        public int SortedRating => string.IsNullOrEmpty(Rating) ? 13 * SortedRateFlag - 2 : int.Parse(Rating);
 
         [XmlIgnore]
         public IEnumerable<string> NameCollection

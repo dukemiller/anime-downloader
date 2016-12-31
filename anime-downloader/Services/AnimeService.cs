@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Windows.Media;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
 using anime_downloader.Models;
@@ -9,14 +8,16 @@ using anime_downloader.Services.Interfaces;
 
 namespace anime_downloader.Services
 {
-    public class AnimeService: IAnimeService
+    public class AnimeService : IAnimeService
     {
-        private ISettingsService Settings { get; }
-
         public AnimeService(ISettingsService settings)
         {
             Settings = settings;
         }
+
+        private ISettingsService Settings { get; }
+
+        public IEnumerable<Anime> Watching => Animes.Where(a => a.Status == Status.Watching);
 
         public IEnumerable<Anime> Animes => Settings.Animes;
 
@@ -39,15 +40,15 @@ namespace anime_downloader.Services
                 .Find(Settings.SortBy, true);
 
             if (!string.IsNullOrEmpty(Settings.FilterBy))
-            {
                 if (Settings.FilterBy.Equals("Needs Synchronize"))
+                {
                     animes = animes.Where(anime => anime.MyAnimeList.HasId && anime.MyAnimeList.NeedsUpdating);
+                }
                 else
                 {
                     var filters = Settings.FilterBy.Split('/');
                     animes = animes.Where(a => filters.Any(f => f.Equals(a.Status.Description())));
                 }
-            }
 
             return Settings.FlagConfig.SortByReversed
                 ? animes.OrderByDescending(x => propertyDescriptor.GetValue(x))
@@ -67,9 +68,7 @@ namespace anime_downloader.Services
 
         public IEnumerable<Anime> AiringAndWatching => Watching.Where(a => a.Airing);
 
-        public IEnumerable<Anime> Watching => Animes.Where(a => a.Status == Status.Watching);
-
-        public IEnumerable<Anime> NeedsUpdates => Animes.Where(a => a.MyAnimeList.NeedsUpdating 
+        public IEnumerable<Anime> NeedsUpdates => Animes.Where(a => a.MyAnimeList.NeedsUpdating
                                                                     && a.Status != Status.Considering);
 
         public Anime ClosestAnime(string name)
@@ -99,7 +98,5 @@ namespace anime_downloader.Services
             if (anime != null)
                 Remove(anime);
         }
-
-        
     }
 }

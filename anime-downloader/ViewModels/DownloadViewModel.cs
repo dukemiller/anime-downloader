@@ -1,25 +1,13 @@
-﻿using anime_downloader.Classes;
-using anime_downloader.Models;
-using anime_downloader.Services;
+﻿using anime_downloader.Models;
 using anime_downloader.Services.Interfaces;
 using anime_downloader.ViewModels.Components;
 using GalaSoft.MvvmLight;
 
 namespace anime_downloader.ViewModels
 {
-    public class DownloadViewModel: ViewModelBase
+    public class DownloadViewModel : ViewModelBase
     {
-        private ISettingsService Settings { get; }
-
-        private IAnimeAggregateService AnimeAggregate { get; }
-
         private ViewModelBase _display;
-
-        public ViewModelBase Display
-        {
-            get { return _display; }
-            set { Set(() => Display, ref _display, value); }
-        }
 
         public DownloadViewModel(ISettingsService settings, IAnimeAggregateService animeAggregate)
         {
@@ -37,10 +25,18 @@ namespace anime_downloader.ViewModels
                     Display = new DownloaderViewModel(Settings, AnimeAggregate, new RadioModel {Tag = "Next"});
             });
 
-            MessengerInstance.Register<RadioModel>(this, _ =>
-            {
-                Display = new DownloaderViewModel(Settings, AnimeAggregate, _);
-            });
+            MessengerInstance.Register<RadioModel>(this,
+                _ => { Display = new DownloaderViewModel(Settings, AnimeAggregate, _); });
+        }
+
+        private ISettingsService Settings { get; }
+
+        private IAnimeAggregateService AnimeAggregate { get; }
+
+        public ViewModelBase Display
+        {
+            get { return _display; }
+            set { Set(() => Display, ref _display, value); }
         }
     }
 }

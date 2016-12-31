@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -8,8 +7,6 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
 using anime_downloader.Models;
@@ -23,12 +20,12 @@ namespace anime_downloader.ViewModels.Components
 {
     public class AnimeListViewModel : ViewModelBase
     {
-        private FindViewModel _find;
-        private string _filterText;
-        private Anime _selectedAnime;
-        private ObservableCollection<Anime> _animes;
-        private ISettingsService _settings;
         private IAnimeAggregateService _animeAggregate;
+        private ObservableCollection<Anime> _animes;
+        private string _filterText;
+        private FindViewModel _find;
+        private Anime _selectedAnime;
+        private ISettingsService _settings;
 
         // 
 
@@ -38,24 +35,23 @@ namespace anime_downloader.ViewModels.Components
             AnimeAggregate = animeAggregate;
 
             // 
-            
+
             Find = new FindViewModel();
             Find.PropertyChanged += (sender, args) =>
             {
                 if (args.PropertyName.Equals("Text"))
-                {
                     if (Find.Text.Equals(""))
                         Animes = new ObservableCollection<Anime>(AnimeAggregate.AnimeService.FilteredAndSorted());
                     else
                         Animes =
                             new ObservableCollection<Anime>(
-                                AnimeAggregate.AnimeService.Animes.Where(a => a.Name.ToLower().Contains(Find.Text.ToLower())));
-                }
+                                AnimeAggregate.AnimeService.Animes.Where(
+                                    a => a.Name.ToLower().Contains(Find.Text.ToLower())));
             };
 
             FilterText = Settings.FilterBy;
             Animes = new ObservableCollection<Anime>(AnimeAggregate.AnimeService.FilteredAndSorted());
-            
+
             // 
 
             FindToggleCommand = new RelayCommand(() => Find.Toggle());
@@ -88,7 +84,8 @@ namespace anime_downloader.ViewModels.Components
 
         public string Stats
         {
-            get {
+            get
+            {
                 var anime = AnimeAggregate.AnimeService.Animes.ToList();
                 return $"{anime.Count} total. " +
                        $"{anime.Count(a => a.Airing && a.Status == Status.Watching)} airing/watching, " +
@@ -103,19 +100,19 @@ namespace anime_downloader.ViewModels.Components
             get { return _find; }
             set { Set(() => Find, ref _find, value); }
         }
-        
+
         public Anime SelectedAnime
         {
             get { return _selectedAnime; }
             set { Set(() => SelectedAnime, ref _selectedAnime, value); }
         }
-        
+
         public ObservableCollection<Anime> Animes
         {
             get { return _animes; }
             set { Set(() => Animes, ref _animes, value); }
         }
-        
+
         public ObservableCollection<Anime> SelectedAnimes { get; set; } = new ObservableCollection<Anime>();
 
         public ISettingsService Settings
@@ -145,7 +142,7 @@ namespace anime_downloader.ViewModels.Components
         public RelayCommand CopyCommand { get; set; }
 
         // 
-        
+
         private void Edit()
         {
             if (SelectedAnimes?.Count > 1)
@@ -158,7 +155,6 @@ namespace anime_downloader.ViewModels.Components
         private void Delete()
         {
             foreach (var anime in new List<Anime>(SelectedAnimes))
-            {
                 if (anime.Status != Status.Dropped && (anime.MyAnimeList.HasId || anime.Episode > 0 || anime.HasRating))
                 {
                     anime.Status = Status.Dropped;
@@ -170,7 +166,6 @@ namespace anime_downloader.ViewModels.Components
                     AnimeAggregate.AnimeService.Remove(anime);
                     Animes.Remove(anime);
                 }
-            }
             RaisePropertyChanged(nameof(Stats));
             _find.Close();
         }
@@ -180,7 +175,9 @@ namespace anime_downloader.ViewModels.Components
             if (SelectedAnime == null)
                 return;
             if (SelectedAnime.MyAnimeList.HasId)
+            {
                 Process.Start($"http://myanimelist.net/anime/{SelectedAnime.MyAnimeList.Id}");
+            }
             else
             {
                 MessengerInstance.Send(new WorkMessage {Working = true});
@@ -214,6 +211,5 @@ namespace anime_downloader.ViewModels.Components
             else
                 Methods.Alert("No results found.");
         }
-
     }
 }

@@ -3,7 +3,7 @@
     /// <summary>
     ///     Interaction logic for Downloader.xaml
     /// </summary>
-    public partial class Downloader 
+    public partial class Downloader
     {
         public Downloader()
         {

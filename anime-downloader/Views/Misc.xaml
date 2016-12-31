@@ -76,21 +76,25 @@
                             <Label Content="Status"
                                    FontStyle="Italic"
                                    Foreground="DarkGray" />
-                            <RadioButton Content="Mark fully watched as completed" IsChecked="{Binding SelectedIndex, Converter={StaticResource CompareConverter}, ConverterParameter=1}" />
+                            <RadioButton Content="Mark fully watched as completed"
+                                         IsChecked="{Binding SelectedIndex, Converter={StaticResource CompareConverter}, ConverterParameter=1}" />
                             <Label Content="Files"
                                    FontStyle="Italic"
                                    Foreground="DarkGray" />
-                            <RadioButton Content="Move duplicates to 'My Videos'" IsChecked="{Binding SelectedIndex, Converter={StaticResource CompareConverter}, ConverterParameter=2}" />
+                            <RadioButton Content="Move duplicates to 'My Videos'"
+                                         IsChecked="{Binding SelectedIndex, Converter={StaticResource CompareConverter}, ConverterParameter=2}" />
                         </StackPanel>
                     </GroupBox>
                 </StackPanel>
                 <StackPanel Grid.Column="1">
-                    <GroupBox Header="MyAnimeList" IsHitTestVisible="{Binding LoggedIntoMal}" Opacity="{Binding LoggedIntoMal, Converter={StaticResource BooleanOpacityConverter}}">
+                    <GroupBox Header="MyAnimeList" IsHitTestVisible="{Binding LoggedIntoMal}"
+                              Opacity="{Binding LoggedIntoMal, Converter={StaticResource BooleanOpacityConverter}}">
                         <StackPanel>
                             <Label Content="API"
                                    FontStyle="Italic"
                                    Foreground="DarkGray" />
-                            <RadioButton Content="Regather shows with no ep. total" IsChecked="{Binding SelectedIndex, Converter={StaticResource CompareConverter}, ConverterParameter=3}" />
+                            <RadioButton Content="Regather shows with no ep. total"
+                                         IsChecked="{Binding SelectedIndex, Converter={StaticResource CompareConverter}, ConverterParameter=3}" />
                         </StackPanel>
                     </GroupBox>
                 </StackPanel>

@@ -39,6 +39,10 @@ namespace anime_downloader.Models
         /// </summary>
         public double Size;
 
+        public string StrippedName => Methods.Strip(Name);
+
+        public string StrippedWithNoEpisode => Methods.Strip(Name, true);
+
         /// <summary>
         ///     A simple representation of the important attributes of a Nyaa object.
         /// </summary>
@@ -69,7 +73,7 @@ namespace anime_downloader.Models
             {
                 response = (HttpWebResponse) await request.GetResponseAsync();
                 var disposition = response.Headers["content-disposition"];
-                var filename = disposition?.Split(new[] { "filename=\"" }, StringSplitOptions.None)[1].Split('"')[0];
+                var filename = disposition?.Split(new[] {"filename=\""}, StringSplitOptions.None)[1].Split('"')[0];
                 return filename;
             }
 
@@ -84,10 +88,6 @@ namespace anime_downloader.Models
             }
         }
 
-        public string StrippedName => Methods.Strip(Name);
-
-        public string StrippedWithNoEpisode => Methods.Strip(Name, true);
-
         /// <summary>
         ///     Returns the subgroup from the name of the file.
         /// </summary>
@@ -95,7 +95,7 @@ namespace anime_downloader.Models
         public string Subgroup()
         {
             return (from Match match in Regex.Matches(Name, @"\[([A-Za-z0-9_µ\s\-]+)\]+")
-                    select match.Groups[1].Value).FirstOrDefault(result => result.All(c => !char.IsNumber(c)));
+                select match.Groups[1].Value).FirstOrDefault(result => result.All(c => !char.IsNumber(c)));
         }
 
         /// <summary>

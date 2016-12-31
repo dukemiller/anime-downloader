@@ -5,7 +5,6 @@ using System.Windows;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
 using anime_downloader.Models;
-using anime_downloader.Services;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 
@@ -13,17 +12,7 @@ namespace anime_downloader.ViewModels.Components
 {
     public class DownloaderViewModel : ViewModelBase
     {
-        private ISettingsService Settings { get; }
-
-        private IAnimeAggregateService AnimeAggregate { get; }
-
         private string _text;
-
-        public string Text
-        {
-            get { return _text; }
-            set { Set(() => Text, ref _text, value); }
-        }
 
         public DownloaderViewModel(ISettingsService settings, IAnimeAggregateService animeAggregate, RadioModel radio)
         {
@@ -31,6 +20,16 @@ namespace anime_downloader.ViewModels.Components
             Settings = settings;
             AnimeAggregate = animeAggregate;
             Download(radio);
+        }
+
+        private ISettingsService Settings { get; }
+
+        private IAnimeAggregateService AnimeAggregate { get; }
+
+        public string Text
+        {
+            get { return _text; }
+            set { Set(() => Text, ref _text, value); }
         }
 
         private async void Download(RadioModel radio)
@@ -44,7 +43,6 @@ namespace anime_downloader.ViewModels.Components
             MessengerInstance.Send(new WorkMessage {Working = true});
 
             if (await AnimeAggregate.DownloadService.ServiceAvailable())
-            {
                 try
                 {
                     if (radio.Tag.Equals("Next"))
@@ -61,14 +59,11 @@ namespace anime_downloader.ViewModels.Components
                 {
                     Text += ">> An error occured while attempting to download, try again.";
                 }
-            }
 
             else
-            {
                 Text += $">> {AnimeAggregate.DownloadService.ServiceName} is currently offline. Try checking later.";
-            }
 
-            MessengerInstance.Send(new WorkMessage { Working = false });
+            MessengerInstance.Send(new WorkMessage {Working = false});
         }
 
         /// <summary>
@@ -86,7 +81,9 @@ namespace anime_downloader.ViewModels.Components
             }
 
             else
+            {
                 Text += ">> No animes need to be downloaded.";
+            }
         }
 
         /// <summary>
@@ -113,7 +110,8 @@ namespace anime_downloader.ViewModels.Components
                     do
                     {
                         var links = await AnimeAggregate.DownloadService.FindTorrentsAsync(anime, anime.NextEpisode);
-                        downloaded = await AnimeAggregate.DownloadService.DownloadEpisodeAsync(links, anime, s => Text += s + '\n');
+                        downloaded = await AnimeAggregate.DownloadService.DownloadEpisodeAsync(links, anime,
+                            s => Text += s + '\n');
                         if (downloaded)
                             total++;
                     } while (downloaded);
@@ -131,8 +129,8 @@ namespace anime_downloader.ViewModels.Components
         /// <summary>
         ///     Downloader (Download missing episodes)
         /// </summary>
-        /// <remarks>   
-        ///     Find and download any episodes in collection anime that are between 
+        /// <remarks>
+        ///     Find and download any episodes in collection anime that are between
         ///     the range start.episode and last.episode
         /// </remarks>
         private async Task GetMissingEpisodesAsync()
@@ -153,7 +151,8 @@ namespace anime_downloader.ViewModels.Components
 
             var total =
                 await
-                    AnimeAggregate.DownloadService.DownloadAsync(AnimeAggregate.AnimeService.AiringAndWatching, animeFileRanges,
+                    AnimeAggregate.DownloadService.DownloadAsync(AnimeAggregate.AnimeService.AiringAndWatching,
+                        animeFileRanges,
                         allEpisodeFiles, s => Text += s + '\n');
 
             Text += total > 0 ? $">> Found {total} anime downloads." : ">> No new anime found.";

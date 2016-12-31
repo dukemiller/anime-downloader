@@ -5,17 +5,17 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Forms;
 using anime_downloader.Models.Configurations;
-using anime_downloader.Services;
 using anime_downloader.Services.Interfaces;
+using anime_downloader.Views;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
 using Application = System.Windows.Application;
 
 namespace anime_downloader.Classes
 {
-    public class Tray: ViewModelBase
+    public class Tray : ViewModelBase
     {
-        private readonly Views.MainWindow _mainWindow;
+        private readonly MainWindow _mainWindow;
 
         private readonly ISettingsService _settings;
 
@@ -29,7 +29,7 @@ namespace anime_downloader.Classes
         /// </summary>
         private NotifyIcon _trayIcon;
 
-        public Tray(Views.MainWindow mainWindow, ISettingsService settings)
+        public Tray(MainWindow mainWindow, ISettingsService settings)
         {
             _mainWindow = mainWindow;
             _settings = settings;
@@ -43,7 +43,9 @@ namespace anime_downloader.Classes
             _settings.FlagConfig.PropertyChanged += (sender, args) =>
             {
                 if (_settings.FlagConfig.AlwaysShowTray)
+                {
                     Visible = true;
+                }
                 else
                 {
                     if (_mainWindow.WindowState == WindowState.Minimized)
@@ -79,7 +81,6 @@ namespace anime_downloader.Classes
             _trayIcon.MouseClick += (sender, args) =>
             {
                 if (args.Button == MouseButtons.Left)
-                {
                     if (_mainWindow.WindowState == WindowState.Minimized)
                     {
                         _mainWindow.Show();
@@ -89,7 +90,6 @@ namespace anime_downloader.Classes
                     {
                         _mainWindow.WindowState = WindowState.Minimized;
                     }
-                }
             };
 
             stream.Close();

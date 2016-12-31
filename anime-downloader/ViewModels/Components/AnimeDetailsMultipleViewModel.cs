@@ -1,55 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Services.Interfaces;
-using anime_downloader.Views;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
 
 namespace anime_downloader.ViewModels.Components
 {
     public class AnimeDetailsMultipleViewModel : ViewModelBase
     {
         private MultipleAnimeDetails _details;
-        private bool _loading;
-        private string _input;
         private string _header;
+        private string _input;
+        private bool _loading;
         private RelayCommand _submitCommand;
-        private ObservableCollection<Anime> Animes { get; }
-        private ISettingsService Settings { get; }
-        private IAnimeAggregateService AnimeAggregate { get; }
 
-        public string Header
-        {
-            get { return _header; }
-            set { Set(() => Header, ref _header, value); }
-        }
-
-        public string Input
-        {
-            get { return _input; }
-            set { Set(() => Input, ref _input, value); }
-        }
-
-        public MultipleAnimeDetails Details
-        {
-            get { return _details; }
-            set { Set(() => Details, ref _details, value); }
-        }
-
-        public bool Loading
-        {
-            get { return _loading; }
-            set { Set(() => Loading, ref _loading, value); }
-        }
-
-        public double LoadOpacity => Loading ? 0.6 : 1.0;
-        
         // New
         public AnimeDetailsMultipleViewModel(ISettingsService settings, IAnimeAggregateService animeAggregate)
         {
@@ -90,6 +58,36 @@ namespace anime_downloader.ViewModels.Components
             SubmitCommand = new RelayCommand(Edit);
         }
 
+        private ObservableCollection<Anime> Animes { get; }
+        private ISettingsService Settings { get; }
+        private IAnimeAggregateService AnimeAggregate { get; }
+
+        public string Header
+        {
+            get { return _header; }
+            set { Set(() => Header, ref _header, value); }
+        }
+
+        public string Input
+        {
+            get { return _input; }
+            set { Set(() => Input, ref _input, value); }
+        }
+
+        public MultipleAnimeDetails Details
+        {
+            get { return _details; }
+            set { Set(() => Details, ref _details, value); }
+        }
+
+        public bool Loading
+        {
+            get { return _loading; }
+            set { Set(() => Loading, ref _loading, value); }
+        }
+
+        public double LoadOpacity => Loading ? 0.6 : 1.0;
+
         // 
 
         public RelayCommand SubmitCommand
@@ -101,17 +99,20 @@ namespace anime_downloader.ViewModels.Components
         private void Create()
         {
             var names = Input
-                    .Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
-                    .Select(n => n.ToLower())
-                    .ToList();
+                .Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
+                .Select(n => n.ToLower())
+                .ToList();
             if (names.Distinct().Count() != names.Count)
+            {
                 Methods.Alert("Names have to be unique.");
+            }
             else if (AnimeAggregate.AnimeService.Animes.Select(a => a.Name.ToLower()).Intersect(names).Any())
+            {
                 Methods.Alert("A title entered already exists in the anime list.");
+            }
             else
             {
                 foreach (var name in names)
-                {
                     AnimeAggregate.AnimeService.Add(new Anime
                     {
                         Name = name,
@@ -120,7 +121,6 @@ namespace anime_downloader.ViewModels.Components
                         Status = Details.Status,
                         Resolution = Details.Resolution
                     });
-                }
                 MessengerInstance.Send(Enums.Views.AnimeDisplay);
             }
         }
@@ -139,6 +139,5 @@ namespace anime_downloader.ViewModels.Components
             }
             MessengerInstance.Send(Enums.Views.AnimeDisplay);
         }
-
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using anime_downloader.Models;
 using anime_downloader.Services.Interfaces;
 using anime_downloader.ViewModels.Components;
@@ -8,10 +7,8 @@ using GalaSoft.MvvmLight.Messaging;
 
 namespace anime_downloader.ViewModels
 {
-    public class AnimeDisplayViewModel: ViewModelBase
+    public class AnimeDisplayViewModel : ViewModelBase
     {
-        private ISettingsService Settings { get; }
-        private IAnimeAggregateService AnimeAggregate { get; }
         private ViewModelBase _display;
 
         //
@@ -24,16 +21,12 @@ namespace anime_downloader.ViewModels
             Display = new AnimeListViewModel(Settings, AnimeAggregate);
 
             // Edit single details
-            MessengerInstance.Register<Anime>(this, anime =>
-            {
-                Display = new AnimeDetailsViewModel(Settings, AnimeAggregate, anime);
-            });
+            MessengerInstance.Register<Anime>(this,
+                anime => { Display = new AnimeDetailsViewModel(Settings, AnimeAggregate, anime); });
 
             // Edit multiple details
-            MessengerInstance.Register<ObservableCollection<Anime>>(this, animes =>
-            {
-                Display = new AnimeDetailsMultipleViewModel(Settings, AnimeAggregate, animes);
-            });
+            MessengerInstance.Register<ObservableCollection<Anime>>(this,
+                animes => { Display = new AnimeDetailsMultipleViewModel(Settings, AnimeAggregate, animes); });
 
             MessengerInstance.Register<NotificationMessage>(this, _ =>
             {
@@ -49,6 +42,9 @@ namespace anime_downloader.ViewModels
                     Display = new AnimeDetailsMultipleViewModel(Settings, AnimeAggregate);
             });
         }
+
+        private ISettingsService Settings { get; }
+        private IAnimeAggregateService AnimeAggregate { get; }
 
         //
 

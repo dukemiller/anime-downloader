@@ -4,11 +4,10 @@ using GalaSoft.MvvmLight.Command;
 
 namespace anime_downloader.ViewModels.Components
 {
-    public class FindViewModel: ViewModelBase
+    public class FindViewModel : ViewModelBase
     {
-        private Visibility _visible;
-
         private string _text;
+        private Visibility _visible;
 
         // 
 

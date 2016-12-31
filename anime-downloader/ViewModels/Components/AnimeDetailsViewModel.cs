@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Threading;
+using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
-using anime_downloader.Enums;
 
 namespace anime_downloader.ViewModels.Components
 {
@@ -20,10 +17,10 @@ namespace anime_downloader.ViewModels.Components
         private Anime _anime;
         private RelayCommand _buttonCommand;
         private string _buttonText;
+        private bool _lastEpisodeAvailable;
+        private MyAnimeListBarViewModel _myAnimeListBar;
         private string _selectedSubgroup;
         private ISettingsService _settings;
-        private MyAnimeListBarViewModel _myAnimeListBar;
-        private bool _lastEpisodeAvailable;
 
         // 
 
@@ -41,8 +38,10 @@ namespace anime_downloader.ViewModels.Components
 
             ButtonCommand = new RelayCommand(
                 Edit,
-                () => !AnimeAggregate.AnimeService.Animes.Except(new []{Anime}).Any(a => a.Name.ToLower().Trim().Equals(Anime?.Name?.ToLower().Trim()))
-                      && Anime?.Name?.Length > 0
+                () =>
+                    !AnimeAggregate.AnimeService.Animes.Except(new[] {Anime})
+                        .Any(a => a.Name.ToLower().Trim().Equals(Anime?.Name?.ToLower().Trim()))
+                    && Anime?.Name?.Length > 0
             );
 
             ExitCommand = new RelayCommand(() =>
@@ -82,8 +81,10 @@ namespace anime_downloader.ViewModels.Components
             ButtonText = "Add";
             ButtonCommand = new RelayCommand(
                 Create,
-                () => !AnimeAggregate.AnimeService.Animes.Any(a => a.Name.ToLower().Trim().Equals(Anime?.Name?.ToLower().Trim()))
-                      && Anime?.Name?.Length > 0
+                () =>
+                    !AnimeAggregate.AnimeService.Animes.Any(
+                        a => a.Name.ToLower().Trim().Equals(Anime?.Name?.ToLower().Trim()))
+                    && Anime?.Name?.Length > 0
             );
             ExitCommand = new RelayCommand(() => MessengerInstance.Send(Enums.Views.AnimeDisplay));
         }
@@ -151,7 +152,7 @@ namespace anime_downloader.ViewModels.Components
                 };
             }
         }
-        
+
         // 
 
         private async void GetLastEpisode()

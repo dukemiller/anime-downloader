@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Globalization;
 using System.Windows.Input;
 using System.Windows.Markup;
 
@@ -7,23 +8,18 @@ namespace anime_downloader.Classes.Xaml
     // https://social.msdn.microsoft.com/Forums/vstudio/en-US/465edb64-e0ee-4fe4-8e69-02a805c902e7/mousebinding-gesture-for-xbutton1?forum=wpf
     public class ExtendedMouseBinding : MouseBinding
     {
-        [ValueSerializer(typeof(MouseGestureValueSerializer)), TypeConverter(typeof(ExtendedMouseGestureConverter))]
+        [ValueSerializer(typeof(MouseGestureValueSerializer))]
+        [TypeConverter(typeof(ExtendedMouseGestureConverter))]
         public override InputGesture Gesture
         {
-            get
-            {
-                return base.Gesture;
-            }
-            set
-            {
-                base.Gesture = value;
-            }
+            get { return base.Gesture; }
+            set { base.Gesture = value; }
         }
     }
 
     public class ExtendedMouseGestureConverter : MouseGestureConverter
     {
-        public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object source)
+        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object source)
         {
             switch (source.ToString())
             {
@@ -50,7 +46,6 @@ namespace anime_downloader.Classes.Xaml
             var device = inputEventArgs.Device as MouseDevice;
 
             if (device != null)
-            {
                 switch (_mouseButton)
                 {
                     case MouseButton.XButton1:
@@ -60,10 +55,8 @@ namespace anime_downloader.Classes.Xaml
                         if (device.XButton2 == MouseButtonState.Pressed) return true;
                         break;
                 }
-            }
 
             return false;
         }
     }
-
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Data;
@@ -18,17 +17,21 @@ namespace anime_downloader.Classes
         {
         }
 
-        public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
+        public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value,
+            Type destinationType)
         {
             if (destinationType == typeof(string))
             {
                 if (value != null)
                 {
-                    FieldInfo fi = value.GetType().GetField(value.ToString());
+                    var fi = value.GetType().GetField(value.ToString());
                     if (fi != null)
                     {
-                        var attributes = (DescriptionAttribute[])fi.GetCustomAttributes(typeof(DescriptionAttribute), false);
-                        return ((attributes.Length > 0) && (!String.IsNullOrEmpty(attributes[0].Description))) ? attributes[0].Description : value.ToString();
+                        var attributes =
+                            (DescriptionAttribute[]) fi.GetCustomAttributes(typeof(DescriptionAttribute), false);
+                        return attributes.Length > 0 && !string.IsNullOrEmpty(attributes[0].Description)
+                            ? attributes[0].Description
+                            : value.ToString();
                     }
                 }
 
@@ -55,7 +58,7 @@ namespace anime_downloader.Classes
             return str.Split(new[] {", "}, StringSplitOptions.RemoveEmptyEntries);
         }
     }
-    
+
     /// <summary>
     ///     Returns opposite of the bool value.
     /// </summary>
@@ -96,18 +99,14 @@ namespace anime_downloader.Classes
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (!System.Convert.ToString(value).Equals(System.Convert.ToString(parameter)))
-            {
                 return true;
-            }
             return false;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (!System.Convert.ToBoolean(value))
-            {
                 return parameter;
-            }
             return null;
         }
     }
@@ -117,9 +116,7 @@ namespace anime_downloader.Classes
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (System.Convert.ToString(value).Equals(System.Convert.ToString(parameter)))
-            {
                 return Visibility.Visible;
-            }
             return Visibility.Collapsed;
         }
 
@@ -268,17 +265,19 @@ namespace anime_downloader.Classes
             if (synopsis == null)
                 return "";
             synopsis = synopsis.Replace("&ndash;", "-");
-            synopsis = new[] {
-                @"\[/?[a-zA-Z0-9=]*\]",                                  // Style tags [b]
-                @"(/)?&\w+;(br)?",                                       // Unescaped html 
-                @"<br />", @"&#[0-9]+;",                                 // HTML break tag
-                @"\([a-zA-Z]+:[a-zA-Z\s-]+\)",                           // Source tag
-                @"[E|e]pisode(s)? [0-9]{1,}(-[0-9]{1,})?(&|,)?.+(\n|$)", // Random information about episode previewing),
-                @"\n$",                                                  // Unneeded linebreak at the end  
-            }
+            synopsis = new[]
+                {
+                    @"\[/?[a-zA-Z0-9=]*\]", // Style tags [b]
+                    @"(/)?&\w+;(br)?", // Unescaped html 
+                    @"<br />", @"&#[0-9]+;", // HTML break tag
+                    @"\([a-zA-Z]+:[a-zA-Z\s-]+\)", // Source tag
+                    @"[E|e]pisode(s)? [0-9]{1,}(-[0-9]{1,})?(&|,)?.+(\n|$)",
+                    // Random information about episode previewing),
+                    @"\n$" // Unneeded linebreak at the end  
+                }
                 .Aggregate(synopsis, (current, pattern) =>
-                        Regex.Replace(current, pattern, ""));
-            synopsis = Regex.Replace(synopsis, @"[\r\n]{2,}", "\n");     // Multiple linebreaks
+                    Regex.Replace(current, pattern, ""));
+            synopsis = Regex.Replace(synopsis, @"[\r\n]{2,}", "\n"); // Multiple linebreaks
             return synopsis;
         }
 
@@ -329,5 +328,4 @@ namespace anime_downloader.Classes
             throw new NotImplementedException();
         }
     }
-
 }

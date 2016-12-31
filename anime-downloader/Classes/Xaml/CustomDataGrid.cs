@@ -16,16 +16,18 @@ namespace anime_downloader.Classes.Xaml
         {
             SelectedItemsList = SelectedItems;
         }
+
         #region SelectedItemsList
 
         public IList SelectedItemsList
         {
-            get { return (IList)GetValue(SelectedItemsListProperty); }
+            get { return (IList) GetValue(SelectedItemsListProperty); }
             set { SetValue(SelectedItemsListProperty, value); }
         }
 
         public static readonly DependencyProperty SelectedItemsListProperty =
-                DependencyProperty.Register("SelectedItemsList", typeof(IList), typeof(CustomDataGrid), new PropertyMetadata(null));
+            DependencyProperty.Register("SelectedItemsList", typeof(IList), typeof(CustomDataGrid),
+                new PropertyMetadata(null));
 
         #endregion
     }

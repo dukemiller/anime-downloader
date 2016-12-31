@@ -15,12 +15,8 @@ using anime_downloader.Services.Interfaces;
 namespace anime_downloader.Services
 {
     // http://myanimelist.net/modules.php?go=api
-    public class MyAnimeListService: IMyAnimeListService
+    public class MyAnimeListService : IMyAnimeListService
     {
-        private ISettingsService Settings { get; set; }
-
-        private IAnimeService Anime { get; set; }
-
         private const string ApiSearch = "https://myanimelist.net/api/anime/search.xml?q={0}";
 
         private const string ApiAdd = "https://myanimelist.net/api/animelist/add/{0}.xml";
@@ -31,6 +27,10 @@ namespace anime_downloader.Services
 
         private const string ApiVerify = "https://myanimelist.net/api/account/verify_credentials.xml";
 
+        //
+
+        private static readonly XmlSerializer ResultDeserializer = new XmlSerializer(typeof(FindResultRoot));
+
         // 
 
         public MyAnimeListService(ISettingsService settings, IAnimeService anime)
@@ -39,81 +39,26 @@ namespace anime_downloader.Services
             Anime = anime;
         }
 
-        //
+        private ISettingsService Settings { get; }
 
-        private static readonly XmlSerializer ResultDeserializer = new XmlSerializer(typeof(FindResultRoot));
-
-        private async Task<HttpContent> GetAsync(string url)
-        {
-            var handler = new HttpClientHandler { Credentials = GetCredentials() };
-            var client = new HttpClient(handler);
-            var response = (await client.GetAsync(url)).Content;
-            return response;
-        }
-
-        private async Task<HttpContent> PostAsync(string url, string data)
-        {
-            var handler = new HttpClientHandler { Credentials = GetCredentials() };
-            var client = new HttpClient(handler);
-            var pairs = new Dictionary<string, string>
-            {
-                {"data", data}
-            };
-            var content = new FormUrlEncodedContent(pairs);
-            var response = (await client.PostAsync(url, content)).Content;
-            return response;
-        }
-
-        private async Task<List<FindResult>> FindAsync(string q)
-        {
-            var url = string.Format(ApiSearch, q);
-            var request = await GetAsync(url);
-            var data = await request.ReadAsStreamAsync();
-            if (data == null || data.Length <= 0)
-                return new List<FindResult>();
-            using (var response = new StreamReader(data))
-            {
-                var result = (FindResultRoot)ResultDeserializer.Deserialize(response);
-                return result.Entries;
-            }
-        }
-
-        private async Task<HttpContent> AddAsync(string id, string data)
-        {
-            var url = string.Format(ApiAdd, id);
-            var response = await PostAsync(url, data);
-            return response;
-        }
-
-        private async Task<HttpContent> UpdateAsync(string id, string data)
-        {
-            var url = string.Format(ApiUpdate, id);
-            var response = await PostAsync(url, data);
-            return response;
-        }
-
-        private async Task<HttpContent> DeleteAsync(string id, string data)
-        {
-            var url = string.Format(ApiDelete, id);
-            var response = await PostAsync(url, data);
-            return response;
-        }
+        private IAnimeService Anime { get; }
 
         // 
 
-        public NetworkCredential GetCredentials() => new NetworkCredential(Settings.MyAnimeListConfig.Username, Settings.MyAnimeListConfig.Password);
+        public NetworkCredential GetCredentials()
+            => new NetworkCredential(Settings.MyAnimeListConfig.Username, Settings.MyAnimeListConfig.Password);
 
         public async Task<List<FindResult>> Find(string q) => await FindAsync(q);
 
         public async Task<bool> VerifyCredentialsAsync()
         {
             const string url = ApiVerify;
-            var handler = new HttpClientHandler { Credentials = GetCredentials() };
+            var handler = new HttpClientHandler {Credentials = GetCredentials()};
             var client = new HttpClient(handler);
             var response = await client.GetAsync(url);
             return response.StatusCode == HttpStatusCode.OK;
         }
-        
+
         public FindResult ClosestResult(Anime anime, IEnumerable<FindResult> results)
         {
             var closestResults = results
@@ -209,9 +154,6 @@ namespace anime_downloader.Services
 
             // check episode details if there is a given total (you can only hope)
             if (result.TotalEpisodes > 0)
-            {
-                // if you have downloaded more episodes than exists in the show, then you probably mislabeled
-                // this show as a s2 show but i'll go through painstaking effort to make it work anyway
                 if (anime.Episode > result.TotalEpisodes)
                 {
                     // track episode total
@@ -237,7 +179,7 @@ namespace anime_downloader.Services
                     if (result == null)
                     {
                         Methods.Alert($"3. Episode mismatch and no new series match for {anime.Title}.\n" +
-                              $"Given total: {total}, current episode: {anime.Episode}");
+                                      $"Given total: {total}, current episode: {anime.Episode}");
                         return false;
                     }
 
@@ -245,8 +187,6 @@ namespace anime_downloader.Services
                     anime.MyAnimeList.SeriesContinuationEpisode = (anime.Episode - total).ToString();
                     anime.MyAnimeList.OverallTotal = total;
                 }
-
-            }
 
             // add all the details available
             anime.MyAnimeList.Id = result.Id;
@@ -264,8 +204,6 @@ namespace anime_downloader.Services
         {
             // for every anime that needs updating
             foreach (var anime in Anime.NeedsUpdates)
-            {
-                // if there is no id, get the id and add it
                 if (anime.MyAnimeList.Id.IsBlank())
                 {
                     if (await GetId(anime))
@@ -273,8 +211,65 @@ namespace anime_downloader.Services
                 }
 
                 else
+                {
                     await Update(anime);
+                }
+        }
+
+        private async Task<HttpContent> GetAsync(string url)
+        {
+            var handler = new HttpClientHandler {Credentials = GetCredentials()};
+            var client = new HttpClient(handler);
+            var response = (await client.GetAsync(url)).Content;
+            return response;
+        }
+
+        private async Task<HttpContent> PostAsync(string url, string data)
+        {
+            var handler = new HttpClientHandler {Credentials = GetCredentials()};
+            var client = new HttpClient(handler);
+            var pairs = new Dictionary<string, string>
+            {
+                {"data", data}
+            };
+            var content = new FormUrlEncodedContent(pairs);
+            var response = (await client.PostAsync(url, content)).Content;
+            return response;
+        }
+
+        private async Task<List<FindResult>> FindAsync(string q)
+        {
+            var url = string.Format(ApiSearch, q);
+            var request = await GetAsync(url);
+            var data = await request.ReadAsStreamAsync();
+            if (data == null || data.Length <= 0)
+                return new List<FindResult>();
+            using (var response = new StreamReader(data))
+            {
+                var result = (FindResultRoot) ResultDeserializer.Deserialize(response);
+                return result.Entries;
             }
+        }
+
+        private async Task<HttpContent> AddAsync(string id, string data)
+        {
+            var url = string.Format(ApiAdd, id);
+            var response = await PostAsync(url, data);
+            return response;
+        }
+
+        private async Task<HttpContent> UpdateAsync(string id, string data)
+        {
+            var url = string.Format(ApiUpdate, id);
+            var response = await PostAsync(url, data);
+            return response;
+        }
+
+        private async Task<HttpContent> DeleteAsync(string id, string data)
+        {
+            var url = string.Format(ApiDelete, id);
+            var response = await PostAsync(url, data);
+            return response;
         }
     }
 }

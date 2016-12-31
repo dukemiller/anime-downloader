@@ -1,19 +1,17 @@
 ﻿using System;
-using System.Windows;
 using System.Windows.Input;
 
 namespace anime_downloader.Views.Components
 {
     public partial class AnimeDetails
     {
-        
         public AnimeDetails()
         {
             InitializeComponent();
         }
 
         // 
-        
+
         private void Number_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             try
@@ -27,7 +25,7 @@ namespace anime_downloader.Views.Components
                 // pass
             }
         }
-        
+
         // 
 
         /// <summary>

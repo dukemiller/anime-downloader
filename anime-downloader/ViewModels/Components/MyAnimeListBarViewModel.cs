@@ -10,18 +10,14 @@ using GalaSoft.MvvmLight.Command;
 
 namespace anime_downloader.ViewModels.Components
 {
-    public class MyAnimeListBarViewModel: ViewModelBase
+    public class MyAnimeListBarViewModel : ViewModelBase
     {
-        private Anime Anime { get; }
-        private ISettingsService Settings { get; }
-        private IAnimeAggregateService AnimeAggregate { get; }
-
         public MyAnimeListBarViewModel(Anime anime, ISettingsService settings, IAnimeAggregateService animeAggregate)
         {
             Anime = anime;
             Settings = settings;
             AnimeAggregate = animeAggregate;
-            
+
             FindCommand = new RelayCommand(Find, () => Settings.MyAnimeListConfig.Works);
             ClearCommand = new RelayCommand(Clear);
             ProfileCommand = new RelayCommand(Profile);
@@ -39,6 +35,10 @@ namespace anime_downloader.ViewModels.Components
                     RaisePropertyChanged(nameof(LoggedIntoMal));
             };
         }
+
+        private Anime Anime { get; }
+        private ISettingsService Settings { get; }
+        private IAnimeAggregateService AnimeAggregate { get; }
 
         // 
 
@@ -58,20 +58,20 @@ namespace anime_downloader.ViewModels.Components
 
         private async void Find()
         {
-            MessengerInstance.Send(new WorkMessage { Working = true });
+            MessengerInstance.Send(new WorkMessage {Working = true});
             var id = await AnimeAggregate.MalService.GetId(Anime);
             RaisePropertyChanged(nameof(HasId));
             Settings.Save();
             if (!id)
                 Methods.Alert($"No ID found for {Anime.Name}.");
-            MessengerInstance.Send(new WorkMessage { Working = false });
+            MessengerInstance.Send(new WorkMessage {Working = false});
         }
 
         private void Clear()
         {
             var response = MessageBox.Show("This will delete all saved MyAnimeList data about this show, are you sure?",
-                                           "Confirmation",
-                                            MessageBoxButton.YesNo);
+                "Confirmation",
+                MessageBoxButton.YesNo);
             if (response == MessageBoxResult.Yes)
             {
                 Anime.MyAnimeList = new MyAnimeListDetails {Id = null, NeedsUpdating = true};
@@ -84,7 +84,7 @@ namespace anime_downloader.ViewModels.Components
 
         private async void Refresh()
         {
-            MessengerInstance.Send(new WorkMessage { Working = true });
+            MessengerInstance.Send(new WorkMessage {Working = true});
 
             var animeResults = await AnimeAggregate.MalService.Find(HttpUtility.UrlEncode(Anime.MyAnimeList.Title));
             var result = animeResults.FirstOrDefault(r => r.Id.Equals(Anime.MyAnimeList.Id));
@@ -100,11 +100,12 @@ namespace anime_downloader.ViewModels.Components
             }
 
             else
+            {
                 Methods.Alert("Had trouble finding this show on MAL.");
+            }
 
             RaisePropertyChanged(nameof(HasId));
-            MessengerInstance.Send(new WorkMessage { Working = false });
+            MessengerInstance.Send(new WorkMessage {Working = false});
         }
-
     }
 }

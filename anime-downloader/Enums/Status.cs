@@ -8,19 +8,14 @@ namespace anime_downloader.Enums
     [Serializable]
     public enum Status
     {
-        [Description("Watching")]
-        Watching,
+        [Description("Watching")] Watching,
 
-        [Description("Considering")]
-        Considering,
+        [Description("Considering")] Considering,
 
-        [Description("Finished")]
-        Finished,
+        [Description("Finished")] Finished,
 
-        [Description("On Hold")]
-        OnHold,
+        [Description("On Hold")] OnHold,
 
-        [Description("Dropped")]
-        Dropped
+        [Description("Dropped")] Dropped
     }
 }

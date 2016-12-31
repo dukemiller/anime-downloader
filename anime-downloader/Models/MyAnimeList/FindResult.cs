@@ -5,7 +5,8 @@ using System.Xml.Serialization;
 
 namespace anime_downloader.Models.MyAnimeList
 {
-    [Serializable, XmlRoot("entry")]
+    [Serializable]
+    [XmlRoot("entry")]
     public class FindResult
     {
         [XmlElement("title")]
@@ -22,7 +23,7 @@ namespace anime_downloader.Models.MyAnimeList
 
         [XmlElement("episodes")]
         public int TotalEpisodes { get; set; }
-        
+
         [XmlElement("score")]
         public string Score { get; set; }
 
@@ -46,6 +47,6 @@ namespace anime_downloader.Models.MyAnimeList
 
         private IEnumerable<string> SynonymsSplit => Synonyms.Split(';');
 
-        public IEnumerable<string> NameCollection => new[] { English, Title }.Union(SynonymsSplit);
+        public IEnumerable<string> NameCollection => new[] {English, Title}.Union(SynonymsSplit);
     }
 }

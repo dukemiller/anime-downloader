@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using anime_downloader.Classes;
 using anime_downloader.Models;
-using anime_downloader.Services;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -13,10 +12,6 @@ namespace anime_downloader.ViewModels
 {
     public class PlaylistCreatorViewModel : ViewModelBase
     {
-        public ISettingsService Settings { get; }
-
-        public IPlaylistService Playlist { get; }
-
         private static readonly RadioModel Default = new RadioModel
         {
             Header = "Default file listing",
@@ -38,15 +33,15 @@ namespace anime_downloader.ViewModels
             Tag = "Date"
         };
 
+        private bool _fileExists;
+
         private ObservableCollection<RadioModel> _options;
+
+        private bool _reverseOrder;
 
         private RadioModel _selectedRadio;
 
         private bool _separateShowOrder;
-
-        private bool _reverseOrder;
-
-        private bool _fileExists;
 
         // 
 
@@ -66,6 +61,10 @@ namespace anime_downloader.ViewModels
             CreateCommand = new RelayCommand(Create);
             OpenCommand = new RelayCommand(Open, () => FileExists);
         }
+
+        public ISettingsService Settings { get; }
+
+        public IPlaylistService Playlist { get; }
 
         // 
 
@@ -118,7 +117,9 @@ namespace anime_downloader.ViewModels
                 Playlist.Refresh();
 
                 if (Playlist.Length == 0)
+                {
                     Methods.Alert("No playlist created (no files were found in the episode folders).");
+                }
                 else
                 {
                     if (SelectedRadio.Tag.Equals("Episode"))

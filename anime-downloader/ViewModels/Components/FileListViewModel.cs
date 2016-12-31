@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -7,7 +6,6 @@ using System.Windows;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
 using anime_downloader.Models;
-using anime_downloader.Services;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -23,9 +21,9 @@ namespace anime_downloader.ViewModels.Components
         private bool _hideLabel;
         private string _imageResourcePath;
         private string _movePath;
+        private AnimeFile _selectedFile;
         private string _startPath;
         private string _title;
-        private AnimeFile _selectedFile;
 
         // 
 
@@ -197,7 +195,7 @@ namespace anime_downloader.ViewModels.Components
 
         private void Move()
         {
-            if ((SelectedFiles.Count > 0) && Directory.Exists(MovePath))
+            if (SelectedFiles.Count > 0 && Directory.Exists(MovePath))
                 foreach (var file in SelectedFiles)
                 {
                     var relative = string.Join(Path.DirectorySeparatorChar.ToString(),
@@ -218,9 +216,11 @@ namespace anime_downloader.ViewModels.Components
             }
 
             else if (SelectedFile != null)
+            {
                 Process.Start(SelectedFile.Path);
+            }
         }
-        
+
         private void Profile()
         {
             if (SelectedFile != null)
@@ -232,7 +232,9 @@ namespace anime_downloader.ViewModels.Components
                     MessengerInstance.Send(anime);
                 }
                 else
+                {
                     Methods.Alert($"No anime profile found for {SelectedFile.Name}.");
+                }
             }
         }
 

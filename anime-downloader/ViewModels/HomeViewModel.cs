@@ -14,7 +14,7 @@ namespace anime_downloader.ViewModels
                 .Version
                 .ToString();
         }
-        
+
         public string Version
         {
             get { return _version; }

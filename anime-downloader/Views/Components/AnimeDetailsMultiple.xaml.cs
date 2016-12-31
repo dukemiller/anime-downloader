@@ -17,7 +17,7 @@ namespace anime_downloader.Views.Components
                 e.Handled = true;
         }
 
-        private void Rating_PreviewTextInput(object sender, TextCompositionEventArgs e) => Methods.AnimeRatingRules(sender as TextBox, e);
-        
+        private void Rating_PreviewTextInput(object sender, TextCompositionEventArgs e)
+            => Methods.AnimeRatingRules(sender as TextBox, e);
     }
 }

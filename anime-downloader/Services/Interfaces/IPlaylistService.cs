@@ -4,18 +4,17 @@ using anime_downloader.Models;
 
 namespace anime_downloader.Services.Interfaces
 {
-
     public interface IPlaylistService
     {
         // List 
 
         int Length { get; }
 
+        string Path { get; }
+
         void Refresh();
 
         void Set(IEnumerable<AnimeFile> files);
-
-        string Path { get; }
 
         // List discrimination
 

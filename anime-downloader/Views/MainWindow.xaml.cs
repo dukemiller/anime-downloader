@@ -16,15 +16,11 @@ namespace anime_downloader.Views
     /// </summary>
     public partial class MainWindow
     {
-        private IAnimeAggregateService AnimeAggregate { get; }
-
-        private ISettingsService Settings { get; }
-
         /// <summary>
         ///     Handles logic related to creating and the features of the system tray.
         /// </summary>
         private readonly Tray _tray;
-        
+
         // 
 
         public MainWindow()
@@ -34,7 +30,9 @@ namespace anime_downloader.Views
             DataContext = new MainWindowViewModel(Settings, AnimeAggregate, Close);
 
             if (AlreadyOpen)
+            {
                 FocusOtherDownloaderAndClose();
+            }
             else
             {
                 _tray = new Tray(this, Settings);
@@ -42,8 +40,25 @@ namespace anime_downloader.Views
             }
         }
 
+        private IAnimeAggregateService AnimeAggregate { get; }
+
+        private ISettingsService Settings { get; }
+
+        /// <summary>
+        ///     Returns the check if there is an already opened anime downloader.
+        /// </summary>
+        private static bool AlreadyOpen
+        {
+            get
+            {
+                return Process
+                           .GetProcessesByName(Path.GetFileNameWithoutExtension(Assembly.GetEntryAssembly().Location))
+                           .Length > 1;
+            }
+        }
+
         // 
-        
+
         private void Window_StateChanged(object sender, EventArgs e)
         {
             // Necessary for bringing focus from another application
@@ -64,7 +79,9 @@ namespace anime_downloader.Views
         private void MainWindow_OnClosing(object sender, CancelEventArgs e)
         {
             if (Settings.FlagConfig.ExitOnClose && !_tray.FullExit)
+            {
                 _tray.Visible = false;
+            }
 
             else if (_tray.FullExit)
             {
@@ -76,19 +93,6 @@ namespace anime_downloader.Views
                 _tray.Visible = true;
                 WindowState = WindowState.Minimized;
                 e.Cancel = true;
-            }
-        }
-
-        /// <summary>
-        ///     Returns the check if there is an already opened anime downloader.
-        /// </summary>
-        private static bool AlreadyOpen
-        {
-            get
-            {
-                return Process
-                           .GetProcessesByName(Path.GetFileNameWithoutExtension(Assembly.GetEntryAssembly().Location))
-                           .Length > 1;
             }
         }
 
@@ -105,6 +109,5 @@ namespace anime_downloader.Views
         }
 
         // public void DisplayTransition() => Display.BeginStoryboard((Storyboard)FindResource("DisplayTransition"));
-
     }
 }

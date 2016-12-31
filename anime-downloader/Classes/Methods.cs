@@ -22,18 +22,18 @@ namespace anime_downloader.Classes
             if (m == 0)
                 return n;
             for (var i = 0; i <= n; d[i, 0] = i++)
-            { }
-            for (var j = 0; j <= m; d[0, j] = j++)
-            { }
-            for (var i = 1; i <= n; i++)
             {
-                for (var j = 1; j <= m; j++)
-                {
-                    var cost = t[j - 1] == s[i - 1] ? 0 : 1;
-                    d[i, j] = Math.Min(
-                        Math.Min(d[i - 1, j] + 1, d[i, j - 1] + 1),
-                        d[i - 1, j - 1] + cost);
-                }
+            }
+            for (var j = 0; j <= m; d[0, j] = j++)
+            {
+            }
+            for (var i = 1; i <= n; i++)
+            for (var j = 1; j <= m; j++)
+            {
+                var cost = t[j - 1] == s[i - 1] ? 0 : 1;
+                d[i, j] = Math.Min(
+                    Math.Min(d[i - 1, j] + 1, d[i, j - 1] + 1),
+                    d[i - 1, j - 1] + cost);
             }
             return d[n, m];
         }
@@ -42,10 +42,10 @@ namespace anime_downloader.Classes
         ///     Strip the entire path of extraneous information (subgroups, resolution, etc).
         /// </summary>
         /// <param name="filename">
-        /// A file name, not a filepath.
+        ///     A file name, not a filepath.
         /// </param>
         /// <param name="removeEpisode">
-        ///  A flag for also removing the episode number
+        ///     A flag for also removing the episode number
         /// </param>
         public static string Strip(string filename, bool removeEpisode = false)
         {
@@ -56,15 +56,15 @@ namespace anime_downloader.Classes
                 .Cast<Match>()
                 .Select(match => match.Groups[0].Value)
                 .ToList();
-            text = new[] { ".mkv", ".mp4", ".avi" }.Union(phrases).Aggregate(text, (current, s) => current.Replace(s, ""));
+            text = new[] {".mkv", ".mp4", ".avi"}.Union(phrases).Aggregate(text, (current, s) => current.Replace(s, ""));
 
             // _ and . can be used for spaces for some subgroups, replace with spaces instead
             text = new[] {"_", "."}.Aggregate(text, (current, s) => current.Replace(s, " "));
 
             if (removeEpisode)
             {
-                var regularEpisodePattern = Regex.Matches(text, @"\-\s[0-9]{1,}");       // Name {- #}
-                var namedEpisodePattern = Regex.Matches(text, @"[e|E]pisode\s[0-9]{1,}");       // Name {Episode #}
+                var regularEpisodePattern = Regex.Matches(text, @"\-\s[0-9]{1,}"); // Name {- #}
+                var namedEpisodePattern = Regex.Matches(text, @"[e|E]pisode\s[0-9]{1,}"); // Name {Episode #}
 
                 if (regularEpisodePattern.Count > 0)
                 {
@@ -74,15 +74,15 @@ namespace anime_downloader.Classes
 
                 else if (namedEpisodePattern.Count > 0)
                 {
-                    var value = namedEpisodePattern.Cast<Match>().Select(match => match.Groups[0].Value).ToList().First();
+                    var value =
+                        namedEpisodePattern.Cast<Match>().Select(match => match.Groups[0].Value).ToList().First();
                     text = text.Replace(value, "");
                 }
-                
             }
 
             return Regex.Replace(text.Trim(), @"\s+", " ");
         }
-        
+
         /// <summary>
         ///     Display an alert message (currently a messagebox).
         /// </summary>
@@ -121,7 +121,6 @@ namespace anime_downloader.Classes
             else
             {
                 if (adder == 0)
-                {
                     if (current == 1)
                     {
                         textbox.Text = "10";
@@ -129,7 +128,6 @@ namespace anime_downloader.Classes
                         e.Handled = true;
                         return;
                     }
-                }
                 e.Handled = true;
                 textbox.Text = $"{adder}";
                 textbox.SelectionStart = 1;

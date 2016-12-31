@@ -9,15 +9,9 @@ namespace anime_downloader.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        private ViewModelBase _currentView;
         private bool _busy;
+        private ViewModelBase _currentView;
         private int _selectedIndex;
-
-        public int SelectedIndex
-        {
-            get { return _selectedIndex; }
-            set { Set(() => SelectedIndex, ref _selectedIndex, value); }
-        }
 
         // 
 
@@ -26,7 +20,7 @@ namespace anime_downloader.ViewModels
             Settings = settings;
             AnimeAggregate = animeAggregate;
             Close = close;
-            
+
             // 
 
             CloseCommand = new RelayCommand(Close);
@@ -35,7 +29,7 @@ namespace anime_downloader.ViewModels
             // 
 
             HomeCommand = new RelayCommand(
-                () => 
+                () =>
                 {
                     CurrentView = new HomeViewModel();
                     SelectedIndex = 1;
@@ -117,10 +111,7 @@ namespace anime_downloader.ViewModels
 
             // 
 
-            MessengerInstance.Register<WorkMessage>(this, _ =>
-            {
-                Busy = _.Working;
-            });
+            MessengerInstance.Register<WorkMessage>(this, _ => { Busy = _.Working; });
 
             MessengerInstance.Register<Enums.Views>(this, _ =>
             {
@@ -141,9 +132,14 @@ namespace anime_downloader.ViewModels
             });
 
             HomeCommand.Execute(1);
-
         }
-        
+
+        public int SelectedIndex
+        {
+            get { return _selectedIndex; }
+            set { Set(() => SelectedIndex, ref _selectedIndex, value); }
+        }
+
         // 
 
         private ISettingsService Settings { get; }
@@ -164,7 +160,7 @@ namespace anime_downloader.ViewModels
             set
             {
                 Set(() => Busy, ref _busy, value);
-                foreach(var _ in ButtonCommands)
+                foreach (var _ in ButtonCommands)
                     _.RaiseCanExecuteChanged();
             }
         }
@@ -190,6 +186,5 @@ namespace anime_downloader.ViewModels
         public RelayCommand SettingsCommand { get; set; }
 
         public RelayCommand WebCommand { get; set; }
-        
     }
 }

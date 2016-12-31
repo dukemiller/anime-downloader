@@ -1,10 +1,10 @@
 ﻿using System.Windows;
-using UserControl = System.Windows.Controls.UserControl;
+using System.Windows.Controls;
 
 namespace anime_downloader.Views.Components
 {
     /// <summary>
-    /// Interaction logic for FindViewModel.xaml
+    ///     Interaction logic for FindViewModel.xaml
     /// </summary>
     public partial class Find : UserControl
     {

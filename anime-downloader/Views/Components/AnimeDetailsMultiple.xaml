@@ -136,21 +136,30 @@
                            Grid.Column="0"
                            Content="Resolution" />
                     <ComboBox Grid.Row="0" Grid.Column="1">
-                        <ComboBoxItem Content="480" IsSelected="{Binding Path=Details.Resolution, Converter={StaticResource StringCompareConverter}, ConverterParameter=480}" />
-                        <ComboBoxItem Content="720" IsSelected="{Binding Path=Details.Resolution, Converter={StaticResource StringCompareConverter}, ConverterParameter=720}" />
-                        <ComboBoxItem Content="1080" IsSelected="{Binding Path=Details.Resolution, Converter={StaticResource StringCompareConverter}, ConverterParameter=1080}" />
+                        <ComboBoxItem Content="480"
+                                      IsSelected="{Binding Path=Details.Resolution, Converter={StaticResource StringCompareConverter}, ConverterParameter=480}" />
+                        <ComboBoxItem Content="720"
+                                      IsSelected="{Binding Path=Details.Resolution, Converter={StaticResource StringCompareConverter}, ConverterParameter=720}" />
+                        <ComboBoxItem Content="1080"
+                                      IsSelected="{Binding Path=Details.Resolution, Converter={StaticResource StringCompareConverter}, ConverterParameter=1080}" />
                     </ComboBox>
 
                     <Label Grid.Row="1"
                            Grid.Column="0"
                            Content="Status" />
                     <ComboBox Grid.Row="1" Grid.Column="1">
-                        <ComboBoxItem Content="" IsSelected="{Binding Path=Details.Status, Converter={StaticResource StringCompareConverter}, ConverterParameter=''}" />
-                        <ComboBoxItem Content="Considering" IsSelected="{Binding Path=Details.Status, Converter={StaticResource StringCompareConverter}, ConverterParameter=Considering}" />
-                        <ComboBoxItem Content="Watching" IsSelected="{Binding Path=Details.Status, Converter={StaticResource StringCompareConverter}, ConverterParameter=Watching}" />
-                        <ComboBoxItem Content="Finished" IsSelected="{Binding Path=Details.Status, Converter={StaticResource StringCompareConverter}, ConverterParameter=Finished}" />
-                        <ComboBoxItem Content="On Hold" IsSelected="{Binding Path=Details.Status, Converter={StaticResource StringCompareConverter}, ConverterParameter='On Hold'}" />
-                        <ComboBoxItem Content="Dropped" IsSelected="{Binding Path=Details.Status, Converter={StaticResource StringCompareConverter}, ConverterParameter=Dropped}" />
+                        <ComboBoxItem Content=""
+                                      IsSelected="{Binding Path=Details.Status, Converter={StaticResource StringCompareConverter}, ConverterParameter=''}" />
+                        <ComboBoxItem Content="Considering"
+                                      IsSelected="{Binding Path=Details.Status, Converter={StaticResource StringCompareConverter}, ConverterParameter=Considering}" />
+                        <ComboBoxItem Content="Watching"
+                                      IsSelected="{Binding Path=Details.Status, Converter={StaticResource StringCompareConverter}, ConverterParameter=Watching}" />
+                        <ComboBoxItem Content="Finished"
+                                      IsSelected="{Binding Path=Details.Status, Converter={StaticResource StringCompareConverter}, ConverterParameter=Finished}" />
+                        <ComboBoxItem Content="On Hold"
+                                      IsSelected="{Binding Path=Details.Status, Converter={StaticResource StringCompareConverter}, ConverterParameter='On Hold'}" />
+                        <ComboBoxItem Content="Dropped"
+                                      IsSelected="{Binding Path=Details.Status, Converter={StaticResource StringCompareConverter}, ConverterParameter=Dropped}" />
                     </ComboBox>
                 </Grid>
             </Grid>

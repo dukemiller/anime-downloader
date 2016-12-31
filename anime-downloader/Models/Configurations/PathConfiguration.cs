@@ -6,12 +6,12 @@ using GalaSoft.MvvmLight;
 namespace anime_downloader.Models.Configurations
 {
     [Serializable]
-    public class PathConfiguration: ObservableObject
+    public class PathConfiguration : ObservableObject
     {
+        private string _torrentDownloader;
+        private string _torrents;
         private string _unwatched;
         private string _watched;
-        private string _torrents;
-        private string _torrentDownloader;
 
         [XmlAttribute("unwatched")]
         public string Unwatched
@@ -40,12 +40,12 @@ namespace anime_downloader.Models.Configurations
             get { return _torrentDownloader; }
             set { Set(() => TorrentDownloader, ref _torrentDownloader, value); }
         }
-        
+
         /// <summary>
         ///     The path to the folder containing all settings and configuration files.
         /// </summary>
         public static string ApplicationDirectory => Path.Combine(Environment
-            .GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                .GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "anime_downloader");
 
         public string DuplicatesDirectory => Environment.GetFolderPath(Environment.SpecialFolder.MyVideos);
@@ -59,6 +59,5 @@ namespace anime_downloader.Models.Configurations
         ///     The path to the log text file.
         /// </summary>
         public string Logging => Path.Combine(ApplicationDirectory, "log.txt");
-
     }
 }

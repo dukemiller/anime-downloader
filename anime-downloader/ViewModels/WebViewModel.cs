@@ -4,13 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web;
-using System.Windows;
-using System.Windows.Controls.Primitives;
-using System.Windows.Input;
 using anime_downloader.Classes;
-using anime_downloader.Models.Configurations;
-using anime_downloader.Models.MyAnimeList;
-using anime_downloader.Services;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -138,7 +132,7 @@ namespace anime_downloader.ViewModels
             ProfileCommand.RaiseCanExecuteChanged();
             SyncCommand.RaiseCanExecuteChanged();
         }
-        
+
         private static void UsageNotes()
         {
             Methods.Alert("There are a few tricks and quirks to correctly use the synchronization: \n\n" +
@@ -164,9 +158,9 @@ namespace anime_downloader.ViewModels
             if (DateTime.Now < WaitDelay)
                 return;
 
-            MessengerInstance.Send(new WorkMessage { Working = true });
+            MessengerInstance.Send(new WorkMessage {Working = true});
             Works = await Mal.VerifyCredentialsAsync();
-            MessengerInstance.Send(new WorkMessage { Working = false });
+            MessengerInstance.Send(new WorkMessage {Working = false});
             RaiseCommandExecutions();
             WaitDelay = DateTime.Now.AddSeconds(5);
         }
@@ -176,9 +170,9 @@ namespace anime_downloader.ViewModels
             var text = Searchbox.Trim();
             if (text.Length > 0)
             {
-                MessengerInstance.Send(new WorkMessage { Working = true });
+                MessengerInstance.Send(new WorkMessage {Working = true});
                 await SearchAndOpenAsync(text);
-                MessengerInstance.Send(new WorkMessage { Working = false });
+                MessengerInstance.Send(new WorkMessage {Working = false});
             }
         }
 
