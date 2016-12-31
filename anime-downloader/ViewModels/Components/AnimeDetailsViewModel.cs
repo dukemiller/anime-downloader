@@ -37,6 +37,8 @@ namespace anime_downloader.ViewModels.Components
             Anime = anime;
             ButtonText = "Edit";
 
+            // 
+
             ButtonCommand = new RelayCommand(
                 Edit,
                 () => !AnimeAggregate.AnimeService.Animes.Except(new []{Anime}).Any(a => a.Name.ToLower().Trim().Equals(Anime?.Name?.ToLower().Trim()))
@@ -48,11 +50,9 @@ namespace anime_downloader.ViewModels.Components
                 Settings.Save();
                 MessengerInstance.Send(Enums.Views.AnimeDisplay);
             });
-
             MyAnimeListBar = new MyAnimeListBarViewModel(Anime, Settings, AnimeAggregate);
             NextCommand = new RelayCommand(Next);
             PreviousCommand = new RelayCommand(Previous);
-
 
             // Default of true to avoid the flicker on the majority case that the file is found
             LastEpisodeAvailable = true;
@@ -169,7 +169,7 @@ namespace anime_downloader.ViewModels.Components
         private void Edit()
         {
             Settings.Save();
-            MessengerInstance.Send(new NotificationMessage("anime_list"));
+            MessengerInstance.Send(Enums.Views.AnimeDisplay);
         }
 
         private void Create()
@@ -177,7 +177,7 @@ namespace anime_downloader.ViewModels.Components
             if (!string.IsNullOrEmpty(SelectedSubgroup))
                 Anime.PreferredSubgroup = SelectedSubgroup;
             Settings.Animes.Add(Anime);
-            MessengerInstance.Send(new NotificationMessage("anime_list"));
+            MessengerInstance.Send(Enums.Views.AnimeDisplay);
         }
 
         private void Next()

@@ -48,6 +48,48 @@ namespace anime_downloader.Services
 
         public string ServiceName => "Nyaa";
 
+        // Query functions
+        
+        private static string NyaaQueryScrub(Anime anime, int episode)
+        {
+            var name = anime.Name
+                .Replace(" ", "+").Replace("'s", "").Replace(".", "+").Replace(":", " ")
+                .Replace("!", "%21").Replace("'", "%27").Replace("-", "%2D");
+            return $"{name}+{anime.Resolution}+{episode:D2}";
+        }
+
+        private static IEnumerable<Torrent> ParseResults(HtmlDocument document, Anime anime, int episode)
+        {
+            var result = document.DocumentNode?
+                .SelectNodes("//item")?
+                .Select(NodeToTorrent)
+                .Where(n => n.Measurement.Equals("MiB")
+                            && n.Size > 5
+                            && Regex.Split(n.StrippedName, " ").Any(s => s.Contains(episode.ToString()))
+                            // && n.Seeders > 0
+                            );
+
+            if (anime.NameCollection.Any(c => c.Contains(episode.ToString())))
+            {
+                // To account for the case that a show contains a number (e.g. 12-sai - ep 12) that is 
+                // relevant to the title and or also might contain the year in case of rework/reboot 
+                // (e.g. Berserk (2016)) 
+                const string fullYearPattern = @"\(\d{4}\)";
+                result = result?
+                    .Where(nyaa => nyaa.StrippedName.Split()
+                                       .Select(c => Regex.Replace(c, fullYearPattern, ""))
+                                       .Count(c => c.Contains(episode.ToString("D2")))
+                                   >= 2);
+
+                /* TODO
+                 * This will fail in the case that there is a show with a name that contains the 
+                 * same string multiple times in the name, something like "12 Dogfighter 12 - 12"
+                */
+            }
+
+            return result?.OrderByDescending(n => n.Seeders);
+        }
+
         // 
 
         public bool CanDownload(Torrent torrent, Anime anime)
@@ -97,23 +139,16 @@ namespace anime_downloader.Services
             }
         }
 
+        // 
+        
         public async Task<IEnumerable<Torrent>> FindTorrentsAsync(Anime anime, int episode)
         {
-            var queryDetails = anime.Name.Replace(" ", "+")
-                                   .Replace("'s", "")
-                                   .Replace(".", "+")
-                                   .Replace(":", " ")
-                                   .Replace("!", "%21")
-                                   .Replace("'", "%27")
-                                   .Replace("-", "%2D")
-                               + "+" + anime.Resolution + "+" + episode;
+            var document = new HtmlDocument();
 
             var url = new Uri("https://www.nyaa.se/?page=rss" +
                               $"&cats={EnglishTranslated}" +
-                              $"&term={queryDetails}" +
+                              $"&term={NyaaQueryScrub(anime, episode)}" +
                               $"&sort={BySeeders}");
-
-            var document = new HtmlDocument();
 
             using (var client = new WebClient())
             {
@@ -121,34 +156,10 @@ namespace anime_downloader.Services
                 document.LoadHtml(html);
             }
 
-            var result = document.DocumentNode?
-                .SelectNodes("//item")?
-                .Select(NodeToTorrent)
-                .Where(n => n.Measurement.Equals("MiB")
-                            && n.Size > 5
-                            && n.StrippedName.Contains(episode.ToString("D2"))
-                            && n.Seeders > 0);
-
-            if (anime.NameCollection.Any(c => c.Contains(episode.ToString("D2"))))
-            {
-                // To account for the case that a show contains a number (e.g. 12-sai - ep 12) that is 
-                // relevant to the title and or also might contain the year in case of rework/reboot 
-                // (e.g. Berserk (2016)) 
-                const string fullYearPattern = @"\(\d{4}\)";
-                result = result?
-                    .Where(nyaa => nyaa.StrippedName.Split()
-                                       .Select(c => Regex.Replace(c, fullYearPattern, ""))
-                                       .Count(c => c.Contains(episode.ToString("D2")))
-                                   >= 2);
-
-                /* TODO
-                 * This will fail in the case that there is a show with a name that contains the 
-                 * same string multiple times in the name, something like "12 Dogfighter 12 - 12"
-                */
-            }
-
-            return result?.OrderByDescending(n => n.Seeders);
+            return ParseResults(document, anime, episode);
         }
+
+        // 
 
         public async Task<int> DownloadAsync(IEnumerable<Anime> animes, Action<string> output)
         {

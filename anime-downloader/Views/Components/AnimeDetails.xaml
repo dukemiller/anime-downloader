@@ -139,7 +139,8 @@
                         <DockPanel Grid.Row="0" Grid.Column="1">
                             <TextBox PreviewTextInput="Number_PreviewTextInput"
                                      Style="{DynamicResource NumberBoxStyle}"
-                                     Text="{Binding Anime.Episode}">
+                                     Text="{Binding Anime.Episode,
+                                                    UpdateSourceTrigger=PropertyChanged}">
                                 <TextBox.InputBindings>
                                     <KeyBinding Key="Enter" Command="{Binding ButtonCommand}" />
                                 </TextBox.InputBindings>
@@ -291,16 +292,14 @@
                 <!--  Only visible when not editing  -->
                 <ContentPresenter Margin="5" Content="{Binding MyAnimeListBar}" />
 
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button 
-                        Margin="5"
-                        Command="{Binding LastEpisodeCommand}"
-                        Content="Last episode" />
+                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                    <Button Margin="5"
+                            Command="{Binding LastEpisodeCommand}"
+                            Content="Last episode" />
 
-                    <Button 
-                        Margin="5"
-                        Command="{Binding ButtonCommand}"
-                        Content="{Binding ButtonText}" />
+                    <Button Margin="5"
+                            Command="{Binding ButtonCommand}"
+                            Content="{Binding ButtonText}" />
                 </StackPanel>
             </DockPanel>
         </Grid>
