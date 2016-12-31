@@ -1,4 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using anime_downloader.Models;
 using anime_downloader.Services.Interfaces;
@@ -69,14 +71,7 @@ namespace anime_downloader.ViewModels.Components
 
         // 
 
-        public static ObservableCollection<Status> Statuses => new ObservableCollection<Status>
-        {
-            Status.Watching,
-            Status.Considering,
-            Status.Finished,
-            Status.OnHold,
-            Status.Dropped
-        };
+        public static IEnumerable<Status> Statuses => Enum.GetValues(typeof(Status)).Cast<Status>();
 
         public ISettingsService Settings
         {
