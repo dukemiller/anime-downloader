@@ -49,20 +49,12 @@ namespace anime_downloader.Classes
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (System.Convert.ToString(value).Equals(System.Convert.ToString(parameter)))
-            {
-                return true;
-            }
-            return false;
+            return System.Convert.ToString(value).ToLower().Equals(System.Convert.ToString(parameter).ToLower());
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (System.Convert.ToBoolean(value))
-            {
-                return parameter;
-            }
-            return null;
+            return System.Convert.ToBoolean(value) ? parameter : null;
         }
     }
 
