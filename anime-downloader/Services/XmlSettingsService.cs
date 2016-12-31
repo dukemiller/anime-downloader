@@ -20,11 +20,22 @@ namespace anime_downloader.Services
 
         public XmlSettingsService()
         {
+            var path = Directory.GetCurrentDirectory();
+
             PathConfig = new PathConfiguration
             {
+                Watched = Path.Combine(path, "Watched"),
+                Unwatched = Path.Combine(path, "Shows"),
+                Torrents = Path.Combine(path, "Torrents"),
                 TorrentDownloader = @"C:\Program Files (x86)\uTorrent\uTorrent.exe"
             };
-            FlagConfig = new FlagConfiguration {AlwaysShowTray = true, ExitOnClose = true};
+
+            FlagConfig = new FlagConfiguration
+            {
+                AlwaysShowTray = true,
+                ExitOnClose = true
+            };
+
             MyAnimeListConfig = new MyAnimeListConfiguration();
             Animes = new List<Anime>();
             Subgroups = new List<string>();
