@@ -255,7 +255,8 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsEnabled" Value="false">
                                 <Setter Property="Border.Opacity" Value="0.75" />
-                                <Setter Property="Border.Background" Value="{StaticResource SpecialDisabledBackgroundColor}" />
+                                <Setter Property="Border.Background"
+                                        Value="{StaticResource SpecialDisabledBackgroundColor}" />
                                 <Setter Property="Background" Value="{StaticResource SpecialDisabledBackgroundColor}" />
                                 <Setter Property="Border.BorderBrush" Value="{StaticResource DisabledBorderColor}" />
                                 <Setter Property="Foreground" Value="{StaticResource SpecialDisabledForegroundColor}" />

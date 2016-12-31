@@ -33,6 +33,7 @@ namespace anime_downloader.ViewModels.Components
             AnimeAggregate = animeAggregate;
             Anime = anime;
             ButtonText = "Edit";
+            SelectedSubgroup = Anime.PreferredSubgroup;
 
             // 
 
@@ -43,7 +44,6 @@ namespace anime_downloader.ViewModels.Components
                         .Any(a => a.Name.ToLower().Trim().Equals(Anime?.Name?.ToLower().Trim()))
                     && Anime?.Name?.Length > 0
             );
-
             ExitCommand = new RelayCommand(() =>
             {
                 Settings.Save();
@@ -52,6 +52,7 @@ namespace anime_downloader.ViewModels.Components
             MyAnimeListBar = new MyAnimeListBarViewModel(Anime, Settings, AnimeAggregate);
             NextCommand = new RelayCommand(Next);
             PreviousCommand = new RelayCommand(Previous);
+            ClearSubgroupCommand = new RelayCommand(() => SelectedSubgroup = null);
 
             // Default of true to avoid the flicker on the majority case that the file is found
             LastEpisodeAvailable = true;
@@ -79,6 +80,10 @@ namespace anime_downloader.ViewModels.Components
                 Airing = true
             };
             ButtonText = "Add";
+            SelectedSubgroup = Anime.PreferredSubgroup;
+
+            // 
+
             ButtonCommand = new RelayCommand(
                 Create,
                 () =>
@@ -87,6 +92,7 @@ namespace anime_downloader.ViewModels.Components
                     && Anime?.Name?.Length > 0
             );
             ExitCommand = new RelayCommand(() => MessengerInstance.Send(Enums.Views.AnimeDisplay));
+            ClearSubgroupCommand = new RelayCommand(() => SelectedSubgroup = null);
         }
 
         // 
@@ -127,6 +133,8 @@ namespace anime_downloader.ViewModels.Components
 
         public RelayCommand PreviousCommand { get; set; }
 
+        public RelayCommand ClearSubgroupCommand { get; set; }
+
         public MyAnimeListBarViewModel MyAnimeListBar
         {
             get { return _myAnimeListBar; }
@@ -136,7 +144,11 @@ namespace anime_downloader.ViewModels.Components
         public string SelectedSubgroup
         {
             get { return _selectedSubgroup; }
-            set { Set(() => SelectedSubgroup, ref _selectedSubgroup, value); }
+            set
+            {
+                Set(() => SelectedSubgroup, ref _selectedSubgroup, value);
+                Anime.PreferredSubgroup = SelectedSubgroup;
+            }
         }
 
         public Anime Anime

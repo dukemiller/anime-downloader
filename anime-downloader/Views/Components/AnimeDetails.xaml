@@ -24,7 +24,6 @@
         <xaml:ExtendedMouseBinding Command="{Binding ExitCommand}" Gesture="XButton1" />
     </UserControl.InputBindings>
     <UserControl.Resources>
-
         <Style x:Key="NumberBoxStyle" TargetType="TextBox">
             <Setter Property="Width" Value="40" />
             <Setter Property="HorizontalAlignment" Value="Left" />
@@ -180,12 +179,9 @@
                                   Grid.Column="1"
                                   VerticalAlignment="Center"
                                   FontSize="14">
-                            <ComboBoxItem Content="480"
-                                          IsSelected="{Binding Path=Anime.Resolution, Converter={StaticResource StringCompareConverter}, ConverterParameter=480}" />
-                            <ComboBoxItem Content="720"
-                                          IsSelected="{Binding Path=Anime.Resolution, Converter={StaticResource StringCompareConverter}, ConverterParameter=720}" />
-                            <ComboBoxItem Content="1080"
-                                          IsSelected="{Binding Path=Anime.Resolution, Converter={StaticResource StringCompareConverter}, ConverterParameter=1080}" />
+                            <ComboBoxItem Content="480" IsSelected="{Binding Path=Anime.Resolution, Converter={StaticResource StringCompareConverter}, ConverterParameter=480}" />
+                            <ComboBoxItem Content="720" IsSelected="{Binding Path=Anime.Resolution, Converter={StaticResource StringCompareConverter}, ConverterParameter=720}" />
+                            <ComboBoxItem Content="1080" IsSelected="{Binding Path=Anime.Resolution, Converter={StaticResource StringCompareConverter}, ConverterParameter=1080}" />
                         </ComboBox>
 
                         <!--  Subgroup  -->
@@ -198,7 +194,7 @@
                                   VerticalAlignment="Center"
                                   FontSize="14"
                                   ItemsSource="{Binding Settings.Subgroups}"
-                                  SelectedItem="{Binding SelectedSubgroup}">
+                                  SelectedItem="{Binding SelectedSubgroup, UpdateSourceTrigger=PropertyChanged}">
                             <ComboBox.Style>
                                 <Style>
                                     <Style.Triggers>
@@ -209,6 +205,20 @@
                                 </Style>
                             </ComboBox.Style>
                         </ComboBox>
+                        <Button Grid.Row="3"
+                                Grid.Column="1"
+                                Height="21"
+                                BorderThickness="0"
+                                Style="{x:Null}"
+                                VerticalAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                Width="14"
+                                FontSize="10"
+                                Content="X"
+                                Margin="0,0,-15,0"
+                                HorizontalAlignment="Right"
+                                Command="{Binding ClearSubgroupCommand}"
+                                 />
 
                         <!--  Rating  -->
                         <Label Grid.Row="4"
