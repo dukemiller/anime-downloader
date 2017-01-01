@@ -51,8 +51,8 @@ namespace anime_downloader.Services
                 }
 
             return Settings.FlagConfig.SortByReversed
-                ? animes.OrderByDescending(x => propertyDescriptor.GetValue(x))
-                : animes.OrderBy(x => propertyDescriptor.GetValue(x));
+                ? animes.OrderByDescending(x => propertyDescriptor?.GetValue(x))
+                : animes.OrderBy(x => propertyDescriptor?.GetValue(x));
         }
 
         public IEnumerable<Anime> AiringAndWatchingAndNotCompleted()
