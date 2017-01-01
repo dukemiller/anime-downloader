@@ -99,6 +99,16 @@ namespace anime_downloader.ViewModels.Components
                 Anime.MyAnimeList.English = result.English;
                 Anime.MyAnimeList.Synopsis = result.Synopsis;
                 Anime.MyAnimeList.TotalEpisodes = result.TotalEpisodes;
+
+                DateTime date;
+                if (DateTime.TryParse(result.StartDate, out date))
+                {
+                    Anime.MyAnimeList.Aired = new AnimeSeason
+                    {
+                        Year = date.Year,
+                        Season = (Season)Math.Ceiling(Convert.ToDouble(date.Month) / 3)
+                    };
+                }
             }
 
             else

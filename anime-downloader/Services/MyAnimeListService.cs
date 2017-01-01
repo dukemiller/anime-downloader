@@ -197,6 +197,15 @@ namespace anime_downloader.Services
             anime.MyAnimeList.Title = result.Title;
             anime.MyAnimeList.English = result.English;
             anime.MyAnimeList.Synonyms = result.Synonyms;
+            DateTime date;
+            if (DateTime.TryParse(result.StartDate, out date))
+            {
+                anime.MyAnimeList.Aired = new AnimeSeason
+                {
+                    Year = date.Year,
+                    Season = (Season)Math.Ceiling(Convert.ToDouble(date.Month) / 3)
+                };
+            }
 
             return true;
         }
