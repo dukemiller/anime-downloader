@@ -229,7 +229,7 @@
                         <TextBox Grid.Row="4"
                                  Grid.Column="1"
                                  MaxLength="2"
-                                 PreviewTextInput="Number_PreviewTextInput"
+                                 PreviewTextInput="Rating_PreviewTextInput"
                                  Style="{DynamicResource NumberBoxStyle}"
                                  Text="{Binding Anime.Rating}">
                             <TextBox.InputBindings>

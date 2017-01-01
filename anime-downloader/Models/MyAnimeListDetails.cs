@@ -17,7 +17,6 @@ namespace anime_downloader.Models
         private string _synonyms;
         private string _synopsis;
         private string _title;
-        private string _seasonInformation;
         private int _totalEpisodes;
 
         [XmlAttribute("id")]

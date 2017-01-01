@@ -129,15 +129,7 @@ namespace anime_downloader.Models
         public string Rating
         {
             get { return _rating; }
-            set
-            {
-                if (value != null)
-                {
-                    var number = int.Parse(value);
-                    number = Math.Min(Math.Max(number, 0), 10);
-                    Set(() => Rating, ref _rating, number.ToString());
-                }
-            }
+            set { Set(() => Rating, ref _rating, value); }
         }
 
         [XmlElement("my_anime_list")]
