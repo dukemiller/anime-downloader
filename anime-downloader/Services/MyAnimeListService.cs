@@ -174,6 +174,7 @@ namespace anime_downloader.Services
                             Id = m.SeriesAnimedbId,
                             Synonyms = m.SeriesSynonyms,
                             Image = m.SeriesImage,
+                            Title = m.SeriesTitle,
                             TotalEpisodes = seriesResult ? seriesEpisodes : 0
                         }
                     };
