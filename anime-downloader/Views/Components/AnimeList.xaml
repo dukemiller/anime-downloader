@@ -8,7 +8,7 @@
              xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
              d:DataContext="{d:DesignInstance {x:Type components:AnimeListViewModel}}"
              d:DesignHeight="360"
-             d:DesignWidth="680"
+             d:DesignWidth="780"
              mc:Ignorable="d">
     <UserControl.Resources>
         <Style TargetType="{x:Type Rectangle}">
@@ -132,7 +132,12 @@
                                     Binding="{Binding Rating}"
                                     CellStyle="{StaticResource CenterStyle}"
                                     Header="Rating"
-                                    SortMemberPath="SortedRating" />
+                                    SortMemberPath="SortedRating" /> 
+                <DataGridTextColumn Width="auto"
+                                    Binding="{Binding MyAnimeList.Aired.Title}"
+                                    SortMemberPath="MyAnimeList.SeasonSort"
+                                    CellStyle="{StaticResource CenterStyle}"
+                                    Header="Aired" />
             </DataGrid.Columns>
         </DataGrid>
         <ContentPresenter Grid.Row="0"

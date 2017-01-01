@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
+using anime_downloader.Classes;
+using anime_downloader.Enums;
 using GalaSoft.MvvmLight;
 
 namespace anime_downloader.Models
@@ -15,6 +17,7 @@ namespace anime_downloader.Models
         private string _synonyms;
         private string _synopsis;
         private string _title;
+        private string _seasonInformation;
         private int _totalEpisodes;
 
         [XmlAttribute("id")]
@@ -102,8 +105,14 @@ namespace anime_downloader.Models
 
         [XmlAttribute("series_continuation_episode")]
         public string SeriesContinuationEpisode { get; set; }
-
+        
+        [XmlElement("aired")]
+        public AnimeSeason Aired { get; set; }
+        
         // 
+
+        [XmlIgnore]
+        public int SeasonSort => Aired?.Sort ?? (DateTime.Now.Year + 3) * Anime.SortedAiredFlag - 2;
 
         [XmlIgnore]
         public int Total => OverallTotal > 0 ? OverallTotal : TotalEpisodes;

@@ -16,6 +16,11 @@ namespace anime_downloader.Models
         /// </summary>
         public static int SortedRateFlag;
 
+        /// <summary>
+        ///    Another variable used sort of like a bit flag for sorting in the data grid.
+        /// </summary>
+        public static int SortedAiredFlag;
+
         private bool _airing;
         private int _episode;
         private MyAnimeListDetails _myAnimeList;
@@ -153,7 +158,7 @@ namespace anime_downloader.Models
                     MyAnimeList.NeedsUpdating = true;
             }
         }
-
+        
         //////////////////////////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////////////////////

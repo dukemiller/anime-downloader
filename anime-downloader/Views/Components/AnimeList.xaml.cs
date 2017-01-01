@@ -26,6 +26,11 @@ namespace anime_downloader.Views.Components
                     Anime.SortedRateFlag = 1;
                 else
                     Anime.SortedRateFlag ^= 1;
+            else if (header.Equals("aired"))
+                if (column.SortDirection == null)
+                    Anime.SortedAiredFlag = 1;
+                else
+                    Anime.SortedAiredFlag ^= 1;
 
             // 
 

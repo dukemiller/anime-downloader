@@ -92,11 +92,13 @@
     <Compile Include="Classes\Xaml\FocusBehavior.cs" />
     <Compile Include="Classes\Xaml\MouseBindings.cs" />
     <Compile Include="Classes\Xaml\MyMultiSelectBehavior.cs" />
+    <Compile Include="Enums\Season.cs" />
     <Compile Include="Enums\Status.cs" />
     <Compile Include="Enums\Views.cs" />
     <Compile Include="Models\Anime.cs" />
     <Compile Include="Models\AnimeFile.cs" />
     <Compile Include="Classes\Extensions.cs" />
+    <Compile Include="Models\AnimeSeason.cs" />
     <Compile Include="Models\MultipleAnimeDetails.cs" />
     <Compile Include="Models\AnimeFileRange.cs" />
     <Compile Include="Models\MyAnimeListDetails.cs" />
