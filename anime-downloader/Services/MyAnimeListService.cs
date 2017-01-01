@@ -28,9 +28,13 @@ namespace anime_downloader.Services
 
         private const string ApiVerify = "https://myanimelist.net/api/account/verify_credentials.xml";
 
+        private const string ApiProfile = "https://myanimelist.net/malappinfo.php?u={0}&status=all&type=anime";
+
         //
 
         private static readonly XmlSerializer ResultDeserializer = new XmlSerializer(typeof(FindResultRoot));
+
+        private static readonly XmlSerializer ProfileDeserializer = new XmlSerializer(typeof(ProfileResult));
 
         // 
 
@@ -39,6 +43,8 @@ namespace anime_downloader.Services
             Settings = settings;
             Anime = anime;
         }
+
+        // 
 
         private ISettingsService Settings { get; }
 
@@ -106,6 +112,89 @@ namespace anime_downloader.Services
                 : new UpdateShow(anime);
             await AddAsync(anime.MyAnimeList.Id, myAnimeListNode.ToString());
             anime.MyAnimeList.NeedsUpdating = false;
+        }
+
+        public async Task<IEnumerable<Anime>> GetProfileAnime()
+        {
+            var animes = await GetProfile();
+            return animes
+                .Select(m =>
+                {
+                    bool airing;
+                    switch (m.SeriesStatus)
+                    {
+                        case "1":
+                            airing = true;
+                            break;
+
+                        default:
+                            airing = false;
+                            break;
+                    }
+
+                    Status status;
+                    switch (m.My_status)
+                    {
+                        case "1":
+                            status = Status.Watching;
+                            break;
+                        case "3":
+                            status = Status.OnHold;
+                            break;
+                        case "4":
+                            status = Status.Dropped;
+                            break;
+                        case "6":
+                            status = Status.Considering;
+                            break;
+                        case "2":
+                        default:
+                            status = Status.Finished;
+                            break;
+                    }
+
+                    
+                    int episodes;
+                    var episodesResult = int.TryParse(m.MyWatchedEpisodes, out episodes);
+
+                    int seriesEpisodes;
+                    var seriesResult = int.TryParse(m.SeriesEpisodes, out seriesEpisodes);
+
+                    var anime = new Anime
+                    {
+                        Name = m.SeriesTitle,
+                        Episode = episodesResult ? episodes : 0,
+                        Rating = m.My_score,
+                        Notes = m.My_tags,
+                        Status = status,
+                        Airing = airing,
+                        Resolution = "720",
+                        MyAnimeList = new MyAnimeListDetails
+                        {
+                            Id = m.SeriesAnimedbId,
+                            Synonyms = m.SeriesSynonyms,
+                            Image = m.SeriesImage,
+                            TotalEpisodes = seriesResult ? seriesEpisodes : 0
+                        }
+                    };
+
+                    // Date stuff
+                    DateTime date;
+                    if (DateTime.TryParse(m.SeriesStart, out date))
+                    {
+                        anime.MyAnimeList.Aired = new AnimeSeason
+                        {
+                            Year = date.Year,
+                            Season = (Season) Math.Ceiling(Convert.ToDouble(date.Month) / 3)
+                        };
+                    }
+
+                    // Math.Min(Math.Max(number, 0), 10)
+                    if (anime.Rating.Equals("0"))
+                        anime.Rating = "";
+
+                    return anime;
+                });
         }
 
         public async Task<bool> GetId(Anime anime)
@@ -226,6 +315,24 @@ namespace anime_downloader.Services
                 }
         }
 
+        // 
+
+        private async Task<IEnumerable<ProfileAnimeResult>> GetProfile()
+        {
+            var url = string.Format(ApiProfile, Settings.MyAnimeListConfig.Username);
+            var request = await GetAsync(url);
+            var data = await request.ReadAsStreamAsync();
+            if (data == null || data.Length <= 0)
+                return new List<ProfileAnimeResult>();
+            using (var response = new StreamReader(data))
+            {
+                var result = (ProfileResult)ProfileDeserializer.Deserialize(response);
+                return result.Anime.Where(anime => anime?.SeriesType?.Equals("1") == true // Only allow shorts
+                                                   || anime?.SeriesType?.Equals("2") == true); // and series
+            }
+
+        }
+
         private async Task<HttpContent> GetAsync(string url)
         {
             var handler = new HttpClientHandler {Credentials = GetCredentials()};
@@ -281,5 +388,6 @@ namespace anime_downloader.Services
             var response = await PostAsync(url, data);
             return response;
         }
+        
     }
 }

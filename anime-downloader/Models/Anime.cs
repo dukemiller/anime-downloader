@@ -205,6 +205,9 @@ namespace anime_downloader.Models
         public int SortedRating => string.IsNullOrEmpty(Rating) ? 13 * SortedRateFlag - 2 : int.Parse(Rating);
 
         [XmlIgnore]
+        public int SeasonSort => MyAnimeList.Aired?.Sort ?? (DateTime.Now.Year + 3) * SortedAiredFlag - 2;
+
+        [XmlIgnore]
         public IEnumerable<string> NameCollection
         {
             get

@@ -42,6 +42,12 @@ namespace anime_downloader.Services.Interfaces
         /// </summary>
         IEnumerable<Anime> AiringAndWatchingAndNotCompleted();
 
+        /// <summary>
+        ///     Series that contain a MyAnimeList Id
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<Anime> HasId { get; }
+
         // Collection operations
 
         /// <summary>

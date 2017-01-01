@@ -15,7 +15,7 @@ namespace anime_downloader.Models
         public Season Season { get; set; }
 
         [XmlIgnore]
-        public int Sort => Year - 4 + (int) Season;
+        public int Sort => (Year * 10) + (int) Season;
 
         [XmlIgnore]
         public string Title => $"{Season.Description()} {Year}";

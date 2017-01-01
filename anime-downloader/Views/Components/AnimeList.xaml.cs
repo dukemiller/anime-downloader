@@ -37,7 +37,9 @@ namespace anime_downloader.Views.Components
             var settings = (DataContext as AnimeListViewModel)?.Settings;
             if (settings != null)
             {
-                settings.SortBy = header.Equals("rating") ? "sortedrating" : header;
+                settings.SortBy = header.Equals("rating")
+                    ? "sortedrating"
+                    : header.Equals("aired") ? "seasonsort" : header;
                 settings.FlagConfig.SortByReversed = column.SortDirection == ListSortDirection.Ascending;
                 settings.Save();
             }

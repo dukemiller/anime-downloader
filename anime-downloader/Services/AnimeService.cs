@@ -39,6 +39,7 @@ namespace anime_downloader.Services
                 .GetProperties(typeof(Anime))
                 .Find(Settings.SortBy, true);
 
+            // Filtering
             if (!string.IsNullOrEmpty(Settings.FilterBy))
                 if (Settings.FilterBy.Equals("Needs Synchronize"))
                 {
@@ -50,6 +51,7 @@ namespace anime_downloader.Services
                     animes = animes.Where(a => filters.Any(f => f.Equals(a.Status.Description())));
                 }
 
+            // Ordering
             return Settings.FlagConfig.SortByReversed
                 ? animes.OrderByDescending(x => propertyDescriptor?.GetValue(x))
                 : animes.OrderBy(x => propertyDescriptor?.GetValue(x));
@@ -70,6 +72,8 @@ namespace anime_downloader.Services
 
         public IEnumerable<Anime> NeedsUpdates => Animes.Where(a => a.MyAnimeList.NeedsUpdating
                                                                     && a.Status != Status.Considering);
+
+        public IEnumerable<Anime> HasId => Animes.Where(a => !string.IsNullOrEmpty(a.MyAnimeList.Id));
 
         public Anime ClosestAnime(string name)
         {

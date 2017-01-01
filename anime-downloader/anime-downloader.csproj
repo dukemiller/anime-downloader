@@ -109,6 +109,7 @@
     <Compile Include="Classes\OperatingSystemApi.cs" />
     <Compile Include="Classes\Tray.cs" />
     <Compile Include="Models\MyAnimeList\FindResultRoot.cs" />
+    <Compile Include="Models\MyAnimeList\ProfileResult.cs" />
     <Compile Include="Models\MyAnimeList\UpdateShow.cs" />
     <Compile Include="Models\MyAnimeList\FindResult.cs" />
     <Compile Include="Models\Configurations\PathConfiguration.cs" />

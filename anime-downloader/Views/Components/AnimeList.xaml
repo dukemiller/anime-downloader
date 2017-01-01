@@ -132,12 +132,12 @@
                                     Binding="{Binding Rating}"
                                     CellStyle="{StaticResource CenterStyle}"
                                     Header="Rating"
-                                    SortMemberPath="SortedRating" /> 
+                                    SortMemberPath="SortedRating" />
                 <DataGridTextColumn Width="auto"
                                     Binding="{Binding MyAnimeList.Aired.Title}"
-                                    SortMemberPath="MyAnimeList.SeasonSort"
                                     CellStyle="{StaticResource CenterStyle}"
-                                    Header="Aired" />
+                                    Header="Aired"
+                                    SortMemberPath="SeasonSort" />
             </DataGrid.Columns>
         </DataGrid>
         <ContentPresenter Grid.Row="0"
@@ -170,20 +170,13 @@
                       HorizontalContentAlignment="Center"
                       FontFamily="{StaticResource MainFont}"
                       MouseWheel="OnContentChanged">
-                <ComboBoxItem Content=""
-                              IsSelected="{Binding FilterText, Converter={StaticResource StringCompareConverter}, ConverterParameter=''}" />
-                <ComboBoxItem Content="Airing/Watching"
-                              IsSelected="{Binding FilterText, Converter={StaticResource StringCompareConverter}, ConverterParameter=Airing/Watching}" />
-                <ComboBoxItem Content="Finished"
-                              IsSelected="{Binding FilterText, Converter={StaticResource StringCompareConverter}, ConverterParameter=Finished}" />
-                <ComboBoxItem Content="On Hold"
-                              IsSelected="{Binding FilterText, Converter={StaticResource StringCompareConverter}, ConverterParameter='On Hold'}" />
-                <ComboBoxItem Content="Considering"
-                              IsSelected="{Binding FilterText, Converter={StaticResource StringCompareConverter}, ConverterParameter=Considering}" />
-                <ComboBoxItem Content="Dropped"
-                              IsSelected="{Binding FilterText, Converter={StaticResource StringCompareConverter}, ConverterParameter=Dropped}" />
-                <ComboBoxItem Content="Needs Synchronize"
-                              IsSelected="{Binding FilterText, Converter={StaticResource StringCompareConverter}, ConverterParameter='Needs Synchronize'}" />
+                <ComboBoxItem Content="" IsSelected="{Binding FilterText, Converter={StaticResource StringCompareConverter}, ConverterParameter=''}" />
+                <ComboBoxItem Content="Airing/Watching" IsSelected="{Binding FilterText, Converter={StaticResource StringCompareConverter}, ConverterParameter=Airing/Watching}" />
+                <ComboBoxItem Content="Finished" IsSelected="{Binding FilterText, Converter={StaticResource StringCompareConverter}, ConverterParameter=Finished}" />
+                <ComboBoxItem Content="On Hold" IsSelected="{Binding FilterText, Converter={StaticResource StringCompareConverter}, ConverterParameter='On Hold'}" />
+                <ComboBoxItem Content="Considering" IsSelected="{Binding FilterText, Converter={StaticResource StringCompareConverter}, ConverterParameter=Considering}" />
+                <ComboBoxItem Content="Dropped" IsSelected="{Binding FilterText, Converter={StaticResource StringCompareConverter}, ConverterParameter=Dropped}" />
+                <ComboBoxItem Content="Needs Synchronize" IsSelected="{Binding FilterText, Converter={StaticResource StringCompareConverter}, ConverterParameter='Needs Synchronize'}" />
             </ComboBox>
         </Grid>
     </Grid>

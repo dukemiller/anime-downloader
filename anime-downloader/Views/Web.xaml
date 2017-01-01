@@ -59,7 +59,7 @@
                                     <TextBox Grid.Row="0"
                                              Grid.Column="1"
                                              VerticalAlignment="Center"
-                                             Text="{Binding Settings.MyAnimeListConfig.Username}">
+                                             Text="{Binding SettingsService.MyAnimeListConfig.Username}">
                                         <TextBox.InputBindings>
                                             <KeyBinding Key="Enter" Command="{Binding LoginCommand}" />
                                         </TextBox.InputBindings>
@@ -72,7 +72,7 @@
                                                  Grid.Column="1"
                                                  VerticalAlignment="Center"
                                                  xaml:PasswordBoxAssistant.BindPassword="True"
-                                                 xaml:PasswordBoxAssistant.BoundPassword="{Binding Path=Settings.MyAnimeListConfig.Password,
+                                                 xaml:PasswordBoxAssistant.BoundPassword="{Binding Path=SettingsService.MyAnimeListConfig.Password,
                                                                                                    Mode=TwoWay,
                                                                                                    UpdateSourceTrigger=PropertyChanged}">
                                         <PasswordBox.InputBindings>
@@ -87,10 +87,10 @@
                                     <DockPanel Grid.Row="2" Grid.Column="1">
                                         <Label HorizontalAlignment="Left"
                                                VerticalAlignment="Center"
-                                               Content="{Binding Settings.MyAnimeListConfig.Works,
+                                               Content="{Binding SettingsService.MyAnimeListConfig.Works,
                                                                  Converter={StaticResource BooleanSymbolConverter}}"
                                                FontSize="22"
-                                               Foreground="{Binding Settings.MyAnimeListConfig.Works,
+                                               Foreground="{Binding SettingsService.MyAnimeListConfig.Works,
                                                                     Converter={StaticResource BooleanColorConverter}}" />
                                     </DockPanel>
 
@@ -118,18 +118,20 @@
                                             </Style>
                                         </DockPanel.Resources>
 
-                                        <Label
-                                            Content="{Binding Path=UpToDate,
+                                        <Label Content="{Binding Path=UpToDate,
                                                                  Converter={StaticResource BooleanSymbolConverter}}"
-                                            DockPanel.Dock="Left"
-                                            FontSize="22"
-                                            Foreground="{Binding Path=UpToDate,
+                                               DockPanel.Dock="Left"
+                                               FontSize="22"
+                                               Foreground="{Binding Path=UpToDate,
                                                                     Converter={StaticResource BooleanColorConverter}}" />
 
-                                        <Button x:Name="SyncButton"
-                                                Command="{Binding SyncCommand}"
+                                        <Button Command="{Binding SyncCommand}"
                                                 Content="{Binding SyncText}"
                                                 Style="{StaticResource Special}" />
+
+                                        <Button Command="{Binding ImportCommand}"
+                                                Content="Import"
+                                                Style="{StaticResource Normal}" />
 
                                         <Button Command="{Binding ProfileCommand}"
                                                 Content="Profile"

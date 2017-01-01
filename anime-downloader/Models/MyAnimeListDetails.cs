@@ -111,9 +111,6 @@ namespace anime_downloader.Models
         // 
 
         [XmlIgnore]
-        public int SeasonSort => Aired?.Sort ?? (DateTime.Now.Year + 3) * Anime.SortedAiredFlag - 2;
-
-        [XmlIgnore]
         public int Total => OverallTotal > 0 ? OverallTotal : TotalEpisodes;
 
         [XmlIgnore]
