@@ -104,7 +104,7 @@ namespace anime_downloader.ViewModels.Components
             {
                 var total = 0;
                 Text += ">> Attempting to catch up on airing anime episodes ...\n";
-                foreach (var anime in AnimeAggregate.AnimeService.Animes.ToList())
+                foreach (var anime in AnimeAggregate.AnimeService.AiringAndWatchingAndNotCompleted())
                 {
                     bool downloaded;
                     do
