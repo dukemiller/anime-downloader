@@ -31,8 +31,6 @@ namespace anime_downloader.Services
 
         private const string ApiProfile = "https://myanimelist.net/malappinfo.php?u={0}&status=all&type=anime";
 
-        //
-
         private static readonly XmlSerializer ResultDeserializer = new XmlSerializer(typeof(FindResultRoot));
 
         private static readonly XmlSerializer ProfileDeserializer = new XmlSerializer(typeof(ProfileResult));
@@ -51,10 +49,9 @@ namespace anime_downloader.Services
 
         private IAnimeService Anime { get; }
 
-        // 
+        // Interface methods
 
-        public NetworkCredential GetCredentials()
-            => new NetworkCredential(Settings.MyAnimeListConfig.Username, Settings.MyAnimeListConfig.Password);
+        public NetworkCredential GetCredentials() => new NetworkCredential(Settings.MyAnimeListConfig.Username, Settings.MyAnimeListConfig.Password);
 
         public async Task<List<FindResult>> Find(string q) => await FindAsync(q);
 
@@ -118,6 +115,7 @@ namespace anime_downloader.Services
         public async Task<IEnumerable<Anime>> GetProfileAnime()
         {
             var animes = await GetProfile();
+
             return animes
                 .Select(m =>
                 {
@@ -328,7 +326,7 @@ namespace anime_downloader.Services
                 }
         }
 
-        // 
+        // API requests
 
         private async Task<IEnumerable<ProfileAnimeResult>> GetProfile()
         {

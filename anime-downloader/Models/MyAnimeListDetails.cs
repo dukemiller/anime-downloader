@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
-using anime_downloader.Classes;
 using anime_downloader.Enums;
 using GalaSoft.MvvmLight;
 
@@ -10,11 +9,8 @@ namespace anime_downloader.Models
     [Serializable]
     public sealed class MyAnimeListDetails : ObservableObject
     {
-        public static AnimeSeason CurrentSeason = new AnimeSeason
-        {
-            Year = DateTime.Now.Year,
-            Season = (Season)Math.Ceiling(Convert.ToDouble(DateTime.Now.Month) / 3)
-        };
+        private static int CurrentYear() => DateTime.Now.Year;
+        private static Season CurrentSeason() => (Season) Math.Ceiling(Convert.ToDouble(DateTime.Now.Month) / 3);
 
         private string _english;
         private string _id;
@@ -139,12 +135,12 @@ namespace anime_downloader.Models
             get
             {
                 return Aired != null
-                       && (Aired.Year < CurrentSeason.Year
-                           || (Aired.Year == CurrentSeason.Year
-                               && (int) Aired.Season <= (int) CurrentSeason.Season))
+                       && (Aired.Year < CurrentYear()
+                           || (Aired.Year == CurrentYear()
+                               && (int) Aired.Season <= (int) CurrentSeason()))
                        && (Ended == null
-                           || (Ended.Year == CurrentSeason.Year
-                               && (int) Ended.Season == (int) CurrentSeason.Season));
+                           || (Ended.Year == CurrentYear()
+                               && (int) Ended.Season == (int) CurrentSeason()));
             }
         }
 
