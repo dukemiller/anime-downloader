@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
+using System.Windows.Forms;
 using System.Xml.Serialization;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
@@ -152,7 +153,6 @@ namespace anime_downloader.Services
                             status = Status.Finished;
                             break;
                     }
-
                     
                     int episodes;
                     var episodesResult = int.TryParse(m.MyWatchedEpisodes, out episodes);
@@ -175,22 +175,34 @@ namespace anime_downloader.Services
                             Synonyms = m.SeriesSynonyms,
                             Image = m.SeriesImage,
                             Title = m.SeriesTitle,
-                            TotalEpisodes = seriesResult ? seriesEpisodes : 0
+                            TotalEpisodes = seriesResult ? seriesEpisodes : 0,
+                            NeedsUpdating = false,
+                            English = "",
+                            Synopsis = ""
                         }
                     };
 
                     // Date stuff
-                    DateTime date;
-                    if (DateTime.TryParse(m.SeriesStart, out date))
+                    DateTime startAiring;
+                    if (DateTime.TryParse(m.SeriesStart, out startAiring))
                     {
                         anime.MyAnimeList.Aired = new AnimeSeason
                         {
-                            Year = date.Year,
-                            Season = (Season) Math.Ceiling(Convert.ToDouble(date.Month) / 3)
+                            Year = startAiring.Year,
+                            Season = (Season) Math.Ceiling(Convert.ToDouble(startAiring.Month) / 3)
                         };
                     }
 
-                    // Math.Min(Math.Max(number, 0), 10)
+                    DateTime endAiring;
+                    if (DateTime.TryParse(m.SeriesEnd, out endAiring))
+                    {
+                        anime.MyAnimeList.Ended = new AnimeSeason
+                        {
+                            Year = endAiring.Year,
+                            Season = (Season) Math.Ceiling(Convert.ToDouble(endAiring.Month) / 3)
+                        };
+                    }
+                    
                     if (anime.Rating.Equals("0"))
                         anime.Rating = "";
 

@@ -16,8 +16,7 @@
         </Style>
     </UserControl.Resources>
 
-    <DockPanel IsHitTestVisible="{Binding LoggedIntoMal}"
-               Opacity="{Binding LoggedIntoMal, Converter={StaticResource BooleanOpacityConverter}}">
+    <DockPanel IsHitTestVisible="{Binding LoggedIntoMal}" Opacity="{Binding LoggedIntoMal, Converter={StaticResource BooleanOpacityConverter}}">
         <Border Background="White"
                 BorderBrush="#2e51a2"
                 BorderThickness="0, 2"

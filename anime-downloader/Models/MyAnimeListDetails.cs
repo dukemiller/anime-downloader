@@ -10,6 +10,12 @@ namespace anime_downloader.Models
     [Serializable]
     public sealed class MyAnimeListDetails : ObservableObject
     {
+        public static AnimeSeason CurrentSeason = new AnimeSeason
+        {
+            Year = DateTime.Now.Year,
+            Season = (Season)Math.Ceiling(Convert.ToDouble(DateTime.Now.Month) / 3)
+        };
+
         private string _english;
         private string _id;
         private bool _needsUpdating;
@@ -107,8 +113,40 @@ namespace anime_downloader.Models
         
         [XmlElement("aired")]
         public AnimeSeason Aired { get; set; }
-        
+
+        [XmlElement("ended")]
+        public AnimeSeason Ended { get; set; }
+
         // 
+
+        public bool AiringNow
+        {
+            /*
+             * Given that the airing is not null and that either the year is less than the current year
+             * or that the year is the same as the current year and the season is less than or equal to the current season,
+             * combined with the fact that there is either no end date or the end date is this season, then the show
+             * has to be airing
+             * 
+             * Starting airing in 2007,
+             *    No End Date
+             *    Current is 2016
+             *    = Still airing e.g. Naruto Shippuden
+             * Started airing in Summer 2016, 
+             *     Ended Airing in Fall 2017
+             *     Current is Fall 2017
+             *     = Still airing e.g. Twin Star Exorcists
+             * */
+            get
+            {
+                return Aired != null
+                       && (Aired.Year < CurrentSeason.Year
+                           || (Aired.Year == CurrentSeason.Year
+                               && (int) Aired.Season <= (int) CurrentSeason.Season))
+                       && (Ended == null
+                           || (Ended.Year == CurrentSeason.Year
+                               && (int) Ended.Season == (int) CurrentSeason.Season));
+            }
+        }
 
         [XmlIgnore]
         public int Total => OverallTotal > 0 ? OverallTotal : TotalEpisodes;

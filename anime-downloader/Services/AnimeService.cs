@@ -42,9 +42,9 @@ namespace anime_downloader.Services
             // Filtering
             if (!string.IsNullOrEmpty(Settings.FilterBy))
                 if (Settings.FilterBy.Equals("Needs Synchronize"))
-                {
                     animes = animes.Where(anime => anime.MyAnimeList.HasId && anime.MyAnimeList.NeedsUpdating);
-                }
+                else if (Settings.FilterBy.Equals("Current Season"))
+                    animes = animes.Where(anime => (anime.Status == Status.Watching || anime.Status == Status.Finished) && anime.MyAnimeList.HasId && anime.MyAnimeList.AiringNow);
                 else
                 {
                     var filters = Settings.FilterBy.Split('/');

@@ -173,7 +173,7 @@ namespace anime_downloader.ViewModels
             WaitDelay = DateTime.Now.AddSeconds(5);
         }
 
-        public async void Import()
+        private async void Import()
         {
             MessengerInstance.Send(new WorkMessage { Working = true });
             var animes = await Task.Run(async () => await MalService.GetProfileAnime());

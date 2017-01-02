@@ -177,6 +177,7 @@
                 <ComboBoxItem Content="Considering" IsSelected="{Binding FilterText, Converter={StaticResource StringCompareConverter}, ConverterParameter=Considering}" />
                 <ComboBoxItem Content="Dropped" IsSelected="{Binding FilterText, Converter={StaticResource StringCompareConverter}, ConverterParameter=Dropped}" />
                 <ComboBoxItem Content="Needs Synchronize" IsSelected="{Binding FilterText, Converter={StaticResource StringCompareConverter}, ConverterParameter='Needs Synchronize'}" />
+                <ComboBoxItem Content="Current Season" IsSelected="{Binding FilterText, Converter={StaticResource StringCompareConverter}, ConverterParameter='Current Season'}" />
             </ComboBox>
         </Grid>
     </Grid>
