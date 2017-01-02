@@ -34,7 +34,7 @@ namespace anime_downloader.Views.Components
             var textbox = (TextBox) sender;
 
             if (textbox.Text.Any(c => !char.IsDigit(c)) || e.Text.Any(c => !char.IsDigit(c)) ||
-                e.Text.Length == 0 || e.Text.Trim().Equals(" ") || e.Text.IsBlank())
+                e.Text.Length == 0 || e.Text.Trim().Equals(" ") || string.IsNullOrEmpty(e.Text))
             {
                 e.Handled = true;
                 return;

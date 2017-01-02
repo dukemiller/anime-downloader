@@ -35,7 +35,7 @@ namespace anime_downloader.Classes
 
         private double StringRelevance(string comparison)
         {
-            if (comparison.IsBlank())
+            if (string.IsNullOrEmpty(comparison))
                 return ArbitraryHighValue;
 
             var distance = Methods.LevenshteinDistance(comparison, Name);

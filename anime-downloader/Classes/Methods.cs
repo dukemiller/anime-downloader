@@ -91,7 +91,7 @@ namespace anime_downloader.Classes
         public static void AnimeRatingRules(TextBox textbox, TextCompositionEventArgs e)
         {
             if (textbox.Text.Any(c => !char.IsDigit(c)) || e.Text.Any(c => !char.IsDigit(c)) ||
-                e.Text.Length == 0 || e.Text.Trim().Equals(" ") || e.Text.IsBlank())
+                e.Text.Length == 0 || e.Text.Trim().Equals(" ") || string.IsNullOrEmpty(e.Text))
             {
                 e.Handled = true;
                 return;

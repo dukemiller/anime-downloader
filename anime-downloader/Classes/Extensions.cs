@@ -26,11 +26,6 @@ namespace anime_downloader.Classes
                 .ToArray());
         }
 
-        public static bool IsBlank(this string str)
-        {
-            return str == null || str.Equals("");
-        }
-
         // http://www.pavey.me/2015/04/aspnet-c-extension-method-to-get-enum.html
         public static string Description(this Enum value)
         {

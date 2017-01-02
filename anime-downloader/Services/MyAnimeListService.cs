@@ -316,7 +316,7 @@ namespace anime_downloader.Services
         {
             // for every anime that needs updating
             foreach (var anime in Anime.NeedsUpdates)
-                if (anime.MyAnimeList.Id.IsBlank())
+                if (string.IsNullOrEmpty(anime.MyAnimeList.Id))
                 {
                     if (await GetId(anime))
                         await Add(anime);
