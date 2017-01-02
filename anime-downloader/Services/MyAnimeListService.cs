@@ -338,8 +338,14 @@ namespace anime_downloader.Services
             using (var response = new StreamReader(data))
             {
                 var result = (ProfileResult)ProfileDeserializer.Deserialize(response);
-                return result.Anime.Where(anime => anime?.SeriesType?.Equals("1") == true // Only allow shorts
-                                                   || anime?.SeriesType?.Equals("2") == true); // and series
+                return result.Anime.Where(anime =>
+                {
+                    DateTime date;
+                    var withinLastThreeYears = DateTime.TryParse(anime?.SeriesStart, out date) && Math.Abs(DateTime.Now.Year - date.Year) <= 3;
+                    var isShortOrSeries = anime?.SeriesType?.Equals("1") == true || anime?.SeriesType?.Equals("2") == true;
+                    var definitelyNotAnOva = int.Parse(anime?.SeriesEpisodes ?? "0") > 4;
+                    return withinLastThreeYears && isShortOrSeries && definitelyNotAnOva;
+                });
             }
 
         }
