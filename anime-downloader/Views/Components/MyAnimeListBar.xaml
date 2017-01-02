@@ -27,10 +27,7 @@
                        FontFamily="Segoe UI Black"
                        FontSize="16"
                        Foreground="#2e51a2" />
-                <Button Command="{Binding FindCommand}"
-                        Content="Find ID"
-                        Visibility="{Binding HasId,
-                                             Converter={StaticResource ReverseVisibilityConverter}}" />
+                <Label Content="Sync to get options." Visibility="{Binding HasId, Converter={StaticResource ReverseVisibilityConverter}}" />
                 <Button Command="{Binding ProfileCommand}"
                         Content="Profile"
                         ToolTip="Go to the MyAnimeList profile of this show."
