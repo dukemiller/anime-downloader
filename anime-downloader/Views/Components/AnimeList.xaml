@@ -86,7 +86,9 @@
                 <KeyBinding Key="OemComma"
                             Command="{Binding CopyCommand}"
                             Modifiers="Control" />
-
+                <KeyBinding Key="C"
+                            Command="{Binding CopyCommand}"
+                            Modifiers="Control" />
             </DataGrid.InputBindings>
             <DataGrid.ContextMenu>
                 <ContextMenu>
