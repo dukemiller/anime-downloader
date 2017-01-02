@@ -107,6 +107,14 @@
         </Grid>
         <ContentPresenter Grid.Column="1"
                           Margin="20,0"
-                          Content="{Binding CurrentView}" />
+                          Content="{Binding CurrentView,
+                                            NotifyOnTargetUpdated=True,
+                                            UpdateSourceTrigger=PropertyChanged}">
+            <ContentPresenter.Triggers>
+                <EventTrigger RoutedEvent="Binding.TargetUpdated">
+                    <BeginStoryboard Storyboard="{StaticResource DisplayTransition}" />
+                </EventTrigger>
+            </ContentPresenter.Triggers>
+        </ContentPresenter>
     </Grid>
 </Window>
