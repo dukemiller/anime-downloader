@@ -178,7 +178,10 @@ namespace anime_downloader.ViewModels
             MessengerInstance.Send(new WorkMessage { Working = true });
             var animes = await Task.Run(async () => await MalService.GetProfileAnime());
             foreach (var anime in animes)
-                AnimeService.Add(anime);
+            {
+                if (!AnimeService.Animes.Any(a => a.MyAnimeList.Id.Equals(anime.MyAnimeList.Id)))
+                    AnimeService.Add(anime);
+            }
             MessengerInstance.Send(new WorkMessage { Working = false });
         }
 
