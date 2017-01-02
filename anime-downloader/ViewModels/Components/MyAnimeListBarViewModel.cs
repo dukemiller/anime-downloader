@@ -100,14 +100,28 @@ namespace anime_downloader.ViewModels.Components
                 Anime.MyAnimeList.Synopsis = result.Synopsis;
                 Anime.MyAnimeList.TotalEpisodes = result.TotalEpisodes;
 
-                DateTime date;
-                if (DateTime.TryParse(result.StartDate, out date))
+                DateTime start;
+                if (DateTime.TryParse(result.StartDate, out start))
                 {
                     Anime.MyAnimeList.Aired = new AnimeSeason
                     {
-                        Year = date.Year,
-                        Season = (Season)Math.Ceiling(Convert.ToDouble(date.Month) / 3)
+                        Year = start.Year,
+                        Season = (Season)Math.Ceiling(Convert.ToDouble(start.Month) / 3)
                     };
+                }
+
+                DateTime end;
+                if (DateTime.TryParse(result.EndDate, out end))
+                {
+                    Anime.MyAnimeList.Ended = new AnimeSeason
+                    {
+                        Year = end.Year,
+                        Season = (Season)Math.Ceiling(Convert.ToDouble(end.Month) / 3)
+                    };
+
+                    var now = DateTime.Now;
+                    Anime.Airing = end.Year >= now.Year && (end.Month > now.Month ||
+                                                            end.Month == now.Month && end.Day > now.Day);
                 }
             }
 
