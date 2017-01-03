@@ -74,12 +74,12 @@ namespace anime_downloader.Services
                         return true;
                     return result.NameCollection.Any(r => r.ToLower().Replace(" (tv)", "").Equals(anime.Name.ToLower()));
                 })
-                .Where(findResult =>
-                {
-                    if (findResult.TotalEpisodes != 0)
-                        return findResult.TotalEpisodes > 2;
-                    return true;
-                })
+                //.Where(findResult =>
+                //{
+                //    if (findResult.TotalEpisodes != 0)
+                //        return findResult.TotalEpisodes > 2;
+                //    return true;
+                //})
                 .Select(result => new FindResultDistance(anime.Name, result))
                 .OrderBy(resultDistance => resultDistance.Distance);
 
@@ -211,7 +211,7 @@ namespace anime_downloader.Services
         public async Task<bool> GetId(Anime anime)
         {
             // get all results from searching the name
-            var animeResults = await FindAsync(HttpUtility.UrlEncode(anime.Title.Replace(":", "")));
+            var animeResults = await FindAsync(anime.Title.Replace(":", ""));
 
             // if there were absolutely no results from the query
             if (!animeResults.Any())
@@ -373,6 +373,7 @@ namespace anime_downloader.Services
 
         private async Task<List<FindResult>> FindAsync(string q)
         {
+            q = HttpUtility.UrlPathEncode(q).Replace("%20", "%25");
             var url = string.Format(ApiSearch, q);
             var request = await GetAsync(url);
             var data = await request.ReadAsStreamAsync();

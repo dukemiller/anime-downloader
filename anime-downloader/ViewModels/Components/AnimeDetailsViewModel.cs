@@ -77,8 +77,10 @@ namespace anime_downloader.ViewModels.Components
                 Episode = 0,
                 Status = Status.Watching,
                 Resolution = "720",
-                Airing = true
+                Airing = true,
+                MyAnimeList = {NeedsUpdating = true}
             };
+
             ButtonText = "Add";
             SelectedSubgroup = Anime.PreferredSubgroup;
 
