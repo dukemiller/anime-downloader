@@ -216,6 +216,16 @@ namespace anime_downloader.Services
                 };
             }
 
+            DateTime end;
+            if (DateTime.TryParse(result.EndDate, out end))
+            {
+                anime.MyAnimeList.Ended = new AnimeSeason
+                {
+                    Year = end.Year,
+                    Season = (Season)Math.Ceiling(Convert.ToDouble(end.Month) / 3)
+                };
+            }
+
             return true;
         }
 
