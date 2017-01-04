@@ -45,6 +45,9 @@ namespace anime_downloader.Models.MyAnimeList
         public string SeriesEnd { get; set; }
         [XmlElement(ElementName = "series_image")]
         public string SeriesImage { get; set; }
+
+        // 
+
         [XmlElement(ElementName = "my_id")]
         public string MyId { get; set; }
         [XmlElement(ElementName = "my_watched_episodes")]
@@ -52,19 +55,19 @@ namespace anime_downloader.Models.MyAnimeList
         [XmlElement(ElementName = "my_start_date")]
         public string MyStartDate { get; set; }
         [XmlElement(ElementName = "my_finish_date")]
-        public string My_finish_date { get; set; }
+        public string MyFinishDate { get; set; }
         [XmlElement(ElementName = "my_score")]
-        public string My_score { get; set; }
+        public string MyScore { get; set; }
         [XmlElement(ElementName = "my_status")]
-        public string My_status { get; set; }
+        public string MyStatus { get; set; }
         [XmlElement(ElementName = "my_rewatching")]
-        public string My_rewatching { get; set; }
+        public string MyRewatching { get; set; }
         [XmlElement(ElementName = "my_rewatching_ep")]
-        public string My_rewatching_ep { get; set; }
+        public string MyRewatchingEp { get; set; }
         [XmlElement(ElementName = "my_last_updated")]
-        public string My_last_updated { get; set; }
+        public string MyLastUpdated { get; set; }
         [XmlElement(ElementName = "my_tags")]
-        public string My_tags { get; set; }
+        public string MyTags { get; set; }
     }
 
     [XmlRoot(ElementName = "myanimelist")]
@@ -72,6 +75,7 @@ namespace anime_downloader.Models.MyAnimeList
     {
         [XmlElement(ElementName = "myinfo")]
         public ProfileInfo ProfileInfo { get; set; }
+
         [XmlElement(ElementName = "anime")]
         public List<ProfileAnimeResult> Anime { get; set; }
     }

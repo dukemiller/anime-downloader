@@ -37,7 +37,6 @@ namespace anime_downloader.ViewModels
 
             Works = SettingsService.MyAnimeListConfig.Works;
             UpToDate = AnimeService.Animes.Any() && !AnimeService.NeedsUpdates.Any();
-            // LoginDetails = new MyAnimeListConfiguration();
             SyncText = UpToDate ? "Synced" : "Sync";
 
             // 
@@ -76,9 +75,9 @@ namespace anime_downloader.ViewModels
 
         public ISettingsService SettingsService { get; set; }
 
-        public IAnimeService AnimeService { get; set; }
+        private IAnimeService AnimeService { get; }
 
-        public IMyAnimeListService MalService { get; set; }
+        private IMyAnimeListService MalService { get; }
 
         private DateTime WaitDelay { get; set; } = DateTime.Now;
 

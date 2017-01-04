@@ -30,10 +30,9 @@ namespace anime_downloader.Services
 
         // 
 
-        public NyaaService(ISettingsService settings, IAnimeFileService fileService, IAnimeService animeService)
+        public NyaaService(ISettingsService settings, IAnimeService animeService)
         {
             Settings = settings;
-            FileService = fileService;
             AnimeService = animeService;
             _client = new WebClient();
         }
@@ -41,8 +40,6 @@ namespace anime_downloader.Services
         // 
 
         private ISettingsService Settings { get; }
-
-        private IAnimeFileService FileService { get; }
 
         private IAnimeService AnimeService { get; }
 

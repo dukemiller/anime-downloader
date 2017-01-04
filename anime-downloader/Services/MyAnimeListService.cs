@@ -233,7 +233,7 @@ namespace anime_downloader.Services
                     return false;
                 }
             }
-
+            
             // make an estimation as to what is the closest result related to the anime
             var result = ClosestResult(anime, animeResults);
 

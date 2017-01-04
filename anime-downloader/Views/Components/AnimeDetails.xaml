@@ -194,7 +194,8 @@
                                   VerticalAlignment="Center"
                                   FontSize="14"
                                   ItemsSource="{Binding Settings.Subgroups}"
-                                  SelectedItem="{Binding SelectedSubgroup, UpdateSourceTrigger=PropertyChanged}">
+                                  SelectedItem="{Binding SelectedSubgroup,
+                                                         UpdateSourceTrigger=PropertyChanged}">
                             <ComboBox.Style>
                                 <Style>
                                     <Style.Triggers>
@@ -207,18 +208,17 @@
                         </ComboBox>
                         <Button Grid.Row="3"
                                 Grid.Column="1"
-                                Height="21"
-                                BorderThickness="0"
-                                Style="{x:Null}"
-                                VerticalAlignment="Center"
-                                VerticalContentAlignment="Center"
                                 Width="14"
-                                FontSize="10"
-                                Content="X"
+                                Height="21"
                                 Margin="0,0,-15,0"
                                 HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                BorderThickness="0"
                                 Command="{Binding ClearSubgroupCommand}"
-                                 />
+                                Content="X"
+                                FontSize="10"
+                                Style="{x:Null}" />
 
                         <!--  Rating  -->
                         <Label Grid.Row="4"

@@ -8,7 +8,7 @@ namespace anime_downloader.Services
         {
             AnimeService = new AnimeService(settings);
             FileService = new AnimeFileService(settings);
-            DownloadService = new NyaaService(settings, FileService, AnimeService);
+            DownloadService = new NyaaService(settings, AnimeService);
             MalService = new MyAnimeListService(settings, AnimeService);
             PlaylistService = new PlaylistService(settings, FileService);
         }
