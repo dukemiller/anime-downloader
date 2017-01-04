@@ -84,6 +84,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Classes\AnimeConverter.cs" />
     <Compile Include="Classes\Attributes.cs" />
     <Compile Include="Classes\Distances.cs" />
     <Compile Include="Classes\Messages.cs" />
