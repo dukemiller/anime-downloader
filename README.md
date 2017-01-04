@@ -1,37 +1,62 @@
 # anime-downloader
-A program to download and manage a collection of currently airing anime shows. 
 
-**Features**  
-\- Manage and track basic information about shows.  
-\- Search for and download any newly found episodes through a few downloading options.  
-\- Support for downloading from specific subgroups, and setting a whitelist subgroups to download from.  
-\- Set custom paths for where videos and torrent files download to and where watched files move to.  
-\- A basic episode file management system for moving unwatched->watched or deleting.  
-\- Create playlists with some file organization options.  
-\- MyAnimeList synchronization to your anime list (*experimental*).  
+A program to download and manage a collection of currently airing anime shows.  
 
-**To be implemented**  
-\- Downloading episode ranges (e.g. 12-13)  
-\- Detecting and downloading two part episodes (e.g. Re: Zero 01a & 01b)  
-\- Searching for any episode 00 (e.g. Tales of Zestira - 00)  
+### Demo 
+
+![demo](http://i.imgur.com/2Z6bugU.gif)  
+
+---
+
+## Features 
+
+- Manage and track basic information about downloaded shows (name, episode, status, rating, optional notes, etc).
+- Search for and download any newly found episodes, with a few custom options.
+- Some semi advanced features, like selecting to download from specific subgroups and setting a whitelist subgroups to download from.
+- Set paths to where episodes and torrent files download to and where watched files move to.
+- Simple file management system for moving unwatched<->watched, deleting or creating playlists (with a few options).
+- (*experimental*) MyAnimeList synchronization to your anime list. Sync your anime by going to the web view, logging in and pressing  sync. It will attempt to find MyAnimeList entries for anime on your list and any further changes on the details on the anime will be marked for synchronization. Any further syncs will update your list.
+
+## Shortcuts
+
+**Alt+[1-8]**: Change view.  
+**Ctrl+X**: Close program.  
+**Pressing enter** while focused on a selected input (textbox, radio, anime selection) will generally have the result of attempting to save the details on the page or do the main action (anime details, settings, download, web, misc, etc.).  
+**Escape** will either clear out the selected input (textbox) or go back a view if in a sub-view (details of an anime).  
+While on the anime details page unfocused or clicking on another element to remove focus, **arrow left/page up** will go to the previous entry on the list and **arrow right/page down** will go to the next entry on the list.  
+While on the Anime tab and focused on the list: **Ctrl+F** will open the find bar, **Ctrl+C** will copy the selected names.  
+
+## Other notes  
+
+A lot of options and selections have tooltips. If there's a selection that doesn't make a lot of sense or is unclear, hover over the label and there could be something in the tooltip that clarifies it for you. If it still doesn't make sense, feel free to create a github issue about it and I could fix it to be more clear / rework it.
+
+The tray provides shortcuts to the user provided folders and commonly used functions, they can be pretty useful.
+
+## To be implemented  
+
+- Downloading episode ranges (e.g. 12-13)
+- Detecting and downloading two part episodes (e.g. Re: Zero 01a & 01b)
 
 ---
 
 ### Build & Run
-**Requirements:**  [nuget.exe](https://dist.nuget.org/win-x86-commandline/latest/nuget.exe) on PATH, Visual Studio 2015 and/or C# 6.0 Roslyn Compiler  
+
+**Requirements:** [nuget.exe](https://dist.nuget.org/win-x86-commandline/latest/nuget.exe) on PATH, Visual Studio 2015 and/or C# 6.0 Roslyn Compiler  
 **Optional:** Devenv (Visual Studio 2015) on PATH  
+
 ```
 git clone https://github.com/dukemiller/anime-downloader.git
 cd anime-downloader
 nuget install anime-downloader\packages.config -OutputDirectory packages
-```
-**Building with Devenv (CLI):** ```devenv anime-downloader.sln /Build```  
-**Building with Visual Studio:**  Open (ctrl-shift-o) "anime-downloader.sln", Build Solution (ctrl-shift-b)
+```  
+
+**Building with Devenv (CLI):** ``devenv anime-downloader.sln /Build``  
+**Building with Visual Studio:**  Open (Ctrl+Shift+O) "anime-downloader.sln", Build Solution (Ctrl+Shift+B)
 
 An "anime-downloader.exe" artifact will be created in the parent anime-downloader folder.
 
 ---
 
 ### Notes
-\- This is my first larger sized application using WPF, based on very little knowledge of both C# and WPF. That is to say a lot of bad practices are probably in the code.  
-\- Not tested on other platforms other than **Windows**, and im assuming that since it's WPF based that the support for Mono for Linux/Mac is pretty nonexistant.  
++ I started this off as my first application and went through a lot of changes (Delegating every event in the MainWindow.xaml.cs + using x:Name in xaml to alter in code behind, to some view binding and binding the datacontext to {View}.xaml.cs and making the "Settings" classes statically accessable from MainWindow.xaml.cs, to actually using ViewModels and some MVVM practices). What i'm saying is that there's probably some bugs here and there that need fixing and weird behaviors, so throw up a github issue and i'll fix it pretty quickly.
++ Not tested on other platforms other than **Windows**, but the GUI is WPF based so that's pretty much the end of the line for Mac/Linux support at the moment. In the future, I could extend the project to have all the services and models be their own solution and use something like GTK# for cross platform support given the demand.

@@ -15,15 +15,6 @@
         StateChanged="Window_StateChanged"
         mc:Ignorable="d">
     <Window.Resources>
-        <!--<Style TargetType="{x:Type ListBox}">
-            <Setter Property="ItemTemplate">
-                <Setter.Value>
-                    <DataTemplate>
-                        <ToggleButton Content="{Binding}" IsChecked="{Binding IsSelected, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}" />
-                    </DataTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>-->
         <Style BasedOn="{StaticResource LargeButtonStyle}" TargetType="RadioButton" />
     </Window.Resources>
     <Window.InputBindings>
