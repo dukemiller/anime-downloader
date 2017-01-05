@@ -71,9 +71,7 @@ namespace anime_downloader.Classes.Xaml
                 return;
 
             if (e.Key == Key.LeftShift || e.Key == Key.RightShift)
-            {
                 SetIsDragSelectionEnabled(listBox, false);
-            }
         }
 
         private static void listBox_PreviewKeyUp(object sender, KeyEventArgs e)
@@ -83,9 +81,7 @@ namespace anime_downloader.Classes.Xaml
                 return;
 
             if (e.Key == Key.LeftShift || e.Key == Key.RightShift)
-            {
                 SetIsDragSelectionEnabled(listBox, true);
-            }
         }
 
         private static void listBox_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -148,9 +144,7 @@ namespace anime_downloader.Classes.Xaml
             if (!GetIsDragClickStarted(listBoxItem)) return;
 
             if (GetIsDragSelecting(listBoxItem))
-            {
                 listBoxItem.IsSelected = true;
-            }
         }
 
         #endregion IsDragSelectingProperty
@@ -169,7 +163,7 @@ namespace anime_downloader.Classes.Xaml
 
         public static readonly DependencyProperty IsDragClickStartedProperty =
             DependencyProperty.RegisterAttached("IsDragClickStarted", typeof(bool), typeof(DragSelectionHelper),
-                new FrameworkPropertyMetadata(false, IsDragClickStartedPropertyChanged) { Inherits = true });
+                new FrameworkPropertyMetadata(false, IsDragClickStartedPropertyChanged) {Inherits = true});
 
         private static void IsDragClickStartedPropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
@@ -190,9 +184,7 @@ namespace anime_downloader.Classes.Xaml
             {
                 var scrollBar = element as ScrollBar;
                 if (scrollBar != null)
-                {
                     return;
-                }
                 element = VisualTreeHelper.GetParent(element);
             }
 

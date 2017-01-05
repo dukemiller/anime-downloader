@@ -3,18 +3,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:models="clr-namespace:anime_downloader.Models"
+             xmlns:viewModels="clr-namespace:anime_downloader.ViewModels"
+             d:DataContext="{d:DesignInstance viewModels:PlaylistCreatorViewModel}"
              d:DesignHeight="360"
              d:DesignWidth="680"
-             KeyDown="UserControl_KeyDown"
-             Loaded="UserControl_Loaded"
              mc:Ignorable="d">
     <UserControl.Resources>
         <Style x:Key="FontStyle">
             <Setter Property="RadioButton.FontFamily" Value="{StaticResource MainFont}" />
         </Style>
     </UserControl.Resources>
-    <Grid>
-        <Grid.Background>White</Grid.Background>
+    <Grid Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
             <RowDefinition Height="9*" />
@@ -34,19 +34,29 @@
                           Header="Sort by"
                           Style="{DynamicResource FontStyle}">
                     <StackPanel>
-                        <RadioButton x:Name="DefaultRadio"
-                                     Margin="5"
-                                     Content="Default file listing"
-                                     ToolTip="Default windows lexical filename sort" />
-                        <RadioButton x:Name="EpisodeRadio"
-                                     Margin="5"
-                                     Content="Episode number"
-                                     IsChecked="True"
-                                     ToolTip="A more rigorous episode number check so that episodes are in order" />
-                        <RadioButton x:Name="MomentRadio"
-                                     Margin="5"
-                                     Content="Date downloaded"
-                                     ToolTip="When the file was created" />
+                        <ListBox BorderThickness="0"
+                                 ItemsSource="{Binding Options}"
+                                 SelectedItem="{Binding SelectedRadio}">
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="{x:Type ListBoxItem}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                                <RadioButton Margin="5"
+                                                             VerticalAlignment="Center"
+                                                             VerticalContentAlignment="Center"
+                                                             d:DataContext="{d:DesignInstance d:Type=models:RadioModel}"
+                                                             Content="{Binding Header}"
+                                                             IsChecked="{Binding RelativeSource={RelativeSource TemplatedParent},
+                                                                                 Path=IsSelected}"
+                                                             Style="{DynamicResource FontStyle}"
+                                                             ToolTip="{Binding ToolTip}" />
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                        </ListBox>
                     </StackPanel>
                 </GroupBox>
                 <GroupBox HorizontalAlignment="Left"
@@ -55,26 +65,23 @@
                           Header="Options"
                           Style="{DynamicResource FontStyle}">
                     <StackPanel>
-                        <CheckBox x:Name="SeparateCheckBox"
-                                  Margin="5"
+                        <CheckBox Margin="5"
                                   Content="Separate show order"
+                                  IsChecked="{Binding SeparateShowOrder}"
                                   ToolTip="Distribute the show order so that you don't watch the same show twice in a row." />
-                        <CheckBox x:Name="ReverseCheckbox"
-                                  Margin="5"
+                        <CheckBox Margin="5"
                                   Content="Reverse order"
+                                  IsChecked="{Binding ReverseOrder}"
                                   ToolTip="Reverse the order." />
                     </StackPanel>
                 </GroupBox>
             </DockPanel>
         </StackPanel>
         <DockPanel Grid.Row="2" LastChildFill="False">
-            <Button x:Name="OpenButton"
-                    Click="OpenButton_OnClick"
+            <Button Command="{Binding OpenCommand}"
                     Content="Open"
                     DockPanel.Dock="Left" />
-
-            <Button x:Name="CreateButton"
-                    Click="CreateButton_OnClick"
+            <Button Command="{Binding CreateCommand}"
                     Content="Create"
                     DockPanel.Dock="Right" />
         </DockPanel>

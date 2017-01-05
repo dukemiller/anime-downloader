@@ -40,8 +40,24 @@
     <ApplicationIcon>Resources\Icons\icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="GalaSoft.MvvmLight, Version=5.3.0.19026, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight.Extras, Version=5.3.0.19032, Culture=neutral, PublicKeyToken=669f0b5e8f868abf, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.Extras.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight.Platform, Version=5.3.0.19032, Culture=neutral, PublicKeyToken=5f873c45e98af8a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="HtmlAgilityPack, Version=1.4.9.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <HintPath>..\packages\HtmlAgilityPack.1.4.9\lib\Net45\HtmlAgilityPack.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -49,6 +65,10 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -64,55 +84,107 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Classes\Anime.cs" />
-    <Compile Include="Classes\Distances\StringDistance.cs" />
-    <Compile Include="Classes\File\AnimeFile.cs" />
-    <Compile Include="Classes\File\AnimeFileCollection.cs" />
-    <Compile Include="Classes\File\EpisodeHandler.cs" />
-    <Compile Include="Classes\File\Downloader.cs" />
+    <Compile Include="Classes\AnimeConverter.cs" />
+    <Compile Include="Classes\Attributes.cs" />
+    <Compile Include="Classes\Distances.cs" />
+    <Compile Include="Classes\Messages.cs" />
+    <Compile Include="Classes\Xaml\AttachedProperties.cs" />
+    <Compile Include="Classes\Xaml\CustomDataGrid.cs" />
+    <Compile Include="Classes\Xaml\FocusBehavior.cs" />
+    <Compile Include="Classes\Xaml\MouseBindings.cs" />
+    <Compile Include="Classes\Xaml\MyMultiSelectBehavior.cs" />
+    <Compile Include="Enums\Season.cs" />
+    <Compile Include="Enums\Status.cs" />
+    <Compile Include="Enums\Views.cs" />
+    <Compile Include="Models\Anime.cs" />
+    <Compile Include="Models\AnimeFile.cs" />
     <Compile Include="Classes\Extensions.cs" />
-    <Compile Include="Classes\File\AnimeFileRange.cs" />
-    <Compile Include="Classes\Distances\GroupFileDistance.cs" />
-    <Compile Include="Classes\AnimeDetails.cs" />
-    <Compile Include="Classes\Web\MyAnimeList\WebPage.cs" />
+    <Compile Include="Models\AnimeSeason.cs" />
+    <Compile Include="Models\MultipleAnimeDetails.cs" />
+    <Compile Include="Models\AnimeFileRange.cs" />
+    <Compile Include="Models\MyAnimeListDetails.cs" />
+    <Compile Include="Models\Configurations\FlagConfiguration.cs" />
+    <Compile Include="Models\Configurations\MyAnimeListConfiguration.cs" />
     <Compile Include="Enums\EpisodeStatus.cs" />
-    <Compile Include="Classes\File\Logger.cs" />
-    <Compile Include="Classes\File\MultipleAnimeFiles.cs" />
-    <Compile Include="Classes\FindPopup.cs" />
     <Compile Include="Classes\Methods.cs" />
     <Compile Include="Classes\OperatingSystemApi.cs" />
     <Compile Include="Classes\Tray.cs" />
-    <Compile Include="Classes\Distances\FindResultDistance.cs" />
-    <Compile Include="Classes\Web\MyAnimeList\Api.cs" />
-    <Compile Include="Classes\Web\MyAnimeList\FindResultRoot.cs" />
-    <Compile Include="Classes\Web\MyAnimeList\Synchronizer.cs" />
-    <Compile Include="Classes\Web\MyAnimeList\UpdateShow.cs" />
-    <Compile Include="Classes\Web\MyAnimeList\FindResult.cs" />
-    <Compile Include="Classes\Web\Nyaa.cs" />
-    <Compile Include="Classes\File\Playlist.cs" />
-    <Compile Include="Classes\Settings.cs" />
-    <Compile Include="Classes\Web\Torrent.cs" />
-    <Compile Include="Classes\Xaml\Converters.cs" />
+    <Compile Include="Models\MyAnimeList\FindResultRoot.cs" />
+    <Compile Include="Models\MyAnimeList\ProfileResult.cs" />
+    <Compile Include="Models\MyAnimeList\UpdateShow.cs" />
+    <Compile Include="Models\MyAnimeList\FindResult.cs" />
+    <Compile Include="Models\Configurations\PathConfiguration.cs" />
+    <Compile Include="Models\RadioModel.cs" />
+    <Compile Include="Models\Torrent.cs" />
+    <Compile Include="Classes\Converters.cs" />
     <Compile Include="Classes\Xaml\DragSelectionHelper.cs" />
     <Compile Include="Classes\Xaml\PasswordBoxAssistant.cs" />
-    <Compile Include="Classes\Xml\AnimeCollection.cs" />
-    <Compile Include="Classes\Xml\Schema.cs" />
-    <Compile Include="Classes\Xml\Verify.cs" />
     <Compile Include="Properties\Annotations.cs" />
-    <Compile Include="Views\AnimeDetails.xaml.cs">
+    <Compile Include="Services\AnimeFileService.cs" />
+    <Compile Include="Services\AnimeAggregateService.cs" />
+    <Compile Include="Services\AnimeService.cs" />
+    <Compile Include="Services\Interfaces\IAnimeDownloaderService.cs" />
+    <Compile Include="Services\Interfaces\IAnimeFileService.cs" />
+    <Compile Include="Services\Interfaces\IAnimeAggregateService.cs" />
+    <Compile Include="Services\Interfaces\IAnimeService.cs" />
+    <Compile Include="Services\Interfaces\IMyAnimeListService.cs" />
+    <Compile Include="Services\Interfaces\IPlaylistService.cs" />
+    <Compile Include="Services\Interfaces\ISettingsService.cs" />
+    <Compile Include="Services\MyAnimeListService.cs" />
+    <Compile Include="Services\NyaaService.cs" />
+    <Compile Include="Services\PlaylistService.cs" />
+    <Compile Include="Services\ApplicationSettingsService.cs" />
+    <Compile Include="Services\XmlSettingsService.cs" />
+    <Compile Include="ViewModels\AnimeDisplayViewModel.cs" />
+    <Compile Include="ViewModels\Components\AnimeDetailsMultipleViewModel.cs" />
+    <Compile Include="ViewModels\Components\AnimeDetailsViewModel.cs" />
+    <Compile Include="ViewModels\Components\AnimeListViewModel.cs" />
+    <Compile Include="ViewModels\Components\DownloaderViewModel.cs" />
+    <Compile Include="ViewModels\Components\DownloadLogViewModel.cs" />
+    <Compile Include="ViewModels\Components\DownloadOptionsViewModel.cs" />
+    <Compile Include="ViewModels\Components\FileListViewModel.cs" />
+    <Compile Include="ViewModels\Components\FindViewModel.cs" />
+    <Compile Include="ViewModels\Components\MyAnimeListBarViewModel.cs" />
+    <Compile Include="ViewModels\DownloadViewModel.cs" />
+    <Compile Include="ViewModels\HomeViewModel.cs" />
+    <Compile Include="ViewModels\MainWindowViewModel.cs" />
+    <Compile Include="ViewModels\ManageViewModel.cs" />
+    <Compile Include="ViewModels\MiscViewModel.cs" />
+    <Compile Include="ViewModels\PlaylistCreatorViewModel.cs" />
+    <Compile Include="ViewModels\SettingsViewModel.cs" />
+    <Compile Include="ViewModels\WebViewModel.cs" />
+    <Compile Include="Views\AnimeDisplay.xaml.cs">
+      <DependentUpon>AnimeDisplay.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Components\AnimeDetails.xaml.cs">
       <DependentUpon>AnimeDetails.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\AnimeDetailsMultiple.xaml.cs">
+    <Compile Include="Views\Components\AnimeDetailsMultiple.xaml.cs">
       <DependentUpon>AnimeDetailsMultiple.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\AnimeList.xaml.cs">
+    <Compile Include="Views\Components\AnimeList.xaml.cs">
       <DependentUpon>AnimeList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\DownloadOptions.xaml.cs">
+    <Compile Include="Views\Components\DownloadLog.xaml.cs">
+      <DependentUpon>DownloadLog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Components\DownloadOptions.xaml.cs">
       <DependentUpon>DownloadOptions.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Downloader.xaml.cs">
+    <Compile Include="Views\Components\Downloader.xaml.cs">
       <DependentUpon>Downloader.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Components\FileList.xaml.cs">
+      <DependentUpon>FileList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Components\Find.xaml.cs">
+      <DependentUpon>Find.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Components\MyAnimeListBar.xaml.cs">
+      <DependentUpon>MyAnimeListBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Download.xaml.cs">
+      <DependentUpon>Download.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Home.xaml.cs">
       <DependentUpon>Home.xaml</DependentUpon>
@@ -129,11 +201,22 @@
     <Compile Include="Views\Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Enums\ViewMode.cs" />
     <Compile Include="Views\Web.xaml.cs">
       <DependentUpon>Web.xaml</DependentUpon>
     </Compile>
-    <Page Include="MainWindow.xaml">
+    <Page Include="Views\AnimeDisplay.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Components\Find.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Components\MyAnimeListBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -141,27 +224,39 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\AnimeDetails.xaml">
+    <Page Include="Views\Components\AnimeDetails.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\AnimeDetailsMultiple.xaml">
+    <Page Include="Views\Components\AnimeDetailsMultiple.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\AnimeList.xaml">
+    <Page Include="Views\Components\AnimeList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\DownloadOptions.xaml">
+    <Page Include="Views\Components\DownloadLog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Downloader.xaml">
+    <Page Include="Views\Components\DownloadOptions.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Components\Downloader.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Components\FileList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Download.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

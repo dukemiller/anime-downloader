@@ -3,10 +3,30 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:models="clr-namespace:anime_downloader.Models"
+             xmlns:viewModels="clr-namespace:anime_downloader.ViewModels"
+             d:DataContext="{d:DesignInstance viewModels:MiscViewModel}"
              d:DesignHeight="360"
              d:DesignWidth="680"
              mc:Ignorable="d">
     <UserControl.Resources>
+        <Style TargetType="{x:Type ListBoxItem}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <RadioButton Margin="5"
+                                     VerticalAlignment="Center"
+                                     VerticalContentAlignment="Center"
+                                     d:DataContext="{d:DesignInstance d:Type=models:RadioModel}"
+                                     IsChecked="{Binding RelativeSource={RelativeSource TemplatedParent},
+                                                         Path=IsSelected}"
+                                     Style="{DynamicResource ItemStyle}">
+                            <TextBlock Text="{Binding Header}" TextWrapping="WrapWithOverflow" />
+                        </RadioButton>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <Style TargetType="{x:Type GroupBox}">
             <Setter Property="FontSize" Value="18" />
             <Setter Property="HorizontalAlignment" Value="Left" />
@@ -27,8 +47,7 @@
             <Setter Property="TextWrapping" Value="Wrap" />
         </Style>
     </UserControl.Resources>
-    <Grid>
-        <Grid.Background>White</Grid.Background>
+    <Grid Background="White">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="1*" />
@@ -39,79 +58,51 @@
             <TextBlock Grid.Row="0"
                        FontFamily="{StaticResource MainFont}"
                        FontSize="16"
-                       Text="Other useful features that don't fit much into other sections."
+                       Text="Other features that don't fit much into other sections."
                        TextAlignment="Justify"
                        TextWrapping="Wrap" />
 
-            <DockPanel Grid.Row="1">
-                <GroupBox Header="Anime manipulation (for airing and watched shows)">
-                    <StackPanel>
-                        <GroupBox Header="Episode">
-                            <StackPanel>
-                                <RadioButton Name="Zero" KeyDown="Radio_KeyDown">
-                                    <TextBlock>Set all episodes to zero</TextBlock>
-                                </RadioButton>
-                                <GroupBox Header="Re-indexing">
-                                    <StackPanel>
-                                        <Label Content="Set all episodes to LAST found in ..." Padding="0" />
-                                        <DockPanel>
-                                            <RadioButton Name="LastWatched" KeyDown="Radio_KeyDown">
-                                                <TextBlock>Watched folder</TextBlock>
-                                            </RadioButton>
-
-                                            <RadioButton Name="LastUnwatched" KeyDown="Radio_KeyDown">
-                                                <TextBlock>Episodes folder</TextBlock>
-                                            </RadioButton>
-
-                                            <RadioButton Name="LastAny" KeyDown="Radio_KeyDown">
-                                                <TextBlock>Any folder</TextBlock>
-                                            </RadioButton>
-                                        </DockPanel>
-                                        <Label Content="Set all episodes to FIRST found in ..." Padding="0" />
-                                        <RadioButton Name="FirstWatched" KeyDown="Radio_KeyDown">
-                                            <TextBlock>Any folder</TextBlock>
-                                        </RadioButton>
-                                    </StackPanel>
-                                </GroupBox>
-
-                            </StackPanel>
-                        </GroupBox>
-
-                        <GroupBox Header="Status">
-                            <StackPanel>
-                                <RadioButton Name="MarkComplete" KeyDown="Radio_KeyDown">
-                                    <TextBlock>Mark fully watched shows as completed</TextBlock>
-                                </RadioButton>
-                            </StackPanel>
-                        </GroupBox>
-
-                    </StackPanel>
-                </GroupBox>
-                <StackPanel>
-                    <GroupBox Header="Episode/File Management">
+            <Grid Grid.Row="1">
+                <Grid.InputBindings>
+                    <KeyBinding Key="Return" Command="{Binding SubmitCommand}" />
+                </Grid.InputBindings>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <GroupBox Header="Anime">
                         <StackPanel>
-                            <RadioButton Name="Duplicates" KeyDown="Radio_KeyDown">
-                                <TextBlock Text="Move any duplicates to 'My Videos' folder" />
-                            </RadioButton>
-                        </StackPanel>
-                    </GroupBox>
-
-                    <GroupBox Header="MyAnimeList">
-                        <StackPanel>
-
-                            <RadioButton Name="SearchMore" KeyDown="Radio_KeyDown">
-                                <TextBlock Text="Regather data for any show that have no total episodes" />
-                            </RadioButton>
-
+                            <Label Content="Status"
+                                   FontStyle="Italic"
+                                   Foreground="DarkGray" />
+                            <RadioButton Content="Mark fully watched as completed"
+                                         IsChecked="{Binding SelectedIndex, Converter={StaticResource CompareConverter}, ConverterParameter=1}" />
+                            <Label Content="Files"
+                                   FontStyle="Italic"
+                                   Foreground="DarkGray" />
+                            <RadioButton Content="Move duplicates to 'My Videos'"
+                                         IsChecked="{Binding SelectedIndex, Converter={StaticResource CompareConverter}, ConverterParameter=2}" />
                         </StackPanel>
                     </GroupBox>
                 </StackPanel>
-            </DockPanel>
+                <StackPanel Grid.Column="1">
+                    <GroupBox Header="MyAnimeList" IsHitTestVisible="{Binding LoggedIntoMal}"
+                              Opacity="{Binding LoggedIntoMal, Converter={StaticResource BooleanOpacityConverter}}">
+                        <StackPanel>
+                            <Label Content="API"
+                                   FontStyle="Italic"
+                                   Foreground="DarkGray" />
+                            <RadioButton Content="Regather shows with no ep. total"
+                                         IsChecked="{Binding SelectedIndex, Converter={StaticResource CompareConverter}, ConverterParameter=3}" />
+                        </StackPanel>
+                    </GroupBox>
+                </StackPanel>
+            </Grid>
 
-            <Button x:Name="ButtonSubmit"
-                    Grid.Row="2"
+            <Button Grid.Row="2"
                     HorizontalAlignment="Right"
-                    Click="ButtonSubmit_OnClick"
+                    Command="{Binding SubmitCommand}"
                     Content="Submit" />
         </Grid>
     </Grid>

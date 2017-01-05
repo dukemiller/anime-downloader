@@ -3,17 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:anime_downloader.ViewModels"
              xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
+             d:DataContext="{d:DesignInstance viewModels:WebViewModel}"
              d:DesignHeight="360"
              d:DesignWidth="680"
-             DataContext="{Binding RelativeSource={RelativeSource Self}}"
              mc:Ignorable="d">
     <UserControl.Resources>
-        <xaml:BooleanSymbolConverter x:Key="BooleanSymbolConverter" />
-        <xaml:BooleanColorConverter x:Key="BooleanColorConverter" />
-        <xaml:BooleanOpacityConverterNot x:Key="BooleanOpacityConverterNot" />
-        <xaml:BooleanOpacityConverter x:Key="BooleanOpacityConverter" />
-        <xaml:NotConverter x:Key="NotConverter" />
         <Style x:Key="BoxStyle" TargetType="{x:Type GroupBox}">
             <Setter Property="FontSize" Value="16" />
             <Setter Property="HorizontalAlignment" Value="Left" />
@@ -22,22 +18,17 @@
         <Style x:Key="FontStyle">
             <Setter Property="RadioButton.FontFamily" Value="{StaticResource MainFont}" />
         </Style>
-
         <Style TargetType="Label">
             <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
-
-
     </UserControl.Resources>
-    <Grid>
-        <Grid.Background>White</Grid.Background>
+    <Grid Background="White">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="1*" />
                 <RowDefinition Height="11*" />
             </Grid.RowDefinitions>
-
             <TextBlock Grid.Row="0"
                        FontSize="16"
                        Style="{DynamicResource FontStyle}"
@@ -45,7 +36,6 @@
                        TextWrapping="Wrap">
                 Sync your anime list with your MyAnimeList profile and quickly visit pages.
             </TextBlock>
-
             <DockPanel Grid.Row="1">
                 <GroupBox Header="MyAnimeList" Style="{DynamicResource BoxStyle}">
                     <StackPanel Margin="3">
@@ -66,11 +56,14 @@
                                     <Label Grid.Row="0"
                                            Grid.Column="0"
                                            Content="Username: " />
-
                                     <TextBox Grid.Row="0"
                                              Grid.Column="1"
                                              VerticalAlignment="Center"
-                                             Text="{Binding LoginDetails.Username}" />
+                                             Text="{Binding SettingsService.MyAnimeListConfig.Username}">
+                                        <TextBox.InputBindings>
+                                            <KeyBinding Key="Enter" Command="{Binding LoginCommand}" />
+                                        </TextBox.InputBindings>
+                                    </TextBox>
 
                                     <Label Grid.Row="1"
                                            Grid.Column="0"
@@ -79,9 +72,13 @@
                                                  Grid.Column="1"
                                                  VerticalAlignment="Center"
                                                  xaml:PasswordBoxAssistant.BindPassword="True"
-                                                 xaml:PasswordBoxAssistant.BoundPassword="{Binding Path=LoginDetails.Password,
+                                                 xaml:PasswordBoxAssistant.BoundPassword="{Binding Path=SettingsService.MyAnimeListConfig.Password,
                                                                                                    Mode=TwoWay,
-                                                                                                   UpdateSourceTrigger=PropertyChanged}" />
+                                                                                                   UpdateSourceTrigger=PropertyChanged}">
+                                        <PasswordBox.InputBindings>
+                                            <KeyBinding Key="Enter" Command="{Binding LoginCommand}" />
+                                        </PasswordBox.InputBindings>
+                                    </PasswordBox>
 
                                     <Label Grid.Row="2"
                                            Grid.Column="0"
@@ -90,10 +87,10 @@
                                     <DockPanel Grid.Row="2" Grid.Column="1">
                                         <Label HorizontalAlignment="Left"
                                                VerticalAlignment="Center"
-                                               Content="{Binding LoginDetails.Works,
+                                               Content="{Binding SettingsService.MyAnimeListConfig.Works,
                                                                  Converter={StaticResource BooleanSymbolConverter}}"
                                                FontSize="22"
-                                               Foreground="{Binding LoginDetails.Works,
+                                               Foreground="{Binding SettingsService.MyAnimeListConfig.Works,
                                                                     Converter={StaticResource BooleanColorConverter}}" />
                                     </DockPanel>
 
@@ -128,23 +125,19 @@
                                                Foreground="{Binding Path=UpToDate,
                                                                     Converter={StaticResource BooleanColorConverter}}" />
 
-                                        <Button x:Name="SyncButton"
-                                                Click="Sync_OnClick"
+                                        <Button Command="{Binding SyncCommand}"
                                                 Content="{Binding SyncText}"
-                                                IsHitTestVisible="{Binding UpToDate,
-                                                                           Converter={StaticResource NotConverter}}"
-                                                Opacity="{Binding UpToDate,
-                                                                  Converter={StaticResource BooleanOpacityConverterNot}}"
                                                 Style="{StaticResource Special}" />
 
-                                        <Button Click="GotoProfile_OnClick"
-                                                Content="Profile"
-                                                IsHitTestVisible="{Binding LoginDetails.Works}"
-                                                Opacity="{Binding LoginDetails.Works,
-                                                                  Converter={StaticResource BooleanOpacityConverter}}"
+                                        <Button Command="{Binding ImportCommand}"
+                                                Content="Import"
                                                 Style="{StaticResource Normal}" />
 
-                                        <Button Click="Login_OnClick"
+                                        <Button Command="{Binding ProfileCommand}"
+                                                Content="Profile"
+                                                Style="{StaticResource Normal}" />
+
+                                        <Button Command="{Binding LoginCommand}"
                                                 Content="Login"
                                                 Style="{StaticResource Normal}" />
 
@@ -160,22 +153,19 @@
                                     <ColumnDefinition Width="1*" />
                                 </Grid.ColumnDefinitions>
 
-                                <TextBox x:Name="SearchTextBox"
-                                         Grid.Column="0"
+                                <TextBox Grid.Column="0"
                                          Width="300"
                                          Margin="5"
                                          VerticalContentAlignment="Center"
-                                         KeyDown="SearchTextBox_KeyDown" />
+                                         Text="{Binding Searchbox}" />
 
                                 <DockPanel Grid.Column="1" HorizontalAlignment="Left">
-                                    <Button x:Name="SearchButton"
-                                            Margin="5"
-                                            Click="Search_OnClick"
-                                            Content="Search"
-                                            KeyDown="SearchButton_KeyDown" />
+                                    <Button Margin="5"
+                                            Command="{Binding SearchCommand}"
+                                            Content="Search" />
 
                                     <Button Margin="5"
-                                            Click="Search_FirstResult_OnClick"
+                                            Command="{Binding SearchFirstResultCommand}"
                                             Content="First Result" />
                                 </DockPanel>
                             </Grid>
@@ -187,20 +177,25 @@
                     <GroupBox Header="Launch Website" Style="{DynamicResource BoxStyle}">
                         <StackPanel>
                             <Button Margin="5"
-                                    Click="MyanimelistButton_Click"
+                                    HorizontalAlignment="Stretch"
+                                    Command="{Binding MyAnimeListCommand}"
                                     Content="MyAnimeList" />
                             <Button Margin="5"
-                                    Click="AnichartButton_Click"
+                                    HorizontalAlignment="Stretch"
+                                    Command="{Binding AnichartCommand}"
                                     Content="Anichart" />
                             <Button Margin="5"
-                                    Click="NyaaButton_Click"
+                                    HorizontalAlignment="Stretch"
+                                    Command="{Binding NyaaCommand}"
                                     Content="Nyaa" />
                         </StackPanel>
                     </GroupBox>
                     <GroupBox VerticalAlignment="Bottom"
                               Header="Usage Notes"
                               Style="{DynamicResource BoxStyle}">
-                        <Button Click="UsageNotes_OnClick" Content="Click me" />
+                        <Button HorizontalAlignment="Stretch"
+                                Command="{Binding UsageNotesCommand}"
+                                Content="Click me" />
                     </GroupBox>
                 </StackPanel>
             </DockPanel>

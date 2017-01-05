@@ -4,16 +4,13 @@
              xmlns:classes="clr-namespace:anime_downloader.Classes"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:anime_downloader.ViewModels"
              xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
+             d:DataContext="{d:DesignInstance viewModels:SettingsViewModel}"
              d:DesignHeight="360"
              d:DesignWidth="680"
-             DataContext="{Binding RelativeSource={RelativeSource Self}}"
              mc:Ignorable="d">
     <UserControl.Resources>
-        <xaml:StringJoinConverter x:Key="Converter" />
-        <xaml:NotConverter x:Key="NotConverter" />
-        <xaml:BooleanVisibilityConverter x:Key="VisbilityConverter" />
-
         <Style x:Key="LabelStyle" TargetType="{x:Type Label}">
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -32,13 +29,12 @@
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
     </UserControl.Resources>
-    <Grid>
-        <Grid.Background>White</Grid.Background>
+    <Grid Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="5*" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
-        <Grid x:Name="SettingsGrid" d:DataContext="{d:DesignInstance Type=classes:Settings}">
+        <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="2*" />
                 <RowDefinition Height="1*" />
@@ -64,10 +60,9 @@
                        ToolTip="Path to where episodes will be downloaded to." />
                 <TextBox Grid.Row="0"
                          Grid.Column="1"
-                         KeyDown="Textbox_KeyDown"
-                         PreviewKeyDown="Textbox_OnPreviewKeyDown"
                          Style="{DynamicResource TextboxStyle}"
-                         Text="{Binding Paths.EpisodeDirectory}" />
+                         Text="{Binding Settings.PathConfig.Unwatched,
+                                        UpdateSourceTrigger=PropertyChanged}" />
 
                 <!--  Watched path  -->
                 <Label Grid.Row="1"
@@ -77,10 +72,9 @@
                        ToolTip="Path where watched episodes will be moved to." />
                 <TextBox Grid.Row="1"
                          Grid.Column="1"
-                         KeyDown="Textbox_KeyDown"
-                         PreviewKeyDown="Textbox_OnPreviewKeyDown"
                          Style="{DynamicResource TextboxStyle}"
-                         Text="{Binding Paths.WatchedDirectory}" />
+                         Text="{Binding Settings.PathConfig.Watched,
+                                        UpdateSourceTrigger=PropertyChanged}" />
 
                 <!--  Torrent  -->
                 <Label Grid.Row="2"
@@ -88,12 +82,12 @@
                        Content="Torrent downloads to: "
                        Style="{DynamicResource LabelStyle}"
                        ToolTip="Path to the folder that all .torrent files will be downloaded into." />
+
                 <TextBox Grid.Row="2"
                          Grid.Column="1"
-                         KeyDown="Textbox_KeyDown"
-                         PreviewKeyDown="Textbox_OnPreviewKeyDown"
                          Style="{DynamicResource TextboxStyle}"
-                         Text="{Binding Paths.TorrentFilesDirectory}" />
+                         Text="{Binding Settings.PathConfig.Torrents,
+                                        UpdateSourceTrigger=PropertyChanged}" />
 
                 <!--  Download  -->
                 <Label Grid.Row="3"
@@ -103,10 +97,9 @@
                        ToolTip="Path to uTorrent.exe." />
                 <TextBox Grid.Row="3"
                          Grid.Column="1"
-                         KeyDown="Textbox_KeyDown"
-                         PreviewKeyDown="Textbox_OnPreviewKeyDown"
                          Style="{DynamicResource TextboxStyle}"
-                         Text="{Binding Paths.UtorrentFile}" />
+                         Text="{Binding Settings.PathConfig.TorrentDownloader,
+                                        UpdateSourceTrigger=PropertyChanged}" />
 
                 <!--  Subgroups  -->
                 <Label Grid.Row="4"
@@ -116,11 +109,8 @@
                        ToolTip="A comma + space (', ') separated list of preferred subgroups, e.g. '{subgroup1}, {subgroup2}, {subgroup3}'" />
                 <TextBox Grid.Row="4"
                          Grid.Column="1"
-                         KeyDown="Textbox_KeyDown"
-                         PreviewKeyDown="Textbox_OnPreviewKeyDown"
                          Style="{DynamicResource TextboxStyle}"
-                         Text="{Binding Path=Subgroups,
-                                        Converter={StaticResource Converter}}" />
+                         Text="{Binding Subgroups}" />
             </Grid>
             <Grid Row="1">
                 <Grid.ColumnDefinitions>
@@ -146,8 +136,8 @@
                            ToolTip="Instead of closing the program on exit, it is brought to the tray." />
                     <CheckBox Grid.Row="0"
                               Grid.Column="1"
-                              Click="Checkbox_OnClick"
-                              IsChecked="{Binding Path=Flags.ExitOnClose,
+                              IsChecked="{Binding Path=Settings.FlagConfig.ExitOnClose,
+                                                  UpdateSourceTrigger=PropertyChanged,
                                                   Converter={StaticResource NotConverter}}"
                               Style="{DynamicResource CheckboxStyle}" />
 
@@ -159,8 +149,9 @@
                            ToolTip="Always have the tray enabled." />
                     <CheckBox Grid.Row="1"
                               Grid.Column="1"
-                              Click="AlwaysTrayCheckbox_OnClick"
-                              IsChecked="{Binding Flags.AlwaysShowTray}"
+                              Command="{Binding TrayToggleCommand}"
+                              IsChecked="{Binding Settings.FlagConfig.AlwaysShowTray,
+                                                  UpdateSourceTrigger=PropertyChanged}"
                               Style="{DynamicResource CheckboxStyle}" />
                 </Grid>
                 <Grid Column="1">
@@ -182,8 +173,8 @@
                            ToolTip="Whether or not to only download from subgroups that are on the whitelisted subgroups list." />
                     <CheckBox Grid.Row="0"
                               Grid.Column="1"
-                              Click="Checkbox_OnClick"
-                              IsChecked="{Binding Flags.OnlyWhitelisted}"
+                              IsChecked="{Binding Settings.FlagConfig.OnlyWhitelisted,
+                                                  UpdateSourceTrigger=PropertyChanged}"
                               Style="{DynamicResource CheckboxStyle}" />
 
                     <!--  Named folders  -->
@@ -195,26 +186,33 @@
                            ToolTip="Put each episode inside a folder named after the show" />
                     <CheckBox Grid.Row="1"
                               Grid.Column="1"
-                              Click="Checkbox_OnClick"
-                              IsChecked="{Binding Flags.IndividualShowFolders}"
+                              IsChecked="{Binding Settings.FlagConfig.IndividualShowFolders,
+                                                  UpdateSourceTrigger=PropertyChanged}"
                               Style="{DynamicResource CheckboxStyle}" />
                 </Grid>
             </Grid>
         </Grid>
         <DockPanel Grid.Row="1">
-            <Label HorizontalAlignment="Left"
-                   VerticalAlignment="Center"
-                   Visibility="{Binding Path=UnsavedChanges,
-                                        Converter={StaticResource VisbilityConverter},
-                                        Mode=TwoWay}">
-                <TextBlock FontSize="14" Foreground="Green">
-                    <Italic>*Unsaved changes pending</Italic>
-                </TextBlock>
+            <Label HorizontalAlignment="Left" VerticalAlignment="Center">
+                <Label.Style>
+                    <Style TargetType="Label">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ChangeMade}" Value="True">
+                                <Setter Property="Content">
+                                    <Setter.Value>
+                                        <TextBlock FontSize="14" Foreground="Red">
+                                            <Italic>*Unsaved changes pending</Italic>
+                                        </TextBlock>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Label.Style>
             </Label>
             <Button HorizontalAlignment="Right"
-                    Click="ApplyChangesButton_OnClick"
-                    Content="{Binding SubmitText}" />
+                    Command="{Binding SaveCommand}"
+                    Content="Edit" />
         </DockPanel>
-
     </Grid>
 </UserControl>

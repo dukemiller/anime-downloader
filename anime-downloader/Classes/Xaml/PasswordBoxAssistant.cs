@@ -7,13 +7,16 @@ namespace anime_downloader.Classes.Xaml
     public class PasswordBoxAssistant
     {
         public static readonly DependencyProperty BoundPassword =
-          DependencyProperty.RegisterAttached("BoundPassword", typeof(string), typeof(PasswordBoxAssistant), new PropertyMetadata(string.Empty, OnBoundPasswordChanged));
+            DependencyProperty.RegisterAttached("BoundPassword", typeof(string), typeof(PasswordBoxAssistant),
+                new PropertyMetadata(string.Empty, OnBoundPasswordChanged));
 
         public static readonly DependencyProperty BindPassword = DependencyProperty.RegisterAttached(
-            "BindPassword", typeof(bool), typeof(PasswordBoxAssistant), new PropertyMetadata(false, OnBindPasswordChanged));
+            "BindPassword", typeof(bool), typeof(PasswordBoxAssistant),
+            new PropertyMetadata(false, OnBindPasswordChanged));
 
         private static readonly DependencyProperty UpdatingPassword =
-            DependencyProperty.RegisterAttached("UpdatingPassword", typeof(bool), typeof(PasswordBoxAssistant), new PropertyMetadata(false));
+            DependencyProperty.RegisterAttached("UpdatingPassword", typeof(bool), typeof(PasswordBoxAssistant),
+                new PropertyMetadata(false));
 
         private static void OnBoundPasswordChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -22,9 +25,7 @@ namespace anime_downloader.Classes.Xaml
             // only handle this event when the property is attached to a PasswordBox
             // and when the BindPassword attached property has been set to true
             if (d == null || !GetBindPassword(d))
-            {
                 return;
-            }
 
             // avoid recursive updating by ignoring the box's changed event
             box.PasswordChanged -= HandlePasswordChanged;
@@ -32,9 +33,7 @@ namespace anime_downloader.Classes.Xaml
             var newPassword = (string) e.NewValue;
 
             if (!GetUpdatingPassword(box))
-            {
                 box.Password = newPassword;
-            }
 
             box.PasswordChanged += HandlePasswordChanged;
         }
@@ -47,22 +46,16 @@ namespace anime_downloader.Classes.Xaml
             var box = dp as PasswordBox;
 
             if (box == null)
-            {
                 return;
-            }
 
-            var wasBound = (bool) (e.OldValue);
-            var needToBind = (bool) (e.NewValue);
+            var wasBound = (bool) e.OldValue;
+            var needToBind = (bool) e.NewValue;
 
             if (wasBound)
-            {
                 box.PasswordChanged -= HandlePasswordChanged;
-            }
 
             if (needToBind)
-            {
                 box.PasswordChanged += HandlePasswordChanged;
-            }
         }
 
         private static void HandlePasswordChanged(object sender, RoutedEventArgs e)

@@ -1,0 +1,111 @@
+﻿<Window x:Class="anime_downloader.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:anime_downloader.ViewModels"
+        xmlns:views="clr-namespace:anime_downloader.Views"
+        xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
+        Title="Anime Downloader"
+        Width="920"
+        Height="400"
+        d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel}"
+        Closing="MainWindow_OnClosing"
+        ResizeMode="CanMinimize"
+        StateChanged="Window_StateChanged"
+        mc:Ignorable="d">
+    <Window.Resources>
+        <Style BasedOn="{StaticResource LargeButtonStyle}" TargetType="RadioButton" />
+    </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Key="X"
+                    Command="{Binding CloseCommand}"
+                    Modifiers="Control" />
+        <KeyBinding Key="D1"
+                    Command="{Binding HomeCommand}"
+                    Modifiers="Alt" />
+        <KeyBinding Key="D2"
+                    Command="{Binding AnimeCommand}"
+                    Modifiers="Alt" />
+        <KeyBinding Key="D3"
+                    Command="{Binding SettingsCommand}"
+                    Modifiers="Alt" />
+        <KeyBinding Key="D4"
+                    Command="{Binding DownloadCommand}"
+                    Modifiers="Alt" />
+        <KeyBinding Key="D5"
+                    Command="{Binding ManageCommand}"
+                    Modifiers="Alt" />
+        <KeyBinding Key="D6"
+                    Command="{Binding PlaylistCreatorCommand}"
+                    Modifiers="Alt" />
+        <KeyBinding Key="D7"
+                    Command="{Binding WebCommand}"
+                    Modifiers="Alt" />
+        <KeyBinding Key="D8"
+                    Command="{Binding MiscCommand}"
+                    Modifiers="Alt" />
+    </Window.InputBindings>
+    <Grid Background="White">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="9*" />
+        </Grid.ColumnDefinitions>
+        <Grid Background="{StaticResource BackgroundColor}" Column="0">
+            <StackPanel>
+                <RadioButton xaml:FocusBehavior.IsFocused="True"
+                             Command="{Binding HomeCommand}"
+                             Content="Home"
+                             IsChecked="{Binding SelectedIndex,
+                                                 Converter={StaticResource CompareConverter},
+                                                 ConverterParameter=1}" />
+                <RadioButton Command="{Binding AnimeCommand}"
+                             Content="Anime"
+                             IsChecked="{Binding SelectedIndex,
+                                                 Converter={StaticResource CompareConverter},
+                                                 ConverterParameter=2}" />
+                <RadioButton Command="{Binding SettingsCommand}"
+                             Content="Settings"
+                             IsChecked="{Binding SelectedIndex,
+                                                 Converter={StaticResource CompareConverter},
+                                                 ConverterParameter=3}" />
+                <RadioButton Command="{Binding DownloadCommand}"
+                             Content="Download"
+                             IsChecked="{Binding SelectedIndex,
+                                                 Converter={StaticResource CompareConverter},
+                                                 ConverterParameter=4}" />
+                <RadioButton Command="{Binding ManageCommand}"
+                             Content="Manage"
+                             IsChecked="{Binding SelectedIndex,
+                                                 Converter={StaticResource CompareConverter},
+                                                 ConverterParameter=5}" />
+                <RadioButton Command="{Binding PlaylistCreatorCommand}"
+                             Content="Playlists"
+                             IsChecked="{Binding SelectedIndex,
+                                                 Converter={StaticResource CompareConverter},
+                                                 ConverterParameter=6}" />
+                <RadioButton Command="{Binding WebCommand}"
+                             Content="Web"
+                             IsChecked="{Binding SelectedIndex,
+                                                 Converter={StaticResource CompareConverter},
+                                                 ConverterParameter=7}" />
+                <RadioButton Command="{Binding MiscCommand}"
+                             Content="Misc"
+                             IsChecked="{Binding SelectedIndex,
+                                                 Converter={StaticResource CompareConverter},
+                                                 ConverterParameter=8}" />
+            </StackPanel>
+        </Grid>
+        <ContentPresenter Grid.Column="1"
+                          Margin="20,0"
+                          Content="{Binding CurrentView,
+                                            NotifyOnTargetUpdated=True,
+                                            UpdateSourceTrigger=PropertyChanged}">
+            <ContentPresenter.Triggers>
+                <EventTrigger RoutedEvent="Binding.TargetUpdated">
+                    <BeginStoryboard Storyboard="{StaticResource DisplayTransition}" />
+                </EventTrigger>
+            </ContentPresenter.Triggers>
+        </ContentPresenter>
+    </Grid>
+</Window>
