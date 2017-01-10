@@ -38,8 +38,7 @@
                                     <Style TargetType="{x:Type TextBox}">
                                         <Setter Property="Foreground" Value="Transparent" />
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Path=Text, Source={x:Reference textSource}}"
-                                                         Value="">
+                                            <DataTrigger Binding="{Binding Path=Text, Source={x:Reference textSource}}" Value="">
                                                 <Setter Property="Foreground" Value="LightGray" />
                                             </DataTrigger>
                                         </Style.Triggers>
@@ -90,7 +89,6 @@
         <Style TargetType="{x:Type ListBoxItem}">
             <Setter Property="xaml:DragSelectionHelper.IsDragSelecting" Value="False" />
             <Style.Triggers>
-
                 <Trigger Property="ListBoxItem.IsMouseOver" Value="True">
                     <Setter Property="xaml:DragSelectionHelper.IsDragSelecting" Value="True" />
                 </Trigger>
@@ -105,7 +103,7 @@
             <RowDefinition Height="2*" />
         </Grid.RowDefinitions>
 
-        <!--  Titlebar  -->
+        <!-- Titlebar -->
         <DockPanel Grid.Row="0">
             <Label Content="{Binding Title}" Style="{DynamicResource Title}">
                 <Label.InputBindings>
@@ -136,8 +134,7 @@
             </ListBox.InputBindings>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock d:DataContext="{d:DesignInstance Type=models:AnimeFile}"
-                               Text="{Binding StrippedFilename}" />
+                    <TextBlock d:DataContext="{d:DesignInstance Type=models:AnimeFile}" Text="{Binding StrippedFilename}" />
                 </DataTemplate>
             </ListBox.ItemTemplate>
             <ListBox.ContextMenu>
@@ -150,7 +147,7 @@
             </ListBox.ContextMenu>
         </ListBox>
 
-        <!--  Filterbar  -->
+        <!-- Filter bar -->
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />

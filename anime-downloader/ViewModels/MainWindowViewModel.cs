@@ -10,7 +10,9 @@ namespace anime_downloader.ViewModels
     public class MainWindowViewModel : ViewModelBase
     {
         private bool _busy;
+
         private ViewModelBase _currentView;
+
         private int _selectedIndex;
 
         // 
