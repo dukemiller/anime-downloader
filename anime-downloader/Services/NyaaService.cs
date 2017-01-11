@@ -110,7 +110,7 @@ namespace anime_downloader.Services
                 var html = await client.DownloadStringTaskAsync(url);
                 document.LoadHtml(html);
             }
-
+            
             return ParseResults(document, anime, episode);
         }
 
@@ -260,7 +260,7 @@ namespace anime_downloader.Services
                     // && n.Seeders > 0
                 );
 
-            if (anime.NameCollection.Any(c => c.Contains(episode.ToString())))
+            if (anime.NameCollection.Any(c => c.Contains(episode.ToString("D2"))))
             {
                 // To account for the case that a show contains a number (e.g. 12-sai - ep 12) that is 
                 // relevant to the title and or also might contain the year in case of rework/reboot 
