@@ -303,9 +303,7 @@ namespace anime_downloader.Services
                 var result = (FindResultRoot) ResultDeserializer.Deserialize(response);
                 return result.Entries.Where(anime =>
                 {
-                    var isShortOrSeries = anime.Type.Equals("TV") || anime.Type.Equals("Special");
-                    var definitelyNotAnOva = anime.TotalEpisodes == 0 || anime.TotalEpisodes > 4;
-                    return isShortOrSeries && definitelyNotAnOva;
+                    return (!anime.Type.Equals("Movie") && (anime.TotalEpisodes == 0 || anime.TotalEpisodes > 4)) || anime.Type.Equals("Special");
                 });
             }
         }
