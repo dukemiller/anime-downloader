@@ -53,7 +53,7 @@ namespace anime_downloader.Services
 
         public NetworkCredential GetCredentials() => new NetworkCredential(Settings.MyAnimeListConfig.Username, Settings.MyAnimeListConfig.Password);
 
-        public async Task<List<FindResult>> Find(string q) => await FindAsync(q);
+        public async Task<IEnumerable<FindResult>> Find(string q) => await FindAsync(q);
 
         public async Task<bool> VerifyCredentialsAsync()
         {
@@ -120,7 +120,7 @@ namespace anime_downloader.Services
         public async Task<bool> GetId(Anime anime)
         {
             // get all results from searching the name
-            var animeResults = await FindAsync(anime.Title.Replace(":", ""));
+            var animeResults = (await FindAsync(anime.Title.Replace(":", ""))).ToList();
 
             // if there were absolutely no results from the query
             if (!animeResults.Any())
@@ -131,7 +131,7 @@ namespace anime_downloader.Services
                 while (!animeResults.Any() && length-- > 1)
                 {
                     var newName = string.Join(" ", name.Take(length));
-                    animeResults = await FindAsync(HttpUtility.UrlEncode(newName));
+                    animeResults = (await FindAsync(HttpUtility.UrlEncode(newName))).ToList();
                 }
 
                 // if after the previous operation there are still no results
@@ -150,7 +150,7 @@ namespace anime_downloader.Services
             if (result == null)
             {
                 // try slapping a (TV) infront of it because the MAL api is weird sometimes
-                animeResults = await FindAsync(HttpUtility.UrlEncode(anime.Title + " (TV)"));
+                animeResults = (await FindAsync(HttpUtility.UrlEncode(anime.Title + " (TV)"))).ToList();
                 result = ClosestResult(anime, animeResults);
 
                 // if still no result
@@ -290,7 +290,7 @@ namespace anime_downloader.Services
             return response;
         }
 
-        private async Task<List<FindResult>> FindAsync(string q)
+        private async Task<IEnumerable<FindResult>> FindAsync(string q)
         {
             q = HttpUtility.UrlPathEncode(q).Replace("%20", "%25");
             var url = string.Format(ApiSearch, q);
@@ -301,7 +301,12 @@ namespace anime_downloader.Services
             using (var response = new StreamReader(data))
             {
                 var result = (FindResultRoot) ResultDeserializer.Deserialize(response);
-                return result.Entries;
+                return result.Entries.Where(anime =>
+                {
+                    var isShortOrSeries = anime.Type.Equals("TV") || anime.Type.Equals("Special");
+                    var definitelyNotAnOva = anime.TotalEpisodes == 0 || anime.TotalEpisodes > 4;
+                    return isShortOrSeries && definitelyNotAnOva;
+                });
             }
         }
 

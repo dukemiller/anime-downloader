@@ -66,7 +66,7 @@ namespace anime_downloader.Services.Interfaces
         /// <summary>
         ///     Retrieve all results on MyAnimeList matching the query string (searching by anime name).
         /// </summary>
-        Task<List<FindResult>> Find(string q);
+        Task<IEnumerable<FindResult>> Find(string q);
 
         /// <summary>
         ///     Gather all animes from the user's profile
