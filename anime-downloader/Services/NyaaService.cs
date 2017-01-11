@@ -257,6 +257,8 @@ namespace anime_downloader.Services
                 .Where(n => n.Measurement.Equals("MiB")
                             && n.Size > 5
                             && Regex.Split(n.StrippedName, " ").Any(s => s.Contains(episode.ToString()))
+                            && !n.Name.ToLower().Contains("(movie)")
+                            && !n.Name.ToLower().Replace("-", "").Replace("_", "").Replace(" ", "").Contains($"part{episode:D2}")
                     // && n.Seeders > 0
                 );
 
