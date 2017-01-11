@@ -266,7 +266,6 @@ namespace anime_downloader.Services
                     return withinLastThreeYears && isShortOrSeries && definitelyNotAnOva;
                 });
             }
-
         }
 
         private async Task<HttpContent> GetAsync(string url)

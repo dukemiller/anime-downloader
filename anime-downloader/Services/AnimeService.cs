@@ -23,7 +23,7 @@ namespace anime_downloader.Services
 
         public IEnumerable<Anime> FullyWatched()
         {
-            return AiringAndWatching
+            return Watching
                 .Where(
                     anime =>
                         anime.MyAnimeList.HasId &&
