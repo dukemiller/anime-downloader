@@ -119,7 +119,11 @@ namespace anime_downloader.ViewModels.Components
                         Airing = Details.Airing,
                         Episode = int.Parse(Details.Episode),
                         Status = Details.Status,
-                        Resolution = Details.Resolution
+                        Resolution = Details.Resolution,
+                        MyAnimeList = new MyAnimeListDetails
+                        {
+                            NeedsUpdating = true
+                        }
                     });
                 MessengerInstance.Send(Enums.Views.AnimeDisplay);
             }
