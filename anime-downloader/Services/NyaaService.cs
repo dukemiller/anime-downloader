@@ -256,21 +256,23 @@ namespace anime_downloader.Services
                 .Select(NodeToTorrent)
                 .Where(n => n.Measurement.Equals("MiB")
                             && n.Size > 5
-                            && Regex.Split(n.StrippedName, " ").Any(s => s.Contains(episode.ToString()))
+                            && Regex.Split(n.StrippedName, " ").Any(s => s.Contains(episode.ToString("D2")))
                             && !n.Name.ToLower().Contains("(movie)")
                             && !n.Name.ToLower().Replace("-", "").Replace("_", "").Replace(" ", "").Contains($"part{episode:D2}")
                     // && n.Seeders > 0
                 );
+            
+            Console.WriteLine(result);
 
             if (anime.NameCollection.Any(c => c.Contains(episode.ToString("D2"))))
             {
                 // To account for the case that a show contains a number (e.g. 12-sai - ep 12) that is 
                 // relevant to the title and or also might contain the year in case of rework/reboot 
                 // (e.g. Berserk (2016)) 
-                const string fullYearPattern = @"\(\d{4}\)";
+                const string yearPattern = @"[^a-zA-Z](\d{4})[^a-zA-Z]";
                 result = result?
                     .Where(nyaa => nyaa.StrippedName.Split()
-                                       .Select(c => Regex.Replace(c, fullYearPattern, ""))
+                                       .Select(c => Regex.Replace(c, yearPattern, ""))
                                        .Count(c => c.Contains(episode.ToString("D2")))
                                    >= 2);
 
