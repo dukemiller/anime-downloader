@@ -76,7 +76,7 @@ namespace anime_downloader.ViewModels.Components
             if (animes.Any())
             {
                 Text += ">> Searching for currently airing anime episodes ...\n";
-                var downloaded = await AnimeAggregate.DownloadService.DownloadAsync(animes, s => Text += s + '\n');
+                var downloaded = await AnimeAggregate.DownloadService.DownloadAll(animes, s => Text += s + '\n');
                 Text += downloaded > 0 ? $">> Found {downloaded} anime downloads." : ">> No new anime found.";
             }
 
@@ -109,9 +109,8 @@ namespace anime_downloader.ViewModels.Components
                     bool downloaded;
                     do
                     {
-                        var links = await AnimeAggregate.DownloadService.FindTorrentsAsync(anime, anime.NextEpisode);
-                        downloaded = await AnimeAggregate.DownloadService.DownloadEpisodeAsync(links, anime,
-                            s => Text += s + '\n');
+                        var links = await AnimeAggregate.DownloadService.FindAllTorrents(anime, anime.NextEpisode);
+                        downloaded = await AnimeAggregate.DownloadService.AttemptDownload(anime, links, s => Text += s + '\n');
                         if (downloaded)
                             total++;
                     } while (downloaded);
@@ -151,7 +150,7 @@ namespace anime_downloader.ViewModels.Components
 
             var total =
                 await
-                    AnimeAggregate.DownloadService.DownloadAsync(AnimeAggregate.AnimeService.AiringAndWatching,
+                    AnimeAggregate.DownloadService.DownloadAll(AnimeAggregate.AnimeService.AiringAndWatching,
                         animeFileRanges,
                         allEpisodeFiles, s => Text += s + '\n');
 

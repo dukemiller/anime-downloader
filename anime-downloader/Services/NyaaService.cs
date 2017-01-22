@@ -19,33 +19,23 @@ namespace anime_downloader.Services
 
         private const string BySeeders = "2";
 
-        private static readonly Dictionary<string, double> ToMegabyte = new Dictionary<string, double>
-        {
-            {"MiB", 1.04858},
-            {"GiB", 1073.74},
-            {"KiB", 0.001024}
-        };
+        private readonly IAnimeService _animeService;
+
+        private readonly ISettingsService _settingsService;
 
         private readonly WebClient _client;
 
+
         // 
 
-        public NyaaService(ISettingsService settings, IAnimeService animeService)
+        public NyaaService(ISettingsService settingsService, IAnimeService animeService)
         {
-            Settings = settings;
-            AnimeService = animeService;
+            _settingsService = settingsService;
+            _animeService = animeService;
             _client = new WebClient();
         }
 
-        // 
-
-        private ISettingsService Settings { get; }
-
-        private IAnimeService AnimeService { get; }
-
         public string ServiceName => "Nyaa";
-
-        // 
 
         public bool CanDownload(Torrent torrent, Anime anime)
         {
@@ -59,14 +49,14 @@ namespace anime_downloader.Services
                     !torrent.Subgroup().Contains(anime.PreferredSubgroup))
                     return false;
 
-            if (Settings.FlagConfig.OnlyWhitelisted)
+            if (_settingsService.FlagConfig.OnlyWhitelisted)
             {
                 // Torrent listing with no subgroup in the title
                 if (!torrent.HasSubgroup())
                     return false;
 
                 // Torrent listing with wrong subgroup
-                if (!Settings.Subgroups.Select(s => s.ToLower()).Contains(torrent.Subgroup().ToLower()))
+                if (!_settingsService.Subgroups.Select(s => s.ToLower()).Contains(torrent.Subgroup().ToLower()))
                     return false;
             }
 
@@ -96,34 +86,43 @@ namespace anime_downloader.Services
 
         // 
 
-        public async Task<IEnumerable<Torrent>> FindTorrentsAsync(Anime anime, int episode)
+        public async Task<IEnumerable<Torrent>> FindAllTorrents(Anime anime, int episode)
         {
             var document = new HtmlDocument();
 
             var url = new Uri("https://www.nyaa.se/?page=rss" +
                               $"&cats={EnglishTranslated}" +
-                              $"&term={NyaaQueryScrub(anime, episode)}" +
+                              $"&term={NyaaTerms(anime, episode)}" +
                               $"&sort={BySeeders}");
+
+            Console.WriteLine(url);
 
             using (var client = new WebClient())
             {
                 var html = await client.DownloadStringTaskAsync(url);
                 document.LoadHtml(html);
             }
-            
-            return ParseResults(document, anime, episode);
+
+            return ParseResults(anime, episode, document);
         }
 
-        // 
+        public async Task<IEnumerable<Torrent>> GetNextEpisode(Anime anime)
+        {
+            var result = await FindAllTorrents(anime, anime.NextEpisode);
+            return result?
+                .Select(torrent => new StringDistance<Torrent>(torrent, torrent.StrippedWithNoEpisode, anime.Name))
+                .Where(ctd => ctd.Distance <= 25)
+                .Select(ctd => ctd.Item);
+        }
 
-        public async Task<int> DownloadAsync(IEnumerable<Anime> animes, Action<string> output)
+        public async Task<int> DownloadAll(IEnumerable<Anime> animes, Action<string> output)
         {
             var downloaded = 0;
 
             foreach (var anime in animes)
             {
-                var downloadSuccessful = await DownloadEpisodeAsync(await GetNextEpisode(anime), anime, output);
-                if (downloadSuccessful)
+                var download = await AttemptDownload(anime, await GetNextEpisode(anime), output);
+                if (download)
                     downloaded++;
             }
 
@@ -131,33 +130,36 @@ namespace anime_downloader.Services
         }
 
         [NeedsUpdating]
-        public async Task<int> DownloadAsync(IEnumerable<Anime> animes, IEnumerable<AnimeFileRange> ranges,
-            IEnumerable<AnimeFile> files, Action<string> output)
+        public async Task<int> DownloadAll(
+            IEnumerable<Anime> animes,
+            IEnumerable<AnimeFileRange> ranges,
+            IEnumerable<AnimeFile> files,
+            Action<string> output)
         {
             var downloaded = 0;
 
-            foreach (var animeFile in ranges)
+            foreach (var file in ranges)
             {
-                var animeBase = AnimeService.ClosestAnime(animeFile.Name);
-                foreach (var episode in animeFile.EpisodeRange)
+                var closest = _animeService.ClosestAnime(file.Name);
+                foreach (var episode in file.EpisodeRange)
                 {
-                    if (await Task.Run(() => files.Any(a => a.Name.Equals(animeFile.Name) && a.Episode == episode)))
+                    if (await Task.Run(() => files.Any(a => a.Name.Equals(file.Name) && a.Episode == episode)))
                         continue;
 
                     // TODO: make a copy constructor?
                     var anime = new Anime
                     {
-                        Name = animeFile.Name,
+                        Name = file.Name,
                         Episode = episode - 1,
-                        Airing = animeBase.Airing,
-                        Resolution = animeBase.Resolution,
-                        PreferredSubgroup = animeBase.PreferredSubgroup,
-                        NameStrict = animeBase.NameStrict
+                        Airing = closest.Airing,
+                        Resolution = closest.Resolution,
+                        PreferredSubgroup = closest.PreferredSubgroup,
+                        NameStrict = closest.NameStrict
                     };
 
-                    var downloadSuccessful = await DownloadEpisodeAsync(await GetNextEpisode(anime), anime, output);
+                    var download = await AttemptDownload(anime, await GetNextEpisode(anime), output);
 
-                    if (downloadSuccessful)
+                    if (download)
                         downloaded++;
                 }
             }
@@ -165,28 +167,29 @@ namespace anime_downloader.Services
             return downloaded;
         }
 
-        public async Task<bool> DownloadEpisodeAsync(IEnumerable<Torrent> torrents, Anime anime, Action<string> output)
+        public async Task<bool> AttemptDownload(Anime anime, IEnumerable<Torrent> torrents, Action<string> output)
         {
             if (torrents == null || anime == null)
                 return false;
 
             foreach (var torrent in torrents.Where(torrent => CanDownload(torrent, anime)))
-                if (await DownloadTorrentAsync(torrent, anime, output))
+                if (await DownloadEpisode(anime, torrent, output))
                     return true;
 
             return false;
         }
 
-        public async Task<bool> DownloadTorrentAsync(Torrent torrent, Anime anime, Action<string> output)
+        public async Task<bool> DownloadEpisode(Anime anime, Torrent torrent, Action<string> output)
         {
             output($"Downloading '{anime.Title}' episode '{anime.NextEpisode}'.");
 
-            var fileWasDownloaded = await DownloadFileAsync(torrent, anime);
+            var download = await DownloadTorrent(anime, torrent);
 
-            if (fileWasDownloaded)
+            if (download.Successful)
             {
+                StartTorrent(download.Command);
+                anime.Episode++;
                 await Log(anime);
-                anime.Episode = anime.NextEpisode;
             }
 
             else
@@ -194,19 +197,20 @@ namespace anime_downloader.Services
                 output($"Download of '{anime.Title}' failed.");
             }
 
-            return fileWasDownloaded;
+            return download.Successful;
         }
 
-        public async Task<bool> DownloadFileAsync(Torrent torrent, Anime anime)
+        public async Task<DownloadResult> DownloadTorrent(Anime anime, Torrent torrent)
         {
+            var downloadResult = new DownloadResult {Successful = false};
             var torrentName = await torrent.GetTorrentNameAsync();
             if (torrentName == null)
-                return false;
+                return downloadResult;
 
-            var filePath = Path.Combine(Settings.PathConfig.Torrents, torrentName);
-            var fileDirectory = Settings.PathConfig.Unwatched;
+            var filePath = Path.Combine(_settingsService.PathConfig.Torrents, torrentName);
+            var fileDirectory = _settingsService.PathConfig.Unwatched;
 
-            if (Settings.FlagConfig.IndividualShowFolders)
+            if (_settingsService.FlagConfig.IndividualShowFolders)
                 fileDirectory = Path.Combine(fileDirectory, anime.Title);
 
             var command = $"/DIRECTORY \"{fileDirectory}\" \"{filePath}\"";
@@ -227,21 +231,41 @@ namespace anime_downloader.Services
                     // TODO: heh heh heh
                     catch (Exception)
                     {
-                        // ignored
-                        return false;
+                        downloadResult.Successful = false;
+                        return downloadResult;
                     }
 
-                    CallCommand(Settings.PathConfig.TorrentDownloader, command);
-                    return true;
+                    downloadResult.Command = command;
+                    downloadResult.Successful = true;
+                    return downloadResult;
                 });
 
-            CallCommand(Settings.PathConfig.TorrentDownloader, command);
-            return true;
+            downloadResult.Command = command;
+            downloadResult.Successful = true;
+            return downloadResult;
+        }
+
+        private void StartTorrent(string command)
+        {
+            var info = new ProcessStartInfo
+            {
+                FileName = _settingsService.PathConfig.TorrentDownloader,
+                Arguments = command,
+                UseShellExecute = false,
+                RedirectStandardOutput = true
+            };
+
+            var process = new Process
+            {
+                StartInfo = info
+            };
+
+            Task.Run(() => process.Start());
         }
 
         // Query functions
 
-        private static string NyaaQueryScrub(Anime anime, int episode)
+        private static string NyaaTerms(Anime anime, int episode)
         {
             var name = anime.Name
                 .Replace(" ", "+").Replace("'s", "").Replace(".", "+").Replace(":", " ")
@@ -249,19 +273,22 @@ namespace anime_downloader.Services
             return $"{name}+{anime.Resolution}+{episode:D2}";
         }
 
-        private static IEnumerable<Torrent> ParseResults(HtmlDocument document, Anime anime, int episode)
+        private static IEnumerable<Torrent> ParseResults(Anime anime, int episode, HtmlDocument document)
         {
             var result = document.DocumentNode?
                 .SelectNodes("//item")?
-                .Select(NodeToTorrent)
+                .Select(node => node.ToTorrent())
                 .Where(n => n.Measurement.Equals("MiB")
                             && n.Size > 5
                             && Regex.Split(n.StrippedName, " ").Any(s => s.Contains(episode.ToString("D2")))
                             && !n.Name.ToLower().Contains("(movie)")
-                            && !n.Name.ToLower().Replace("-", "").Replace("_", "").Replace(" ", "").Contains($"part{episode:D2}")
-                    // && n.Seeders > 0
+                            && !n.Name.ToLower()
+                                .Replace("-", "")
+                                .Replace("_", "")
+                                .Replace(" ", "")
+                                .Contains($"part{episode:D2}")
                 );
-            
+
             Console.WriteLine(result);
 
             if (anime.NameCollection.Any(c => c.Contains(episode.ToString("D2"))))
@@ -285,27 +312,28 @@ namespace anime_downloader.Services
             return result?.OrderByDescending(n => n.Seeders);
         }
 
-        public async Task<IEnumerable<Torrent>> GetNextEpisode(Anime anime)
-        {
-            var result = await FindTorrentsAsync(anime, anime.NextEpisode);
-            return result?
-                .Select(torrent => new StringDistance<Torrent>(torrent, torrent.StrippedWithNoEpisode, anime.Name))
-                .Where(ctd => ctd.Distance <= 25)
-                .Select(ctd => ctd.Item);
-        }
-
         private async Task Log(Anime anime)
         {
             var timestamp = $"{DateTime.Now:[M/d/yyyy @ hh:mm:ss tt]}";
             var message = $"Downloaded '{anime.Title}' episode {anime.NextEpisode}.";
-            using (var streamWriter = new StreamWriter(Settings.PathConfig.Logging, true))
+            using (var streamWriter = new StreamWriter(_settingsService.PathConfig.Logging, true))
             {
                 await streamWriter.WriteLineAsync($"{timestamp} - {message}");
                 streamWriter.Close();
             }
         }
+    }
 
-        private static Torrent NodeToTorrent(HtmlNode node)
+    internal static class NyaaExtension
+    {
+        private static readonly Dictionary<string, double> ToMegabyte = new Dictionary<string, double>
+        {
+            {"MiB", 1.04858},
+            {"GiB", 1073.74},
+            {"KiB", 0.001024}
+        };
+
+        public static Torrent ToTorrent(this HtmlNode node)
         {
             var torrent = new Torrent
             {
@@ -324,33 +352,7 @@ namespace anime_downloader.Services
             torrent.Size =
                 Math.Round(double.Parse(description.Split(new[] {$" {torrent.Measurement}"}, StringSplitOptions.None)[0]
                                .Split(new[] {" - "}, StringSplitOptions.None)[1]) * ToMegabyte[torrent.Measurement], 2);
-
             return torrent;
-        }
-
-        // 
-
-        /// <summary>
-        ///     Execute new process with given parameters.
-        /// </summary>
-        /// <param name="executable">Path to the executable file.</param>
-        /// <param name="parameters">Arguments given to the executable.</param>
-        private static void CallCommand(string executable, string parameters)
-        {
-            var info = new ProcessStartInfo
-            {
-                FileName = executable,
-                Arguments = parameters,
-                UseShellExecute = false,
-                RedirectStandardOutput = true
-            };
-
-            var process = new Process
-            {
-                StartInfo = info
-            };
-
-            Task.Run(() => process.Start());
         }
     }
 }

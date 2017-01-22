@@ -15,7 +15,6 @@
              MouseDown="OnMouseDown"
              mc:Ignorable="d">
     <UserControl.InputBindings>
-        <KeyBinding Key="Enter" Command="{Binding ButtonCommand}" />
         <KeyBinding Key="Escape" Command="{Binding ExitCommand}" />
         <KeyBinding Key="Right" Command="{Binding NextCommand}" />
         <KeyBinding Key="PageDown" Command="{Binding NextCommand}" />
@@ -312,7 +311,8 @@
 
                     <Button Margin="5"
                             Command="{Binding ButtonCommand}"
-                            Content="{Binding ButtonText}" />
+                            Content="{Binding ButtonText}"
+                            IsDefault="True" />
                 </StackPanel>
             </DockPanel>
         </Grid>
