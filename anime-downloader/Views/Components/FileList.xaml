@@ -4,6 +4,7 @@
              xmlns:components="clr-namespace:anime_downloader.ViewModels.Components"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:models="clr-namespace:anime_downloader.Models"
              xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
@@ -13,58 +14,23 @@
              Background="White"
              mc:Ignorable="d">
     <UserControl.Resources>
-        <Style x:Key="Filter" TargetType="TextBox">
-            <Setter Property="Width" Value="150" />
-            <Setter Property="Height" Value="25" />
-            <Setter Property="FontSize" Value="16" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="Tag" Value="Filter by name ..." />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type TextBox}">
-                        <Grid>
-                            <TextBox x:Name="textSource"
-                                     Panel.ZIndex="2"
-                                     Background="Transparent"
-                                     Text="{Binding Path=Text,
-                                                    RelativeSource={RelativeSource TemplatedParent},
-                                                    Mode=TwoWay,
-                                                    UpdateSourceTrigger=PropertyChanged}" />
-                            <TextBox Panel.ZIndex="1"
-                                     Background="{TemplateBinding Background}"
-                                     Text="{TemplateBinding Tag}">
-                                <TextBox.Style>
-                                    <Style TargetType="{x:Type TextBox}">
-                                        <Setter Property="Foreground" Value="Transparent" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Path=Text, Source={x:Reference textSource}}" Value="">
-                                                <Setter Property="Foreground" Value="LightGray" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBox.Style>
-                            </TextBox>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="Episodes" TargetType="ListBox">
+        <Style x:Key="Filter"
+               BasedOn="{StaticResource MaterialDesignTextBox}"
+               TargetType="TextBox" />
+        <Style x:Key="Episodes"
+               BasedOn="{StaticResource MaterialDesignListBox}"
+               TargetType="ListBox">
             <Setter Property="FontFamily" Value="{StaticResource MainFont}" />
             <Setter Property="FontSize" Value="16" />
             <Setter Property="xaml:DragSelectionHelper.IsDragSelecting" Value="False" />
         </Style>
-        <Style x:Key="Title" TargetType="Label">
-            <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="FontSize" Value="18" />
-            <Setter Property="FontFamily" Value="Segoe UI Symbol" />
-        </Style>
-        <Style x:Key="Label" TargetType="Label">
+        <Style x:Key="Label"
+               BasedOn="{StaticResource MaterialDesignLabel}"
+               TargetType="Label">
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="Opacity" Value="0.4" />
-            <Setter Property="Foreground" Value="Gray" />
+            <Setter Property="Opacity" Value="0.8" />
+            <Setter Property="Foreground" Value="LightGray" />
             <Setter Property="FontSize" Value="14" />
             <Setter Property="FontFamily" Value="Segoe UI Symbol" />
             <Style.Triggers>
@@ -86,7 +52,7 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-        <Style TargetType="{x:Type ListBoxItem}">
+        <Style BasedOn="{StaticResource MaterialDesignListBoxItem}" TargetType="{x:Type ListBoxItem}">
             <Setter Property="xaml:DragSelectionHelper.IsDragSelecting" Value="False" />
             <Style.Triggers>
                 <Trigger Property="ListBoxItem.IsMouseOver" Value="True">
@@ -95,66 +61,74 @@
             </Style.Triggers>
         </Style>
     </UserControl.Resources>
-
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="2*" />
-            <RowDefinition Height="13*" />
-            <RowDefinition Height="2*" />
+            <RowDefinition Height="8*" />
+            <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
 
-        <!-- Titlebar -->
-        <DockPanel Grid.Row="0">
-            <Label Content="{Binding Title}" Style="{DynamicResource Title}">
-                <Label.InputBindings>
-                    <MouseBinding Command="{Binding FolderCommand}" MouseAction="LeftClick" />
-                </Label.InputBindings>
-            </Label>
-            <Label Content="{Binding Label, Mode=OneWay}" Style="{DynamicResource Label}" />
-        </DockPanel>
+        <!--  Titlebar  -->
+        <GroupBox>
+            <GroupBox.Header>
+                <DockPanel Grid.Row="0">
+                    <TextBlock Text="{Binding Title}" VerticalAlignment="Center" Foreground="White" >
+                        <TextBlock.InputBindings>
+                            <MouseBinding Command="{Binding FolderCommand}" MouseAction="LeftClick" />
+                        </TextBlock.InputBindings>
+                    </TextBlock>
+                    <Label Content="{Binding Label, Mode=OneWay}" Style="{DynamicResource Label}" />
+                </DockPanel>
+            </GroupBox.Header>
 
-        <!--  Episodes  -->
-        <ListBox Grid.Row="1"
-                 xaml:AttachedProperties.SelectedItems="{Binding SelectedFiles}"
-                 xaml:DragSelectionHelper.IsDragSelectionEnabled="true"
-                 ItemsSource="{Binding FilteredFiles,
-                                       UpdateSourceTrigger=PropertyChanged}"
-                 SelectedItem="{Binding SelectedFile,
-                                        UpdateSourceTrigger=PropertyChanged}"
-                 SelectionMode="Multiple"
-                 Style="{StaticResource Episodes}">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="MouseDoubleClick">
-                    <i:InvokeCommandAction Command="{Binding OpenCommand}" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-            <ListBox.InputBindings>
-                <KeyBinding Key="Return" Command="{Binding OpenCommand}" />
-                <KeyBinding Key="Delete" Command="{Binding DeleteCommand}" />
-            </ListBox.InputBindings>
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock d:DataContext="{d:DesignInstance Type=models:AnimeFile}" Text="{Binding StrippedFilename}" />
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-            <ListBox.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Command="{Binding MoveCommand}" Header="Move to the other side" />
-                    <MenuItem Command="{Binding ProfileCommand}" Header="Go to profile" />
-                    <MenuItem Command="{Binding OpenCommand}" Header="Open" />
-                    <MenuItem Command="{Binding DeleteCommand}" Header="Delete" />
-                </ContextMenu>
-            </ListBox.ContextMenu>
-        </ListBox>
+            <!--  Episodes  -->
+            <ListBox Grid.Row="1"
+                     xaml:AttachedProperties.SelectedItems="{Binding SelectedFiles}"
+                     xaml:DragSelectionHelper.IsDragSelectionEnabled="true"
+                     ItemsSource="{Binding FilteredFiles,
+                                           UpdateSourceTrigger=PropertyChanged}"
+                     SelectedItem="{Binding SelectedFile,
+                                            UpdateSourceTrigger=PropertyChanged}"
+                     SelectionMode="Multiple"
+                     Style="{StaticResource Episodes}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseDoubleClick">
+                        <i:InvokeCommandAction Command="{Binding OpenCommand}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <ListBox.InputBindings>
+                    <KeyBinding Key="A"
+                                Command="{Binding SelectAllCommand}"
+                                Modifiers="Control" />
+                    <KeyBinding Key="Return" Command="{Binding OpenCommand}" />
+                    <KeyBinding Key="Delete" Command="{Binding DeleteCommand}" />
+                </ListBox.InputBindings>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock d:DataContext="{d:DesignInstance Type=models:AnimeFile}" Text="{Binding StrippedFilename}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+                <ListBox.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Command="{Binding MoveCommand}" Header="Move to other side" />
+                        <MenuItem Command="{Binding ProfileCommand}" Header="Profile" />
+                        <MenuItem Command="{Binding OpenCommand}" Header="Open" />
+                        <MenuItem Command="{Binding DeleteCommand}" Header="Delete" />
+                    </ContextMenu>
+                </ListBox.ContextMenu>
+            </ListBox>
+        </GroupBox>
 
-        <!-- Filter bar -->
-        <Grid Grid.Row="2">
+        <!--  Filter bar  -->
+        <Grid Margin="0,5,0,0" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
 
-            <TextBox Style="{DynamicResource Filter}" Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}">
+            <TextBox materialDesign:HintAssist.Hint="Filter by name ..."
+                     Style="{DynamicResource Filter}"
+                     Text="{Binding Filter,
+                                    UpdateSourceTrigger=PropertyChanged}">
                 <TextBox.InputBindings>
                     <KeyBinding Key="Escape" Command="{Binding ClearFilterCommand}" />
                 </TextBox.InputBindings>

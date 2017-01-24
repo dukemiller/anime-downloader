@@ -9,11 +9,6 @@
              d:DesignHeight="360"
              d:DesignWidth="680"
              mc:Ignorable="d">
-    <UserControl.Resources>
-        <Style x:Key="FontStyle">
-            <Setter Property="RadioButton.FontFamily" Value="{StaticResource MainFont}" />
-        </Style>
-    </UserControl.Resources>
     <Grid Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
@@ -22,7 +17,6 @@
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0"
                    FontSize="16"
-                   Style="{DynamicResource FontStyle}"
                    Text="Create a playlist from all unwatched anime episodes as the filename 'playlist.m3u'."
                    TextAlignment="Justify"
                    TextWrapping="Wrap" />
@@ -30,9 +24,8 @@
             <DockPanel>
                 <GroupBox HorizontalAlignment="Left"
                           VerticalAlignment="Top"
-                          FontSize="16"
-                          Header="Sort by"
-                          Style="{DynamicResource FontStyle}">
+                          Margin="5"
+                          Header="Sort by">
                     <StackPanel>
                         <ListBox BorderThickness="0"
                                  ItemsSource="{Binding Options}"
@@ -49,7 +42,7 @@
                                                              Content="{Binding Header}"
                                                              IsChecked="{Binding RelativeSource={RelativeSource TemplatedParent},
                                                                                  Path=IsSelected}"
-                                                             Style="{DynamicResource FontStyle}"
+                                                             Style="{StaticResource {x:Type RadioButton}}"
                                                              ToolTip="{Binding ToolTip}" />
                                             </ControlTemplate>
                                         </Setter.Value>
@@ -61,9 +54,8 @@
                 </GroupBox>
                 <GroupBox HorizontalAlignment="Left"
                           VerticalAlignment="Top"
-                          FontSize="16"
-                          Header="Options"
-                          Style="{DynamicResource FontStyle}">
+                          Margin="5"
+                          Header="Options">
                     <StackPanel>
                         <CheckBox Margin="5"
                                   Content="Separate show order"

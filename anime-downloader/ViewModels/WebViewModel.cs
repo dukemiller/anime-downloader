@@ -186,8 +186,8 @@ namespace anime_downloader.ViewModels
 
         private async void SearchFirstResult()
         {
-            var text = Searchbox.Trim();
-            if (text.Length > 0)
+            var text = Searchbox?.Trim();
+            if (text?.Length > 0)
             {
                 MessengerInstance.Send(new WorkMessage {Working = true});
                 await SearchAndOpenAsync(text);
@@ -197,8 +197,8 @@ namespace anime_downloader.ViewModels
 
         private void Search()
         {
-            var text = Searchbox.Trim();
-            if (text.Length > 0)
+            var text = Searchbox?.Trim();
+            if (text?.Length > 0)
             {
                 var q = HttpUtility.UrlEncode(text);
                 Process.Start($"http://myanimelist.net/anime.php?q={q}");

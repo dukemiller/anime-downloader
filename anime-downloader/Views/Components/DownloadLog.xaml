@@ -11,6 +11,8 @@
     <TextBox Background="#ECECEC"
              BorderThickness="0"
              FontFamily="Segoe UI Light"
+             VerticalContentAlignment="Top"
+             HorizontalContentAlignment="Left"
              FontSize="22"
              IsReadOnly="True"
              Text="{Binding Text}"

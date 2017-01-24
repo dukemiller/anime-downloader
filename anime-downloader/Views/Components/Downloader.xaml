@@ -12,6 +12,8 @@
              FontFamily="Segoe UI Light"
              FontSize="20"
              IsReadOnly="True"
+             VerticalContentAlignment="Top"
+             HorizontalContentAlignment="Left"
              Text="{Binding Text}"
              TextWrapping="Wrap"
              VerticalScrollBarVisibility="Auto" />

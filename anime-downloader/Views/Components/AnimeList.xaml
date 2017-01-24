@@ -4,6 +4,7 @@
              xmlns:components="clr-namespace:anime_downloader.ViewModels.Components"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
              d:DataContext="{d:DesignInstance {x:Type components:AnimeListViewModel}}"
@@ -29,26 +30,6 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-        <Style TargetType="DataGrid">
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-            <Setter Property="AutoGenerateColumns" Value="False" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="CanUserAddRows" Value="False" />
-            <Setter Property="CanUserResizeRows" Value="False" />
-            <Setter Property="FontSize" Value="16" />
-            <Setter Property="RowHeaderWidth" Value="0" />
-            <Setter Property="GridLinesVisibility" Value="None" />
-            <Setter Property="IsReadOnly" Value="True" />
-            <Setter Property="SelectionMode" Value="Extended" />
-            <Setter Property="SelectionUnit" Value="FullRow" />
-        </Style>
-        <Style TargetType="DataGridCell">
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-        </Style>
-        <Style TargetType="DataGridColumnHeader">
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-        </Style>
     </UserControl.Resources>
     <UserControl.InputBindings>
         <KeyBinding Key="F"
@@ -61,35 +42,37 @@
             <RowDefinition Height="2*" />
         </Grid.RowDefinitions>
         <DataGrid Grid.Row="0"
-                  HorizontalContentAlignment="Center"
+                  materialDesign:DataGridAssist.CellPadding="5"
+                  AutoGenerateColumns="False"
                   FocusVisualStyle="{x:Null}"
+                  FontSize="16"
+                  IsReadOnly="True"
                   ItemsSource="{Binding Animes}"
                   SelectedItem="{Binding SelectedAnime}"
+                  SelectionMode="Extended"
+                  SelectionUnit="FullRow"
                   Sorting="DataGrid_OnSorting"
-                  UseLayoutRounding="False">
-            <i:Interaction.Behaviors>
-                <xaml:MultiSelectionBehavior SelectedItems="{Binding SelectedAnimes}" />
-            </i:Interaction.Behaviors>
-            <DataGrid.Resources>
-                <Style x:Key="CenterStyle" TargetType="{x:Type DataGridCell}">
-                    <Setter Property="HorizontalAlignment" Value="Stretch" />
-                    <Setter Property="TextBlock.TextAlignment" Value="Center" />
-                </Style>
-            </DataGrid.Resources>
-            <DataGrid.FontFamily>
-                <StaticResource ResourceKey="MainFont" />
-            </DataGrid.FontFamily>
-            <DataGrid.InputBindings>
-                <MouseBinding Command="{Binding EditCommand}" MouseAction="LeftDoubleClick" />
-                <KeyBinding Key="Delete" Command="{Binding DeleteCommand}" />
-                <KeyBinding Key="Enter" Command="{Binding EditCommand}" />
-                <KeyBinding Key="OemComma"
-                            Command="{Binding CopyCommand}"
-                            Modifiers="Control" />
-                <KeyBinding Key="C"
-                            Command="{Binding CopyCommand}"
-                            Modifiers="Control" />
-            </DataGrid.InputBindings>
+                  UseLayoutRounding="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Width="300"
+                                    Binding="{Binding Title}"
+                                    Header="Name" />
+                <DataGridTextColumn Width="73"
+                                    Binding="{Binding EpisodeTotal}"
+                                    Header="Episode"
+                                    SortMemberPath="Episode" />
+                <DataGridTextColumn Width="95"
+                                    Binding="{Binding Status}"
+                                    Header="Status" />
+                <DataGridTextColumn Width="60"
+                                    Binding="{Binding Rating}"
+                                    Header="Rating"
+                                    SortMemberPath="SortedRating" />
+                <DataGridTextColumn Width="114"
+                                    Binding="{Binding MyAnimeList.Aired.Title}"
+                                    Header="Aired in"
+                                    SortMemberPath="SeasonSort" />
+            </DataGrid.Columns>
             <DataGrid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Command="{Binding AddCommand}" Header="Add (Single) ..." />
@@ -99,11 +82,31 @@
                     <MenuItem Command="{Binding SearchCommand}" Header="Search on MyAnimeList ..." />
                 </ContextMenu>
             </DataGrid.ContextMenu>
+            <i:Interaction.Behaviors>
+                <xaml:MultiSelectionBehavior SelectedItems="{Binding SelectedAnimes}" />
+            </i:Interaction.Behaviors>
+            <DataGrid.Resources>
+                <Style BasedOn="{StaticResource MaterialDesignDataGridCell}" TargetType="DataGridCell">
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                </Style>
+                <Style x:Key="Centered"
+                       BasedOn="{StaticResource MaterialDesignDataGridCell}"
+                       TargetType="DataGridCell">
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                    <Setter Property="TextBlock.TextAlignment" Value="Center" />
+                </Style>
+            </DataGrid.Resources>
             <DataGrid.RowStyle>
-                <Style TargetType="{x:Type DataGridRow}">
+                <Style BasedOn="{StaticResource MaterialDesignDataGridRow}" TargetType="{x:Type DataGridRow}">
+                    <Setter Property="Padding" Value="0" />
                     <Style.Triggers>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsMouseOver}" Value="False" />
+                                <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsSelected}" Value="False" />
                                 <Condition Binding="{Binding MyAnimeList.HasId}" Value="True" />
                                 <Condition Binding="{Binding MyAnimeList.NeedsUpdating}" Value="True" />
                             </MultiDataTrigger.Conditions>
@@ -112,35 +115,14 @@
                     </Style.Triggers>
                 </Style>
             </DataGrid.RowStyle>
-            <DataGrid.Columns>
-                <DataGridTextColumn Width="300"
-                                    Binding="{Binding Title}"
-                                    Header="Name" />
-                <DataGridTextColumn Width="auto"
-                                    Binding="{Binding EpisodeTotal}"
-                                    CellStyle="{StaticResource CenterStyle}"
-                                    Header="Episode"
-                                    SortMemberPath="Episode" />
-                <DataGridTextColumn Width="auto"
-                                    Binding="{Binding Status}"
-                                    CellStyle="{StaticResource CenterStyle}"
-                                    Header="Status" />
-                <DataGridTextColumn Width="auto"
-                                    Binding="{Binding AiringSymbol}"
-                                    CellStyle="{StaticResource CenterStyle}"
-                                    Header="Airing"
-                                    SortMemberPath="AiringSymbol" />
-                <DataGridTextColumn Width="auto"
-                                    Binding="{Binding Rating}"
-                                    CellStyle="{StaticResource CenterStyle}"
-                                    Header="Rating"
-                                    SortMemberPath="SortedRating" />
-                <DataGridTextColumn Width="auto"
-                                    Binding="{Binding MyAnimeList.Aired.Title}"
-                                    CellStyle="{StaticResource CenterStyle}"
-                                    Header="Aired"
-                                    SortMemberPath="SeasonSort" />
-            </DataGrid.Columns>
+            <DataGrid.InputBindings>
+                <MouseBinding Command="{Binding EditCommand}" MouseAction="LeftDoubleClick" />
+                <KeyBinding Key="Delete" Command="{Binding DeleteCommand}" />
+                <KeyBinding Key="Enter" Command="{Binding EditCommand}" />
+                <KeyBinding Key="C"
+                            Command="{Binding CopyCommand}"
+                            Modifiers="Control" />
+            </DataGrid.InputBindings>
         </DataGrid>
         <ContentPresenter Grid.Row="0"
                           HorizontalAlignment="Right"
@@ -149,14 +131,13 @@
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="9*" />
-                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="2.5*" />
             </Grid.ColumnDefinitions>
             <Label Grid.Column="0"
                    HorizontalAlignment="Left"
                    VerticalContentAlignment="Center"
                    Content="{Binding Stats}"
-                   FontFamily="{StaticResource MainFont}"
-                   FontSize="16" />
+                   FontSize="14" />
             <Rectangle Grid.Column="0">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseDown">
@@ -167,12 +148,8 @@
                     <ImageBrush ImageSource="../../Resources/Images/find.png" />
                 </Rectangle.Fill>
             </Rectangle>
-            <ComboBox Grid.Column="1"
-                      Height="25"
-                      HorizontalContentAlignment="Center"
-                      FontFamily="{StaticResource MainFont}"
-                      MouseWheel="OnContentChanged">
-                <ComboBoxItem Content="" IsSelected="{Binding FilterText, Converter={StaticResource StringCompareConverter}, ConverterParameter=''}" />
+            <ComboBox Grid.Column="1" materialDesign:ComboBoxAssist.ClassicMode="True">
+                <ComboBoxItem Content="All" IsSelected="{Binding FilterText, Converter={StaticResource StringCompareConverter}, ConverterParameter=''}" />
                 <ComboBoxItem Content="Airing/Watching" IsSelected="{Binding FilterText, Converter={StaticResource StringCompareConverter}, ConverterParameter=Airing/Watching}" />
                 <ComboBoxItem Content="Finished" IsSelected="{Binding FilterText, Converter={StaticResource StringCompareConverter}, ConverterParameter=Finished}" />
                 <ComboBoxItem Content="On Hold" IsSelected="{Binding FilterText, Converter={StaticResource StringCompareConverter}, ConverterParameter='On Hold'}" />

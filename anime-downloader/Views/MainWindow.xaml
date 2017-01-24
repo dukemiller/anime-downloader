@@ -10,6 +10,12 @@
         Width="920"
         Height="400"
         d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel}"
+        
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.FontSize="16"
+        
+        
         Closing="MainWindow_OnClosing"
         ResizeMode="CanMinimize"
         StateChanged="Window_StateChanged"
@@ -46,7 +52,7 @@
                     Command="{Binding MiscCommand}"
                     Modifiers="Alt" />
     </Window.InputBindings>
-    <Grid Background="White">
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*" />
             <ColumnDefinition Width="9*" />

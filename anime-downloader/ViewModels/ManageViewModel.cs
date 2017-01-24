@@ -7,9 +7,9 @@ namespace anime_downloader.ViewModels
 {
     public class ManageViewModel : ViewModelBase
     {
-        private ViewModelBase _unwatched;
+        private FileListViewModel _unwatched;
 
-        private ViewModelBase _watched;
+        private FileListViewModel _watched;
 
         // 
 
@@ -46,13 +46,13 @@ namespace anime_downloader.ViewModels
 
         private IAnimeAggregateService AnimeAggregate { get; }
 
-        public ViewModelBase Unwatched
+        public FileListViewModel Unwatched
         {
             get { return _unwatched; }
             set { Set(() => Unwatched, ref _unwatched, value); }
         }
 
-        public ViewModelBase Watched
+        public FileListViewModel Watched
         {
             get { return _watched; }
             set { Set(() => Watched, ref _watched, value); }

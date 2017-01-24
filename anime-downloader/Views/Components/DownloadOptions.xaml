@@ -10,15 +10,6 @@
              d:DesignHeight="360"
              d:DesignWidth="680"
              mc:Ignorable="d">
-    <UserControl.Resources>
-        <Style x:Key="ItemStyle">
-            <Setter Property="RadioButton.FontFamily" Value="{StaticResource MainFont}" />
-        </Style>
-    </UserControl.Resources>
-    <UserControl.InputBindings>
-        <KeyBinding Key="Enter" Command="{Binding SearchCommand}" />
-        <KeyBinding Key="Return" Command="{Binding SearchCommand}" />
-    </UserControl.InputBindings>
     <Grid Background="White">
         <Grid>
             <Grid.RowDefinitions>
@@ -26,16 +17,9 @@
                 <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
             <GroupBox Grid.Column="0"
-                      Width="auto"
-                      Height="auto"
-                      HorizontalAlignment="Left"
-                      VerticalAlignment="Top"
-                      FontSize="16"
-                      Header="Download Options (Airing Series)"
-                      Style="{DynamicResource ItemStyle}">
-                <ListBox BorderThickness="0"
-                         ItemsSource="{Binding Options}"
-                         SelectedItem="{Binding SelectedRadio}">
+                      Margin="5"
+                      Header="Download Options (Airing Series)">
+                <ListBox ItemsSource="{Binding Options}" SelectedItem="{Binding SelectedRadio}">
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="{x:Type ListBoxItem}">
                             <Setter Property="Template">
@@ -48,7 +32,7 @@
                                                      Content="{Binding Header}"
                                                      IsChecked="{Binding RelativeSource={RelativeSource TemplatedParent},
                                                                          Path=IsSelected}"
-                                                     Style="{DynamicResource ItemStyle}" />
+                                                     Style="{StaticResource {x:Type RadioButton}}" />
                                     </ControlTemplate>
                                 </Setter.Value>
                             </Setter>
@@ -59,8 +43,8 @@
             <Button Grid.Row="1"
                     HorizontalAlignment="Right"
                     Command="{Binding SearchCommand}"
-                    xaml:FocusBehavior.IsFocused="True"
-                    Content="Search" />
+                    Content="Search"
+                    IsDefault="True" />
             <Button Grid.Row="1"
                     HorizontalAlignment="Left"
                     Command="{Binding LogCommand}"

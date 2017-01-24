@@ -14,9 +14,7 @@
                 <RowDefinition Height="1*" />
                 <RowDefinition Height="9*" />
             </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0"
-                       FontFamily="{StaticResource MainFont}"
-                       FontSize="16">
+            <TextBlock Grid.Row="0">
                 Manage and move episodes from your download directory to the watched directory.
             </TextBlock>
             <Grid Grid.Row="1">
@@ -25,8 +23,12 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="30*" />
                 </Grid.ColumnDefinitions>
-                <ContentPresenter Grid.Column="0" Content="{Binding Unwatched}" />
-                <ContentPresenter Grid.Column="2" Content="{Binding Watched}" />
+                <ContentPresenter Grid.Column="0"
+                                  Margin="5"
+                                  Content="{Binding Unwatched}" />
+                <ContentPresenter Grid.Column="2"
+                                  Margin="5"
+                                  Content="{Binding Watched}" />
             </Grid>
         </Grid>
     </Grid>

@@ -10,7 +10,6 @@
     <UserControl.Resources>
         <Style BasedOn="{StaticResource {x:Type Button}}" TargetType="Button">
             <Setter Property="Margin" Value="5" />
-            <Setter Property="FontSize" Value="16" />
             <Setter Property="Background" Value="#2e51a2" />
             <Setter Property="Foreground" Value="White" />
         </Style>
@@ -25,7 +24,6 @@
                 <Label VerticalAlignment="Center"
                        Content="MyAnimeList"
                        FontFamily="Segoe UI Black"
-                       FontSize="16"
                        Foreground="#2e51a2" />
                 <Label Content="Sync to get options." Visibility="{Binding HasId, Converter={StaticResource ReverseVisibilityConverter}}" />
                 <Button Command="{Binding ProfileCommand}"

@@ -10,25 +10,6 @@
              d:DesignHeight="360"
              d:DesignWidth="680"
              mc:Ignorable="d">
-    <UserControl.Resources>
-        <Style x:Key="LabelStyle" TargetType="{x:Type Label}">
-            <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="FontSize" Value="15" />
-            <Setter Property="FontFamily" Value="{StaticResource MainFont}" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-        </Style>
-        <Style x:Key="TextboxStyle" TargetType="{x:Type TextBox}">
-            <Setter Property="Height" Value="33" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="FontSize" Value="16" />
-        </Style>
-        <Style x:Key="CheckboxStyle" TargetType="{x:Type CheckBox}">
-            <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-        </Style>
-    </UserControl.Resources>
     <Grid Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="5*" />
@@ -36,161 +17,109 @@
         </Grid.RowDefinitions>
         <Grid>
             <Grid.RowDefinitions>
+                <RowDefinition Height="5*" />
                 <RowDefinition Height="2*" />
-                <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
-            <Grid Row="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="3*" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="1*" />
-                    <RowDefinition Height="1*" />
-                    <RowDefinition Height="1*" />
-                    <RowDefinition Height="1*" />
-                    <RowDefinition Height="1*" />
-                </Grid.RowDefinitions>
-
-                <!--  Episode path  -->
-                <Label Grid.Row="0"
-                       Grid.Column="0"
-                       Content="Episode downloads to: "
-                       Style="{DynamicResource LabelStyle}"
-                       ToolTip="Path to where episodes will be downloaded to." />
-                <TextBox Grid.Row="0"
-                         Grid.Column="1"
-                         Style="{DynamicResource TextboxStyle}"
-                         Text="{Binding Settings.PathConfig.Unwatched,
-                                        UpdateSourceTrigger=PropertyChanged}" />
-
-                <!--  Watched path  -->
-                <Label Grid.Row="1"
-                       Grid.Column="0"
-                       Content="Watched files to: "
-                       Style="{DynamicResource LabelStyle}"
-                       ToolTip="Path where watched episodes will be moved to." />
-                <TextBox Grid.Row="1"
-                         Grid.Column="1"
-                         Style="{DynamicResource TextboxStyle}"
-                         Text="{Binding Settings.PathConfig.Watched,
-                                        UpdateSourceTrigger=PropertyChanged}" />
-
-                <!--  Torrent  -->
-                <Label Grid.Row="2"
-                       Grid.Column="0"
-                       Content="Torrent downloads to: "
-                       Style="{DynamicResource LabelStyle}"
-                       ToolTip="Path to the folder that all .torrent files will be downloaded into." />
-
-                <TextBox Grid.Row="2"
-                         Grid.Column="1"
-                         Style="{DynamicResource TextboxStyle}"
-                         Text="{Binding Settings.PathConfig.Torrents,
-                                        UpdateSourceTrigger=PropertyChanged}" />
-
-                <!--  Download  -->
-                <Label Grid.Row="3"
-                       Grid.Column="0"
-                       Content="uTorrent exe file: "
-                       Style="{DynamicResource LabelStyle}"
-                       ToolTip="Path to uTorrent.exe." />
-                <TextBox Grid.Row="3"
-                         Grid.Column="1"
-                         Style="{DynamicResource TextboxStyle}"
-                         Text="{Binding Settings.PathConfig.TorrentDownloader,
-                                        UpdateSourceTrigger=PropertyChanged}" />
-
-                <!--  Subgroups  -->
-                <Label Grid.Row="4"
-                       Grid.Column="0"
-                       Content="Whitelist subgroups: "
-                       Style="{DynamicResource LabelStyle}"
-                       ToolTip="A comma + space (', ') separated list of preferred subgroups, e.g. '{subgroup1}, {subgroup2}, {subgroup3}'" />
-                <TextBox Grid.Row="4"
-                         Grid.Column="1"
-                         Style="{DynamicResource TextboxStyle}"
-                         Text="{Binding Subgroups}" />
-            </Grid>
-            <Grid Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                </Grid.ColumnDefinitions>
-                <Grid Column="0">
+            <GroupBox Margin="5" Header="Paths">
+                <Grid Row="0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="3*" />
                     </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="1*" />
-                        <RowDefinition Height="1*" />
-                        <RowDefinition Height="1*" />
-                    </Grid.RowDefinitions>
+                    <UniformGrid Grid.Column="0"
+                                 Columns="1"
+                                 Rows="5">
+                        <Label VerticalAlignment="Center"
+                               Content="Episode downloads to: "
+                               ToolTip="Path to where episodes will be downloaded to." />
+                        <Label VerticalAlignment="Center"
+                               Content="Watched files to: "
+                               ToolTip="Path where watched episodes will be moved to." />
+                        <Label VerticalAlignment="Center"
+                               Content="Torrent downloads to: "
+                               ToolTip="Path to the folder that all .torrent files will be downloaded into." />
+                        <Label VerticalAlignment="Center"
+                               Content="uTorrent exe file: "
+                               ToolTip="Path to uTorrent.exe." />
+                        <Label VerticalAlignment="Center"
+                               Content="Whitelist subgroups: "
+                               ToolTip="A comma + space (', ') separated list of preferred subgroups, e.g. '{subgroup1}, {subgroup2}, {subgroup3}'" />
+                    </UniformGrid>
+                    <UniformGrid Grid.Column="1"
+                                 Columns="1"
+                                 Rows="5">
+                        <TextBox VerticalAlignment="Center" Text="{Binding Settings.PathConfig.Unwatched, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox VerticalAlignment="Center" Text="{Binding Settings.PathConfig.Watched, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox VerticalAlignment="Center" Text="{Binding Settings.PathConfig.Torrents, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox VerticalAlignment="Center" Text="{Binding Settings.PathConfig.TorrentDownloader, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox VerticalAlignment="Center" Text="{Binding Subgroups}" />
+                    </UniformGrid>
+                </Grid>
+            </GroupBox>
 
+            <GroupBox Grid.Row="1"
+                      Margin="5"
+                      Header="Tray / Downloading">
+                <StackPanel Orientation="Horizontal">
                     <!--  Exit  -->
-                    <Label Grid.Row="0"
-                           Grid.Column="0"
-                           Content="Exit to tray:"
-                           Style="{DynamicResource LabelStyle}"
-                           ToolTip="Instead of closing the program on exit, it is brought to the tray." />
-                    <CheckBox Grid.Row="0"
-                              Grid.Column="1"
+                    <CheckBox HorizontalAlignment="Left"
+                              Margin="0, 0, 25, 0"
+                              FlowDirection="RightToLeft"
                               IsChecked="{Binding Path=Settings.FlagConfig.ExitOnClose,
                                                   UpdateSourceTrigger=PropertyChanged,
                                                   Converter={StaticResource NotConverter}}"
-                              Style="{DynamicResource CheckboxStyle}" />
+                              ToolTip=".Instead of closing the program on exit, it is brought to the tray">
+                        <TextBlock Margin="0,-5,0,0"
+                                   VerticalAlignment="Center"
+                                   FlowDirection="LeftToRight"
+                                   Text="Exit to tray:" />
+                    </CheckBox>
 
                     <!--  AlwaysTray  -->
-                    <Label Grid.Row="1"
-                           Grid.Column="0"
-                           Content="Keep tray open:"
-                           Style="{DynamicResource LabelStyle}"
-                           ToolTip="Always have the tray enabled." />
-                    <CheckBox Grid.Row="1"
-                              Grid.Column="1"
+                    <CheckBox HorizontalAlignment="Left"
                               Command="{Binding TrayToggleCommand}"
+                              FlowDirection="RightToLeft"
+                              Margin="0, 0, 25, 0"
                               IsChecked="{Binding Settings.FlagConfig.AlwaysShowTray,
                                                   UpdateSourceTrigger=PropertyChanged}"
-                              Style="{DynamicResource CheckboxStyle}" />
-                </Grid>
-                <Grid Column="1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="1*" />
-                        <RowDefinition Height="1*" />
-                        <RowDefinition Height="1*" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                    </Grid.ColumnDefinitions>
+                              ToolTip=".Always have the tray enabled">
+                        <TextBlock Margin="0,-5,0,0"
+                                   VerticalAlignment="Center"
+                                   FlowDirection="LeftToRight"
+                                   Text="Keep tray open:" />
+                    </CheckBox>
 
                     <!--  Whitelisted  -->
-                    <Label Grid.Row="0"
-                           Grid.Column="0"
-                           Content="Only whitelisted subs: "
-                           Style="{DynamicResource LabelStyle}"
-                           ToolTip="Whether or not to only download from subgroups that are on the whitelisted subgroups list." />
-                    <CheckBox Grid.Row="0"
-                              Grid.Column="1"
+                    <CheckBox HorizontalAlignment="Left"
+                              FlowDirection="RightToLeft"
+                              Margin="0, 0, 25, 0"
                               IsChecked="{Binding Settings.FlagConfig.OnlyWhitelisted,
                                                   UpdateSourceTrigger=PropertyChanged}"
-                              Style="{DynamicResource CheckboxStyle}" />
+                              ToolTip=".Whether or not to only download from subgroups that are on the whitelisted subgroups list">
+                        <TextBlock Margin="0,-5,0,0"
+                                   VerticalAlignment="Center"
+                                   FlowDirection="LeftToRight"
+                                   Text="Only whitelisted subs: " />
+                    </CheckBox>
 
                     <!--  Named folders  -->
-                    <Label Grid.Row="1"
-                           Grid.Column="0"
-                           VerticalAlignment="Top"
-                           Content="Show named folders:"
-                           Style="{DynamicResource LabelStyle}"
-                           ToolTip="Put each episode inside a folder named after the show" />
-                    <CheckBox Grid.Row="1"
-                              Grid.Column="1"
+                    <CheckBox HorizontalAlignment="Left"
+                              FlowDirection="RightToLeft"
+                              Margin="0, 0, 25, 0"
                               IsChecked="{Binding Settings.FlagConfig.IndividualShowFolders,
                                                   UpdateSourceTrigger=PropertyChanged}"
-                              Style="{DynamicResource CheckboxStyle}" />
-                </Grid>
-            </Grid>
+                              ToolTip="Put each episode inside a folder named after the show">
+                        <TextBlock Margin="0,-5,0,0"
+                                   VerticalAlignment="Center"
+                                   FlowDirection="LeftToRight"
+                                   Text="Show named folders:" />
+                    </CheckBox>
+
+
+
+
+                </StackPanel>
+            </GroupBox>
         </Grid>
         <DockPanel Grid.Row="1">
             <Label HorizontalAlignment="Left" VerticalAlignment="Center">
