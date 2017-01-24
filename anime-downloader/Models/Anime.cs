@@ -32,6 +32,7 @@ namespace anime_downloader.Models
         private string _rating;
         private string _resolution;
         private Status _status;
+        private bool _secondSeason;
 
         // 
 
@@ -150,7 +151,14 @@ namespace anime_downloader.Models
                     MyAnimeList.NeedsUpdating = true;
             }
         }
-        
+
+        [XmlAttribute("is_second_season")]
+        public bool SecondSeason
+        {
+            get { return _secondSeason; }
+            set { Set(() => SecondSeason, ref _secondSeason, value); }
+        }
+
         //////////////////////////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////////////////////
