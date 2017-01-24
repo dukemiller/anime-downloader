@@ -160,38 +160,41 @@
                                 <ComboBoxItem Content="1080" IsSelected="{Binding Path=Anime.Resolution, Converter={StaticResource StringCompareConverter}, ConverterParameter=1080}" />
                             </ComboBox>
                         </DockPanel>
-                        <DockPanel>
-                            <Label Content="Only from:" ToolTip="Only download from animes that have this subgroup." />
-                            <DockPanel>
-                                <Button Width="14"
-                                        Height="21"
-                                        Margin="0,0,-15,0"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        VerticalContentAlignment="Center"
-                                        BorderThickness="0"
-                                        Command="{Binding ClearSubgroupCommand}"
-                                        Content="X"
-                                        DockPanel.Dock="Right"
-                                        FontSize="10"
-                                        Style="{x:Null}" />
-                                <ComboBox Width="120"
-                                          VerticalAlignment="Center"
-                                          materialDesign:ComboBoxAssist.ClassicMode="True"
-                                          ItemsSource="{Binding Settings.Subgroups}"
-                                          SelectedItem="{Binding SelectedSubgroup,
-                                                                 UpdateSourceTrigger=PropertyChanged}">
-                                    <ComboBox.Style>
-                                        <Style BasedOn="{StaticResource MaterialDesignComboBox}" TargetType="ComboBox">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Settings.Subgroups.Count}" Value="0">
-                                                    <Setter Property="ComboBox.IsEnabled" Value="false" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </ComboBox.Style>
-                                </ComboBox>
-                            </DockPanel>
+                        <DockPanel LastChildFill="False">
+                            <Label Content="Only from:"
+                                   DockPanel.Dock="Left"
+                                   ToolTip="Only download from animes that have this subgroup." />
+                            <Button Width="14"
+                                    Height="21"
+                                    Margin="0,0,-15,0"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    BorderThickness="0"
+                                    Command="{Binding ClearSubgroupCommand}"
+                                    Content="X"
+                                    DockPanel.Dock="Right"
+                                    FontSize="10"
+                                    Style="{x:Null}"/>
+                            <ComboBox Width="120"
+                                      VerticalAlignment="Center"
+                                      materialDesign:ComboBoxAssist.ClassicMode="True"
+                                      ItemsSource="{Binding Settings.Subgroups}"
+                                      SelectedItem="{Binding SelectedSubgroup,
+                                                             UpdateSourceTrigger=PropertyChanged}">
+                                <ComboBox.InputBindings>
+                                    <KeyBinding Key="Escape" Command="{Binding ClearSubgroupCommand}" />
+                                </ComboBox.InputBindings>
+                                <ComboBox.Style>
+                                    <Style BasedOn="{StaticResource MaterialDesignComboBox}" TargetType="ComboBox">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Settings.Subgroups.Count}" Value="0">
+                                                <Setter Property="ComboBox.IsEnabled" Value="false" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ComboBox.Style>
+                            </ComboBox>
                         </DockPanel>
                         <CheckBox Margin="5"
                                   HorizontalAlignment="Left"
@@ -203,7 +206,6 @@
                                        FlowDirection="LeftToRight"
                                        Text="Match exact name: " />
                         </CheckBox>
-
                     </StackPanel>
                 </GroupBox>
 

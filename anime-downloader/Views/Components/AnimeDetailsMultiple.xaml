@@ -82,7 +82,8 @@
                     <TextBox Grid.Row="0"
                              Grid.Column="1"
                              PreviewTextInput="Episode_PreviewTextInput"
-                             Text="{Binding Path=Details.Episode, UpdateSourceTrigger=PropertyChanged}"
+                             Text="{Binding Path=Details.Episode,
+                                            UpdateSourceTrigger=PropertyChanged}"
                              TextWrapping="Wrap">
                         <TextBox.InputBindings>
                             <KeyBinding Key="Enter" Command="{Binding SubmitCommand}" />
