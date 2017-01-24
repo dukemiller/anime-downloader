@@ -45,7 +45,7 @@ namespace anime_downloader.ViewModels.Components
                     else
                         Animes =
                             new ObservableCollection<Anime>(
-                                AnimeAggregate.AnimeService.Animes.Where(
+                                AnimeAggregate.AnimeService.FilteredAndSorted().Where(
                                     a => a.Name.ToLower().Contains(Find.Text.ToLower())));
             };
 
