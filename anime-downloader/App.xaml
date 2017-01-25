@@ -26,8 +26,10 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.Blue.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Blue.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            
-            <!-- Converters -->
+
+            <SolidColorBrush x:Key="PrimaryHueMidBrush" Color="#2e51a2" />
+
+            <!--  Converters  -->
 
             <classes:StringIsEmptyOrNullConverter x:Key="StringIsEmptyOrNullConverter" />
             <classes:StringLengthVisibilityConverter x:Key="StringLengthVisibilityConverter" />
