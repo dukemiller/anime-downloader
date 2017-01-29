@@ -13,7 +13,7 @@ using HtmlAgilityPack;
 
 namespace anime_downloader.Services
 {
-    public class NyaaService : IAnimeDownloaderService
+    public class NyaaService : IDownloadService
     {
         private const string EnglishTranslated = "1_37";
 

@@ -9,7 +9,7 @@ namespace anime_downloader.Services.Interfaces
     ///     The logic behind handling file retrieval for anime episodes and
     ///     some file operations.
     /// </summary>
-    public interface IAnimeFileService
+    public interface IFileService
     {
         IEnumerable<AnimeFile> GetEpisodes(Anime anime);
         IEnumerable<AnimeFile> GetEpisodes(EpisodeStatus episodeStatus);

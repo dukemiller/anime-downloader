@@ -10,14 +10,14 @@ using anime_downloader.Services.Interfaces;
 
 namespace anime_downloader.Services
 {
-    public class AnimeFileService : IAnimeFileService
+    public class FileService : IFileService
     {
         private static readonly string[] FileExtensions =
         {
             ".mkv", ".mp4", ".avi"
         };
 
-        public AnimeFileService(ISettingsService settings)
+        public FileService(ISettingsService settings)
         {
             Settings = settings;
         }

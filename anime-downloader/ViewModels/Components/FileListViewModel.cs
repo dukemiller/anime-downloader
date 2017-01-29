@@ -38,7 +38,7 @@ namespace anime_downloader.ViewModels.Components
 
         // 
 
-        public FileListViewModel(IAnimeFileService fileService, IAnimeService animeService,
+        public FileListViewModel(IFileService fileService, IAnimeService animeService,
             IPlaylistService playlistService)
         {
             FileService = fileService;
@@ -57,7 +57,7 @@ namespace anime_downloader.ViewModels.Components
 
         // Properties
 
-        private IAnimeFileService FileService { get; }
+        private IFileService FileService { get; }
 
         private IAnimeService AnimeService { get; }
 

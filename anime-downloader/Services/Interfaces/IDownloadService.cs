@@ -10,7 +10,7 @@ namespace anime_downloader.Services.Interfaces
     ///     The logic for a downloading host provider for anime episodes, usually in
     ///     the form of a torrent host.
     /// </summary>
-    public interface IAnimeDownloaderService
+    public interface IDownloadService
     {
         // 
         string ServiceName { get; }

@@ -6,8 +6,8 @@
     public interface IAnimeAggregateService
     {
         IAnimeService AnimeService { get; set; }
-        IAnimeFileService FileService { get; set; }
-        IAnimeDownloaderService DownloadService { get; set; }
+        IFileService FileService { get; set; }
+        IDownloadService DownloadService { get; set; }
         IMyAnimeListService MalService { get; set; }
         IPlaylistService PlaylistService { get; set; }
     }
