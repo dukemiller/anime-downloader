@@ -173,8 +173,10 @@ namespace anime_downloader.Services
                 return false;
 
             foreach (var torrent in torrents.Where(torrent => CanDownload(torrent, anime)))
+            {
                 if (await DownloadEpisode(anime, torrent, output))
                     return true;
+            }
 
             return false;
         }
@@ -270,7 +272,7 @@ namespace anime_downloader.Services
             var name = anime.Name
                 .Replace(" ", "+").Replace("'s", "").Replace(".", "+").Replace(":", " ")
                 .Replace("!", "%21").Replace("'", "%27").Replace("-", "%2D");
-            return $"{name}+{anime.Resolution}+{episode:D2}";
+            return $"{name}+{episode:D2}";
         }
 
         private static IEnumerable<Torrent> ParseResults(Anime anime, int episode, HtmlDocument document)
@@ -309,7 +311,7 @@ namespace anime_downloader.Services
                 */
             }
 
-            return result?.OrderByDescending(n => n.Seeders);
+            return result?.OrderByDescending(n => n.Name.Contains(anime.Resolution)).ThenBy(n => n.Seeders);
         }
 
         private async Task Log(Anime anime)
