@@ -101,7 +101,7 @@
                 </ListBox.InputBindings>
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock d:DataContext="{d:DesignInstance Type=models:AnimeFile}" Text="{Binding StrippedFilename}" />
+                        <TextBlock d:DataContext="{d:DesignInstance Type=models:AnimeFile}" Text="{Binding StrippedFilename}" ToolTip="{Binding StrippedFilename}" />
                     </DataTemplate>
                 </ListBox.ItemTemplate>
                 <ListBox.ContextMenu>
