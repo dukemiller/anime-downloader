@@ -19,10 +19,10 @@ namespace anime_downloader.Services
 
         public FileService(ISettingsService settings)
         {
-            Settings = settings;
+            _settings = settings;
         }
 
-        private ISettingsService Settings { get; }
+        private readonly ISettingsService _settings;
 
         /* Easy debug functions */
 
@@ -165,7 +165,7 @@ namespace anime_downloader.Services
             if (duplicates.Any())
                 foreach (var duplicate in duplicates)
                     File.Move(duplicate.Path,
-                        Path.Combine(Settings.PathConfig.DuplicatesDirectory, duplicate.FileName));
+                        Path.Combine(_settings.PathConfig.DuplicatesDirectory, duplicate.FileName));
 
             return duplicates.Count;
         }
@@ -177,12 +177,12 @@ namespace anime_downloader.Services
             IEnumerable<string> files;
 
             if (episodeStatus == EpisodeStatus.Unwatched)
-                files = Directory.GetFiles(Settings.PathConfig.Unwatched, "*", SearchOption.AllDirectories);
+                files = Directory.GetFiles(_settings.PathConfig.Unwatched, "*", SearchOption.AllDirectories);
             else if (episodeStatus == EpisodeStatus.Watched)
-                files = Directory.GetFiles(Settings.PathConfig.Watched, "*", SearchOption.AllDirectories);
+                files = Directory.GetFiles(_settings.PathConfig.Watched, "*", SearchOption.AllDirectories);
             else // (EpisodeStatus == Episode.All)
-                files = Directory.GetFiles(Settings.PathConfig.Watched, "*", SearchOption.AllDirectories)
-                    .Union(Directory.GetFiles(Settings.PathConfig.Unwatched, "*", SearchOption.AllDirectories));
+                files = Directory.GetFiles(_settings.PathConfig.Watched, "*", SearchOption.AllDirectories)
+                    .Union(Directory.GetFiles(_settings.PathConfig.Unwatched, "*", SearchOption.AllDirectories));
 
             return files;
         }
