@@ -120,6 +120,7 @@ namespace anime_downloader.ViewModels
                 {
                     Methods.Alert("No playlist created (no files were found in the episode folders).");
                 }
+
                 else
                 {
                     if (SelectedRadio.Tag.Equals("Episode"))

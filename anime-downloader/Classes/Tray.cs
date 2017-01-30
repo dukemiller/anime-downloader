@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
@@ -15,8 +17,6 @@ namespace anime_downloader.Classes
 {
     public class Tray : ViewModelBase
     {
-        private readonly MainWindow _mainWindow;
-
         private readonly ISettingsService _settings;
 
         /// <summary>
@@ -29,44 +29,87 @@ namespace anime_downloader.Classes
         /// </summary>
         private NotifyIcon _trayIcon;
 
-        public Tray(MainWindow mainWindow, ISettingsService settings)
+        // Constructors
+
+        public Tray(ISettingsService settings)
         {
-            _mainWindow = mainWindow;
             _settings = settings;
+            InitTray();
+            InitContextMenu();
 
-            CreateTray();
-            CreateContextMenu();
-
-            if (_settings.FlagConfig.AlwaysShowTray)
-                Visible = true;
-
-            _settings.FlagConfig.PropertyChanged += (sender, args) =>
-            {
-                if (_settings.FlagConfig.AlwaysShowTray)
-                {
-                    Visible = true;
-                }
-                else
-                {
-                    if (_mainWindow.WindowState == WindowState.Minimized)
-                        Visible = true;
-
-                    else if (_mainWindow.WindowState == WindowState.Normal)
-                        if (Visible)
-                            Visible = false;
-                }
-            };
+            Visible = _settings.FlagConfig.AlwaysShowTray;
+            _settings.FlagConfig.PropertyChanged += FlagChanged;
+            MainWindow.Closing += WindowIsClosing;
+            MainWindow.StateChanged += WindowStateChanged;
         }
 
-        public bool FullExit { get; private set; }
+        // Properties
 
-        public bool Visible
+        private static MainWindow MainWindow => (MainWindow) Application.Current.MainWindow;
+
+        private bool FullExit { get; set; }
+
+        private bool Visible
         {
             get { return _trayIcon.Visible; }
             set { _trayIcon.Visible = value; }
         }
 
-        private void CreateTray()
+        // Events
+
+        private void FlagChanged(object sender, PropertyChangedEventArgs args)
+        {
+            if (_settings.FlagConfig.AlwaysShowTray)
+            {
+                Visible = true;
+            }
+            else
+            {
+                if (MainWindow.WindowState == WindowState.Minimized)
+                    Visible = true;
+                else if (MainWindow.WindowState == WindowState.Normal)
+                    if (Visible)
+                        Visible = false;
+            }
+        }
+
+        private void WindowStateChanged(object sender, EventArgs e)
+        {
+            // Necessary for bringing focus from another application
+            switch (MainWindow.WindowState)
+            {
+                case WindowState.Normal:
+                    Visible = _settings.FlagConfig.AlwaysShowTray;
+                    MainWindow.Show();
+                    break;
+                case WindowState.Minimized:
+                    Visible = true;
+                    MainWindow.Hide();
+                    break;
+            }
+        }
+
+        private void WindowIsClosing(object sender, CancelEventArgs e)
+        {
+            if (_settings.FlagConfig.ExitOnClose && !FullExit)
+                Visible = false;
+
+            else if (FullExit)
+            {
+                // exit is called through tray, no special handling
+            }
+
+            else
+            {
+                Visible = true;
+                MainWindow.WindowState = WindowState.Minimized;
+                e.Cancel = true;
+            }
+        }
+
+        // 
+
+        private void InitTray()
         {
             // get the image from the program
             var assembly = Assembly.GetExecutingAssembly();
@@ -81,31 +124,31 @@ namespace anime_downloader.Classes
             _trayIcon.MouseClick += (sender, args) =>
             {
                 if (args.Button == MouseButtons.Left)
-                    if (_mainWindow.WindowState == WindowState.Minimized)
+                    if (MainWindow.WindowState == WindowState.Minimized)
                     {
-                        _mainWindow.Show();
-                        _mainWindow.WindowState = WindowState.Normal;
+                        MainWindow.Show();
+                        MainWindow.WindowState = WindowState.Normal;
                     }
-                    else if (_mainWindow.WindowState == WindowState.Normal)
+                    else if (MainWindow.WindowState == WindowState.Normal)
                     {
-                        _mainWindow.WindowState = WindowState.Minimized;
+                        MainWindow.WindowState = WindowState.Minimized;
                     }
             };
 
             stream.Close();
         }
 
-        private void BringWindowToFocus()
+        private static void BringWindowToFocus()
         {
-            if (_mainWindow.WindowState == WindowState.Minimized)
+            if (MainWindow.WindowState == WindowState.Minimized)
             {
-                _mainWindow.Show();
-                _mainWindow.WindowState = WindowState.Normal;
+                MainWindow.Show();
+                MainWindow.WindowState = WindowState.Normal;
             }
         }
 
         [NeedsUpdating]
-        private void CreateContextMenu()
+        private void InitContextMenu()
         {
             _trayContextMenu = new ContextMenu();
 

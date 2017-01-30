@@ -85,9 +85,6 @@
                              Text="{Binding Path=Details.Episode,
                                             UpdateSourceTrigger=PropertyChanged}"
                              TextWrapping="Wrap">
-                        <TextBox.InputBindings>
-                            <KeyBinding Key="Enter" Command="{Binding SubmitCommand}" />
-                        </TextBox.InputBindings>
                     </TextBox>
 
                     <Label Grid.Row="1"

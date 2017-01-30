@@ -10,5 +10,5 @@
              d:DesignWidth="300"
              Background="White"
              mc:Ignorable="d">
-    <ContentPresenter Content="{Binding Display}" />
+    <ContentPresenter Content="{Binding CurrentDisplay}" />
 </UserControl>

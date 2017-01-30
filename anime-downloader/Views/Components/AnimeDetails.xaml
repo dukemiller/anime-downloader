@@ -79,9 +79,6 @@
                                              Style="{DynamicResource NumberBoxStyle}"
                                              Text="{Binding Anime.Episode,
                                                             UpdateSourceTrigger=PropertyChanged}">
-                                        <TextBox.InputBindings>
-                                            <KeyBinding Key="Enter" Command="{Binding ButtonCommand}" />
-                                        </TextBox.InputBindings>
                                     </TextBox>
                                     <TextBox BorderThickness="0"
                                              Foreground="Gray"

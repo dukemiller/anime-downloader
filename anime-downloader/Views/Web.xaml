@@ -60,9 +60,6 @@
                                          Grid.Column="1"
                                          VerticalAlignment="Center"
                                          Text="{Binding SettingsService.MyAnimeListConfig.Username}">
-                                    <TextBox.InputBindings>
-                                        <KeyBinding Key="Enter" Command="{Binding LoginCommand}" />
-                                    </TextBox.InputBindings>
                                 </TextBox>
 
                                 <Label Grid.Row="1"
@@ -75,9 +72,6 @@
                                              xaml:PasswordBoxAssistant.BoundPassword="{Binding Path=SettingsService.MyAnimeListConfig.Password,
                                                                                                Mode=TwoWay,
                                                                                                UpdateSourceTrigger=PropertyChanged}">
-                                    <PasswordBox.InputBindings>
-                                        <KeyBinding Key="Enter" Command="{Binding LoginCommand}" />
-                                    </PasswordBox.InputBindings>
                                 </PasswordBox>
 
                                 <Label Grid.Row="2"

@@ -10,13 +10,12 @@ namespace anime_downloader.ViewModels.Components
     {
         private string _text;
 
+        private readonly ISettingsService _settings;
+
         public DownloadLogViewModel(ISettingsService settings)
         {
-            Settings = settings;
-            Logger();
+            _settings = settings;
         }
-
-        public ISettingsService Settings { get; set; }
 
         public string Text
         {
@@ -24,12 +23,12 @@ namespace anime_downloader.ViewModels.Components
             set { Set(() => Text, ref _text, value); }
         }
 
-        private async void Logger()
+        public async void DisplayLogResults()
         {
             Text = ">> No downloads have been logged so far.\n";
 
-            if (File.Exists(Settings.PathConfig.Logging))
-                using (var reader = new StreamReader(Settings.PathConfig.Logging))
+            if (File.Exists(_settings.PathConfig.Logging))
+                using (var reader = new StreamReader(_settings.PathConfig.Logging))
                 {
                     var data = await reader.ReadToEndAsync();
                     Text = await Task.Run(() => string.Join("\n", data.Split('\n').Reverse().Skip(1)));

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows;
 using anime_downloader.Classes;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
+using GalaSoft.MvvmLight.Ioc;
 
 namespace anime_downloader.ViewModels
 {
@@ -15,17 +17,17 @@ namespace anime_downloader.ViewModels
 
         private int _selectedIndex;
 
+        /// <summary>
+        ///     Handles logic related to creating and the features of the system tray.
+        /// </summary>
+        private Tray Tray { get; }
+
         // 
 
-        public MainWindowViewModel(ISettingsService settings, IAnimeAggregateService animeAggregate, Action close)
+        public MainWindowViewModel()
         {
-            Settings = settings;
-            AnimeAggregate = animeAggregate;
-            Close = close;
-
-            // 
-
-            CloseCommand = new RelayCommand(Close);
+            Tray = new Tray(SimpleIoc.Default.GetInstance<ISettingsService>());
+            CloseCommand = new RelayCommand(Application.Current.MainWindow.Close);
             CurrentView = new HomeViewModel();
 
             // 
@@ -33,7 +35,7 @@ namespace anime_downloader.ViewModels
             HomeCommand = new RelayCommand(
                 () =>
                 {
-                    CurrentView = new HomeViewModel();
+                    CurrentView = SimpleIoc.Default.GetInstance<HomeViewModel>();
                     SelectedIndex = 1;
                 },
                 () => !Busy
@@ -42,7 +44,7 @@ namespace anime_downloader.ViewModels
             AnimeCommand = new RelayCommand(
                 () =>
                 {
-                    CurrentView = new AnimeDisplayViewModel(Settings, AnimeAggregate);
+                    CurrentView = SimpleIoc.Default.GetInstance<AnimeDisplayViewModel>(Guid.NewGuid().ToString());
                     SelectedIndex = 2;
                 },
                 () => !Busy
@@ -51,7 +53,7 @@ namespace anime_downloader.ViewModels
             SettingsCommand = new RelayCommand(
                 () =>
                 {
-                    CurrentView = new SettingsViewModel(Settings);
+                    CurrentView = SimpleIoc.Default.GetInstance<SettingsViewModel>();
                     SelectedIndex = 3;
                 },
                 () => !Busy
@@ -60,7 +62,7 @@ namespace anime_downloader.ViewModels
             DownloadCommand = new RelayCommand(
                 () =>
                 {
-                    CurrentView = new DownloadViewModel(Settings, AnimeAggregate);
+                    CurrentView = SimpleIoc.Default.GetInstance<DownloadViewModel>(Guid.NewGuid().ToString());
                     SelectedIndex = 4;
                 },
                 () => !Busy
@@ -69,7 +71,7 @@ namespace anime_downloader.ViewModels
             ManageCommand = new RelayCommand(
                 () =>
                 {
-                    CurrentView = new ManageViewModel(Settings, AnimeAggregate);
+                    CurrentView = SimpleIoc.Default.GetInstance<ManageViewModel>();
                     SelectedIndex = 5;
                 },
                 () => !Busy
@@ -78,7 +80,7 @@ namespace anime_downloader.ViewModels
             PlaylistCreatorCommand = new RelayCommand(
                 () =>
                 {
-                    CurrentView = new PlaylistCreatorViewModel(Settings, AnimeAggregate.PlaylistService);
+                    CurrentView = SimpleIoc.Default.GetInstance<PlaylistCreatorViewModel>();
                     SelectedIndex = 6;
                 },
                 () => !Busy
@@ -87,7 +89,7 @@ namespace anime_downloader.ViewModels
             WebCommand = new RelayCommand(
                 () =>
                 {
-                    CurrentView = new WebViewModel(Settings, AnimeAggregate.AnimeService, AnimeAggregate.MalService);
+                    CurrentView = SimpleIoc.Default.GetInstance<WebViewModel>();
                     SelectedIndex = 7;
                 },
                 () => !Busy
@@ -96,7 +98,7 @@ namespace anime_downloader.ViewModels
             MiscCommand = new RelayCommand(
                 () =>
                 {
-                    CurrentView = new MiscViewModel(Settings, AnimeAggregate);
+                    CurrentView = SimpleIoc.Default.GetInstance<MiscViewModel>();
                     SelectedIndex = 8;
                 },
                 () => !Busy
@@ -144,16 +146,14 @@ namespace anime_downloader.ViewModels
 
         // 
 
-        private ISettingsService Settings { get; }
-
-        private IAnimeAggregateService AnimeAggregate { get; }
-
-        private Action Close { get; }
-
         public ViewModelBase CurrentView
         {
             get { return _currentView; }
-            set { Set(() => CurrentView, ref _currentView, value); }
+            set
+            {
+                CurrentView?.Cleanup();
+                Set(() => CurrentView, ref _currentView, value);
+            }
         }
 
         private bool Busy

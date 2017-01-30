@@ -56,9 +56,6 @@
                        TextWrapping="Wrap" />
 
             <Grid Grid.Row="1">
-                <Grid.InputBindings>
-                    <KeyBinding Key="Return" Command="{Binding SubmitCommand}" />
-                </Grid.InputBindings>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />

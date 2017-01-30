@@ -145,6 +145,7 @@
     <Compile Include="Services\PlaylistService.cs" />
     <Compile Include="Services\ApplicationSettingsService.cs" />
     <Compile Include="Services\XmlSettingsService.cs" />
+    <Compile Include="ViewModelLocator.cs" />
     <Compile Include="ViewModels\AnimeDisplayViewModel.cs" />
     <Compile Include="ViewModels\Components\AnimeDetailsMultipleViewModel.cs" />
     <Compile Include="ViewModels\Components\AnimeDetailsViewModel.cs" />

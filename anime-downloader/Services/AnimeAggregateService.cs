@@ -4,13 +4,17 @@ namespace anime_downloader.Services
 {
     public class AnimeAggregateService : IAnimeAggregateService
     {
-        public AnimeAggregateService(ISettingsService settings)
+        public AnimeAggregateService(IAnimeService animeService, 
+            IFileService fileService, 
+            IDownloadService downloadService, 
+            IMyAnimeListService malService, 
+            IPlaylistService playlistService)
         {
-            AnimeService = new AnimeService(settings);
-            FileService = new FileService(settings);
-            DownloadService = new NyaaService(settings, AnimeService);
-            MalService = new MyAnimeListService(settings, AnimeService);
-            PlaylistService = new PlaylistService(settings, FileService);
+            AnimeService = animeService;
+            FileService = fileService;
+            DownloadService = downloadService;
+            MalService = malService;
+            PlaylistService = playlistService;
         }
 
         public IAnimeService AnimeService { get; set; }

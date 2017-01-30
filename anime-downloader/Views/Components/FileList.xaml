@@ -96,9 +96,6 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
                 <ListBox.InputBindings>
-                    <KeyBinding Key="A"
-                                Command="{Binding SelectAllCommand}"
-                                Modifiers="Control" />
                     <KeyBinding Key="Return" Command="{Binding OpenCommand}" />
                     <KeyBinding Key="Delete" Command="{Binding DeleteCommand}" />
                 </ListBox.InputBindings>

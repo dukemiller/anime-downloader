@@ -10,15 +10,12 @@
         Width="920"
         Height="400"
         d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel}"
-        
-        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}"
-        TextElement.FontSize="16"
-        
-        
-        Closing="MainWindow_OnClosing"
+        DataContext="{Binding Source={StaticResource Locator},
+                              Path=Main}"
         ResizeMode="CanMinimize"
-        StateChanged="Window_StateChanged"
+        TextElement.FontSize="16"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         mc:Ignorable="d">
     <Window.Resources>
         <Style BasedOn="{StaticResource LargeButtonStyle}" TargetType="RadioButton" />

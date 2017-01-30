@@ -1,42 +1,60 @@
-﻿using anime_downloader.Models;
+﻿using System;
+using System.Windows.Forms;
+using anime_downloader.Models;
 using anime_downloader.Services.Interfaces;
 using anime_downloader.ViewModels.Components;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Ioc;
 
 namespace anime_downloader.ViewModels
 {
     public class DownloadViewModel : ViewModelBase
     {
-        private ViewModelBase _display;
+        private ViewModelBase _currentDisplay;
 
-        public DownloadViewModel(ISettingsService settings, IAnimeAggregateService animeAggregate)
+        // 
+
+        public DownloadViewModel()
         {
-            Settings = settings;
-            AnimeAggregate = animeAggregate;
+            // Default display
 
-            Display = new DownloadOptionsViewModel();
+            CurrentDisplay = SimpleIoc.Default.GetInstance<DownloadOptionsViewModel>();
+
+            // Messages
+
+            MessengerInstance.Register<RadioModel>(this, _ =>
+            {
+                var downloader = SimpleIoc.Default.GetInstance<DownloaderViewModel>();
+                CurrentDisplay = downloader;
+                downloader.Download(_);
+            });
 
             MessengerInstance.Register<string>(this, _ =>
             {
                 if (_.Equals("download_log"))
-                    Display = new DownloadLogViewModel(Settings);
+                {
+                    var log = SimpleIoc.Default.GetInstance<DownloadLogViewModel>();
+                    CurrentDisplay = log;
+                    log.DisplayLogResults();
+                }
 
                 else if (_.Equals("tray_download"))
-                    Display = new DownloaderViewModel(Settings, AnimeAggregate, new RadioModel {Tag = "Next"});
+                {
+                    var downloader = SimpleIoc.Default.GetInstance<DownloaderViewModel>();
+                    CurrentDisplay = downloader;
+                    downloader.Download(new RadioModel { Tag = "Next" });
+                }
             });
-
-            MessengerInstance.Register<RadioModel>(this,
-                _ => { Display = new DownloaderViewModel(Settings, AnimeAggregate, _); });
         }
 
-        private ISettingsService Settings { get; }
-
-        private IAnimeAggregateService AnimeAggregate { get; }
-
-        public ViewModelBase Display
+        public ViewModelBase CurrentDisplay
         {
-            get { return _display; }
-            set { Set(() => Display, ref _display, value); }
+            get { return _currentDisplay; }
+            set
+            {
+                CurrentDisplay?.Cleanup();
+                Set(() => CurrentDisplay, ref _currentDisplay, value);
+            }
         }
     }
 }

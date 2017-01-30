@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using anime_downloader.Models;
 using GalaSoft.MvvmLight;
@@ -34,7 +35,7 @@ namespace anime_downloader.ViewModels.Components
 
         public DownloadOptionsViewModel()
         {
-            Options = new ObservableCollection<RadioModel> {NextEpisode, Continually, Missing};
+            Options = new ObservableCollection<RadioModel> { NextEpisode, Continually, Missing };
             SelectedRadio = Options.First();
             SearchCommand = new RelayCommand(() => MessengerInstance.Send(SelectedRadio));
             LogCommand = new RelayCommand(() => MessengerInstance.Send("download_log"));

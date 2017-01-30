@@ -27,6 +27,8 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Blue.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
+            <animeDownloader:ViewModelLocator x:Key="Locator" />
+
             <SolidColorBrush x:Key="PrimaryHueMidBrush" Color="#2e51a2" />
 
             <!--  Converters  -->

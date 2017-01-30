@@ -15,43 +15,48 @@ namespace anime_downloader.ViewModels
 
         public AnimeDisplayViewModel(ISettingsService settings, IAnimeAggregateService animeAggregate)
         {
-            Settings = settings;
-            AnimeAggregate = animeAggregate;
+            _settings = settings;
+            _animeAggregate = animeAggregate;
 
-            Display = new AnimeListViewModel(Settings, AnimeAggregate);
+            Display = new AnimeListViewModel(_settings, _animeAggregate);
 
             // Edit single details
             MessengerInstance.Register<Anime>(this,
-                anime => { Display = new AnimeDetailsViewModel(Settings, AnimeAggregate, anime); });
+                anime => { Display = new AnimeDetailsViewModel(_settings, _animeAggregate, anime); });
 
             // Edit multiple details
             MessengerInstance.Register<ObservableCollection<Anime>>(this,
-                animes => { Display = new AnimeDetailsMultipleViewModel(Settings, AnimeAggregate, animes); });
+                animes => { Display = new AnimeDetailsMultipleViewModel(_settings, _animeAggregate, animes); });
 
             MessengerInstance.Register<NotificationMessage>(this, _ =>
             {
                 if (_.Notification.Equals("anime_list"))
-                    Display = new AnimeListViewModel(Settings, AnimeAggregate);
+                    Display = new AnimeListViewModel(_settings, _animeAggregate);
 
                 // Create new
                 else if (_.Notification.Equals("anime_new"))
-                    Display = new AnimeDetailsViewModel(Settings, AnimeAggregate);
+                    Display = new AnimeDetailsViewModel(_settings, _animeAggregate);
 
                 // Create new multiple
                 else if (_.Notification.Equals("anime_newMultiple"))
-                    Display = new AnimeDetailsMultipleViewModel(Settings, AnimeAggregate);
+                    Display = new AnimeDetailsMultipleViewModel(_settings, _animeAggregate);
             });
         }
 
-        private ISettingsService Settings { get; }
-        private IAnimeAggregateService AnimeAggregate { get; }
+        private readonly ISettingsService _settings;
+
+        private readonly IAnimeAggregateService _animeAggregate;
 
         //
 
         public ViewModelBase Display
         {
             get { return _display; }
-            set { Set(() => Display, ref _display, value); }
+            set
+            {
+                Display?.Cleanup();
+                Set(() => Display, ref _display, value);
+            }
         }
     }
 }
