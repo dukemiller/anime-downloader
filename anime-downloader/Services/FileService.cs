@@ -187,14 +187,14 @@ namespace anime_downloader.Services
             return files;
         }
 
-        public static AnimeFile FirstEpisode(IEnumerable<AnimeFile> animeEpisodes)
+        public static AnimeFile FirstEpisode(IEnumerable<AnimeFile> episodes)
         {
-            return animeEpisodes?.OrderBy(ep => ep.Episode).FirstOrDefault();
+            return episodes?.OrderBy(ep => ep.Episode).FirstOrDefault();
         }
 
-        public static AnimeFile LastEpisode(IEnumerable<AnimeFile> animeEpisodes)
+        public static AnimeFile LastEpisode(IEnumerable<AnimeFile> episodes)
         {
-            return animeEpisodes?.OrderBy(ep => ep.Episode).LastOrDefault();
+            return episodes?.OrderBy(ep => ep.Episode).LastOrDefault();
         }
     }
 }
