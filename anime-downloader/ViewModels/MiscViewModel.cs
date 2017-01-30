@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
@@ -40,6 +41,7 @@ namespace anime_downloader.ViewModels
         private async void DoAction()
         {
             MessengerInstance.Send(new WorkMessage {Working = true});
+
             // Mark fully watched as completed
             if (SelectedIndex == 1)
             {
@@ -101,20 +103,25 @@ namespace anime_downloader.ViewModels
             {
                 var changed = new List<string>();
 
-                foreach (var anime in AnimeAggregate.AnimeService.AiringAndWatching)
+                await Task.Run(() =>
                 {
-                    var lastEpisode = AnimeAggregate.FileService.LastEpisode(anime);
-                    if (lastEpisode != null && anime.Episode != lastEpisode.Episode)
+                    foreach (var anime in AnimeAggregate.AnimeService.AiringAndWatching)
                     {
-                        anime.Episode = lastEpisode.Episode;
-                        changed.Add(anime.Title);
+                        var lastEpisode = AnimeAggregate.FileService.LastEpisode(anime);
+                        if (lastEpisode != null && anime.Episode != lastEpisode.Episode)
+                        {
+                            anime.Episode = lastEpisode.Episode;
+                            changed.Add(anime.Title);
+                        }
                     }
-                }
+                });
 
-                Methods.Alert($"Updated episodes for: {string.Join(", ", changed)}");
+                if (changed.Count > 0)
+                    Methods.Alert($"Updated episodes for: {string.Join(", ", changed)}");
+                else
+                    Methods.Alert("No re-indexes were needed.");
             }
-
-
+            
             MessengerInstance.Send(new WorkMessage {Working = false});
         }
 

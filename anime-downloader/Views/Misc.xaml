@@ -78,7 +78,7 @@
                                          IsChecked="{Binding SelectedIndex,
                                                              Converter={StaticResource CompareConverter},
                                                              ConverterParameter=4}"
-                                         ToolTip="For every airing show, find the last downloaded episode of it and set the anime's current watched episode to that.                                          This is helpful for re-indexing if something goes wrong." />
+                                         ToolTip="For every airing show, find the last downloaded episode of it and set the anime's current watched episode to that. This is helpful for re-indexing if something goes wrong." />
                         </StackPanel>
                     </GroupBox>
                 </StackPanel>
