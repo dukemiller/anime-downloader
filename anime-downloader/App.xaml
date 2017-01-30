@@ -125,6 +125,10 @@
                 <components:MyAnimeListBar DataContext="{Binding}" />
             </DataTemplate>
 
+            <DataTemplate DataType="{x:Type viewModelComponents:DialogViewModel}">
+                <components:Dialog DataContext="{Binding}" />
+            </DataTemplate>
+
             <!--  Storyboard  -->
 
             <Storyboard x:Key="DisplayTransition">

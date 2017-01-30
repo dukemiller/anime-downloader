@@ -150,6 +150,7 @@
     <Compile Include="ViewModels\Components\AnimeDetailsMultipleViewModel.cs" />
     <Compile Include="ViewModels\Components\AnimeDetailsViewModel.cs" />
     <Compile Include="ViewModels\Components\AnimeListViewModel.cs" />
+    <Compile Include="ViewModels\Components\DialogViewModel.cs" />
     <Compile Include="ViewModels\Components\DownloaderViewModel.cs" />
     <Compile Include="ViewModels\Components\DownloadLogViewModel.cs" />
     <Compile Include="ViewModels\Components\DownloadOptionsViewModel.cs" />
@@ -175,6 +176,9 @@
     </Compile>
     <Compile Include="Views\Components\AnimeList.xaml.cs">
       <DependentUpon>AnimeList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Components\Dialog.xaml.cs">
+      <DependentUpon>Dialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Components\DownloadLog.xaml.cs">
       <DependentUpon>DownloadLog.xaml</DependentUpon>
@@ -216,6 +220,10 @@
       <DependentUpon>Web.xaml</DependentUpon>
     </Compile>
     <Page Include="Views\AnimeDisplay.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Components\Dialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

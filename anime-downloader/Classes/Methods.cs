@@ -4,6 +4,9 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using anime_downloader.ViewModels.Components;
+using anime_downloader.Views.Components;
+using MaterialDesignThemes.Wpf;
 
 namespace anime_downloader.Classes
 {
@@ -86,7 +89,14 @@ namespace anime_downloader.Classes
         /// <summary>
         ///     Display an alert message (currently a messagebox).
         /// </summary>
-        public static void Alert(string msg = "") => MessageBox.Show(msg);
+        public static async void Alert(string msg = "")
+        {
+            var view = new Dialog
+            {
+                DataContext = new DialogViewModel { Message = msg }
+            };
+            await DialogHost.Show(view);
+        }
 
         public static void AnimeRatingRules(TextBox textbox, TextCompositionEventArgs e)
         {
