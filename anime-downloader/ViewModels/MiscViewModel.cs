@@ -95,6 +95,26 @@ namespace anime_downloader.ViewModels
                     Methods.Alert($"No shows were updated for an attempted {needsUpdating.Count} shows.");
                 }
             }
+
+            // Set current episode to last found file's episode number
+            else if (SelectedIndex == 4)
+            {
+                var changed = new List<string>();
+
+                foreach (var anime in AnimeAggregate.AnimeService.AiringAndWatching)
+                {
+                    var lastEpisode = AnimeAggregate.FileService.LastEpisode(anime);
+                    if (lastEpisode != null && anime.Episode != lastEpisode.Episode)
+                    {
+                        anime.Episode = lastEpisode.Episode;
+                        changed.Add(anime.Title);
+                    }
+                }
+
+                Methods.Alert($"Updated episodes for: {string.Join(", ", changed)}");
+            }
+
+
             MessengerInstance.Send(new WorkMessage {Working = false});
         }
 

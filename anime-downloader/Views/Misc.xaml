@@ -6,11 +6,11 @@
              xmlns:models="clr-namespace:anime_downloader.Models"
              xmlns:viewModels="clr-namespace:anime_downloader.ViewModels"
              d:DataContext="{d:DesignInstance viewModels:MiscViewModel}"
-             d:DesignHeight="360"
-             d:DesignWidth="680"
+             d:DesignHeight="320"
+             d:DesignWidth="560"
              mc:Ignorable="d">
     <UserControl.Resources>
-        <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource MaterialDesignListBoxItem}">
+        <Style BasedOn="{StaticResource MaterialDesignListBoxItem}" TargetType="{x:Type ListBoxItem}">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ListBoxItem}">
@@ -27,7 +27,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <Style TargetType="{x:Type RadioButton}" BasedOn="{StaticResource {x:Type RadioButton}}">
+        <Style BasedOn="{StaticResource {x:Type RadioButton}}" TargetType="{x:Type RadioButton}">
             <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="HorizontalAlignment" Value="Left" />
@@ -61,31 +61,38 @@
                     <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0">
-                    <GroupBox Header="Anime" Margin="5">
+                    <GroupBox Margin="5" Header="Anime">
                         <StackPanel>
                             <Label Content="Status"
                                    FontStyle="Italic"
                                    Foreground="DarkGray" />
-                            <RadioButton Content="Mark fully watched as completed"
-                                         IsChecked="{Binding SelectedIndex, Converter={StaticResource CompareConverter}, ConverterParameter=1}" />
+                            <RadioButton Content="Mark fully watched as completed" IsChecked="{Binding SelectedIndex, Converter={StaticResource CompareConverter}, ConverterParameter=1}" />
                             <Label Content="Files"
                                    FontStyle="Italic"
                                    Foreground="DarkGray" />
-                            <RadioButton Content="Move duplicates to 'My Videos'"
-                                         IsChecked="{Binding SelectedIndex, Converter={StaticResource CompareConverter}, ConverterParameter=2}" />
+                            <RadioButton Content="Move duplicates to 'My Videos'" IsChecked="{Binding SelectedIndex, Converter={StaticResource CompareConverter}, ConverterParameter=2}" />
+                            <Label Content="Episode"
+                                   FontStyle="Italic"
+                                   Foreground="DarkGray" />
+                            <RadioButton Content="Set episode to last found episode #"
+                                         IsChecked="{Binding SelectedIndex,
+                                                             Converter={StaticResource CompareConverter},
+                                                             ConverterParameter=4}"
+                                         ToolTip="For every airing show, find the last downloaded episode of it and set the anime's current watched episode to that.                                          This is helpful for re-indexing if something goes wrong." />
                         </StackPanel>
                     </GroupBox>
                 </StackPanel>
                 <StackPanel Grid.Column="1">
-                    <GroupBox Header="MyAnimeList" IsHitTestVisible="{Binding LoggedIntoMal}"
-                              Margin="5"
-                              Opacity="{Binding LoggedIntoMal, Converter={StaticResource BooleanOpacityConverter}}">
+                    <GroupBox Margin="5"
+                              Header="MyAnimeList"
+                              IsHitTestVisible="{Binding LoggedIntoMal}"
+                              Opacity="{Binding LoggedIntoMal,
+                                                Converter={StaticResource BooleanOpacityConverter}}">
                         <StackPanel>
                             <Label Content="API"
                                    FontStyle="Italic"
                                    Foreground="DarkGray" />
-                            <RadioButton Content="Regather shows with no ep. total"
-                                         IsChecked="{Binding SelectedIndex, Converter={StaticResource CompareConverter}, ConverterParameter=3}" />
+                            <RadioButton Content="Regather shows with no ep. total" IsChecked="{Binding SelectedIndex, Converter={StaticResource CompareConverter}, ConverterParameter=3}" />
                         </StackPanel>
                     </GroupBox>
                 </StackPanel>
@@ -94,7 +101,8 @@
             <Button Grid.Row="2"
                     HorizontalAlignment="Right"
                     Command="{Binding SubmitCommand}"
-                    Content="Submit" />
+                    Content="Submit"
+                    IsDefault="True" />
         </Grid>
     </Grid>
 </UserControl>
