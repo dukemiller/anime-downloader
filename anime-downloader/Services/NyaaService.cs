@@ -310,7 +310,7 @@ namespace anime_downloader.Services
                 */
             }
 
-            return result?.OrderByDescending(n => n.Name.Contains(anime.Resolution)).ThenBy(n => n.Seeders);
+            return result?.OrderByDescending(n => n.Name.Contains(anime.Resolution)).ThenByDescending(n => n.Seeders);
         }
 
         private async Task Log(Anime anime)
