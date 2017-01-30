@@ -25,7 +25,6 @@ namespace anime_downloader.Services
 
         private readonly WebClient _client;
 
-
         // 
 
         public NyaaService(ISettingsService settingsService, IAnimeService animeService)

@@ -50,7 +50,7 @@
                     Command="{Binding MiscCommand}"
                     Modifiers="Alt" />
     </Window.InputBindings>
-    <materialDesign:DialogHost>
+    <materialDesign:DialogHost FocusVisualStyle="{x:Null}">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*" />
