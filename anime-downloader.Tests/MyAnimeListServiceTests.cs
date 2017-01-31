@@ -9,7 +9,7 @@ using NUnit.Framework;
 namespace anime_downloader.Tests
 {
     [TestFixture]
-    public class MyAnimeListTests
+    public class MyAnimeListServiceTests
     {
         private ISettingsService _settings;
         private IAnimeService _animes;
