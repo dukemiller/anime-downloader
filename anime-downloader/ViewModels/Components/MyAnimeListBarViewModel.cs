@@ -14,39 +14,43 @@ namespace anime_downloader.ViewModels.Components
 {
     public class MyAnimeListBarViewModel : ViewModelBase
     {
+        private readonly Anime _anime;
+
+        private readonly ISettingsService _settings;
+
+        private readonly IAnimeAggregateService _animeAggregate;
+
+        // 
+
         public MyAnimeListBarViewModel(Anime anime, ISettingsService settings, IAnimeAggregateService animeAggregate)
         {
-            Anime = anime;
-            Settings = settings;
-            AnimeAggregate = animeAggregate;
+            _anime = anime;
+            _settings = settings;
+            _animeAggregate = animeAggregate;
 
-            FindCommand = new RelayCommand(Find, () => Settings.MyAnimeListConfig.Works);
+            FindCommand = new RelayCommand(Find, () => _settings.MyAnimeListConfig.Works);
             ClearCommand = new RelayCommand(Clear);
             ProfileCommand = new RelayCommand(Profile);
             RefreshCommand = new RelayCommand(Refresh);
 
-            Anime.MyAnimeList.PropertyChanged += (sender, args) =>
+            _anime.MyAnimeList.PropertyChanged += (sender, args) =>
             {
                 if (args.PropertyName.Equals("Id"))
                     RaisePropertyChanged(nameof(HasId));
             };
 
-            Settings.MyAnimeListConfig.PropertyChanged += (sender, args) =>
+            _settings.MyAnimeListConfig.PropertyChanged += (sender, args) =>
             {
                 if (args.PropertyName.Equals("Works"))
                     RaisePropertyChanged(nameof(LoggedIntoMal));
             };
         }
 
-        private Anime Anime { get; }
-        private ISettingsService Settings { get; }
-        private IAnimeAggregateService AnimeAggregate { get; }
-
         // 
 
-        public bool LoggedIntoMal => Settings.MyAnimeListConfig.Works;
+        public bool LoggedIntoMal => _settings.MyAnimeListConfig.Works;
 
-        public Visibility HasId => Anime.MyAnimeList.HasId ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility HasId => _anime.MyAnimeList.HasId ? Visibility.Visible : Visibility.Collapsed;
 
         public RelayCommand FindCommand { get; set; }
 
@@ -61,11 +65,11 @@ namespace anime_downloader.ViewModels.Components
         private async void Find()
         {
             MessengerInstance.Send(new WorkMessage {Working = true});
-            var id = await AnimeAggregate.MalService.GetId(Anime);
+            var id = await _animeAggregate.MalService.GetId(_anime);
             RaisePropertyChanged(nameof(HasId));
-            Settings.Save();
+            _settings.Save();
             if (!id)
-                Methods.Alert($"No ID found for {Anime.Name}.");
+                Methods.Alert($"No ID found for {_anime.Name}.");
             MessengerInstance.Send(new WorkMessage {Working = false});
         }
 
@@ -76,34 +80,34 @@ namespace anime_downloader.ViewModels.Components
                 MessageBoxButton.YesNo);
             if (response == MessageBoxResult.Yes)
             {
-                Anime.MyAnimeList = new MyAnimeListDetails {Id = null, NeedsUpdating = true};
+                _anime.MyAnimeList = new MyAnimeListDetails {Id = null, NeedsUpdating = true};
                 RaisePropertyChanged(nameof(HasId));
-                Settings.Save();
+                _settings.Save();
             }
         }
 
-        private void Profile() => Process.Start($"http://myanimelist.net/anime/{Anime.MyAnimeList.Id}");
+        private void Profile() => Process.Start($"http://myanimelist.net/anime/{_anime.MyAnimeList.Id}");
 
         private async void Refresh()
         {
             MessengerInstance.Send(new WorkMessage {Working = true});
 
-            var animeResults = await AnimeAggregate.MalService.Find(HttpUtility.UrlEncode(Anime.MyAnimeList.Title));
-            var result = animeResults.FirstOrDefault(r => r.Id.Equals(Anime.MyAnimeList.Id));
+            var animeResults = await _animeAggregate.MalService.Find(HttpUtility.UrlEncode(_anime.MyAnimeList.Title));
+            var result = animeResults.FirstOrDefault(r => r.Id.Equals(_anime.MyAnimeList.Id));
 
             if (result != null)
             {
-                Anime.MyAnimeList.Synopsis = result.Synopsis;
-                Anime.MyAnimeList.Image = result.Image;
-                Anime.MyAnimeList.Title = result.Title;
-                Anime.MyAnimeList.English = result.English;
-                Anime.MyAnimeList.Synopsis = result.Synopsis;
-                Anime.MyAnimeList.TotalEpisodes = result.TotalEpisodes;
+                _anime.MyAnimeList.Synopsis = result.Synopsis;
+                _anime.MyAnimeList.Image = result.Image;
+                _anime.MyAnimeList.Title = result.Title;
+                _anime.MyAnimeList.English = result.English;
+                _anime.MyAnimeList.Synopsis = result.Synopsis;
+                _anime.MyAnimeList.TotalEpisodes = result.TotalEpisodes;
 
                 DateTime start;
                 if (DateTime.TryParse(result.StartDate, out start))
                 {
-                    Anime.MyAnimeList.Aired = new AnimeSeason
+                    _anime.MyAnimeList.Aired = new AnimeSeason
                     {
                         Year = start.Year,
                         Season = (Season)Math.Ceiling(Convert.ToDouble(start.Month) / 3)
@@ -113,14 +117,14 @@ namespace anime_downloader.ViewModels.Components
                 DateTime end;
                 if (DateTime.TryParse(result.EndDate, out end))
                 {
-                    Anime.MyAnimeList.Ended = new AnimeSeason
+                    _anime.MyAnimeList.Ended = new AnimeSeason
                     {
                         Year = end.Year,
                         Season = (Season)Math.Ceiling(Convert.ToDouble(end.Month) / 3)
                     };
 
                     var now = DateTime.Now;
-                    Anime.Airing = end.Year >= now.Year && (end.Month > now.Month ||
+                    _anime.Airing = end.Year >= now.Year && (end.Month > now.Month ||
                                                             end.Month == now.Month && end.Day > now.Day);
                 }
             }

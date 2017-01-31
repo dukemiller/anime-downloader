@@ -36,14 +36,20 @@ namespace anime_downloader.ViewModels.Components
 
         private string _title;
 
+        private readonly IFileService _fileService;
+
+        private readonly IAnimeService _animeService;
+
+        private readonly IPlaylistService _playlistService;
+
         // 
 
         public FileListViewModel(IFileService fileService, IAnimeService animeService,
             IPlaylistService playlistService)
         {
-            FileService = fileService;
-            AnimeService = animeService;
-            PlaylistService = playlistService;
+            _fileService = fileService;
+            _animeService = animeService;
+            _playlistService = playlistService;
 
             // 
 
@@ -56,13 +62,7 @@ namespace anime_downloader.ViewModels.Components
         }
 
         // Properties
-
-        private IFileService FileService { get; }
-
-        private IAnimeService AnimeService { get; }
-
-        private IPlaylistService PlaylistService { get; }
-
+        
         private FileSystemWatcher Watcher { get; set; }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace anime_downloader.ViewModels.Components
             set
             {
                 Set(() => EpisodeType, ref _episodeType, value);
-                Files = new ObservableCollection<AnimeFile>(FileService.GetEpisodes(value));
+                Files = new ObservableCollection<AnimeFile>(_fileService.GetEpisodes(value));
                 Files.CollectionChanged += (sender, args) => { RaisePropertyChanged(Label); };
                 FilteredFiles = Files;
             }
@@ -241,9 +241,9 @@ namespace anime_downloader.ViewModels.Components
         {
             if (SelectedFiles.Count > 1)
             {
-                PlaylistService.Set(SelectedFiles);
-                PlaylistService.Create();
-                Process.Start(PlaylistService.Path);
+                _playlistService.Set(SelectedFiles);
+                _playlistService.Create();
+                Process.Start(_playlistService.Path);
             }
 
             else if (SelectedFile != null)
@@ -260,7 +260,7 @@ namespace anime_downloader.ViewModels.Components
             if (SelectedFile == null)
                 return;
 
-            var anime = FileService.ClosestAnime(AnimeService.Animes, SelectedFile);
+            var anime = _fileService.ClosestAnime(_animeService.Animes, SelectedFile);
 
             if (anime != null)
             {

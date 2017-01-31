@@ -10,42 +10,35 @@ namespace anime_downloader.ViewModels
         private FileListViewModel _unwatched;
 
         private FileListViewModel _watched;
-
+        
         // 
 
         public ManageViewModel(ISettingsService settings, IAnimeAggregateService animeAggregate)
         {
-            Settings = settings;
-            AnimeAggregate = animeAggregate;
-
-            Unwatched = new FileListViewModel(AnimeAggregate.FileService, animeAggregate.AnimeService,
+            Unwatched = new FileListViewModel(animeAggregate.FileService, animeAggregate.AnimeService,
                 animeAggregate.PlaylistService)
             {
                 Title = "Unwatched",
                 ImageResourcePath = "../Resources/Images/right.png",
                 EpisodeType = EpisodeStatus.Unwatched,
-                StartPath = Settings.PathConfig.Unwatched,
-                MovePath = Settings.PathConfig.Watched
+                StartPath = settings.PathConfig.Unwatched,
+                MovePath = settings.PathConfig.Watched
             };
 
-            Watched = new FileListViewModel(AnimeAggregate.FileService, animeAggregate.AnimeService,
+            Watched = new FileListViewModel(animeAggregate.FileService, animeAggregate.AnimeService,
                 animeAggregate.PlaylistService)
             {
                 Title = "Watched",
                 ImageResourcePath = "../Resources/Images/left.png",
                 EpisodeType = EpisodeStatus.Watched,
-                StartPath = Settings.PathConfig.Watched,
-                MovePath = Settings.PathConfig.Unwatched,
+                StartPath = settings.PathConfig.Watched,
+                MovePath = settings.PathConfig.Unwatched,
                 HideLabel = true
             };
         }
 
         // 
-
-        private ISettingsService Settings { get; }
-
-        private IAnimeAggregateService AnimeAggregate { get; }
-
+        
         public FileListViewModel Unwatched
         {
             get { return _unwatched; }

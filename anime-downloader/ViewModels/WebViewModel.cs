@@ -5,8 +5,6 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using anime_downloader.Classes;
-using anime_downloader.Enums;
-using anime_downloader.Models;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -25,18 +23,20 @@ namespace anime_downloader.ViewModels
 
         private bool _works;
 
-        // 
+        private readonly IAnimeService _animeService;
+
+        private readonly IMyAnimeListService _malService;
 
         public WebViewModel(ISettingsService settingsService, IAnimeService animeService, IMyAnimeListService malService)
         {
             SettingsService = settingsService;
-            AnimeService = animeService;
-            MalService = malService;
+            _animeService = animeService;
+            _malService = malService;
 
             // 
 
             Works = SettingsService.MyAnimeListConfig.Works;
-            UpToDate = AnimeService.Animes.Any() && !AnimeService.NeedsUpdates.Any();
+            UpToDate = _animeService.Animes.Any() && !_animeService.NeedsUpdates.Any();
             SyncText = UpToDate ? "Synced" : "Sync";
 
             // 
@@ -74,10 +74,6 @@ namespace anime_downloader.ViewModels
         // 
 
         public ISettingsService SettingsService { get; set; }
-
-        private IAnimeService AnimeService { get; }
-
-        private IMyAnimeListService MalService { get; }
 
         private DateTime WaitDelay { get; set; } = DateTime.Now;
 
@@ -166,7 +162,7 @@ namespace anime_downloader.ViewModels
                 return;
 
             MessengerInstance.Send(new WorkMessage {Working = true});
-            Works = await MalService.VerifyCredentialsAsync();
+            Works = await _malService.VerifyCredentialsAsync();
             MessengerInstance.Send(new WorkMessage {Working = false});
             RaiseCommandExecutions();
             WaitDelay = DateTime.Now.AddSeconds(5);
@@ -175,11 +171,11 @@ namespace anime_downloader.ViewModels
         private async void Import()
         {
             MessengerInstance.Send(new WorkMessage { Working = true });
-            var animes = await Task.Run(async () => await MalService.GetProfileAnime());
+            var animes = await Task.Run(async () => await _malService.GetProfileAnime());
             foreach (var anime in animes)
             {
-                if (!AnimeService.Animes.Any(a => a.MyAnimeList.Id.Equals(anime.MyAnimeList.Id)))
-                    AnimeService.Add(anime);
+                if (!_animeService.Animes.Any(a => a.MyAnimeList.Id.Equals(anime.MyAnimeList.Id)))
+                    _animeService.Add(anime);
             }
             MessengerInstance.Send(new WorkMessage { Working = false });
         }
@@ -208,12 +204,11 @@ namespace anime_downloader.ViewModels
         private async void Sync()
         {
             SyncText = "Syncing ...";
-
             MessengerInstance.Send(new WorkMessage {Working = true});
-            await MalService.Synchronize();
+            await _malService.Synchronize();
             MessengerInstance.Send(new WorkMessage {Working = false});
             RaiseCommandExecutions();
-            UpToDate = AnimeService.Animes.Any() && !AnimeService.NeedsUpdates.Any();
+            UpToDate = _animeService.Animes.Any() && !_animeService.NeedsUpdates.Any();
             SyncText = UpToDate ? "Synced" : "Sync";
         }
 

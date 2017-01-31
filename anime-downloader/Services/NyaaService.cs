@@ -296,8 +296,6 @@ namespace anime_downloader.Services
                                 .Contains($"part{episode:D2}")
                 );
 
-            Console.WriteLine(result);
-
             if (anime.NameCollection.Any(c => c.Contains(episode.ToString("D2"))))
             {
                 // To account for the case that a show contains a number (e.g. 12-sai - ep 12) that is 

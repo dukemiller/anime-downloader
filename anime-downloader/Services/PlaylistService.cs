@@ -10,13 +10,14 @@ namespace anime_downloader.Services
 {
     public class PlaylistService : IPlaylistService
     {
+
+        private readonly ISettingsService _settings;
+
         public PlaylistService(ISettingsService settings, IFileService file)
         {
-            Settings = settings;
+            _settings = settings;
             File = file;
         }
-
-        private ISettingsService Settings { get; }
 
         public IFileService File { get; set; }
 
@@ -24,7 +25,7 @@ namespace anime_downloader.Services
 
         public int Length => Episodes.Count();
 
-        public string Path => Settings.PathConfig.Playlist;
+        public string Path => _settings.PathConfig.Playlist;
 
         // 
 
@@ -65,13 +66,13 @@ namespace anime_downloader.Services
 
         public async Task<string> Create()
         {
-            using (var writer = new StreamWriter(Settings.PathConfig.Playlist, false))
+            using (var writer = new StreamWriter(_settings.PathConfig.Playlist, false))
             {
                 foreach (var episode in Episodes)
                     await writer.WriteLineAsync(episode.Path);
             }
 
-            return Settings.PathConfig.Playlist;
+            return _settings.PathConfig.Playlist;
         }
     }
 }

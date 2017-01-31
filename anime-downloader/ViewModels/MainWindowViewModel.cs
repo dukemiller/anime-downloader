@@ -144,8 +144,6 @@ namespace anime_downloader.ViewModels
             set { Set(() => SelectedIndex, ref _selectedIndex, value); }
         }
 
-        // 
-
         public ViewModelBase CurrentView
         {
             get { return _currentView; }
@@ -167,9 +165,9 @@ namespace anime_downloader.ViewModels
             }
         }
 
-        private IEnumerable<RelayCommand> ButtonCommands { get; }
-
         // 
+
+        private IEnumerable<RelayCommand> ButtonCommands { get; }
 
         public RelayCommand CloseCommand { get; set; }
 

@@ -17,12 +17,14 @@ namespace anime_downloader.ViewModels.Components
         private string _input;
         private bool _loading;
         private RelayCommand _submitCommand;
+        private readonly ISettingsService _settings;
+        private readonly IAnimeAggregateService _animeAggregate;
 
         // New
         public AnimeDetailsMultipleViewModel(ISettingsService settings, IAnimeAggregateService animeAggregate)
         {
-            Settings = settings;
-            AnimeAggregate = animeAggregate;
+            _settings = settings;
+            _animeAggregate = animeAggregate;
             Loading = false;
             Header = "Put each anime on own line, each will be added with the template chosen below:";
 
@@ -41,8 +43,8 @@ namespace anime_downloader.ViewModels.Components
         public AnimeDetailsMultipleViewModel(ISettingsService settings, IAnimeAggregateService animeAggregate,
             ObservableCollection<Anime> animes)
         {
-            Settings = settings;
-            AnimeAggregate = animeAggregate;
+            _settings = settings;
+            _animeAggregate = animeAggregate;
             Animes = animes;
             Loading = true;
             Header = "Make the same change to the following list of anime: ";
@@ -59,8 +61,6 @@ namespace anime_downloader.ViewModels.Components
         }
 
         private ObservableCollection<Anime> Animes { get; }
-        private ISettingsService Settings { get; }
-        private IAnimeAggregateService AnimeAggregate { get; }
 
         public string Header
         {
@@ -106,14 +106,14 @@ namespace anime_downloader.ViewModels.Components
             {
                 Methods.Alert("Names have to be unique.");
             }
-            else if (AnimeAggregate.AnimeService.Animes.Select(a => a.Name.ToLower()).Intersect(names).Any())
+            else if (_animeAggregate.AnimeService.Animes.Select(a => a.Name.ToLower()).Intersect(names).Any())
             {
                 Methods.Alert("A title entered already exists in the anime list.");
             }
             else
             {
                 foreach (var name in names)
-                    AnimeAggregate.AnimeService.Add(new Anime
+                    _animeAggregate.AnimeService.Add(new Anime
                     {
                         Name = name,
                         Airing = Details.Airing,

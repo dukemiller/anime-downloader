@@ -7,6 +7,7 @@ namespace anime_downloader.ViewModels.Components
     public class FindViewModel : ViewModelBase
     {
         private string _text;
+
         private Visibility _visible;
 
         // 

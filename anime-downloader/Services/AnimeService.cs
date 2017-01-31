@@ -10,16 +10,16 @@ namespace anime_downloader.Services
 {
     public class AnimeService : IAnimeService
     {
+        private readonly ISettingsService _settings;
+
         public AnimeService(ISettingsService settings)
         {
-            Settings = settings;
+            _settings = settings;
         }
-
-        private ISettingsService Settings { get; }
 
         public IEnumerable<Anime> Watching => Animes.Where(a => a.Status == Status.Watching);
 
-        public IEnumerable<Anime> Animes => Settings.Animes;
+        public IEnumerable<Anime> Animes => _settings.Animes;
 
         public IEnumerable<Anime> FullyWatched()
         {
@@ -37,22 +37,22 @@ namespace anime_downloader.Services
 
             var propertyDescriptor = TypeDescriptor
                 .GetProperties(typeof(Anime))
-                .Find(Settings.SortBy, true);
+                .Find(_settings.SortBy, true);
 
             // Filtering
-            if (!string.IsNullOrEmpty(Settings.FilterBy))
-                if (Settings.FilterBy.Equals("Needs Synchronize"))
+            if (!string.IsNullOrEmpty(_settings.FilterBy))
+                if (_settings.FilterBy.Equals("Needs Synchronize"))
                     animes = animes.Where(anime => anime.MyAnimeList.HasId && anime.MyAnimeList.NeedsUpdating);
-                else if (Settings.FilterBy.Equals("Current Season"))
+                else if (_settings.FilterBy.Equals("Current Season"))
                     animes = animes.Where(anime => (anime.Status == Status.Watching || anime.Status == Status.Finished) && anime.MyAnimeList.HasId && anime.MyAnimeList.AiringNow);
                 else
                 {
-                    var filters = Settings.FilterBy.Split('/');
+                    var filters = _settings.FilterBy.Split('/');
                     animes = animes.Where(a => filters.Any(f => f.Equals(a.Status.Description())));
                 }
 
             // Ordering
-            return Settings.FlagConfig.SortByReversed
+            return _settings.FlagConfig.SortByReversed
                 ? animes.OrderByDescending(x => propertyDescriptor?.GetValue(x))
                 : animes.OrderBy(x => propertyDescriptor?.GetValue(x));
         }
@@ -86,14 +86,14 @@ namespace anime_downloader.Services
 
         public void Add(Anime anime)
         {
-            Settings.Animes.Add(anime);
-            Settings.Save();
+            _settings.Animes.Add(anime);
+            _settings.Save();
         }
 
         public void Remove(Anime anime)
         {
-            Settings.Animes.Remove(anime);
-            Settings.Save();
+            _settings.Animes.Remove(anime);
+            _settings.Save();
         }
 
         public void Remove(string name)

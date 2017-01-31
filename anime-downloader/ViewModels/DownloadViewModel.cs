@@ -1,7 +1,4 @@
-﻿using System;
-using System.Windows.Forms;
-using anime_downloader.Models;
-using anime_downloader.Services.Interfaces;
+﻿using anime_downloader.Models;
 using anime_downloader.ViewModels.Components;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;

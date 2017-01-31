@@ -35,23 +35,21 @@ namespace anime_downloader.Services
 
         private static readonly XmlSerializer ProfileDeserializer = new XmlSerializer(typeof(ProfileResult));
 
+        private readonly ISettingsService _settings;
+
+        private readonly IAnimeService _anime;
+
         // 
 
         public MyAnimeListService(ISettingsService settings, IAnimeService anime)
         {
-            Settings = settings;
-            Anime = anime;
+            _settings = settings;
+            _anime = anime;
         }
-
-        // 
-
-        private ISettingsService Settings { get; }
-
-        private IAnimeService Anime { get; }
 
         // Interface methods
 
-        public NetworkCredential GetCredentials() => new NetworkCredential(Settings.MyAnimeListConfig.Username, Settings.MyAnimeListConfig.Password);
+        public NetworkCredential GetCredentials() => new NetworkCredential(_settings.MyAnimeListConfig.Username, _settings.MyAnimeListConfig.Password);
 
         public async Task<IEnumerable<FindResult>> Find(string q) => await FindAsync(q);
 
@@ -232,7 +230,7 @@ namespace anime_downloader.Services
         public async Task Synchronize()
         {
             // for every anime that needs updating
-            foreach (var anime in Anime.NeedsUpdates)
+            foreach (var anime in _anime.NeedsUpdates)
                 if (string.IsNullOrEmpty(anime.MyAnimeList.Id))
                 {
                     if (await GetId(anime))
@@ -249,7 +247,7 @@ namespace anime_downloader.Services
 
         private async Task<IEnumerable<ProfileAnimeResult>> GetProfile()
         {
-            var url = string.Format(ApiProfile, Settings.MyAnimeListConfig.Username);
+            var url = string.Format(ApiProfile, _settings.MyAnimeListConfig.Username);
             var request = await GetAsync(url);
             var data = await request.ReadAsStreamAsync();
             if (data == null || data.Length <= 0)
