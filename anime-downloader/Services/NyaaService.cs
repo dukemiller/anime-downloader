@@ -125,6 +125,9 @@ namespace anime_downloader.Services
                     downloaded++;
             }
 
+            if (downloaded > 0)
+                _settingsService.Save();
+
             return downloaded;
         }
 
@@ -162,6 +165,9 @@ namespace anime_downloader.Services
                         downloaded++;
                 }
             }
+
+            if (downloaded > 0)
+                _settingsService.Save();
 
             return downloaded;
         }
