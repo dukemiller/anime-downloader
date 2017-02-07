@@ -106,8 +106,9 @@
                 </ListBox.ItemTemplate>
                 <ListBox.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Command="{Binding MoveCommand}" Header="Move to other side" />
-                        <MenuItem Command="{Binding ProfileCommand}" Header="Profile" />
+                        <MenuItem Command="{Binding MoveCommand}" Header="Move" />
+                        <MenuItem Command="{Binding ProfileCommand}" Header="Details" />
+                        <MenuItem Command="{Binding MalCommand}" Header="MyAnimeList" />
                         <MenuItem Command="{Binding OpenCommand}" Header="Open" />
                         <MenuItem Command="{Binding DeleteCommand}" Header="Delete" />
                     </ContextMenu>

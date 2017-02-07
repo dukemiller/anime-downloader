@@ -59,6 +59,7 @@ namespace anime_downloader.ViewModels.Components
             OpenCommand = new RelayCommand(Open);
             ClearFilterCommand = new RelayCommand(() => Filter = "");
             FolderCommand = new RelayCommand(() => Process.Start(StartPath));
+            MalCommand = new RelayCommand(MyAnimeListProfile);
         }
 
         // Properties
@@ -209,6 +210,8 @@ namespace anime_downloader.ViewModels.Components
 
         public RelayCommand ProfileCommand { get; set; }
 
+        public RelayCommand MalCommand { get; set; }
+
         public RelayCommand OpenCommand { get; set; }
 
         public RelayCommand DeleteCommand { get; set; }
@@ -290,6 +293,18 @@ namespace anime_downloader.ViewModels.Components
             if (response == MessageBoxResult.Yes)
                 foreach (var episode in new List<AnimeFile>(SelectedFiles))
                     FileSystem.DeleteFile(episode.Path, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+        }
+
+        /// <summary>
+        ///     Open the selected file's MyAnimeList page.
+        /// </summary>
+        private void MyAnimeListProfile()
+        {
+            if (SelectedFile == null)
+                return;
+            var anime = _fileService.ClosestAnime(_animeService.Animes, SelectedFile);
+            if (anime != null && anime.MyAnimeList.HasId)
+                    Process.Start($"http://myanimelist.net/anime/{anime.MyAnimeList.Id}");
         }
 
         private void CreateMethodLogic(object sender, FileSystemEventArgs args)
