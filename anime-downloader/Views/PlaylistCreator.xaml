@@ -62,6 +62,10 @@
                                   IsChecked="{Binding SeparateShowOrder}"
                                   ToolTip="Distribute the show order so that you don't watch the same show twice in a row." />
                         <CheckBox Margin="5"
+                                  Content="Play all episodes that have more than one episode first"
+                                  IsChecked="{Binding AdditionalEpisodesFirst}"
+                                  ToolTip="For shows that have more than one episode, organize so that those shows with additional episodes will play first. This would have no effect if you only have one episode to watch for every series." />
+                        <CheckBox Margin="5"
                                   Content="Reverse order"
                                   IsChecked="{Binding ReverseOrder}"
                                   ToolTip="Reverse the order." />

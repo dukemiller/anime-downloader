@@ -43,6 +43,8 @@ namespace anime_downloader.ViewModels
 
         private bool _separateShowOrder;
 
+        private bool _additionalEpisodesFirst;
+
         // 
 
         public PlaylistCreatorViewModel(ISettingsService settings, IPlaylistService playlist)
@@ -78,6 +80,12 @@ namespace anime_downloader.ViewModels
         {
             get { return _reverseOrder; }
             set { Set(() => ReverseOrder, ref _reverseOrder, value); }
+        }
+
+        public bool AdditionalEpisodesFirst
+        {
+            get { return _additionalEpisodesFirst; }
+            set { Set(() => AdditionalEpisodesFirst, ref _additionalEpisodesFirst, value); }
         }
 
         public ObservableCollection<RadioModel> Options
@@ -133,6 +141,8 @@ namespace anime_downloader.ViewModels
                         Playlist.SeparateShowOrder();
                     if (ReverseOrder)
                         Playlist.ReverseOrder();
+                    if (AdditionalEpisodesFirst)
+                        Playlist.AdditionalEpisodesFirst();
 
                     await Playlist.Create();
 

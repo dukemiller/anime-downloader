@@ -26,6 +26,8 @@ namespace anime_downloader.Services.Interfaces
 
         void SeparateShowOrder();
 
+        void AdditionalEpisodesFirst();
+
         /// <summary>
         ///     Create the playlist.
         /// </summary>

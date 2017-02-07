@@ -64,6 +64,20 @@ namespace anime_downloader.Services
             Episodes = sortedEpisodes;
         }
 
+        public void AdditionalEpisodesFirst()
+        {
+            var episodes = Episodes.ToList();
+            var names = episodes.GroupBy(e => e.Name)
+                .Where(grp => grp.Count() > 1)
+                .SelectMany(group =>
+                {
+                    var count = group.Count();
+                    return group.Take(count - 1);
+                }).ToList();
+            var originals = episodes.Except(names);
+            Episodes = names.Concat(originals);
+        }
+
         public async Task<string> Create()
         {
             using (var writer = new StreamWriter(_settings.PathConfig.Playlist, false))
