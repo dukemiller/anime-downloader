@@ -1,0 +1,31 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!--  Brush Colors  -->
+
+    <SolidColorBrush x:Key="BackgroundColor" Color="#CAD6F3" />
+    <SolidColorBrush x:Key="MouseOverColor" Color="#A2B9F0" />
+    <SolidColorBrush x:Key="SelectedColor" Color="#2e51a2" />
+    <SolidColorBrush x:Key="PressedDownColor" Color="#2047A1" />
+    <SolidColorBrush x:Key="BorderColor" Color="#A1CAFF" />
+
+    <!--  Disabled Brush Colors  -->
+
+    <Color x:Key="DisabledBorderColor">#F3F3F3</Color>
+    <Color x:Key="DisabledBackgroundColor">#EBEDF3</Color>
+    <Color x:Key="DisabledForegroundColor">LightSlateGray</Color>
+
+    <!--  Special Brush Colors  -->
+
+    <SolidColorBrush x:Key="SpecialBackgroundColor" Color="#10D910" />
+    <SolidColorBrush x:Key="SpecialMouseOverColor" Color="#18B618" />
+    <SolidColorBrush x:Key="SpecialSelectedColor" Color="#139E13" />
+    <SolidColorBrush x:Key="SpecialPressedDownColor" Color="#0B8E0B" />
+    <SolidColorBrush x:Key="SpecialBorderColor" Color="#2CF12C" />
+
+    <!--  Disabled Brush Colors  -->
+
+    <SolidColorBrush x:Key="SpecialDisabledBorderColor" Color="#94D994" />
+    <SolidColorBrush x:Key="SpecialDisabledBackgroundColor" Color="#7EF17E" />
+    <SolidColorBrush x:Key="SpecialDisabledForegroundColor" Color="LightSlateGray" />
+
+    <!--  Fonts  -->
+</ResourceDictionary>

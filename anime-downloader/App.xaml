@@ -3,15 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:animeDownloader="clr-namespace:anime_downloader"
              xmlns:classes="clr-namespace:anime_downloader.Classes"
-             xmlns:components="clr-namespace:anime_downloader.Views.Components"
-             xmlns:viewModelComponents="clr-namespace:anime_downloader.ViewModels.Components"
-             xmlns:viewModels="clr-namespace:anime_downloader.ViewModels"
-             xmlns:views="clr-namespace:anime_downloader.Views"
-             xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
              StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <!--  Material Design  -->
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
@@ -25,109 +21,37 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ListBox.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.Blue.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Blue.xaml" />
+
+                <!--  Me  -->
+                <ResourceDictionary Source="Xaml/DataTemplates.xaml" />
+                <ResourceDictionary Source="Xaml/Colors.xaml" />
+                <ResourceDictionary Source="Xaml/ButtonStyles.xaml" />
+
             </ResourceDictionary.MergedDictionaries>
 
+            <!--  The ViewModel locator  -->
             <animeDownloader:ViewModelLocator x:Key="Locator" />
 
+            <!--  The preferred font for most of the application  -->
+            <FontFamily x:Key="MainFont">Yu Gothic UI Semilight</FontFamily>
+
+            <!--  Override of Material Design color  -->
             <SolidColorBrush x:Key="PrimaryHueMidBrush" Color="#2e51a2" />
 
             <!--  Converters  -->
 
             <classes:StringIsEmptyOrNullConverter x:Key="StringIsEmptyOrNullConverter" />
             <classes:StringLengthVisibilityConverter x:Key="StringLengthVisibilityConverter" />
-            <classes:StringLengthVisibilityConverterNot x:Key="StringLengthVisibilityConverterNot" />
-            <classes:StringCompareVisibilityConverter x:Key="StringCompareVisibilityConverter" />
-            <classes:IsNullVisibilityConverter x:Key="IsNullVisibilityConverter" />
             <classes:SynposisSnipConverter x:Key="SynposisSnipConverter" />
             <classes:EpisodeConverter x:Key="EpisodeConverter" />
             <classes:StringJoinConverter x:Key="StringJoinConverter" />
             <classes:StringCompareConverter x:Key="StringCompareConverter" />
-            <classes:StringJoinConverter x:Key="Converter" />
             <classes:StringCompareConverter x:Key="CompareConverter" />
             <classes:NotConverter x:Key="NotConverter" />
             <classes:ReverseVisibilityConverter x:Key="ReverseVisibilityConverter" />
-            <classes:BooleanVisibilityConverter x:Key="VisibilityConverter" />
             <classes:BooleanSymbolConverter x:Key="BooleanSymbolConverter" />
             <classes:BooleanColorConverter x:Key="BooleanColorConverter" />
-            <classes:BooleanOpacityConverterNot x:Key="BooleanOpacityConverterNot" />
             <classes:BooleanOpacityConverter x:Key="BooleanOpacityConverter" />
-            <classes:StringEqualsConverter x:Key="StringEqualsConverter" />
-
-            <!--  Views  -->
-
-            <DataTemplate DataType="{x:Type viewModels:HomeViewModel}">
-                <views:Home DataContext="{Binding}" />
-            </DataTemplate>
-
-            <DataTemplate DataType="{x:Type viewModels:AnimeDisplayViewModel}">
-                <views:AnimeDisplay DataContext="{Binding}" />
-            </DataTemplate>
-
-            <DataTemplate DataType="{x:Type viewModels:DownloadViewModel}">
-                <views:Download DataContext="{Binding}" />
-            </DataTemplate>
-
-            <DataTemplate DataType="{x:Type viewModels:ManageViewModel}">
-                <views:Manage DataContext="{Binding}" />
-            </DataTemplate>
-
-            <DataTemplate DataType="{x:Type viewModels:MiscViewModel}">
-                <views:Misc DataContext="{Binding}" />
-            </DataTemplate>
-
-            <DataTemplate DataType="{x:Type viewModels:PlaylistCreatorViewModel}">
-                <views:PlaylistCreator DataContext="{Binding}" />
-            </DataTemplate>
-
-            <DataTemplate DataType="{x:Type viewModels:SettingsViewModel}">
-                <views:Settings DataContext="{Binding}" />
-            </DataTemplate>
-
-            <DataTemplate DataType="{x:Type viewModels:WebViewModel}">
-                <views:Web DataContext="{Binding}" />
-            </DataTemplate>
-
-            <!--  Components  -->
-
-            <DataTemplate DataType="{x:Type viewModelComponents:AnimeDetailsViewModel}">
-                <components:AnimeDetails DataContext="{Binding}" />
-            </DataTemplate>
-
-            <DataTemplate DataType="{x:Type viewModelComponents:AnimeDetailsMultipleViewModel}">
-                <components:AnimeDetailsMultiple DataContext="{Binding}" />
-            </DataTemplate>
-
-            <DataTemplate DataType="{x:Type viewModelComponents:AnimeListViewModel}">
-                <components:AnimeList DataContext="{Binding}" />
-            </DataTemplate>
-
-            <DataTemplate DataType="{x:Type viewModelComponents:DownloaderViewModel}">
-                <components:Downloader DataContext="{Binding}" />
-            </DataTemplate>
-
-            <DataTemplate DataType="{x:Type viewModelComponents:DownloadOptionsViewModel}">
-                <components:DownloadOptions DataContext="{Binding}" />
-            </DataTemplate>
-
-            <DataTemplate DataType="{x:Type viewModelComponents:DownloadLogViewModel}">
-                <components:DownloadLog DataContext="{Binding}" />
-            </DataTemplate>
-
-            <DataTemplate DataType="{x:Type viewModelComponents:FileListViewModel}">
-                <components:FileList DataContext="{Binding}" />
-            </DataTemplate>
-
-            <DataTemplate DataType="{x:Type viewModelComponents:FindViewModel}">
-                <components:Find DataContext="{Binding}" />
-            </DataTemplate>
-
-            <DataTemplate DataType="{x:Type viewModelComponents:MyAnimeListBarViewModel}">
-                <components:MyAnimeListBar DataContext="{Binding}" />
-            </DataTemplate>
-
-            <DataTemplate DataType="{x:Type viewModelComponents:DialogViewModel}">
-                <components:Dialog DataContext="{Binding}" />
-            </DataTemplate>
 
             <!--  Storyboard  -->
 
@@ -137,131 +61,6 @@
                                  Storyboard.TargetProperty="Opacity"
                                  To="1.0" />
             </Storyboard>
-
-            <!--  Brush Colors  -->
-
-            <SolidColorBrush x:Key="BackgroundColor" Color="#CAD6F3" />
-            <SolidColorBrush x:Key="MouseOverColor" Color="#A2B9F0" />
-            <SolidColorBrush x:Key="SelectedColor" Color="#2e51a2" />
-            <SolidColorBrush x:Key="PressedDownColor" Color="#2047A1" />
-            <SolidColorBrush x:Key="BorderColor" Color="#A1CAFF" />
-
-            <!--  Disabled Brush Colors  -->
-
-            <SolidColorBrush x:Key="DisabledBorderColor" Color="#F3F3F3" />
-            <SolidColorBrush x:Key="DisabledBackgroundColor" Color="#EBEDF3" />
-            <SolidColorBrush x:Key="DisabledForegroundColor" Color="LightSlateGray" />
-
-            <!--  Special Brush Colors  -->
-
-            <SolidColorBrush x:Key="SpecialBackgroundColor" Color="#10D910" />
-            <SolidColorBrush x:Key="SpecialMouseOverColor" Color="#18B618" />
-            <SolidColorBrush x:Key="SpecialSelectedColor" Color="#139E13" />
-            <SolidColorBrush x:Key="SpecialPressedDownColor" Color="#0B8E0B" />
-            <SolidColorBrush x:Key="SpecialBorderColor" Color="#2CF12C" />
-
-            <!--  Disabled Brush Colors  -->
-
-            <SolidColorBrush x:Key="SpecialDisabledBorderColor" Color="#94D994" />
-            <SolidColorBrush x:Key="SpecialDisabledBackgroundColor" Color="#7EF17E" />
-            <SolidColorBrush x:Key="SpecialDisabledForegroundColor" Color="LightSlateGray" />
-
-            <!--  Fonts  -->
-
-            <FontFamily x:Key="LargeButtonFont">Segoe UI Light</FontFamily>
-            <FontFamily x:Key="MediumButtonFont">Segoe WP SemiLight</FontFamily>
-            <FontFamily x:Key="MainFont">Yu Gothic UI Semilight</FontFamily>
-
-            <!--  Button Styles  -->
-
-            <Style BasedOn="{StaticResource MaterialDesignFlatAccentButton}" TargetType="Button">
-                <Setter Property="Foreground" Value="Black" />
-                <Setter Property="Background" Value="{StaticResource BackgroundColor}" />
-            </Style>
-
-            <Style x:Key="LargeButtonStyle" TargetType="{x:Type ToggleButton}">
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="{x:Type ToggleButton}">
-                            <Border Background="{TemplateBinding Background}">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsEnabled" Value="false">
-                                    <Setter Property="Border.Opacity" Value="0.75" />
-                                    <Setter Property="Border.Background" Value="{StaticResource DisabledBackgroundColor}" />
-                                    <Setter Property="Border.BorderBrush" Value="{StaticResource DisabledBorderColor}" />
-                                    <Setter Property="Background" Value="{StaticResource DisabledBackgroundColor}" />
-                                    <Setter Property="Foreground" Value="{StaticResource DisabledForegroundColor}" />
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-                <Setter Property="IsTabStop" Value="False" />
-                <Setter Property="Background" Value="{StaticResource BackgroundColor}" />
-                <Setter Property="FontFamily" Value="{StaticResource LargeButtonFont}" />
-                <Setter Property="FontSize" Value="28" />
-                <Setter Property="FontWeight" Value="12" />
-                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-                <Setter Property="BorderBrush" Value="{x:Null}" />
-                <Setter Property="BorderThickness" Value="0" />
-                <Setter Property="Foreground" Value="Black" />
-                <Style.Triggers>
-                    <Trigger Property="IsChecked" Value="True">
-                        <Setter Property="Foreground" Value="White" />
-                        <Setter Property="Background" Value="{StaticResource SelectedColor}" />
-                    </Trigger>
-                    <MultiTrigger>
-                        <MultiTrigger.Conditions>
-                            <Condition Property="IsMouseOver" Value="True" />
-                            <Condition Property="IsChecked" Value="False" />
-                        </MultiTrigger.Conditions>
-                        <Setter Property="Foreground" Value="White" />
-                        <Setter Property="Background" Value="{StaticResource MouseOverColor}" />
-                    </MultiTrigger>
-                    <Trigger Property="IsPressed" Value="True">
-                        <Setter Property="Background" Value="{StaticResource PressedDownColor}" />
-                    </Trigger>
-                </Style.Triggers>
-            </Style>
-
-            <Style x:Key="SpecialButton"
-                   BasedOn="{StaticResource {x:Type Button}}"
-                   TargetType="{x:Type Button}">
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="{x:Type Button}">
-                            <Border Background="{TemplateBinding Background}"
-                                    BorderBrush="{StaticResource SpecialBorderColor}"
-                                    BorderThickness="0">
-                                <ContentPresenter Margin="5"
-                                                  HorizontalAlignment="Center"
-                                                  VerticalAlignment="Center" />
-
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsEnabled" Value="false">
-                                    <Setter Property="Border.Opacity" Value="0.75" />
-                                    <Setter Property="Border.Background" Value="{StaticResource SpecialDisabledBackgroundColor}" />
-                                    <Setter Property="Background" Value="{StaticResource SpecialDisabledBackgroundColor}" />
-                                    <Setter Property="Border.BorderBrush" Value="{StaticResource DisabledBorderColor}" />
-                                    <Setter Property="Foreground" Value="{StaticResource SpecialDisabledForegroundColor}" />
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-                <Setter Property="Background" Value="{StaticResource SpecialBackgroundColor}" />
-                <Style.Triggers>
-                    <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Background" Value="{StaticResource SpecialMouseOverColor}" />
-                    </Trigger>
-                    <Trigger Property="IsPressed" Value="True">
-                        <Setter Property="Background" Value="{StaticResource SpecialPressedDownColor}" />
-                    </Trigger>
-                </Style.Triggers>
-            </Style>
 
         </ResourceDictionary>
     </Application.Resources>
