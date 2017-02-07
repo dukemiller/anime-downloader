@@ -48,6 +48,7 @@ namespace anime_downloader.Classes
     public class GroupFileDistance
     {
         private const double Bias = 2.35;
+
         private static readonly string[] CommonTokens = {"no", "to", "na"};
 
         private readonly int _allMatchBonus;

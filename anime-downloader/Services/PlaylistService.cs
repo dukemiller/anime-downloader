@@ -10,16 +10,15 @@ namespace anime_downloader.Services
 {
     public class PlaylistService : IPlaylistService
     {
-
         private readonly ISettingsService _settings;
 
         public PlaylistService(ISettingsService settings, IFileService file)
         {
             _settings = settings;
-            File = file;
+            _file = file;
         }
 
-        public IFileService File { get; set; }
+        private readonly IFileService _file;
 
         public IEnumerable<AnimeFile> Episodes { get; set; }
 
@@ -29,7 +28,7 @@ namespace anime_downloader.Services
 
         // 
 
-        public void Refresh() => Episodes = File.GetEpisodes(EpisodeStatus.Unwatched);
+        public void Refresh() => Episodes = _file.GetEpisodes(EpisodeStatus.Unwatched);
 
         public void Set(IEnumerable<AnimeFile> files)
         {
@@ -38,7 +37,7 @@ namespace anime_downloader.Services
 
         public void OrderByEpisodeNumber() => Episodes = Episodes.OrderBy(f => f.Episode);
 
-        public void OrderByDate() => Episodes = Episodes.OrderBy(e => System.IO.File.GetCreationTime(e.Path));
+        public void OrderByDate() => Episodes = Episodes.OrderBy(e => File.GetCreationTime(e.Path));
 
         public void ReverseOrder() => Episodes = Episodes.Reverse();
 

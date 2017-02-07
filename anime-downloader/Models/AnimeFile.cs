@@ -68,5 +68,6 @@ namespace anime_downloader.Models
         {
             return string.Compare(StrippedFilename, other.StrippedFilename, StringComparison.Ordinal);
         }
+        
     }
 }

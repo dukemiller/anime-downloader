@@ -49,13 +49,13 @@ namespace anime_downloader.ViewModels
 
         public PlaylistCreatorViewModel(ISettingsService settings, IPlaylistService playlist)
         {
-            Settings = settings;
-            Playlist = playlist;
+            _settings = settings;
+            _playlist = playlist;
 
             // 
 
             Options = new ObservableCollection<RadioModel> {Default, Episode, Date};
-            FileExists = File.Exists(Settings.PathConfig.Playlist);
+            FileExists = File.Exists(_settings.PathConfig.Playlist);
             SelectedRadio = Options.Skip(1).First();
 
             // 
@@ -64,9 +64,9 @@ namespace anime_downloader.ViewModels
             OpenCommand = new RelayCommand(Open, () => FileExists);
         }
 
-        public ISettingsService Settings { get; }
+        private readonly ISettingsService _settings;
 
-        public IPlaylistService Playlist { get; }
+        private readonly IPlaylistService _playlist;
 
         // 
 
@@ -115,16 +115,16 @@ namespace anime_downloader.ViewModels
         private void Open()
         {
             if (FileExists)
-                Process.Start(Settings.PathConfig.Playlist);
+                Process.Start(_settings.PathConfig.Playlist);
         }
 
         private async void Create()
         {
-            if (Settings.CrucialDirectoriesExist())
+            if (_settings.CrucialDirectoriesExist())
             {
-                Playlist.Refresh();
+                _playlist.Refresh();
 
-                if (Playlist.Length == 0)
+                if (_playlist.Length == 0)
                 {
                     Methods.Alert("No playlist created (no files were found in the episode folders).");
                 }
@@ -132,24 +132,24 @@ namespace anime_downloader.ViewModels
                 else
                 {
                     if (SelectedRadio.Tag.Equals("Episode"))
-                        Playlist.OrderByEpisodeNumber();
+                        _playlist.OrderByEpisodeNumber();
                     else if (SelectedRadio.Tag.Equals("Date"))
-                        Playlist.OrderByDate();
+                        _playlist.OrderByDate();
                     // else it's just default
 
                     if (SeparateShowOrder)
-                        Playlist.SeparateShowOrder();
+                        _playlist.SeparateShowOrder();
                     if (ReverseOrder)
-                        Playlist.ReverseOrder();
+                        _playlist.ReverseOrder();
                     if (AdditionalEpisodesFirst)
-                        Playlist.AdditionalEpisodesFirst();
+                        _playlist.AdditionalEpisodesFirst();
 
-                    await Playlist.Create();
+                    await _playlist.Create();
 
                     Methods.Alert("Playlist created.");
                 }
 
-                FileExists = File.Exists(Settings.PathConfig.Playlist);
+                FileExists = File.Exists(_settings.PathConfig.Playlist);
             }
         }
     }

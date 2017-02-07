@@ -120,7 +120,7 @@ namespace anime_downloader.Services
 
         /* Closest */
 
-        /// A set of static retrieval methods for finding anime in the collection without needing to strum up
+        /// A set of retrieval methods for finding anime in the collection without needing to strum up
         /// linq methods, getting the best guess to what the anime is based solely on the given input string
         public AnimeFile ClosestFile(IEnumerable<AnimeFile> files, string name)
         {
@@ -134,18 +134,18 @@ namespace anime_downloader.Services
         public Anime ClosestAnime(IEnumerable<Anime> animes, AnimeFile file)
         {
             return animes
-                .Select(a => new StringDistance<Anime>(a, file.Name, a.Name))
-                .Where(ap => ap.Distance <= 10)
-                .OrderBy(ap => ap.Distance)
+                .Select(anime => new StringDistance<Anime>(anime, file.Name, anime.Name))
+                .Where(pair => pair.Distance <= 10)
+                .OrderBy(pair => pair.Distance)
                 .FirstOrDefault()?.Item;
         }
 
         public Anime ClosestAnime(IEnumerable<Anime> animes, string name)
         {
             return animes
-                .Select(a => new StringDistance<Anime>(a, name, a.Name))
-                .Where(ap => ap.Distance <= 10)
-                .OrderBy(ap => ap.Distance)
+                .Select(anime => new StringDistance<Anime>(anime, name, anime.Name))
+                .Where(pair => pair.Distance <= 10)
+                .OrderBy(pair => pair.Distance)
                 .FirstOrDefault()?.Item;
         }
 
