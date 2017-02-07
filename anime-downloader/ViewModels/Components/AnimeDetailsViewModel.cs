@@ -39,10 +39,7 @@ namespace anime_downloader.ViewModels.Components
 
             ButtonCommand = new RelayCommand(
                 Edit,
-                () =>
-                    !AnimeAggregate.AnimeService.Animes.Except(new[] {Anime})
-                        .Any(a => a.Name.ToLower().Trim().Equals(Anime?.Name?.ToLower().Trim()))
-                    && Anime?.Name?.Length > 0
+                () => Anime?.Name?.Length > 0
             );
             ExitCommand = new RelayCommand(() =>
             {
