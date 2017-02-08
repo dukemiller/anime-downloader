@@ -7,39 +7,39 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <!--  Material Design  -->
+                <!--Material Design ## Themes-->
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ToggleButton.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBox.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBlock.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Label.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.CheckBox.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ComboBox.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.DataGrid.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Label.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ListBox.xaml" />
+                
+                <!--Material Design ## Colors-->
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.Blue.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Blue.xaml" />
-
-                <!--  Me  -->
+                
+                <!--Me-->  
                 <ResourceDictionary Source="Xaml/DataTemplates.xaml" />
                 <ResourceDictionary Source="Xaml/Colors.xaml" />
-                <ResourceDictionary Source="Xaml/ButtonStyles.xaml" />
-
+                <ResourceDictionary Source="Xaml/Buttons.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <!--  The ViewModel locator  -->
+            <!-- The ViewModel locator -->
             <animeDownloader:ViewModelLocator x:Key="Locator" />
 
-            <!--  The preferred font for most of the application  -->
+            <!-- The preferred font for most of the application -->
             <FontFamily x:Key="MainFont">Yu Gothic UI Semilight</FontFamily>
 
-            <!--  Override of Material Design color  -->
+            <!-- Override of Material Design color -->
             <SolidColorBrush x:Key="PrimaryHueMidBrush" Color="#2e51a2" />
 
             <!--  Converters  -->
-
             <classes:StringIsEmptyOrNullConverter x:Key="StringIsEmptyOrNullConverter" />
             <classes:StringLengthVisibilityConverter x:Key="StringLengthVisibilityConverter" />
             <classes:SynposisSnipConverter x:Key="SynposisSnipConverter" />
@@ -54,7 +54,6 @@
             <classes:BooleanOpacityConverter x:Key="BooleanOpacityConverter" />
 
             <!--  Storyboard  -->
-
             <Storyboard x:Key="DisplayTransition">
                 <DoubleAnimation Duration="0:0:0.35"
                                  From="0.0"
