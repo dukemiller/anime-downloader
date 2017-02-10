@@ -28,6 +28,7 @@
                                         <RadioButton Margin="5"
                                                      VerticalAlignment="Center"
                                                      VerticalContentAlignment="Center"
+                                                     FocusVisualStyle="{x:Null}" 
                                                      d:DataContext="{d:DesignInstance d:Type=models:RadioModel}"
                                                      Content="{Binding Header}"
                                                      IsChecked="{Binding RelativeSource={RelativeSource TemplatedParent},

@@ -66,15 +66,24 @@
                             <Label Content="Status"
                                    FontStyle="Italic"
                                    Foreground="DarkGray" />
-                            <RadioButton Content="Mark fully watched as completed" IsChecked="{Binding SelectedIndex, Converter={StaticResource CompareConverter}, ConverterParameter=1}" />
+                            <RadioButton Content="Mark fully watched as completed"
+                                         FocusVisualStyle="{x:Null}"
+                                         IsChecked="{Binding SelectedIndex,
+                                                             Converter={StaticResource CompareConverter},
+                                                             ConverterParameter=1}" />
                             <Label Content="Files"
                                    FontStyle="Italic"
                                    Foreground="DarkGray" />
-                            <RadioButton Content="Move duplicates to 'My Videos'" IsChecked="{Binding SelectedIndex, Converter={StaticResource CompareConverter}, ConverterParameter=2}" />
+                            <RadioButton Content="Move duplicates to 'My Videos'"
+                                         FocusVisualStyle="{x:Null}"
+                                         IsChecked="{Binding SelectedIndex,
+                                                             Converter={StaticResource CompareConverter},
+                                                             ConverterParameter=2}" />
                             <Label Content="Episode"
                                    FontStyle="Italic"
                                    Foreground="DarkGray" />
                             <RadioButton Content="Set episode to last found episode #"
+                                         FocusVisualStyle="{x:Null}"
                                          IsChecked="{Binding SelectedIndex,
                                                              Converter={StaticResource CompareConverter},
                                                              ConverterParameter=4}"
@@ -92,7 +101,11 @@
                             <Label Content="API"
                                    FontStyle="Italic"
                                    Foreground="DarkGray" />
-                            <RadioButton Content="Regather shows with no ep. total" IsChecked="{Binding SelectedIndex, Converter={StaticResource CompareConverter}, ConverterParameter=3}" />
+                            <RadioButton Content="Regather shows with no ep. total"
+                                         FocusVisualStyle="{x:Null}"
+                                         IsChecked="{Binding SelectedIndex,
+                                                             Converter={StaticResource CompareConverter},
+                                                             ConverterParameter=3}" />
                         </StackPanel>
                     </GroupBox>
                 </StackPanel>

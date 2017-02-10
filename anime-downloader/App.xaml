@@ -7,7 +7,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <!--Material Design ## Themes-->
+                <!--  Material Design ## Themes  -->
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
@@ -19,24 +19,24 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.DataGrid.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Label.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ListBox.xaml" />
-                
-                <!--Material Design ## Colors-->
+
+                <!--  Material Design ## Colors  -->
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.Blue.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Blue.xaml" />
-                
-                <!--Me-->  
+
+                <!--  Me  -->
                 <ResourceDictionary Source="Xaml/DataTemplates.xaml" />
                 <ResourceDictionary Source="Xaml/Colors.xaml" />
                 <ResourceDictionary Source="Xaml/Buttons.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <!-- The ViewModel locator -->
+            <!--  The ViewModel locator  -->
             <animeDownloader:ViewModelLocator x:Key="Locator" />
 
-            <!-- The preferred font for most of the application -->
+            <!--  The preferred font for most of the application  -->
             <FontFamily x:Key="MainFont">Yu Gothic UI Semilight</FontFamily>
 
-            <!-- Override of Material Design color -->
+            <!--  Override of Material Design color  -->
             <SolidColorBrush x:Key="PrimaryHueMidBrush" Color="#2e51a2" />
 
             <!--  Converters  -->
