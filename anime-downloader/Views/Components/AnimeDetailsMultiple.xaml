@@ -4,6 +4,7 @@
              xmlns:classes="clr-namespace:anime_downloader.Classes"
              xmlns:components="clr-namespace:anime_downloader.ViewModels.Components"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
              d:DataContext="{d:DesignInstance components:AnimeDetailsMultipleViewModel}"
@@ -11,24 +12,11 @@
              d:DesignWidth="680"
              mc:Ignorable="d">
     <UserControl.Resources>
-        <classes:StringCompareConverter x:Key="StringCompareConverter" />
-        <Style TargetType="{x:Type Label}">
+
+        <Style BasedOn="{StaticResource MaterialDesignLabel}" TargetType="{x:Type Label}">
             <Setter Property="FontSize" Value="16" />
             <Setter Property="FontFamily" Value="{StaticResource MainFont}" />
             <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-        </Style>
-
-        <Style TargetType="{x:Type TextBox}">
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="HorizontalContentAlignment" Value="Left" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="FontSize" Value="16" />
-        </Style>
-
-        <Style TargetType="{x:Type ComboBox}">
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
         </Style>
 
@@ -56,101 +44,48 @@
                      AcceptsReturn="True"
                      IsReadOnly="{Binding Editing}"
                      IsTabStop="{Binding Editing}"
+                     Style="{x:Null}"
                      Text="{Binding Input}"
                      TextWrapping="Wrap" />
-            <Grid Grid.Row="2"
-                  Margin="0,10,0,10"
-                  HorizontalAlignment="Stretch"
-                  Background="PapayaWhip">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="2*" />
-                </Grid.ColumnDefinitions>
-                <Grid Grid.Column="0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="1*" />
-                        <RowDefinition Height="1*" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="2*" />
-                    </Grid.ColumnDefinitions>
 
+            <materialDesign:Card Grid.Row="2" Margin="0,10">
+                <UniformGrid Margin="10" Columns="6" Rows="2">
                     <Label Content="Episode" />
-
-                    <TextBox Grid.Row="0"
-                             Grid.Column="1"
-                             PreviewTextInput="Episode_PreviewTextInput"
+                    <TextBox PreviewTextInput="Episode_PreviewTextInput"
                              Text="{Binding Path=Details.Episode,
                                             UpdateSourceTrigger=PropertyChanged}"
                              TextWrapping="Wrap" />
-
-                    <Label Grid.Row="1"
-                           Grid.Column="0"
-                           Content="Rating" />
-
-                    <TextBox Grid.Row="1"
-                             Grid.Column="1"
+                    
+                    <Label Content="Rating" />
+                    <TextBox materialDesign:HintAssist.Hint="0-10"
                              IsHitTestVisible="{Binding Editing}"
                              IsTabStop="{Binding Editing}"
                              Opacity="{Binding LoadOpacity}"
                              PreviewTextInput="Rating_PreviewTextInput"
                              Text="{Binding Details.Rating}" />
-                </Grid>
-                <Grid Grid.Column="1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="1*" />
-                        <RowDefinition Height="1*" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="2*" />
-                        <ColumnDefinition Width="1*" />
-                    </Grid.ColumnDefinitions>
 
-                    <Label Grid.Row="0"
-                           Grid.Column="0"
-                           Content="Airing" />
-
-                    <CheckBox Grid.Row="0"
-                              Grid.Column="1"
-                              HorizontalAlignment="Left"
+                    <Label Content="Airing" />
+                    <CheckBox HorizontalAlignment="Left"
                               VerticalContentAlignment="Center"
                               IsChecked="{Binding Details.Airing}" />
-                </Grid>
-                <Grid Grid.Column="2">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="1*" />
-                        <RowDefinition Height="1*" />
-                    </Grid.RowDefinitions>
 
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="2*" />
-                    </Grid.ColumnDefinitions>
-
-                    <Label Grid.Row="0"
-                           Grid.Column="0"
-                           Content="Resolution" />
-                    <ComboBox Grid.Row="0" Grid.Column="1">
+                    <Label Content="Resolution" />
+                    <ComboBox>
                         <ComboBoxItem Content="480" IsSelected="{Binding Path=Details.Resolution, Converter={StaticResource StringCompareConverter}, ConverterParameter=480}" />
                         <ComboBoxItem Content="720" IsSelected="{Binding Path=Details.Resolution, Converter={StaticResource StringCompareConverter}, ConverterParameter=720}" />
                         <ComboBoxItem Content="1080" IsSelected="{Binding Path=Details.Resolution, Converter={StaticResource StringCompareConverter}, ConverterParameter=1080}" />
                     </ComboBox>
 
-                    <Label Grid.Row="1"
-                           Grid.Column="0"
-                           Content="Status" />
-                    <ComboBox Grid.Row="1" Grid.Column="1">
-                        <ComboBoxItem Content="" IsSelected="{Binding Path=Details.Status, Converter={StaticResource StringCompareConverter}, ConverterParameter=''}" />
+                    <Label Content="Status" />
+                    <ComboBox>
                         <ComboBoxItem Content="Considering" IsSelected="{Binding Path=Details.Status, Converter={StaticResource StringCompareConverter}, ConverterParameter=Considering}" />
                         <ComboBoxItem Content="Watching" IsSelected="{Binding Path=Details.Status, Converter={StaticResource StringCompareConverter}, ConverterParameter=Watching}" />
                         <ComboBoxItem Content="Finished" IsSelected="{Binding Path=Details.Status, Converter={StaticResource StringCompareConverter}, ConverterParameter=Finished}" />
                         <ComboBoxItem Content="On Hold" IsSelected="{Binding Path=Details.Status, Converter={StaticResource StringCompareConverter}, ConverterParameter='On Hold'}" />
                         <ComboBoxItem Content="Dropped" IsSelected="{Binding Path=Details.Status, Converter={StaticResource StringCompareConverter}, ConverterParameter=Dropped}" />
                     </ComboBox>
-                </Grid>
-            </Grid>
+                </UniformGrid>
+            </materialDesign:Card>
 
             <Button Grid.Row="3"
                     HorizontalAlignment="Right"
