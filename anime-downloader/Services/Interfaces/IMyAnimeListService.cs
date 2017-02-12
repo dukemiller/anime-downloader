@@ -69,6 +69,14 @@ namespace anime_downloader.Services.Interfaces
         Task<IEnumerable<FindResult>> Find(string q);
 
         /// <summary>
+        ///     'Refresh' the MyAnimeList details on an anime object, replacing current existing
+        ///     information with any information done on a new `Find` on that anime's existing id.
+        ///     This operation should only be done on an Anime that already has a MyAnimeList ID, to
+        ///     find the ID instead use `GetId(Anime)`.
+        /// </summary>
+        Task<bool> Refresh(Anime anime);
+
+        /// <summary>
         ///     Gather all animes from the user's profile
         /// </summary>
         /// <returns></returns>

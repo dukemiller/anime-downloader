@@ -97,49 +97,8 @@ namespace anime_downloader.ViewModels.Components
         private async void Refresh()
         {
             MessengerInstance.Send(new WorkMessage {Working = true});
-
-            var animeResults = await _animeAggregate.MalService.Find(HttpUtility.UrlEncode(_anime.MyAnimeList.Title));
-            var result = animeResults.FirstOrDefault(r => r.Id.Equals(_anime.MyAnimeList.Id));
-
-            if (result != null)
-            {
-                _anime.MyAnimeList.Synopsis = result.Synopsis;
-                _anime.MyAnimeList.Image = result.Image;
-                _anime.MyAnimeList.Title = result.Title;
-                _anime.MyAnimeList.English = result.English;
-                _anime.MyAnimeList.Synopsis = result.Synopsis;
-                _anime.MyAnimeList.TotalEpisodes = result.TotalEpisodes;
-
-                DateTime start;
-                if (DateTime.TryParse(result.StartDate, out start))
-                {
-                    _anime.MyAnimeList.Aired = new AnimeSeason
-                    {
-                        Year = start.Year,
-                        Season = (Season)Math.Ceiling(Convert.ToDouble(start.Month) / 3)
-                    };
-                }
-
-                DateTime end;
-                if (DateTime.TryParse(result.EndDate, out end))
-                {
-                    _anime.MyAnimeList.Ended = new AnimeSeason
-                    {
-                        Year = end.Year,
-                        Season = (Season)Math.Ceiling(Convert.ToDouble(end.Month) / 3)
-                    };
-
-                    var now = DateTime.Now;
-                    _anime.Airing = end.Year >= now.Year && (end.Month > now.Month ||
-                                                            end.Month == now.Month && end.Day > now.Day);
-                }
-            }
-
-            else
-            {
+            if (!await _malService.Refresh(_anime))
                 Methods.Alert("Had trouble finding this show on MAL.");
-            }
-
             RaisePropertyChanged(nameof(HasId));
             MessengerInstance.Send(new WorkMessage {Working = false});
         }

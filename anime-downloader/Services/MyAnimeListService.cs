@@ -243,6 +243,51 @@ namespace anime_downloader.Services
                 }
         }
 
+        public async Task<bool> Refresh(Anime anime)
+        {
+            if (!anime.MyAnimeList.HasId)
+                return false;
+
+            var animeResults = await Find(HttpUtility.UrlEncode(anime.MyAnimeList.Title));
+            var result = animeResults.FirstOrDefault(r => r.Id.Equals(anime.MyAnimeList.Id));
+
+            if (result == null)
+                return false;
+
+            anime.MyAnimeList.Synopsis = result.Synopsis;
+            anime.MyAnimeList.Image = result.Image;
+            anime.MyAnimeList.Title = result.Title;
+            anime.MyAnimeList.English = result.English;
+            anime.MyAnimeList.Synopsis = result.Synopsis;
+            anime.MyAnimeList.TotalEpisodes = result.TotalEpisodes;
+
+            DateTime start;
+            if (DateTime.TryParse(result.StartDate, out start))
+            {
+                anime.MyAnimeList.Aired = new AnimeSeason
+                {
+                    Year = start.Year,
+                    Season = (Season)Math.Ceiling(Convert.ToDouble(start.Month) / 3)
+                };
+            }
+
+            DateTime end;
+            if (DateTime.TryParse(result.EndDate, out end))
+            {
+                anime.MyAnimeList.Ended = new AnimeSeason
+                {
+                    Year = end.Year,
+                    Season = (Season)Math.Ceiling(Convert.ToDouble(end.Month) / 3)
+                };
+
+                var now = DateTime.Now;
+                anime.Airing = end.Year >= now.Year && (end.Month > now.Month ||
+                                                        end.Month == now.Month && end.Day > now.Day);
+            }
+
+            return true;
+        }
+
         // API requests
 
         private async Task<IEnumerable<ProfileAnimeResult>> GetProfile()
