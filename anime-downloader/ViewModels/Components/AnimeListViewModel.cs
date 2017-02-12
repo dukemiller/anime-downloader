@@ -55,6 +55,13 @@ namespace anime_downloader.ViewModels.Components
 
             // 
 
+            SelectionChangedCommand = new RelayCommand<IList>(items =>
+            {
+                if (items == null)
+                    return;
+                SelectedAnimes = items.Cast<Anime>().ToList();
+            });
+
             FindToggleCommand = new RelayCommand(() => Find.Toggle());
 
             AddCommand = new RelayCommand(Add);
@@ -114,7 +121,7 @@ namespace anime_downloader.ViewModels.Components
             set { Set(() => Animes, ref _animes, value); }
         }
 
-        public ObservableCollection<Anime> SelectedAnimes { get; set; } = new ObservableCollection<Anime>();
+        private List<Anime> SelectedAnimes { get; set; } = new List<Anime>();
 
         public ISettingsService Settings
         {
@@ -135,6 +142,8 @@ namespace anime_downloader.ViewModels.Components
         public RelayCommand FindToggleCommand { get; set; }
 
         public RelayCommand CopyCommand { get; set; }
+
+        public RelayCommand<IList> SelectionChangedCommand { get; set; }
 
         // 
 

@@ -41,7 +41,8 @@
             <RowDefinition Height="15*" />
             <RowDefinition Height="2*" />
         </Grid.RowDefinitions>
-        <DataGrid Grid.Row="0"
+        <DataGrid x:Name="DataGrid"
+                  Grid.Row="0"
                   materialDesign:DataGridAssist.CellPadding="5"
                   AutoGenerateColumns="False"
                   FocusVisualStyle="{x:Null}"
@@ -82,9 +83,12 @@
                     <MenuItem Command="{Binding SearchCommand}" Header="Search on MyAnimeList ..." />
                 </ContextMenu>
             </DataGrid.ContextMenu>
-            <i:Interaction.Behaviors>
-                <xaml:MultiSelectionBehavior SelectedItems="{Binding SelectedAnimes}" />
-            </i:Interaction.Behaviors>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="SelectionChanged">
+                    <i:InvokeCommandAction Command="{Binding SelectionChangedCommand}" CommandParameter="{Binding SelectedItems, ElementName=DataGrid}" />
+                </i:EventTrigger>
+                <!--<xaml:MultiSelectionBehavior SelectedItems="{Binding SelectedAnimes}" />-->
+            </i:Interaction.Triggers>
             <DataGrid.Resources>
                 <Style BasedOn="{StaticResource MaterialDesignDataGridCell}" TargetType="DataGridCell">
                     <Setter Property="BorderThickness" Value="0" />
