@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -20,7 +21,7 @@ namespace anime_downloader.ViewModels.Components
 {
     public class AnimeListViewModel : ViewModelBase
     {
-        private IAnimeAggregateService _animeAggregate;
+        private readonly IAnimeService _animeService;
         private ObservableCollection<Anime> _animes;
         private string _filterText;
         private FindViewModel _find;
@@ -29,10 +30,10 @@ namespace anime_downloader.ViewModels.Components
 
         // 
 
-        public AnimeListViewModel(ISettingsService settings, IAnimeAggregateService animeAggregate)
+        public AnimeListViewModel(ISettingsService settings, IAnimeService animeService)
         {
+            _animeService = animeService;
             Settings = settings;
-            AnimeAggregate = animeAggregate;
 
             // 
 
@@ -41,16 +42,16 @@ namespace anime_downloader.ViewModels.Components
             {
                 if (args.PropertyName.Equals("Text"))
                     if (Find.Text.Equals(""))
-                        Animes = new ObservableCollection<Anime>(AnimeAggregate.AnimeService.FilteredAndSorted());
+                        Animes = new ObservableCollection<Anime>(_animeService.FilteredAndSorted());
                     else
                         Animes =
                             new ObservableCollection<Anime>(
-                                AnimeAggregate.AnimeService.FilteredAndSorted().Where(
+                                _animeService.FilteredAndSorted().Where(
                                     a => a.Name.ToLower().Contains(Find.Text.ToLower())));
             };
 
             FilterText = Settings.FilterBy;
-            Animes = new ObservableCollection<Anime>(AnimeAggregate.AnimeService.FilteredAndSorted());
+            Animes = new ObservableCollection<Anime>(_animeService.FilteredAndSorted());
 
             // 
 
@@ -78,7 +79,7 @@ namespace anime_downloader.ViewModels.Components
                 _filterText = value;
                 Settings.FilterBy = value;
                 Settings.Save();
-                Animes = new ObservableCollection<Anime>(AnimeAggregate.AnimeService.FilteredAndSorted());
+                Animes = new ObservableCollection<Anime>(_animeService.FilteredAndSorted());
             }
         }
 
@@ -86,7 +87,7 @@ namespace anime_downloader.ViewModels.Components
         {
             get
             {
-                var anime = AnimeAggregate.AnimeService.Animes.ToList();
+                var anime = _animeService.Animes.ToList();
                 return $"{anime.Count} total. " +
                        $"{anime.Count(a => a.Airing && a.Status == Status.Watching)} airing/watching, " +
                        $"{anime.Count(a => a.Status == Status.Finished)} finished, " +
@@ -119,12 +120,6 @@ namespace anime_downloader.ViewModels.Components
         {
             get { return _settings; }
             set { Set(() => Settings, ref _settings, value); }
-        }
-
-        public IAnimeAggregateService AnimeAggregate
-        {
-            get { return _animeAggregate; }
-            set { Set(() => AnimeAggregate, ref _animeAggregate, value); }
         }
 
         public RelayCommand AddCommand { get; set; }
@@ -163,7 +158,7 @@ namespace anime_downloader.ViewModels.Components
 
                 else
                 {
-                    AnimeAggregate.AnimeService.Remove(anime);
+                    _animeService.Remove(anime);
                     Animes.Remove(anime);
                 }
             RaisePropertyChanged(nameof(Stats));
@@ -175,9 +170,7 @@ namespace anime_downloader.ViewModels.Components
             if (SelectedAnime == null)
                 return;
             if (SelectedAnime.MyAnimeList.HasId)
-            {
                 Process.Start($"http://myanimelist.net/anime/{SelectedAnime.MyAnimeList.Id}");
-            }
             else
             {
                 MessengerInstance.Send(new WorkMessage {Working = true});
@@ -188,7 +181,7 @@ namespace anime_downloader.ViewModels.Components
 
         private void Add() => MessengerInstance.Send(new NotificationMessage("anime_new"));
 
-        private void AddMultiple() => MessengerInstance.Send(new NotificationMessage("anime_newMultiple"));
+        private void AddMultiple() => MessengerInstance.Send(new NotificationMessage("anime_new_multiple"));
 
         private static async Task SearchAndOpenAsync(string text)
         {

@@ -54,8 +54,8 @@
                      VerticalAlignment="Stretch"
                      VerticalContentAlignment="Top"
                      AcceptsReturn="True"
-                     IsReadOnly="{Binding Loading}"
-                     IsTabStop="{Binding Loading}"
+                     IsReadOnly="{Binding Editing}"
+                     IsTabStop="{Binding Editing}"
                      Text="{Binding Input}"
                      TextWrapping="Wrap" />
             <Grid Grid.Row="2"
@@ -84,8 +84,7 @@
                              PreviewTextInput="Episode_PreviewTextInput"
                              Text="{Binding Path=Details.Episode,
                                             UpdateSourceTrigger=PropertyChanged}"
-                             TextWrapping="Wrap">
-                    </TextBox>
+                             TextWrapping="Wrap" />
 
                     <Label Grid.Row="1"
                            Grid.Column="0"
@@ -93,8 +92,8 @@
 
                     <TextBox Grid.Row="1"
                              Grid.Column="1"
-                             IsHitTestVisible="{Binding Loading}"
-                             IsTabStop="{Binding Loading}"
+                             IsHitTestVisible="{Binding Editing}"
+                             IsTabStop="{Binding Editing}"
                              Opacity="{Binding LoadOpacity}"
                              PreviewTextInput="Rating_PreviewTextInput"
                              Text="{Binding Details.Rating}" />
@@ -155,7 +154,7 @@
 
             <Button Grid.Row="3"
                     HorizontalAlignment="Right"
-                    Command="{Binding SubmitCommand}"
+                    Command="{Binding SubmitActionCommand}"
                     Content="Submit" />
         </Grid>
     </Grid>

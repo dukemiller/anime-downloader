@@ -14,24 +14,34 @@ namespace anime_downloader.ViewModels.Components
 {
     public class MyAnimeListBarViewModel : ViewModelBase
     {
-        private readonly Anime _anime;
+        private Anime _anime;
 
         private readonly ISettingsService _settings;
 
-        private readonly IAnimeAggregateService _animeAggregate;
+        private readonly IMyAnimeListService _malService;
 
         // 
 
-        public MyAnimeListBarViewModel(Anime anime, ISettingsService settings, IAnimeAggregateService animeAggregate)
+        public MyAnimeListBarViewModel(ISettingsService settings, IMyAnimeListService malService)
         {
-            _anime = anime;
             _settings = settings;
-            _animeAggregate = animeAggregate;
+            _malService = malService;
 
             FindCommand = new RelayCommand(Find, () => _settings.MyAnimeListConfig.Works);
             ClearCommand = new RelayCommand(Clear);
             ProfileCommand = new RelayCommand(Profile);
             RefreshCommand = new RelayCommand(Refresh);
+
+            _settings.MyAnimeListConfig.PropertyChanged += (sender, args) =>
+            {
+                if (args.PropertyName.Equals("Works"))
+                    RaisePropertyChanged(nameof(LoggedIntoMal));
+            };
+        }
+
+        public MyAnimeListBarViewModel Load(Anime anime)
+        {
+            _anime = anime;
 
             _anime.MyAnimeList.PropertyChanged += (sender, args) =>
             {
@@ -39,11 +49,7 @@ namespace anime_downloader.ViewModels.Components
                     RaisePropertyChanged(nameof(HasId));
             };
 
-            _settings.MyAnimeListConfig.PropertyChanged += (sender, args) =>
-            {
-                if (args.PropertyName.Equals("Works"))
-                    RaisePropertyChanged(nameof(LoggedIntoMal));
-            };
+            return this;
         }
 
         // 
@@ -65,7 +71,7 @@ namespace anime_downloader.ViewModels.Components
         private async void Find()
         {
             MessengerInstance.Send(new WorkMessage {Working = true});
-            var id = await _animeAggregate.MalService.GetId(_anime);
+            var id = await _malService.GetId(_anime);
             RaisePropertyChanged(nameof(HasId));
             _settings.Save();
             if (!id)

@@ -9,11 +9,14 @@ using anime_downloader.Models;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Ioc;
 
 namespace anime_downloader.ViewModels.Components
 {
     public class AnimeDetailsViewModel : ViewModelBase
     {
+        private readonly IAnimeService _animeService;
+        private readonly IFileService _fileService;
         private Anime _anime;
         private RelayCommand _buttonCommand;
         private string _buttonText;
@@ -24,74 +27,84 @@ namespace anime_downloader.ViewModels.Components
 
         // 
 
-        /// <summary>
-        ///     Edit
-        /// </summary>
-        public AnimeDetailsViewModel(ISettingsService settings, IAnimeAggregateService animeAggregate, Anime anime)
+        public AnimeDetailsViewModel(ISettingsService settings, IAnimeService animeService, IFileService fileService)
         {
             Settings = settings;
-            AnimeAggregate = animeAggregate;
+            _animeService = animeService;
+            _fileService = fileService;
+        }
+
+        // 
+
+        public AnimeDetailsViewModel EditExisting(Anime anime)
+        {
             Anime = anime;
-            ButtonText = "Edit";
             SelectedSubgroup = Anime.PreferredSubgroup;
 
-            // 
+            ButtonText = "Edit";
 
             ButtonCommand = new RelayCommand(
                 Edit,
                 () => Anime?.Name?.Length > 0
             );
+
             ExitCommand = new RelayCommand(() =>
             {
                 Settings.Save();
                 MessengerInstance.Send(Enums.Views.AnimeDisplay);
             });
-            MyAnimeListBar = new MyAnimeListBarViewModel(Anime, Settings, AnimeAggregate);
+
+            MyAnimeListBar = SimpleIoc.Default.GetInstance<MyAnimeListBarViewModel>().Load(Anime);
+
             NextCommand = new RelayCommand(Next);
+
             PreviousCommand = new RelayCommand(Previous);
+
             ClearSubgroupCommand = new RelayCommand(() => SelectedSubgroup = null);
 
             // Default of true to avoid the flicker on the majority case that the file is found
             LastEpisodeAvailable = true;
+
             LastEpisodeCommand = new RelayCommand(
                 PlayLastEpisode,
                 () => LastEpisodeAvailable
             );
+
             // It's an expensive operation so it has to be async or creating the view makes an upward
             // of 400ms delay
             GetLastEpisode();
+
+            return this;
         }
 
-        /// <summary>
-        ///     Create
-        /// </summary>
-        public AnimeDetailsViewModel(ISettingsService settings, IAnimeAggregateService animeAggregate)
+        public AnimeDetailsViewModel CreateNew()
         {
-            Settings = settings;
-            AnimeAggregate = animeAggregate;
             Anime = new Anime
             {
                 Episode = 0,
                 Status = Status.Watching,
                 Resolution = "720",
                 Airing = true,
-                MyAnimeList = {NeedsUpdating = true}
+                MyAnimeList = { NeedsUpdating = true }
             };
 
             ButtonText = "Add";
-            SelectedSubgroup = Anime.PreferredSubgroup;
 
-            // 
+            SelectedSubgroup = Anime.PreferredSubgroup;
 
             ButtonCommand = new RelayCommand(
                 Create,
                 () =>
-                    !AnimeAggregate.AnimeService.Animes.Any(
+                    !_animeService.Animes.Any(
                         a => a.Name.ToLower().Trim().Equals(Anime?.Name?.ToLower().Trim()))
                     && Anime?.Name?.Length > 0
             );
+
             ExitCommand = new RelayCommand(() => MessengerInstance.Send(Enums.Views.AnimeDisplay));
+
             ClearSubgroupCommand = new RelayCommand(() => SelectedSubgroup = null);
+
+            return this;
         }
 
         // 
@@ -103,8 +116,6 @@ namespace anime_downloader.ViewModels.Components
             get { return _settings; }
             set { Set(() => Settings, ref _settings, value); }
         }
-
-        private IAnimeAggregateService AnimeAggregate { get; }
 
         private bool LastEpisodeAvailable
         {
@@ -170,13 +181,13 @@ namespace anime_downloader.ViewModels.Components
         {
             await Task.Run(() =>
             {
-                var path = AnimeAggregate.FileService.LastEpisode(Anime);
+                var path = _fileService.LastEpisode(Anime);
                 LastEpisodeAvailable = path != null;
                 Application.Current.Dispatcher.InvokeAsync(() => LastEpisodeCommand.RaiseCanExecuteChanged());
             });
         }
 
-        private void PlayLastEpisode() => Process.Start(AnimeAggregate.FileService.LastEpisode(Anime).Path);
+        private void PlayLastEpisode() => Process.Start(_fileService.LastEpisode(Anime).Path);
 
         private void Edit()
         {
@@ -188,14 +199,14 @@ namespace anime_downloader.ViewModels.Components
         {
             if (!string.IsNullOrEmpty(SelectedSubgroup))
                 Anime.PreferredSubgroup = SelectedSubgroup;
-            Settings.Animes.Add(Anime);
+            _animeService.Add(Anime);
             MessengerInstance.Send(Enums.Views.AnimeDisplay);
         }
 
         private void Next()
         {
             Settings.Save();
-            var animes = AnimeAggregate.AnimeService.FilteredAndSorted().ToList();
+            var animes = _animeService.FilteredAndSorted().ToList();
             var anime = animes.First(an => an.Name.Equals(Anime.Name));
             var position = (animes.IndexOf(anime) + 1) % animes.Count;
             MessengerInstance.Send(animes.ElementAt(position));
@@ -204,7 +215,7 @@ namespace anime_downloader.ViewModels.Components
         private void Previous()
         {
             Settings.Save();
-            var animes = AnimeAggregate.AnimeService.FilteredAndSorted().ToList();
+            var animes = _animeService.FilteredAndSorted().ToList();
             var anime = animes.First(an => an.Name.Equals(Anime.Name));
             var position = animes.IndexOf(anime) - 1 >= 0 ? animes.IndexOf(anime) - 1 : animes.Count - 1;
             MessengerInstance.Send(animes.ElementAt(position));

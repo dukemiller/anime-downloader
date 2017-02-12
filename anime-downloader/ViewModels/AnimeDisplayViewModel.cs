@@ -1,8 +1,10 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using anime_downloader.Models;
-using anime_downloader.Services.Interfaces;
 using anime_downloader.ViewModels.Components;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 
 namespace anime_downloader.ViewModels
@@ -11,43 +13,41 @@ namespace anime_downloader.ViewModels
     {
         private ViewModelBase _display;
 
-        //
-
-        public AnimeDisplayViewModel(ISettingsService settings, IAnimeAggregateService animeAggregate)
+        public AnimeDisplayViewModel()
         {
-            _settings = settings;
-            _animeAggregate = animeAggregate;
-
-            Display = new AnimeListViewModel(_settings, _animeAggregate);
+            // Initial view is the list
+            Display = SimpleIoc.Default.GetInstance<AnimeListViewModel>(Guid.NewGuid().ToString());
 
             // Edit single details
-            MessengerInstance.Register<Anime>(this,
-                anime => { Display = new AnimeDetailsViewModel(_settings, _animeAggregate, anime); });
+            MessengerInstance.Register<Anime>(this, 
+                anime => Display = SimpleIoc.Default.GetInstance<AnimeDetailsViewModel>().EditExisting(anime));
 
             // Edit multiple details
-            MessengerInstance.Register<ObservableCollection<Anime>>(this,
-                animes => { Display = new AnimeDetailsMultipleViewModel(_settings, _animeAggregate, animes); });
+            MessengerInstance.Register<List<Anime>>(this, 
+                animes => Display = SimpleIoc.Default.GetInstance<AnimeDetailsMultipleViewModel>().EditExisting(animes));
 
             MessengerInstance.Register<NotificationMessage>(this, _ =>
             {
-                if (_.Notification.Equals("anime_list"))
-                    Display = new AnimeListViewModel(_settings, _animeAggregate);
+                switch (_.Notification)
+                {
+                    case "anime_list":
+                        Display = SimpleIoc.Default.GetInstance<AnimeListViewModel>(Guid.NewGuid().ToString());
+                        break;
 
-                // Create new
-                else if (_.Notification.Equals("anime_new"))
-                    Display = new AnimeDetailsViewModel(_settings, _animeAggregate);
+                    case "anime_new":
+                        Display = SimpleIoc.Default.GetInstance<AnimeDetailsViewModel>().CreateNew();
+                        break;
 
-                // Create new multiple
-                else if (_.Notification.Equals("anime_newMultiple"))
-                    Display = new AnimeDetailsMultipleViewModel(_settings, _animeAggregate);
+                    case "anime_new_multiple":
+                        Display = SimpleIoc.Default.GetInstance<AnimeDetailsMultipleViewModel>().CreateNew();
+                        break;
+
+                    default:
+                        return;
+                }
             });
         }
 
-        private readonly ISettingsService _settings;
-
-        private readonly IAnimeAggregateService _animeAggregate;
-
-        //
 
         public ViewModelBase Display
         {

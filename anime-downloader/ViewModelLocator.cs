@@ -25,7 +25,6 @@ namespace anime_downloader
             SimpleIoc.Default.Register<IFileService, FileService>();
             SimpleIoc.Default.Register<IMyAnimeListService, MyAnimeListService>();
             SimpleIoc.Default.Register<IPlaylistService, PlaylistService>();
-            SimpleIoc.Default.Register<IAnimeAggregateService, AnimeAggregateService>();
 
             // Viewmodels
             SimpleIoc.Default.Register<MainWindowViewModel>();
@@ -39,9 +38,13 @@ namespace anime_downloader
             SimpleIoc.Default.Register<WebViewModel>();
 
             // Components
-            SimpleIoc.Default.Register<DownloadOptionsViewModel>();
+            SimpleIoc.Default.Register<AnimeDetailsMultipleViewModel>();
+            SimpleIoc.Default.Register<AnimeDetailsViewModel>();
+            SimpleIoc.Default.Register<AnimeListViewModel>();
             SimpleIoc.Default.Register<DownloaderViewModel>();
             SimpleIoc.Default.Register<DownloadLogViewModel>();
+            SimpleIoc.Default.Register<DownloadOptionsViewModel>();
+            SimpleIoc.Default.Register<MyAnimeListBarViewModel>();
         }
 
         public static MainWindowViewModel Main => ServiceLocator.Current.GetInstance<MainWindowViewModel>();

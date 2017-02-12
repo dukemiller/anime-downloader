@@ -131,11 +131,9 @@
     <Compile Include="Classes\Xaml\PasswordBoxAssistant.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Services\FileService.cs" />
-    <Compile Include="Services\AnimeAggregateService.cs" />
     <Compile Include="Services\AnimeService.cs" />
     <Compile Include="Services\Interfaces\IDownloadService.cs" />
     <Compile Include="Services\Interfaces\IFileService.cs" />
-    <Compile Include="Services\Interfaces\IAnimeAggregateService.cs" />
     <Compile Include="Services\Interfaces\IAnimeService.cs" />
     <Compile Include="Services\Interfaces\IMyAnimeListService.cs" />
     <Compile Include="Services\Interfaces\IPlaylistService.cs" />
