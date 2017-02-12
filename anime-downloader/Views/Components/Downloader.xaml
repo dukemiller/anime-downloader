@@ -8,14 +8,7 @@
              d:DesignHeight="360"
              d:DesignWidth="680"
              mc:Ignorable="d">
-    <TextBox HorizontalContentAlignment="Left"
-             VerticalContentAlignment="Top"
-             Background="#ECECEC"
-             BorderThickness="0"
-             FontFamily="Segoe UI Light"
-             FontSize="20"
-             IsReadOnly="True"
-             Text="{Binding Text}"
-             TextWrapping="Wrap"
-             VerticalScrollBarVisibility="Auto" />
+    <TextBox
+        Style="{StaticResource ConsoleBox}"
+        Text="{Binding Text}" />
 </UserControl>

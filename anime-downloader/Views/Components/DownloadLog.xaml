@@ -5,18 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:anime_downloader.Views.Components"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             d:DataContext="{d:DesignInstance components:DownloadLogViewModel}"
              d:DesignHeight="300"
              d:DesignWidth="300"
-             d:DataContext="{d:DesignInstance components:DownloadLogViewModel}"
              mc:Ignorable="d">
-    <TextBox Background="#ECECEC"
-             BorderThickness="0"
-             FontFamily="Segoe UI Light"
-             VerticalContentAlignment="Top"
-             HorizontalContentAlignment="Left"
-             FontSize="22"
-             IsReadOnly="True"
-             Text="{Binding Text}"
-             TextWrapping="Wrap"
-             VerticalScrollBarVisibility="Auto" />
+    <TextBox Style="{StaticResource ConsoleBox}" Text="{Binding Text}" />
 </UserControl>

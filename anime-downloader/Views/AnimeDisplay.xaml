@@ -2,12 +2,17 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:anime_downloader.Views"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:anime_downloader.ViewModels"
              d:DataContext="{d:DesignInstance viewModels:AnimeDisplayViewModel}"
              d:DesignHeight="360"
              d:DesignWidth="680"
              mc:Ignorable="d">
-    <ContentPresenter Content="{Binding Display}" />
+    <ContentPresenter Content="{Binding Display, NotifyOnTargetUpdated=True, UpdateSourceTrigger=PropertyChanged}">
+        <ContentPresenter.Triggers>
+            <EventTrigger RoutedEvent="Binding.TargetUpdated">
+                <BeginStoryboard Storyboard="{StaticResource FadeTransition}" />
+            </EventTrigger>
+        </ContentPresenter.Triggers>
+    </ContentPresenter>
 </UserControl>

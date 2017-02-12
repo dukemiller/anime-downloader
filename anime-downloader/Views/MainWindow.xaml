@@ -108,7 +108,7 @@
                                                 UpdateSourceTrigger=PropertyChanged}">
                 <ContentPresenter.Triggers>
                     <EventTrigger RoutedEvent="Binding.TargetUpdated">
-                        <BeginStoryboard Storyboard="{StaticResource DisplayTransition}" />
+                        <BeginStoryboard Storyboard="{StaticResource FadeTransition}" />
                     </EventTrigger>
                 </ContentPresenter.Triggers>
             </ContentPresenter>

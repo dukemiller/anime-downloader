@@ -53,13 +53,29 @@
             <classes:BooleanColorConverter x:Key="BooleanColorConverter" />
             <classes:BooleanOpacityConverter x:Key="BooleanOpacityConverter" />
 
-            <!--  Storyboard  -->
-            <Storyboard x:Key="DisplayTransition">
+            <!--  Storyboards  -->
+            <Storyboard x:Key="FadeTransition">
                 <DoubleAnimation Duration="0:0:0.35"
                                  From="0.0"
                                  Storyboard.TargetProperty="Opacity"
                                  To="1.0" />
             </Storyboard>
+
+            <!--  Misc Styles  -->
+
+            <Style x:Key="ConsoleBox"
+                   TargetType="TextBox">
+                <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+                <Setter Property="TextWrapping" Value="Wrap" />
+                <Setter Property="IsReadOnly" Value="True" />
+                <Setter Property="FontSize" Value="20" />
+                <Setter Property="FontFamily" Value="Yu Gothic" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Padding" Value="4, 0" />
+                <Setter Property="Background" Value="#ECECEC" />
+                <Setter Property="VerticalContentAlignment" Value="Top" />
+                <Setter Property="HorizontalContentAlignment" Value="Left" />
+            </Style>
 
         </ResourceDictionary>
     </Application.Resources>
