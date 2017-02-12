@@ -45,6 +45,7 @@ namespace anime_downloader.ViewModels.Components
 
         public AnimeDetailsMultipleViewModel CreateNew()
         {
+            Input = string.Empty;
             Editing = false;
             Header = "Put each anime on own line, each will be added with the template chosen below:";
             Details = new MultipleAnimeDetails
