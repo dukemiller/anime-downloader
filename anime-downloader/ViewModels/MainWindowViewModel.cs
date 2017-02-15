@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows;
 using anime_downloader.Classes;
 using anime_downloader.Services.Interfaces;
@@ -44,7 +43,7 @@ namespace anime_downloader.ViewModels
             AnimeCommand = new RelayCommand(
                 () =>
                 {
-                    CurrentView = SimpleIoc.Default.GetInstance<AnimeDisplayViewModel>(Guid.NewGuid().ToString());
+                    CurrentView = SimpleIoc.Default.GetUniqueInstance<AnimeDisplayViewModel>();
                     SelectedIndex = 2;
                 },
                 () => !Busy
@@ -62,7 +61,7 @@ namespace anime_downloader.ViewModels
             DownloadCommand = new RelayCommand(
                 () =>
                 {
-                    CurrentView = SimpleIoc.Default.GetInstance<DownloadViewModel>(Guid.NewGuid().ToString());
+                    CurrentView = SimpleIoc.Default.GetUniqueInstance<DownloadViewModel>();
                     SelectedIndex = 4;
                 },
                 () => !Busy
@@ -71,7 +70,7 @@ namespace anime_downloader.ViewModels
             ManageCommand = new RelayCommand(
                 () =>
                 {
-                    CurrentView = SimpleIoc.Default.GetInstance<ManageViewModel>(Guid.NewGuid().ToString());
+                    CurrentView = SimpleIoc.Default.GetUniqueInstance<ManageViewModel>();
                     SelectedIndex = 5;
                 },
                 () => !Busy

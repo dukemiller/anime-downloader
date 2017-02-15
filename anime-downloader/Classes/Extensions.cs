@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Ioc;
 
 namespace anime_downloader.Classes
 {
@@ -36,6 +38,14 @@ namespace anime_downloader.Classes
 
             // return  
             return attributes.Length == 0 ? value.ToString() : ((DescriptionAttribute) attributes[0]).Description;
+        }
+
+        /// <summary>
+        ///     Get a unique ioc instance of ViewModel TService.
+        /// </summary>
+        public static TService GetUniqueInstance<TService>(this SimpleIoc ioc) where TService: ViewModelBase
+        {
+            return ioc.GetInstance<TService>(Guid.NewGuid().ToString());
         }
     }
 }

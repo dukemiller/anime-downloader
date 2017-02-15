@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using anime_downloader.Classes;
 using anime_downloader.Models;
 using anime_downloader.ViewModels.Components;
 using GalaSoft.MvvmLight;
@@ -16,7 +15,7 @@ namespace anime_downloader.ViewModels
         public AnimeDisplayViewModel()
         {
             // Initial view is the list
-            Display = SimpleIoc.Default.GetInstance<AnimeListViewModel>(Guid.NewGuid().ToString());
+            Display = SimpleIoc.Default.GetUniqueInstance<AnimeListViewModel>();
 
             // Edit single details
             MessengerInstance.Register<Anime>(this, 
@@ -31,7 +30,7 @@ namespace anime_downloader.ViewModels
                 switch (_.Notification)
                 {
                     case "anime_list":
-                        Display = SimpleIoc.Default.GetInstance<AnimeListViewModel>(Guid.NewGuid().ToString());
+                        Display = SimpleIoc.Default.GetUniqueInstance<AnimeListViewModel>();
                         break;
 
                     case "anime_new":
@@ -47,7 +46,6 @@ namespace anime_downloader.ViewModels
                 }
             });
         }
-
 
         public ViewModelBase Display
         {
