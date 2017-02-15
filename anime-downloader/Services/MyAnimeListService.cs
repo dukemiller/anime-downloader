@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
-using System.Windows.Forms;
-using System.Xml.Serialization;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
 using anime_downloader.Models;
@@ -16,51 +11,19 @@ using anime_downloader.Services.Interfaces;
 
 namespace anime_downloader.Services
 {
-    // http://myanimelist.net/modules.php?go=api
     public class MyAnimeListService : IMyAnimeListService
     {
-        private const string ApiSearch = "https://myanimelist.net/api/anime/search.xml?q={0}";
-
-        private const string ApiAdd = "https://myanimelist.net/api/animelist/add/{0}.xml";
-
-        private const string ApiUpdate = "https://myanimelist.net/api/animelist/update/{0}.xml";
-
-        private const string ApiDelete = "https://myanimelist.net/api/animelist/delete/{0}.xml";
-
-        private const string ApiVerify = "https://myanimelist.net/api/account/verify_credentials.xml";
-
-        private const string ApiProfile = "https://myanimelist.net/malappinfo.php?u={0}&status=all&type=anime";
-
-        private static readonly XmlSerializer ResultDeserializer = new XmlSerializer(typeof(FindResultRoot));
-
-        private static readonly XmlSerializer ProfileDeserializer = new XmlSerializer(typeof(ProfileResult));
-
-        private readonly ISettingsService _settings;
+        private readonly IMyAnimeListApi _api;
 
         private readonly IAnimeService _anime;
 
-        // 
-
-        public MyAnimeListService(ISettingsService settings, IAnimeService anime)
+        public MyAnimeListService(IMyAnimeListApi api, IAnimeService anime)
         {
-            _settings = settings;
+            _api = api;
             _anime = anime;
         }
 
-        // Interface methods
-
-        public NetworkCredential GetCredentials() => new NetworkCredential(_settings.MyAnimeListConfig.Username, _settings.MyAnimeListConfig.Password);
-
-        public async Task<IEnumerable<FindResult>> Find(string q) => await FindAsync(q);
-
-        public async Task<bool> VerifyCredentialsAsync()
-        {
-            const string url = ApiVerify;
-            var handler = new HttpClientHandler {Credentials = GetCredentials()};
-            var client = new HttpClient(handler);
-            var response = await client.GetAsync(url);
-            return response.StatusCode == HttpStatusCode.OK;
-        }
+        // 
 
         public FindResult ClosestResult(Anime anime, IEnumerable<FindResult> results)
         {
@@ -92,12 +55,14 @@ namespace anime_downloader.Services
             return closest?.FindResult;
         }
 
+        public async Task<IEnumerable<FindResult>> Find(string q) => await _api.FindAsync(q);
+
         public async Task Update(Anime anime)
         {
             var myAnimeListNode = anime.MyAnimeList.SeriesContinuationEpisode != null
                 ? new UpdateShow(anime, anime.MyAnimeList.SeriesContinuationEpisode)
                 : new UpdateShow(anime);
-            await UpdateAsync(anime.MyAnimeList.Id, myAnimeListNode.ToString());
+            await _api.UpdateAsync(anime.MyAnimeList.Id, myAnimeListNode.ToString());
             anime.MyAnimeList.NeedsUpdating = false;
         }
 
@@ -106,19 +71,19 @@ namespace anime_downloader.Services
             var myAnimeListNode = anime.MyAnimeList.SeriesContinuationEpisode != null
                 ? new UpdateShow(anime, anime.MyAnimeList.SeriesContinuationEpisode)
                 : new UpdateShow(anime);
-            await AddAsync(anime.MyAnimeList.Id, myAnimeListNode.ToString());
+            await _api.AddAsync(anime.MyAnimeList.Id, myAnimeListNode.ToString());
             anime.MyAnimeList.NeedsUpdating = false;
         }
 
         public async Task<IEnumerable<Anime>> GetProfileAnime()
         {
-            return (await GetProfile()).Select(AnimeConverter.ToAnime);
+            return (await _api.GetProfile()).Select(AnimeConverter.ToAnime);
         }
 
         public async Task<bool> GetId(Anime anime)
         {
             // get all results from searching the name
-            var animeResults = (await FindAsync(anime.Title.Replace(":", ""))).ToList();
+            var animeResults = (await _api.FindAsync(anime.Title.Replace(":", ""))).ToList();
 
             // if there were absolutely no results from the query
             if (!animeResults.Any())
@@ -129,7 +94,7 @@ namespace anime_downloader.Services
                 while (!animeResults.Any() && length-- > 1)
                 {
                     var newName = string.Join(" ", name.Take(length));
-                    animeResults = (await FindAsync(HttpUtility.UrlEncode(newName))).ToList();
+                    animeResults = (await _api.FindAsync(HttpUtility.UrlEncode(newName))).ToList();
                 }
 
                 // if after the previous operation there are still no results
@@ -148,7 +113,7 @@ namespace anime_downloader.Services
             if (result == null)
             {
                 // try slapping a (TV) infront of it because the MAL api is weird sometimes
-                animeResults = (await FindAsync(HttpUtility.UrlEncode(anime.Title + " (TV)"))).ToList();
+                animeResults = (await _api.FindAsync(HttpUtility.UrlEncode(anime.Title + " (TV)"))).ToList();
                 result = ClosestResult(anime, animeResults);
 
                 // if still no result
@@ -287,89 +252,5 @@ namespace anime_downloader.Services
 
             return true;
         }
-
-        // API requests
-
-        private async Task<IEnumerable<ProfileAnimeResult>> GetProfile()
-        {
-            var url = string.Format(ApiProfile, _settings.MyAnimeListConfig.Username);
-            var request = await GetAsync(url);
-            var data = await request.ReadAsStreamAsync();
-            if (data == null || data.Length <= 0)
-                return new List<ProfileAnimeResult>();
-            using (var response = new StreamReader(data))
-            {
-                var result = (ProfileResult)ProfileDeserializer.Deserialize(response);
-                return result.Anime.Where(anime =>
-                {
-                    DateTime date;
-                    var withinLastThreeYears = DateTime.TryParse(anime?.SeriesStart, out date) && Math.Abs(DateTime.Now.Year - date.Year) <= 3;
-                    var isShortOrSeries = anime?.SeriesType?.Equals("1") == true || anime?.SeriesType?.Equals("2") == true;
-                    var definitelyNotAnOva = int.Parse(anime?.SeriesEpisodes ?? "0") > 4;
-                    return withinLastThreeYears && isShortOrSeries && definitelyNotAnOva;
-                });
-            }
-        }
-
-        private async Task<HttpContent> GetAsync(string url)
-        {
-            var handler = new HttpClientHandler {Credentials = GetCredentials()};
-            var client = new HttpClient(handler);
-            var response = (await client.GetAsync(url)).Content;
-            return response;
-        }
-
-        private async Task<HttpContent> PostAsync(string url, string data)
-        {
-            var handler = new HttpClientHandler {Credentials = GetCredentials()};
-            var client = new HttpClient(handler);
-            var pairs = new Dictionary<string, string>
-            {
-                {"data", data}
-            };
-            var content = new FormUrlEncodedContent(pairs);
-            var response = (await client.PostAsync(url, content)).Content;
-            return response;
-        }
-
-        private async Task<IEnumerable<FindResult>> FindAsync(string q)
-        {
-            q = HttpUtility.UrlPathEncode(q).Replace("%20", "%25");
-            var url = string.Format(ApiSearch, q);
-            var request = await GetAsync(url);
-            var data = await request.ReadAsStreamAsync();
-            if (data == null || data.Length <= 0)
-                return new List<FindResult>();
-            using (var response = new StreamReader(data))
-            {
-                var result = (FindResultRoot) ResultDeserializer.Deserialize(response);
-                return result.Entries.Where(anime =>
-                {
-                    return (!anime.Type.Equals("Movie") && !anime.Type.Equals("OVA") && (anime.TotalEpisodes == 0 || anime.TotalEpisodes > 4)) || anime.Type.Equals("Special");
-                });
-            }
-        }
-
-        private async Task<HttpContent> AddAsync(string id, string data)
-        {
-            var url = string.Format(ApiAdd, id);
-            var response = await PostAsync(url, data);
-            return response;
-        }
-
-        private async Task<HttpContent> UpdateAsync(string id, string data)
-        {
-            var url = string.Format(ApiUpdate, id);
-            var response = await PostAsync(url, data);
-            return response;
-        }
-
-        private async Task<HttpContent> DeleteAsync(string id, string data)
-        {
-            var url = string.Format(ApiDelete, id);
-            var response = await PostAsync(url, data);
-            return response;
-        }
-        
     }
 }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using anime_downloader.Services;
+﻿using anime_downloader.Services;
 using anime_downloader.Services.Interfaces;
 using anime_downloader.ViewModels;
 using anime_downloader.ViewModels.Components;
@@ -23,6 +18,7 @@ namespace anime_downloader
             SimpleIoc.Default.Register<IAnimeService, AnimeService>();
             SimpleIoc.Default.Register<IDownloadService, NyaaService>();
             SimpleIoc.Default.Register<IFileService, FileService>();
+            SimpleIoc.Default.Register<IMyAnimeListApi, MyAnimeListApi>();
             SimpleIoc.Default.Register<IMyAnimeListService, MyAnimeListService>();
             SimpleIoc.Default.Register<IPlaylistService, PlaylistService>();
 
@@ -48,5 +44,6 @@ namespace anime_downloader
         }
 
         public static MainWindowViewModel Main => ServiceLocator.Current.GetInstance<MainWindowViewModel>();
+
     }
 }

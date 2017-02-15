@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
 using anime_downloader.Models;
 using anime_downloader.Models.MyAnimeList;
@@ -13,26 +12,6 @@ namespace anime_downloader.Services.Interfaces
     /// </summary>
     public interface IMyAnimeListService
     {
-        // Service settings
-
-        /// <summary>
-        ///     Gather the users credentials for use in other operations
-        /// </summary>
-        /// <remarks>
-        ///     This is usually going to be done by using the settings service
-        ///     and gathering the properties from the user's settings related
-        ///     to MAL login information
-        /// </remarks>
-        NetworkCredential GetCredentials();
-
-        /// <summary>
-        ///     An API call to verify the users given credentials.
-        /// </summary>
-        /// <returns>
-        ///     A boolean stating if the verification was successful.
-        /// </returns>
-        Task<bool> VerifyCredentialsAsync();
-
         /// <summary>
         ///     Retrieve the closest result on MyAnimeList to a given anime.
         /// </summary>
@@ -40,8 +19,6 @@ namespace anime_downloader.Services.Interfaces
         ///     A MyAnimeList serialized result object.
         /// </returns>
         FindResult ClosestResult(Anime anime, IEnumerable<FindResult> results);
-
-        // Api Operations
 
         /// <summary>
         ///     Send an update API request to replace the information about the anime
@@ -81,8 +58,6 @@ namespace anime_downloader.Services.Interfaces
         /// </summary>
         /// <returns></returns>
         Task<IEnumerable<Anime>> GetProfileAnime();
-
-        // Bulk update
 
         /// <summary>
         ///     Attempt an indescriminate API update on all of the users anime that is flagged for needing updates.

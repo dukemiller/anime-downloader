@@ -27,11 +27,15 @@ namespace anime_downloader.ViewModels
 
         private readonly IMyAnimeListService _malService;
 
-        public WebViewModel(ISettingsService settingsService, IAnimeService animeService, IMyAnimeListService malService)
+        private readonly IMyAnimeListApi _api;
+
+        public WebViewModel(ISettingsService settingsService, IAnimeService animeService, 
+                           IMyAnimeListService malService, IMyAnimeListApi api)
         {
             SettingsService = settingsService;
             _animeService = animeService;
             _malService = malService;
+            _api = api;
 
             // 
 
@@ -162,7 +166,7 @@ namespace anime_downloader.ViewModels
                 return;
 
             MessengerInstance.Send(new WorkMessage {Working = true});
-            Works = await _malService.VerifyCredentialsAsync();
+            Works = await _api.VerifyCredentialsAsync();
             MessengerInstance.Send(new WorkMessage {Working = false});
             RaiseCommandExecutions();
             WaitDelay = DateTime.Now.AddSeconds(5);
