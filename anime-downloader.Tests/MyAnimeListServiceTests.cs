@@ -14,6 +14,7 @@ namespace anime_downloader.Tests
         private ISettingsService _settings;
         private IAnimeService _animes;
         private IMyAnimeListService _mal;
+        private IMyAnimeListApi _api;
 
         [SetUp]
         public void Init()
@@ -27,8 +28,9 @@ namespace anime_downloader.Tests
                         Password = Credentials.MyAnimeListPassword
                     }
             };
+            _api = new MyAnimeListApi(_settings);
             _animes = new MockAnimeService();
-            _mal = new MyAnimeListService(_settings, _animes);
+            _mal = new MyAnimeListService(_api, _animes);
         }
 
         private async Task TestId(string name, string expectedId)
