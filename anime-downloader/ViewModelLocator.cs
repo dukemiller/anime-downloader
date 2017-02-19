@@ -20,7 +20,6 @@ namespace anime_downloader
             SimpleIoc.Default.Register<IFileService, FileService>();
             SimpleIoc.Default.Register<IMyAnimeListApi, MyAnimeListApi>();
             SimpleIoc.Default.Register<IMyAnimeListService, MyAnimeListService>();
-            SimpleIoc.Default.Register<IPlaylistService, PlaylistService>();
 
             // Viewmodels
             SimpleIoc.Default.Register<MainWindowViewModel>();

@@ -48,12 +48,12 @@ namespace anime_downloader.Models.Configurations
                 .GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "anime_downloader");
 
-        public string DuplicatesDirectory => Environment.GetFolderPath(Environment.SpecialFolder.MyVideos);
+        public static string DuplicatesDirectory => Environment.GetFolderPath(Environment.SpecialFolder.MyVideos);
 
         /// <summary>
         ///     The path to the playlist file.
         /// </summary>
-        public string Playlist => Path.Combine(ApplicationDirectory, "playlist.m3u");
+        public static string Playlist => Path.Combine(ApplicationDirectory, "playlist.m3u");
 
         /// <summary>
         ///     The path to the log text file.

@@ -53,7 +53,8 @@
                         </ListBox>
                     </StackPanel>
                 </GroupBox>
-                <GroupBox Margin="5"
+                <GroupBox MaxWidth="280"
+                          Margin="5"
                           HorizontalAlignment="Left"
                           VerticalAlignment="Top"
                           Header="Options">
@@ -64,16 +65,34 @@
                                   IsChecked="{Binding SeparateShowOrder}"
                                   ToolTip="Distribute the show order so that you don't watch the same show twice in a row." />
                         <CheckBox Margin="5"
-                                  Content="Play all episodes that have more than one episode first"
                                   FocusVisualStyle="{x:Null}"
-                                  IsChecked="{Binding AdditionalEpisodesFirst}"
-                                  ToolTip="For shows that have more than one episode, organize so that those shows with additional episodes will play first. This would have no effect if you only have one episode to watch for every series." />
+                                  IsChecked="{Binding AdditionalEpisodesFirst}">
+                            <CheckBox.ToolTip>
+                                <TextBlock>
+                                    For shows that have more than one episode, organize so that those shows with additional episodes will play first.
+                                    <LineBreak />
+                                    This would have no effect if you only have one episode to watch for every series.
+                                </TextBlock>
+                            </CheckBox.ToolTip>
+                            <TextBlock Text="Play all episodes that have more than one episode first" TextWrapping="Wrap" />
+                        </CheckBox>
                         <CheckBox Margin="5"
                                   Content="Reverse order"
                                   FocusVisualStyle="{x:Null}"
                                   IsChecked="{Binding ReverseOrder}"
                                   ToolTip="Reverse the order." />
                     </StackPanel>
+                </GroupBox>
+                <GroupBox Margin="5" Header="Example of output">
+                    <ItemsControl ItemsSource="{Binding DemoPlaylist.Source}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Label Margin="-4"
+                                       Content="{Binding FileName}"
+                                       FontSize="12" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </GroupBox>
             </DockPanel>
         </StackPanel>
@@ -86,6 +105,5 @@
                     DockPanel.Dock="Right"
                     IsDefault="True" />
         </DockPanel>
-
     </Grid>
 </UserControl>

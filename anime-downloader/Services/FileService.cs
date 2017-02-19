@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
 using anime_downloader.Models;
+using anime_downloader.Models.Configurations;
 using anime_downloader.Services.Interfaces;
 
 namespace anime_downloader.Services
@@ -165,7 +166,7 @@ namespace anime_downloader.Services
             if (duplicates.Any())
                 foreach (var duplicate in duplicates)
                     File.Move(duplicate.Path,
-                        Path.Combine(_settings.PathConfig.DuplicatesDirectory, duplicate.FileName));
+                        Path.Combine(PathConfiguration.DuplicatesDirectory, duplicate.FileName));
 
             return duplicates.Count;
         }

@@ -141,12 +141,10 @@
     <Compile Include="Services\Interfaces\IAnimeService.cs" />
     <Compile Include="Services\Interfaces\IMyAnimeListApi.cs" />
     <Compile Include="Services\Interfaces\IMyAnimeListService.cs" />
-    <Compile Include="Services\Interfaces\IPlaylistService.cs" />
     <Compile Include="Services\Interfaces\ISettingsService.cs" />
     <Compile Include="Services\MyAnimeListApi.cs" />
     <Compile Include="Services\MyAnimeListService.cs" />
     <Compile Include="Services\NyaaService.cs" />
-    <Compile Include="Services\PlaylistService.cs" />
     <Compile Include="Services\ApplicationSettingsService.cs" />
     <Compile Include="Services\XmlSettingsService.cs" />
     <Compile Include="ViewModelLocator.cs" />

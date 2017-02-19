@@ -40,16 +40,12 @@ namespace anime_downloader.ViewModels.Components
 
         private readonly IAnimeService _animeService;
 
-        private readonly IPlaylistService _playlistService;
-
         // 
 
-        public FileListViewModel(IFileService fileService, IAnimeService animeService,
-            IPlaylistService playlistService)
+        public FileListViewModel(IFileService fileService, IAnimeService animeService)
         {
             _fileService = fileService;
             _animeService = animeService;
-            _playlistService = playlistService;
 
             // 
 
@@ -240,19 +236,12 @@ namespace anime_downloader.ViewModels.Components
         ///     Open the selected anime, if multiple files are selected then open as a playlist
         ///     in order of selection
         /// </summary>
-        private void Open()
+        private async void Open()
         {
             if (SelectedFiles.Count > 1)
-            {
-                _playlistService.Set(SelectedFiles);
-                _playlistService.Create();
-                Process.Start(_playlistService.Path);
-            }
-
+                Process.Start(await new Playlist {Source = SelectedFiles}.Create());
             else if (SelectedFile != null)
-            {
                 Process.Start(SelectedFile.Path);
-            }
         }
 
         /// <summary>
@@ -270,10 +259,9 @@ namespace anime_downloader.ViewModels.Components
                 MessengerInstance.Send(Enums.Views.AnimeDisplay);
                 MessengerInstance.Send(anime);
             }
+
             else
-            {
                 Methods.Alert($"No anime profile found for {SelectedFile.Name}.");
-            }
         }
 
         /// <summary>

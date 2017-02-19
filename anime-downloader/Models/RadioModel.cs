@@ -2,11 +2,11 @@
 
 namespace anime_downloader.Models
 {
-    public class RadioModel : ViewModelBase
+    public class RadioModel<T> : ViewModelBase
     {
         public string Tag { get; set; }
 
-        public bool Equals(RadioModel obj)
+        public bool Equals(RadioModel<T> obj)
         {
             return Header.Equals(obj.Header);
         }
@@ -26,6 +26,7 @@ namespace anime_downloader.Models
         #region ToolTip
 
         private string _tooltip = string.Empty;
+        private T _data;
 
         public string ToolTip
         {
@@ -34,5 +35,16 @@ namespace anime_downloader.Models
         }
 
         #endregion ToolTip
+
+        public T Data
+        {
+            get { return _data; }
+            set { Set(() => Data, ref _data, value); }
+        }
+    }
+
+    public class RadioModel : RadioModel<object>
+    {
+        
     }
 }

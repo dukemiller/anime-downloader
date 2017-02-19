@@ -9,6 +9,7 @@ namespace anime_downloader.Models
     /// </summary>
     public class AnimeFile : IComparable<AnimeFile>
     {
+        /// <param name="path">The full path filename, e.g. "{C:/.../.../anime.mp4}".</param>
         public AnimeFile(string path)
         {
             Path = path;
