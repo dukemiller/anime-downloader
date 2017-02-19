@@ -98,6 +98,7 @@
     <Compile Include="Classes\Distances.cs" />
     <Compile Include="Classes\DownloadResult.cs" />
     <Compile Include="Classes\Messages.cs" />
+    <Compile Include="Classes\Sorts.cs" />
     <Compile Include="Classes\Xaml\AttachedProperties.cs" />
     <Compile Include="Classes\Xaml\CustomDataGrid.cs" />
     <Compile Include="Classes\Xaml\FocusBehavior.cs" />
@@ -124,6 +125,9 @@
     <Compile Include="Models\MyAnimeList\UpdateShow.cs" />
     <Compile Include="Models\MyAnimeList\FindResult.cs" />
     <Compile Include="Models\Configurations\PathConfiguration.cs" />
+    <Compile Include="Models\Playlist.cs" />
+    <Compile Include="Enums\PlaylistOptions.cs" />
+    <Compile Include="Enums\PlaylistOrder.cs" />
     <Compile Include="Models\RadioModel.cs" />
     <Compile Include="Models\Torrent.cs" />
     <Compile Include="Classes\Converters.cs" />
