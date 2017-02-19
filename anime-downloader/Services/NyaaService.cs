@@ -15,6 +15,8 @@ namespace anime_downloader.Services
 {
     public class NyaaService : IDownloadService
     {
+        private const string YearPattern = @"[^a-zA-Z](\d{4})[^a-zA-Z]";
+
         private const string EnglishTranslated = "1_37";
 
         private const string BySeeders = "2";
@@ -296,15 +298,14 @@ namespace anime_downloader.Services
                                 .Contains($"part{episode:D2}")
                 );
 
-            if (anime.NameCollection.Any(c => c.Contains(episode.ToString("D2"))))
+            if (anime.NameCollection.Any(c => Regex.Replace(c, YearPattern, "").Contains(episode.ToString("D2"))))
             {
                 // To account for the case that a show contains a number (e.g. 12-sai - ep 12) that is 
                 // relevant to the title and or also might contain the year in case of rework/reboot 
                 // (e.g. Berserk (2016)) 
-                const string yearPattern = @"[^a-zA-Z](\d{4})[^a-zA-Z]";
                 result = result?
                     .Where(nyaa => nyaa.StrippedName.Split()
-                                       .Select(c => Regex.Replace(c, yearPattern, ""))
+                                       .Select(c => Regex.Replace(c, YearPattern, ""))
                                        .Count(c => c.Contains(episode.ToString("D2")))
                                    >= 2);
 
