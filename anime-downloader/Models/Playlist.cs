@@ -108,8 +108,11 @@ namespace anime_downloader.Models
                 case PlaylistOrder.Date:
                     stream = Source.OrderBy(file => File.GetCreationTime(file.Path));
                     break;
-                case PlaylistOrder.EpisodeNumber:
-                    stream = Source.OrderBy(file => file.Episode);
+                case PlaylistOrder.NameThenEpisode:
+                    stream = Source.OrderBy(file => file.Name).ThenBy(file => file.Episode);
+                    break;
+                case PlaylistOrder.EpisodeThenName:
+                    stream = Source.OrderBy(file => file.Episode).ThenBy(file => file.Name);
                     break;
                 case PlaylistOrder.Default:
                     stream = Source.OrderBy(file => file.FileName, new WindowsSortComparer());

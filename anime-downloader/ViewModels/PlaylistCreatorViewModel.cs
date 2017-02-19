@@ -22,12 +22,20 @@ namespace anime_downloader.ViewModels
             Data = PlaylistOrder.Default
         };
 
-        private static readonly RadioModel<PlaylistOrder> Episode = new RadioModel<PlaylistOrder>
+        private static readonly RadioModel<PlaylistOrder> NameThenEpisode = new RadioModel<PlaylistOrder>
         {
-            Header = "Episode number",
-            ToolTip = "A more rigorous episode number check so that episodes are in order",
+            Header = "Name then Episode",
+            ToolTip = "Sort by anime name instead of file name, then by episode number",
             Tag = "Episode",
-            Data = PlaylistOrder.EpisodeNumber
+            Data = PlaylistOrder.NameThenEpisode
+        };
+
+        private static readonly RadioModel<PlaylistOrder> EpisodeThenName = new RadioModel<PlaylistOrder>
+        {
+            Header = "Episode then Name",
+            ToolTip = "Sort starting with the episode number, then by name",
+            Tag = "Episode",
+            Data = PlaylistOrder.EpisodeThenName
         };
 
         private static readonly RadioModel<PlaylistOrder> Date = new RadioModel<PlaylistOrder>
@@ -89,7 +97,7 @@ namespace anime_downloader.ViewModels
 
             // 
 
-            Options = new ObservableCollection<RadioModel<PlaylistOrder>> {Default, Episode, Date};
+            Options = new ObservableCollection<RadioModel<PlaylistOrder>> {Default, NameThenEpisode, EpisodeThenName, Date};
             FileExists = File.Exists(PathConfiguration.Playlist);
             SelectedRadio = Options.Skip(1).First();
         }
