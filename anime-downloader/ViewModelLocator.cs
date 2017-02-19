@@ -44,5 +44,6 @@ namespace anime_downloader
 
         public static MainWindowViewModel Main => ServiceLocator.Current.GetInstance<MainWindowViewModel>();
 
+        public static bool Loaded => true;
     }
 }
