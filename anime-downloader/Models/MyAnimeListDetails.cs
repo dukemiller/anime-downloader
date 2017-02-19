@@ -36,7 +36,7 @@ namespace anime_downloader.Models
         public string Synopsis
         {
             get { return _synopsis; }
-            set { Set(() => Synonyms, ref _synopsis, value); }
+            set { Set(() => Synopsis, ref _synopsis, value); }
         }
 
         [XmlAttribute("image")]
