@@ -156,7 +156,7 @@ namespace anime_downloader.Classes
                 new MenuItem("&Download latest...", (sender, args) =>
                 {
                     BringWindowToFocus();
-                    MessengerInstance.Send(Enums.Views.Download);
+                    MessengerInstance.Send(Enums.ViewDisplay.Download);
                     MessengerInstance.Send("tray_download");
                 }));
 
@@ -166,7 +166,7 @@ namespace anime_downloader.Classes
                     BringWindowToFocus();
                     if (_settings.MyAnimeListConfig.Works)
                     {
-                        MessengerInstance.Send(Enums.Views.Web);
+                        MessengerInstance.Send(Enums.ViewDisplay.Web);
                         MessengerInstance.Send(new NotificationMessage("tray_sync"));
                     }
                 }));

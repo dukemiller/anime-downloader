@@ -51,7 +51,7 @@ namespace anime_downloader.ViewModels.Components
             ExitCommand = new RelayCommand(() =>
             {
                 Settings.Save();
-                MessengerInstance.Send(Enums.Views.AnimeDisplay);
+                MessengerInstance.Send(Enums.ViewDisplay.Anime);
             });
 
             MyAnimeListBar = SimpleIoc.Default.GetInstance<MyAnimeListBarViewModel>().Load(Anime);
@@ -100,7 +100,7 @@ namespace anime_downloader.ViewModels.Components
                     && Anime?.Name?.Length > 0
             );
 
-            ExitCommand = new RelayCommand(() => MessengerInstance.Send(Enums.Views.AnimeDisplay));
+            ExitCommand = new RelayCommand(() => MessengerInstance.Send(Enums.ViewDisplay.Anime));
 
             ClearSubgroupCommand = new RelayCommand(() => SelectedSubgroup = null);
 
@@ -192,7 +192,7 @@ namespace anime_downloader.ViewModels.Components
         private void Edit()
         {
             Settings.Save();
-            MessengerInstance.Send(Enums.Views.AnimeDisplay);
+            MessengerInstance.Send(Enums.ViewDisplay.Anime);
         }
 
         private void Create()
@@ -200,7 +200,7 @@ namespace anime_downloader.ViewModels.Components
             if (!string.IsNullOrEmpty(SelectedSubgroup))
                 Anime.PreferredSubgroup = SelectedSubgroup;
             _animeService.Add(Anime);
-            MessengerInstance.Send(Enums.Views.AnimeDisplay);
+            MessengerInstance.Send(Enums.ViewDisplay.Anime);
         }
 
         private void Next()

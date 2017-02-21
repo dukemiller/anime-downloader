@@ -256,7 +256,7 @@ namespace anime_downloader.ViewModels.Components
 
             if (anime != null)
             {
-                MessengerInstance.Send(Enums.Views.AnimeDisplay);
+                MessengerInstance.Send(Enums.ViewDisplay.Anime);
                 MessengerInstance.Send(anime);
             }
 

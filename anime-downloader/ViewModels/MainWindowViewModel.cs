@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using anime_downloader.Classes;
+using anime_downloader.Enums;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
@@ -19,18 +21,91 @@ namespace anime_downloader.ViewModels
         /// <summary>
         ///     Handles logic related to creating and the features of the system tray.
         /// </summary>
-        private Tray Tray { get; }
+        private Tray _tray;
 
         // 
 
         public MainWindowViewModel()
         {
-            Tray = new Tray(SimpleIoc.Default.GetInstance<ISettingsService>());
+            // Initializations
+
+            _tray = new Tray(SimpleIoc.Default.GetInstance<ISettingsService>());
             CloseCommand = new RelayCommand(Application.Current.MainWindow.Close);
             CurrentView = new HomeViewModel();
 
-            // 
+            // Commands
 
+            SetCommands();
+            ButtonCommands = new[]
+            {
+                HomeCommand, AnimeCommand, DownloadCommand,
+                ManageCommand, MiscCommand, PlaylistCreatorCommand,
+                SettingsCommand, WebCommand
+            };
+
+            // Messages
+
+            MessengerInstance.Register<WorkMessage>(this, message => Busy = message.Working);
+            MessengerInstance.Register<ViewDisplay>(this, ChangeView);
+
+            // Etc
+
+            HomeCommand.Execute(1);
+        }
+        
+        public int SelectedIndex
+        {
+            get { return _selectedIndex; }
+            set { Set(() => SelectedIndex, ref _selectedIndex, value); }
+        }
+
+        public ViewModelBase CurrentView
+        {
+            get { return _currentView; }
+            set
+            {
+                CurrentView?.Cleanup();
+                Set(() => CurrentView, ref _currentView, value);
+            }
+        }
+
+        private bool Busy
+        {
+            get { return _busy; }
+            set
+            {
+                Set(() => Busy, ref _busy, value);
+                foreach (var _ in ButtonCommands)
+                    _.RaiseCanExecuteChanged();
+            }
+        }
+
+        // 
+
+        private IEnumerable<RelayCommand> ButtonCommands { get; }
+
+        public RelayCommand CloseCommand { get; set; }
+
+        public RelayCommand HomeCommand { get; set; }
+
+        public RelayCommand AnimeCommand { get; set; }
+
+        public RelayCommand DownloadCommand { get; set; }
+
+        public RelayCommand ManageCommand { get; set; }
+
+        public RelayCommand MiscCommand { get; set; }
+
+        public RelayCommand PlaylistCreatorCommand { get; set; }
+
+        public RelayCommand SettingsCommand { get; set; }
+
+        public RelayCommand WebCommand { get; set; }
+
+        // 
+
+        private void SetCommands()
+        {
             HomeCommand = new RelayCommand(
                 () =>
                 {
@@ -104,86 +179,44 @@ namespace anime_downloader.ViewModels
             );
 
             // 
+        }
 
-            ButtonCommands = new[]
+        private void ChangeView(ViewDisplay view)
+        {
+            switch (view)
             {
-                HomeCommand, AnimeCommand, DownloadCommand,
-                ManageCommand, MiscCommand, PlaylistCreatorCommand,
-                SettingsCommand, WebCommand
-            };
-
-            // 
-
-            MessengerInstance.Register<WorkMessage>(this, _ => { Busy = _.Working; });
-
-            MessengerInstance.Register<Enums.Views>(this, _ =>
-            {
-                if (_ == Enums.Views.Home)
+                case ViewDisplay.Home:
                     HomeCommand.Execute(1);
-                else if (_ == Enums.Views.AnimeDisplay)
+                    break;
+
+                case ViewDisplay.Anime:
                     AnimeCommand.Execute(1);
-                else if (_ == Enums.Views.Download)
+                    break;
+
+                case ViewDisplay.Settings:
+                    SettingsCommand.Execute(1);
+                    break;
+
+                case ViewDisplay.Download:
                     DownloadCommand.Execute(1);
-                else if (_ == Enums.Views.Manage)
+                    break;
+
+                case ViewDisplay.Manage:
                     ManageCommand.Execute(1);
-                else if (_ == Enums.Views.Misc)
+                    break;
+
+                case ViewDisplay.Misc:
                     MiscCommand.Execute(1);
-                else if (_ == Enums.Views.Playlist)
+                    break;
+
+                case ViewDisplay.Playlist:
                     PlaylistCreatorCommand.Execute(1);
-                else if (_ == Enums.Views.Web)
+                    break;
+
+                case ViewDisplay.Web:
                     WebCommand.Execute(1);
-            });
-
-            HomeCommand.Execute(1);
-        }
-
-        public int SelectedIndex
-        {
-            get { return _selectedIndex; }
-            set { Set(() => SelectedIndex, ref _selectedIndex, value); }
-        }
-
-        public ViewModelBase CurrentView
-        {
-            get { return _currentView; }
-            set
-            {
-                CurrentView?.Cleanup();
-                Set(() => CurrentView, ref _currentView, value);
+                    break;
             }
         }
-
-        private bool Busy
-        {
-            get { return _busy; }
-            set
-            {
-                Set(() => Busy, ref _busy, value);
-                foreach (var _ in ButtonCommands)
-                    _.RaiseCanExecuteChanged();
-            }
-        }
-
-        // 
-
-        private IEnumerable<RelayCommand> ButtonCommands { get; }
-
-        public RelayCommand CloseCommand { get; set; }
-
-        public RelayCommand HomeCommand { get; set; }
-
-        public RelayCommand AnimeCommand { get; set; }
-
-        public RelayCommand DownloadCommand { get; set; }
-
-        public RelayCommand ManageCommand { get; set; }
-
-        public RelayCommand MiscCommand { get; set; }
-
-        public RelayCommand PlaylistCreatorCommand { get; set; }
-
-        public RelayCommand SettingsCommand { get; set; }
-
-        public RelayCommand WebCommand { get; set; }
     }
 }

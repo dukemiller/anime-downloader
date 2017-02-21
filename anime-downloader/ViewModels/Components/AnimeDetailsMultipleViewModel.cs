@@ -125,7 +125,7 @@ namespace anime_downloader.ViewModels.Components
                             NeedsUpdating = true
                         }
                     });
-                MessengerInstance.Send(Enums.Views.AnimeDisplay);
+                MessengerInstance.Send(Enums.ViewDisplay.Anime);
             }
         }
 
@@ -141,7 +141,7 @@ namespace anime_downloader.ViewModels.Components
                 anime.Airing = Details.Airing;
                 anime.Resolution = Details.Resolution;
             }
-            MessengerInstance.Send(Enums.Views.AnimeDisplay);
+            MessengerInstance.Send(Enums.ViewDisplay.Anime);
         }
     }
 }

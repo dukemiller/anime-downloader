@@ -128,7 +128,7 @@ namespace anime_downloader.ViewModels.Components
 
             else if (response == MessageBoxResult.No)
             {
-                MessengerInstance.Send(Enums.Views.Download);
+                MessengerInstance.Send(Enums.ViewDisplay.Download);
             }
         }
 
