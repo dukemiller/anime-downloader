@@ -38,7 +38,17 @@ namespace anime_downloader.Services
                 .ToString()
         );
 
-        public async Task<bool> NeedsUpdate() => LocalVersion < await OnlineVersion;
+        public async Task<bool> NeedsUpdate()
+        {
+            try
+            {
+                return LocalVersion < await OnlineVersion;
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
         // https://www.codeproject.com/articles/31454/how-to-make-your-application-delete-itself-immedia
         public async Task Update()
@@ -71,9 +81,16 @@ namespace anime_downloader.Services
 
         private async Task<SemanticVersion> GetVersion()
         {
-            var response = await _client.GetAsync($"{Server}/version");
-            var version = await response.Content.ReadAsStringAsync();
-            return new SemanticVersion(version);
+            try
+            {
+                var response = await _client.GetAsync($"{Server}/version");
+                var version = await response.Content.ReadAsStringAsync();
+                return new SemanticVersion(version);
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         private void StartTimer()
