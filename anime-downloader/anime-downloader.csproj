@@ -129,6 +129,7 @@
     <Compile Include="Enums\PlaylistOptions.cs" />
     <Compile Include="Enums\PlaylistOrder.cs" />
     <Compile Include="Models\RadioModel.cs" />
+    <Compile Include="Models\SemanticVersion.cs" />
     <Compile Include="Models\Torrent.cs" />
     <Compile Include="Classes\Converters.cs" />
     <Compile Include="Classes\Xaml\DragSelectionHelper.cs" />
