@@ -31,7 +31,7 @@ namespace anime_downloader.ViewModels
 
             _tray = new Tray(SimpleIoc.Default.GetInstance<ISettingsService>());
             CloseCommand = new RelayCommand(Application.Current.MainWindow.Close);
-            CurrentView = new HomeViewModel();
+            CurrentView = SimpleIoc.Default.GetInstance<HomeViewModel>();
 
             // Commands
 
