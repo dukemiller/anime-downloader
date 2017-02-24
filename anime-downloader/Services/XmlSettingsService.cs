@@ -41,6 +41,7 @@ namespace anime_downloader.Services
             Subgroups = new List<string>();
             SortBy = "name";
             FilterBy = "";
+            UpdateCheckDelay = DateTime.Now;
         }
 
         // 
@@ -85,6 +86,8 @@ namespace anime_downloader.Services
 
         public List<Anime> Animes { get; set; }
 
+        public DateTime UpdateCheckDelay { get; set; }
+
         // 
 
         public void Save()
@@ -108,13 +111,15 @@ namespace anime_downloader.Services
                 {
                     var xmls = new XmlSerializer(typeof(XmlSettingsService));
                     var settings = xmls.Deserialize(sw) as XmlSettingsService;
-                    PathConfig = settings?.PathConfig;
-                    FlagConfig = settings?.FlagConfig;
-                    MyAnimeListConfig = settings?.MyAnimeListConfig;
-                    SortBy = settings?.SortBy;
-                    FilterBy = settings?.FilterBy;
-                    Subgroups = settings?.Subgroups;
-                    Animes = settings?.Animes;
+                    if (settings == null) return this;
+                    PathConfig = settings.PathConfig;
+                    FlagConfig = settings.FlagConfig;
+                    MyAnimeListConfig = settings.MyAnimeListConfig;
+                    SortBy = settings.SortBy;
+                    FilterBy = settings.FilterBy;
+                    Subgroups = settings.Subgroups;
+                    Animes = settings.Animes;
+                    UpdateCheckDelay = settings.UpdateCheckDelay;
                 }
             return this;
         }

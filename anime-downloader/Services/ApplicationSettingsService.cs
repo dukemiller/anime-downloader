@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using anime_downloader.Classes;
 using anime_downloader.Models;
@@ -97,5 +98,7 @@ namespace anime_downloader.Services
         // 
 
         public void Save() => Settings.Default.Save();
+
+        public DateTime UpdateCheckDelay { get; set; }
     }
 }

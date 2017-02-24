@@ -6,6 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Forms;
+using anime_downloader.Enums;
 using anime_downloader.Models.Configurations;
 using anime_downloader.Services.Interfaces;
 using anime_downloader.Views;
@@ -156,7 +157,7 @@ namespace anime_downloader.Classes
                 new MenuItem("&Download latest...", (sender, args) =>
                 {
                     BringWindowToFocus();
-                    MessengerInstance.Send(Enums.ViewDisplay.Download);
+                    MessengerInstance.Send(ViewDisplay.Download);
                     MessengerInstance.Send("tray_download");
                 }));
 
@@ -166,7 +167,7 @@ namespace anime_downloader.Classes
                     BringWindowToFocus();
                     if (_settings.MyAnimeListConfig.Works)
                     {
-                        MessengerInstance.Send(Enums.ViewDisplay.Web);
+                        MessengerInstance.Send(ViewDisplay.Web);
                         MessengerInstance.Send(new NotificationMessage("tray_sync"));
                     }
                 }));
@@ -195,6 +196,14 @@ namespace anime_downloader.Classes
                 }));
 
             _trayContextMenu.MenuItems.Add("-");
+
+            _trayContextMenu.MenuItems.Add(
+                new MenuItem("Check for &updates", (sender, args) =>
+                {
+                    BringWindowToFocus();
+                    MessengerInstance.Send(ViewDisplay.Home);
+                    MessengerInstance.Send(new NotificationMessage("check_for_updates"));
+                }));
 
             _trayContextMenu.MenuItems.Add(
                 new MenuItem("E&xit", (sender, args) =>

@@ -7,19 +7,25 @@ using anime_downloader.Models;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace anime_downloader.ViewModels
 {
     public class HomeViewModel : ViewModelBase
     {
+        private readonly ISettingsService _settingsService;
+
         private readonly IVersionService _versionService;
 
         private string _version;
 
-        private bool _needsUpdate = true;
+        private bool _needsUpdate;
 
-        public HomeViewModel(IVersionService versionService)
+        private DateTime _updateCheckDelay = DateTime.Now;
+
+        public HomeViewModel(ISettingsService settingsService, IVersionService versionService)
         {
+            _settingsService = settingsService;
             _versionService = versionService;
             
             UpdateCommand = new RelayCommand(Update);
@@ -27,11 +33,34 @@ namespace anime_downloader.ViewModels
                 .GetName()
                 .Version
                 .ToString();
-            CheckForUpdates();
-            StartTimer();
+
+            // The double call to this is necessary, this function can be called
+            // in multiple areas
+            if (DateTime.Now >= _settingsService.UpdateCheckDelay)
+                CheckForUpdates();
+            else
+                DelayedCheckForUpdates();
+
+            SetRepeatingUpdateTimer();
+            MessengerInstance.Register<NotificationMessage>(this, async msg =>
+            {
+                if (msg.Notification.Equals("check_for_updates") 
+                    && DateTime.Now > _updateCheckDelay
+                    && DateTime.Now > _settingsService.UpdateCheckDelay)
+                {
+                    await _versionService.RefreshVersion();
+                    CheckForUpdates();
+                    _updateCheckDelay = DateTime.Now.AddMinutes(20);
+                }
+            });
         }
 
-        private async void CheckForUpdates() => NeedsUpdate = await _versionService.NeedsUpdate();
+        private async void CheckForUpdates()
+        {
+            NeedsUpdate = await _versionService.NeedsUpdate();
+            _settingsService.UpdateCheckDelay = DateTime.Now.AddMinutes(20);
+            _settingsService.Save();
+        }
 
         public bool NeedsUpdate
         {
@@ -51,14 +80,26 @@ namespace anime_downloader.ViewModels
 
         // 
 
-        private void StartTimer()
+        private void DelayedCheckForUpdates()
         {
             var timer = new System.Timers.Timer
             {
-                Interval = new TimeSpan(1, 0, 0).TotalMilliseconds,
+                Interval = (_settingsService.UpdateCheckDelay - DateTime.Now).TotalMilliseconds,
+                AutoReset = false,
+                Enabled = true
+            };
+            timer.Elapsed += (sender, args) => CheckForUpdates();
+        }
+
+        private void SetRepeatingUpdateTimer()
+        {
+            var timer = new System.Timers.Timer
+            {
+                Interval = new TimeSpan(6, 0, 0).TotalMilliseconds,
                 AutoReset = true,
                 Enabled = true
             };
+
             timer.Elapsed += (sender, args) => CheckForUpdates();
         }
 

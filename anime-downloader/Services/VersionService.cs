@@ -29,7 +29,7 @@ namespace anime_downloader.Services
             StartTimer();
         }
 
-        public Task<SemanticVersion> OnlineVersion => _version ?? (_version = GetVersion());
+        public Task<SemanticVersion> OnlineVersion => _version ?? RefreshVersion();
 
         public SemanticVersion LocalVersion => new SemanticVersion(
             Assembly.GetExecutingAssembly()
@@ -37,6 +37,8 @@ namespace anime_downloader.Services
                 .Version
                 .ToString()
         );
+
+        public Task<SemanticVersion> RefreshVersion() => _version = RetrieveOnlineVersion();
 
         public async Task<bool> NeedsUpdate()
         {
@@ -79,7 +81,7 @@ namespace anime_downloader.Services
             Process.Start(info);
         }
 
-        private async Task<SemanticVersion> GetVersion()
+        private async Task<SemanticVersion> RetrieveOnlineVersion()
         {
             try
             {
@@ -97,12 +99,12 @@ namespace anime_downloader.Services
         {
             var timer = new Timer
             {
-                Interval = new TimeSpan(1, 0, 0).TotalMilliseconds,
+                Interval = new TimeSpan(6, 0, 0).TotalMilliseconds,
                 AutoReset = true,
                 Enabled = true
             };
 
-            timer.Elapsed += (sender, args) => _version = GetVersion();
+            timer.Elapsed += (sender, args) => RefreshVersion();
         }
     }
 }
