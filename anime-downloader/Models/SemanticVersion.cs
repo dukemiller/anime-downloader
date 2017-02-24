@@ -26,26 +26,14 @@ namespace anime_downloader.Models
                 Patch = int.Parse(split[2]);
         }
 
-        private int TotalValue => Major + Minor + Patch;
-
         public static bool operator <(SemanticVersion left, SemanticVersion right)
         {
-            return left.TotalValue < right.TotalValue;
+            return left.Major < right.Major || (left.Minor < right.Minor || left.Patch < right.Patch);
         }
 
         public static bool operator >(SemanticVersion left, SemanticVersion right)
         {
-            return left.TotalValue > right.TotalValue;
-        }
-
-        public static bool operator <=(SemanticVersion left, SemanticVersion right)
-        {
-            return left.TotalValue <= right.TotalValue;
-        }
-
-        public static bool operator >=(SemanticVersion left, SemanticVersion right)
-        {
-            return left.TotalValue >= right.TotalValue;
+            return left.Major > right.Major || (left.Minor > right.Minor || left.Patch > right.Patch);
         }
 
         public override string ToString() => $"{Major}.{Minor}.{Patch}";
