@@ -29,7 +29,6 @@ namespace anime_downloader.ViewModels
         {
             // Initializations
 
-            _tray = new Tray(SimpleIoc.Default.GetInstance<ISettingsService>());
             CloseCommand = new RelayCommand(Application.Current.MainWindow.Close);
             CurrentView = SimpleIoc.Default.GetInstance<HomeViewModel>();
 
@@ -102,10 +101,14 @@ namespace anime_downloader.ViewModels
 
         public RelayCommand WebCommand { get; set; }
 
+        public RelayCommand TrayCommand { get; set; }
+
         // 
 
         private void SetCommands()
         {
+            TrayCommand = new RelayCommand(CreateTray);
+
             HomeCommand = new RelayCommand(
                 () =>
                 {
@@ -217,6 +220,11 @@ namespace anime_downloader.ViewModels
                     WebCommand.Execute(1);
                     break;
             }
+        }
+
+        private void CreateTray()
+        {
+            _tray = new Tray(SimpleIoc.Default.GetInstance<ISettingsService>());
         }
     }
 }
