@@ -14,7 +14,7 @@ namespace anime_downloader.Views
         {
             if (AlreadyOpen)
             {
-                FocusOtherDownloader();
+                FocusDownloader();
                 Close();
             }
 
@@ -32,17 +32,6 @@ namespace anime_downloader.Views
                 var name = Path.GetFileNameWithoutExtension(Assembly.GetEntryAssembly().Location);
                 return Process.GetProcessesByName(name).Length > 1;
             }
-        }
-
-        /// <summary>
-        ///     Focus the previously opened downloader and close the current.
-        /// </summary>
-        private static void FocusOtherDownloader()
-        {
-            const int restore = 9;
-            var hwnd = FindWindow(null, "Anime Downloader");
-            ShowWindow(hwnd, restore);
-            SetForegroundWindow(hwnd);
         }
     }
 }

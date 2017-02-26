@@ -7,32 +7,35 @@ namespace anime_downloader.Classes
 {
     public static class OperatingSystemApi
     {
+        private const int Restore = 9;
+
+        /// <summary>
+        ///     Focus the opened downloader.
+        /// </summary>
+        public static void FocusDownloader()
+        {
+            var hwnd = FindWindow(null, "Anime Downloader");
+            ShowWindow(hwnd, Restore);
+            SetForegroundWindow(hwnd);
+        }
+
 #if WINDOWS
         [DllImport("user32.dll")]
-        public static extern bool SetForegroundWindow(IntPtr hWnd);
+        private static extern bool SetForegroundWindow(IntPtr hWnd);
 
         [DllImport("user32.dll")]
-        public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
         [DllImport("user32.dll")]
-        public static extern IntPtr FindWindow(string sClassName, string sAppName);
+        private static extern IntPtr FindWindow(string sClassName, string sAppName);
 #endif
 
 #if LINUX
-        public static bool SetForegroundWindow(IntPtr hwnd)
-        {
-            return false;
-        }
+        private static bool SetForegroundWindow(IntPtr hwnd) => false;
 
-        public static bool ShowWindow(IntPtr hWnd, int nCmdShow)
-        {
-            return false;
-        }
+        private static bool ShowWindow(IntPtr hWnd, int nCmdShow) => false;
 
-        public static IntPtr FindWindow(string sClassName, string sAppName)
-        {
-            return IntPtr.Zero;
-        }
+        private static IntPtr FindWindow(string sClassName, string sAppName) => IntPtr.Zero;
 #endif
     }
 }

@@ -12,6 +12,7 @@ using anime_downloader.Services.Interfaces;
 using anime_downloader.Views;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
+using static anime_downloader.Classes.OperatingSystemApi;
 using Application = System.Windows.Application;
 
 namespace anime_downloader.Classes
@@ -146,6 +147,7 @@ namespace anime_downloader.Classes
                 MainWindow.Show();
                 MainWindow.WindowState = WindowState.Normal;
             }
+            FocusDownloader();
         }
 
         [NeedsUpdating]
