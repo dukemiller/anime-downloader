@@ -27,11 +27,6 @@ namespace anime_downloader.ViewModels
 
         public MainWindowViewModel()
         {
-            // Initializations
-
-            CloseCommand = new RelayCommand(Application.Current.MainWindow.Close);
-            CurrentView = SimpleIoc.Default.GetInstance<HomeViewModel>();
-
             // Commands
 
             SetCommands();
@@ -46,6 +41,11 @@ namespace anime_downloader.ViewModels
 
             MessengerInstance.Register<WorkMessage>(this, message => Busy = message.Working);
             MessengerInstance.Register<ViewDisplay>(this, ChangeView);
+
+            // Initializations
+
+            CloseCommand = new RelayCommand(Application.Current.MainWindow.Close);
+            CurrentView = SimpleIoc.Default.GetInstance<HomeViewModel>();
 
             // Etc
 
