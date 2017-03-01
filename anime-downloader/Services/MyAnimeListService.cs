@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using anime_downloader.Classes;
@@ -8,6 +9,7 @@ using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Models.MyAnimeList;
 using anime_downloader.Services.Interfaces;
+using HtmlAgilityPack;
 
 namespace anime_downloader.Services
 {
@@ -203,9 +205,7 @@ namespace anime_downloader.Services
                 }
 
                 else
-                {
                     await Update(anime);
-                }
         }
 
         public async Task<bool> Refresh(Anime anime)
@@ -251,6 +251,28 @@ namespace anime_downloader.Services
             }
 
             return true;
+        }
+
+        public async Task<string> FindProfilePage(string text)
+        {
+            string result = null;
+
+            var q = HttpUtility.UrlEncode(text);
+            var document = new HtmlDocument();
+            using (var client = new WebClient())
+            {
+                var html = await client.DownloadStringTaskAsync(new Uri($"https://myanimelist.net/anime.php?q={q}"));
+                document.LoadHtml(html);
+            }
+            var link = document.DocumentNode?
+                .SelectSingleNode("//div[@class=\"js-categories-seasonal js-block-list list\"]/table/tr[2]/td[1]")?
+                .Descendants("a")?
+                .FirstOrDefault();
+
+            if (link != null)
+                result = link.Attributes["href"].Value;
+
+            return result;
         }
     }
 }

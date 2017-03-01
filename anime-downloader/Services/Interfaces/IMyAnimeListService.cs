@@ -63,5 +63,11 @@ namespace anime_downloader.Services.Interfaces
         ///     Attempt an indescriminate API update on all of the users anime that is flagged for needing updates.
         /// </summary>
         Task Synchronize();
+
+        /// <summary>
+        ///     Search for the show by querying the page and scraping the results from the DOM.
+        /// </summary>
+        /// <returns>If a result is found, returns the url for the page, otherwise null.</returns>
+        Task<string> FindProfilePage(string text);
     }
 }

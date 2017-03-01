@@ -198,11 +198,9 @@ namespace anime_downloader.ViewModels
         private void Search()
         {
             var text = Searchbox?.Trim();
-            if (text?.Length > 0)
-            {
-                var q = HttpUtility.UrlEncode(text);
-                Process.Start($"http://myanimelist.net/anime.php?q={q}");
-            }
+            if (!(text?.Length > 0))
+                return;
+            Process.Start($"http://myanimelist.net/anime.php?q={HttpUtility.UrlEncode(text)}");
         }
 
         private async void Sync()
@@ -216,24 +214,11 @@ namespace anime_downloader.ViewModels
             SyncText = UpToDate ? "Synced" : "Sync";
         }
 
-        public static async Task SearchAndOpenAsync(string text)
+        private async Task SearchAndOpenAsync(string text)
         {
-            var q = HttpUtility.UrlEncode(text);
-            var document = new HtmlDocument();
-
-            using (var client = new WebClient())
-            {
-                var html = await client.DownloadStringTaskAsync(new Uri($"https://myanimelist.net/anime.php?q={q}"));
-                document.LoadHtml(html);
-            }
-
-            var link = document.DocumentNode?
-                .SelectSingleNode("//div[@class=\"js-categories-seasonal js-block-list list\"]/table/tr[2]/td[1]")?
-                .Descendants("a")?
-                .FirstOrDefault();
-
-            if (link != null)
-                Process.Start(link.Attributes["href"].Value);
+            var result = await _malService.FindProfilePage(text);
+            if (result != null)
+                Process.Start(result);
             else
                 Methods.Alert("No results found.");
         }
