@@ -37,7 +37,7 @@ namespace anime_downloader.ViewModels.Components
             set { Set(() => Text, ref _text, value); }
         }
 
-        public async void Download(RadioModel radio)
+        public async void Download(RadioModel<DownloadOption> radio)
         {
             Text = "";
 
@@ -52,14 +52,18 @@ namespace anime_downloader.ViewModels.Components
             if (await _downloadService.ServiceAvailable())
                 try
                 {
-                    if (radio.Tag.Equals("Next"))
-                        await CheckForLatestAsync();
-
-                    else if (radio.Tag.Equals("Continually"))
-                        await GetUpToDateAsync();
-
-                    else if (radio.Tag.Equals("Missing"))
-                        await GetMissingEpisodesAsync();
+                    switch (radio.Data)
+                    {
+                        case DownloadOption.Next:
+                            await CheckForLatestAsync();
+                            break;
+                        case DownloadOption.Continually:
+                            await GetUpToDateAsync();
+                            break;
+                        case DownloadOption.Missing:
+                            await GetMissingEpisodesAsync();
+                            break;
+                    }
                 }
 
                 catch (Exception)

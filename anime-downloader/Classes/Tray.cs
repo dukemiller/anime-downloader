@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Forms;
 using anime_downloader.Enums;
+using anime_downloader.Models;
 using anime_downloader.Models.Configurations;
 using anime_downloader.Services.Interfaces;
 using anime_downloader.Views;
@@ -160,7 +161,7 @@ namespace anime_downloader.Classes
                 {
                     BringWindowToFocus();
                     MessengerInstance.Send(ViewDisplay.Download);
-                    MessengerInstance.Send("tray_download");
+                    MessengerInstance.Send(new RadioModel<DownloadOption> { Data = DownloadOption.Next });
                 }));
 
             _trayContextMenu.MenuItems.Add(

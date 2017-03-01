@@ -18,7 +18,6 @@ namespace anime_downloader.ViewModels
         {
             Header = "Default file listing",
             ToolTip = "Default windows lexical filename sort",
-            Tag = "Default",
             Data = PlaylistOrder.Default
         };
 
@@ -26,7 +25,6 @@ namespace anime_downloader.ViewModels
         {
             Header = "Name then Episode",
             ToolTip = "Sort by anime name instead of file name, then by episode number",
-            Tag = "Episode",
             Data = PlaylistOrder.NameThenEpisode
         };
 
@@ -34,7 +32,6 @@ namespace anime_downloader.ViewModels
         {
             Header = "Episode then Name",
             ToolTip = "Sort starting with the episode number, then by name",
-            Tag = "Episode",
             Data = PlaylistOrder.EpisodeThenName
         };
 
@@ -42,7 +39,6 @@ namespace anime_downloader.ViewModels
         {
             Header = "Date downloaded",
             ToolTip = "When the file was created",
-            Tag = "Date",
             Data = PlaylistOrder.Date
         };
 

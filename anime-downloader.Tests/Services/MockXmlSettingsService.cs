@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using anime_downloader.Models;
 using anime_downloader.Models.Configurations;
 using anime_downloader.Services.Interfaces;
@@ -16,5 +17,6 @@ namespace anime_downloader.Tests.Services
         public List<Anime> Animes { get; set; } = new List<Anime>();
         public bool CrucialDirectoriesExist() => true;
         public void Save() {}
+        public DateTime UpdateCheckDelay { get; set; }
     }
 }
