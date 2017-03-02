@@ -23,25 +23,25 @@ namespace anime_downloader.ViewModels
 
         private DateTime _updateCheckDelay = DateTime.Now;
 
+        // 
+
         public HomeViewModel(ISettingsService settingsService, IVersionService versionService)
         {
             _settingsService = settingsService;
             _versionService = versionService;
             
             UpdateCommand = new RelayCommand(Update);
-            Version = Assembly.GetExecutingAssembly()
-                .GetName()
-                .Version
-                .ToString();
-
-            // The double call to this is necessary, this function can be called
-            // in multiple areas
+            Version = "v" + _versionService.LocalVersion;
+            
             if (DateTime.Now >= _settingsService.UpdateCheckDelay)
+            {
                 CheckForUpdates();
+                SetRepeatingUpdateTimer();
+            }
+
             else
                 DelayedCheckForUpdates();
 
-            SetRepeatingUpdateTimer();
             MessengerInstance.Register<NotificationMessage>(this, async msg =>
             {
                 if (msg.Notification.Equals("check_for_updates") 
@@ -55,12 +55,7 @@ namespace anime_downloader.ViewModels
             });
         }
 
-        private async void CheckForUpdates()
-        {
-            NeedsUpdate = await _versionService.NeedsUpdate();
-            _settingsService.UpdateCheckDelay = DateTime.Now.AddMinutes(20);
-            _settingsService.Save();
-        }
+        // 
 
         public bool NeedsUpdate
         {
@@ -80,6 +75,13 @@ namespace anime_downloader.ViewModels
 
         // 
 
+        private async void CheckForUpdates()
+        {
+            NeedsUpdate = await _versionService.NeedsUpdate();
+            _settingsService.UpdateCheckDelay = DateTime.Now.AddMinutes(20);
+            _settingsService.Save();
+        }
+
         private void DelayedCheckForUpdates()
         {
             var timer = new System.Timers.Timer
@@ -88,7 +90,12 @@ namespace anime_downloader.ViewModels
                 AutoReset = false,
                 Enabled = true
             };
-            timer.Elapsed += (sender, args) => CheckForUpdates();
+
+            timer.Elapsed += (sender, args) =>
+            {
+                CheckForUpdates();
+                SetRepeatingUpdateTimer();
+            };
         }
 
         private void SetRepeatingUpdateTimer()

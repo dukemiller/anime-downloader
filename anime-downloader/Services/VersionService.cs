@@ -22,6 +22,8 @@ namespace anime_downloader.Services
 
         private Task<SemanticVersion> _version;
 
+        // 
+
         public VersionService()
         {
             _client = new HttpClient();
@@ -29,14 +31,13 @@ namespace anime_downloader.Services
             StartTimer();
         }
 
+        // 
+
         public Task<SemanticVersion> OnlineVersion => _version ?? RefreshVersion();
 
-        public SemanticVersion LocalVersion => new SemanticVersion(
-            Assembly.GetExecutingAssembly()
-                .GetName()
-                .Version
-                .ToString()
-        );
+        public SemanticVersion LocalVersion => new SemanticVersion(Assembly.GetExecutingAssembly().GetName().Version);
+
+        // 
 
         public Task<SemanticVersion> RefreshVersion() => _version = RetrieveOnlineVersion();
 
