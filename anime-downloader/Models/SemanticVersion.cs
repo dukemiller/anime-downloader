@@ -1,41 +1,71 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace anime_downloader.Models
 {
+    /// <summary>
+    ///     Immutable class representing a semantic version of only three significant values.
+    /// </summary>
+    /// <remarks>
+    ///     The built-in version was a little less flexible and had some quirks
+    /// </remarks>
     public class SemanticVersion
     {
-        public int Major { get; set; }
+        private readonly int _major;
 
-        public int Minor { get; set; }
+        private readonly int _minor;
 
-        public int Patch { get; set; }
+        private readonly int _patch;
+
+        // 
 
         public SemanticVersion() { }
 
-        public SemanticVersion(string text)
+        private SemanticVersion(int major, int minor, int patch)
         {
-            var split = Regex.Split(text, @"\.");
-            Major = int.Parse(split[0]);
-            Minor = int.Parse(split[1]);
-            if (split[2].All(char.IsNumber))
-                Patch = int.Parse(split[2]);
+            _major = major;
+            _minor = minor;
+            _patch = patch;
         }
+
+        private SemanticVersion(Tuple<int, int, int> version) 
+            : this(version.Item1, version.Item2, version.Item3) { }
+
+        public SemanticVersion(string version): this(ParseString(version)) { }
+
+        public SemanticVersion(Version version) : this(version.ToString()) { }
+
+        // 
 
         public static bool operator <(SemanticVersion left, SemanticVersion right)
         {
-            return left.Major < right.Major || (left.Minor < right.Minor || left.Patch < right.Patch);
+            return left._major < right._major || (left._minor < right._minor || left._patch < right._patch);
         }
 
         public static bool operator >(SemanticVersion left, SemanticVersion right)
         {
-            return left.Major > right.Major || (left.Minor > right.Minor || left.Patch > right.Patch);
+            return left._major > right._major || (left._minor > right._minor || left._patch > right._patch);
         }
 
-        public override string ToString() => $"{Major}.{Minor}.{Patch}";
+        public override string ToString() => $"{_major}.{_minor}.{_patch}";
+
+        // 
+
+        private static Tuple<int, int, int> ParseString(string text)
+        {
+            int major = 0, minor = 0, patch = 0;
+            var split = Regex.Split(text, @"\.");
+
+            if (split.Length < 3)
+                return Tuple.Create(major, minor, patch);
+
+            int.TryParse(split[0], out major);
+            int.TryParse(split[1], out minor);
+            if (split[2].All(char.IsNumber))
+                int.TryParse(split[2], out patch);
+
+            return Tuple.Create(major, minor, patch);
+        }
     }
 }
