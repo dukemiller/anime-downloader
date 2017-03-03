@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
@@ -40,12 +41,21 @@ namespace anime_downloader.ViewModels.Components
 
         private readonly IAnimeService _animeService;
 
+        public RelayCommand<IList> SelectionChangedCommand { get; set; }
+
         // 
 
         public FileListViewModel(IFileService fileService, IAnimeService animeService)
         {
             _fileService = fileService;
             _animeService = animeService;
+
+            SelectionChangedCommand = new RelayCommand<IList>(items =>
+            {
+                if (items == null)
+                    return;
+                SelectedFiles = items.Cast<AnimeFile>().ToList();
+            });
 
             // 
 
@@ -110,7 +120,7 @@ namespace anime_downloader.ViewModels.Components
         /// <summary>
         ///     All selected files
         /// </summary>
-        public ObservableCollection<AnimeFile> SelectedFiles { get; set; } = new ObservableCollection<AnimeFile>();
+        public List<AnimeFile> SelectedFiles { get; set; } = new List<AnimeFile>();
 
         /// <summary>
         ///     The episode type that will determine what episodes are filled in the Files list
@@ -239,7 +249,7 @@ namespace anime_downloader.ViewModels.Components
         private async void Open()
         {
             if (SelectedFiles.Count > 1)
-                Process.Start(await new Playlist {Source = SelectedFiles}.Create());
+                Process.Start(await new Playlist {Source = new ObservableCollection<AnimeFile>(SelectedFiles)}.Create());
             else if (SelectedFile != null)
                 Process.Start(SelectedFile.Path);
         }

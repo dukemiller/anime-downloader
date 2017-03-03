@@ -6,56 +6,27 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:anime_downloader.ViewModels"
              d:DataContext="{d:DesignInstance viewModels:HomeViewModel}"
-             d:DesignHeight="360"
-             d:DesignWidth="680"
+             Background="White"
              mc:Ignorable="d">
     <UserControl.Resources>
-        <Style x:Key="LabelStyle" TargetType="{x:Type Label}">
+        <Style TargetType="{x:Type Label}">
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="FontSize" Value="18.667" />
             <Setter Property="FontFamily" Value="{StaticResource MainFont}" />
         </Style>
     </UserControl.Resources>
-    <Grid>
-        <Grid.Background>White</Grid.Background>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="1*" />
-            <RowDefinition Height="1*" />
-            <RowDefinition Height="1*" />
-            <RowDefinition Height="1*" />
-            <RowDefinition Height="1*" />
-            <RowDefinition Height="1*" />
-            <RowDefinition Height="1*" />
-            <RowDefinition Height="1*" />
-            <RowDefinition Height="1*" />
-            <RowDefinition Height="1*" />
-        </Grid.RowDefinitions>
-        <Label Grid.Row="0"
-               Content="The home tab."
-               Style="{DynamicResource LabelStyle}" />
-        <Label Grid.Row="1"
-               Content="Add and edit anime details."
-               Style="{DynamicResource LabelStyle}" />
-        <Label Grid.Row="2"
-               Content="Change and modify profile settings."
-               Style="{DynamicResource LabelStyle}" />
-        <Label Grid.Row="3"
-               Content="Download anime from the anime list with a few options."
-               Style="{DynamicResource LabelStyle}" />
-        <Label Grid.Row="4"
-               Content="Manage and track episode files."
-               Style="{DynamicResource LabelStyle}" />
-        <Label Grid.Row="5"
-               Content="Create a basic playlist."
-               Style="{DynamicResource LabelStyle}" />
-        <Label Grid.Row="6"
-               Content="Some helpful internet links and buttons."
-               Style="{DynamicResource LabelStyle}" />
-        <Label Grid.Row="7"
-               Content="Other options and features."
-               Style="{DynamicResource LabelStyle}" />
-        <DockPanel Grid.Row="9" LastChildFill="False">
+    <UniformGrid Columns="1" Rows="10">
+        <Label Content="The home tab."  />
+        <Label Content="Add and edit anime details."  />
+        <Label Content="Change and modify profile settings."  />
+        <Label Content="Download anime from the anime list with a few options."  />
+        <Label Content="Manage and track episode files."  />
+        <Label Content="Create a basic playlist."  />
+        <Label Content="Some helpful internet links and buttons." />
+        <Label Content="Other options and features."  />
+        <Separator Visibility="Hidden" />
+        <DockPanel LastChildFill="False">
             <materialDesign:Card Padding="4">
                 <DockPanel VerticalAlignment="Center" DockPanel.Dock="Left">
                     <TextBlock VerticalAlignment="Center" FontSize="16">
@@ -79,9 +50,9 @@
                                     <BeginStoryboard>
                                         <Storyboard>
                                             <DoubleAnimation Duration="0:0:0.95"
-                                                                 From="0.0"
-                                                                 Storyboard.TargetProperty="Opacity"
-                                                                 To="1.0" />
+                                                             From="0.0"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             To="1.0" />
                                         </Storyboard>
                                     </BeginStoryboard>
                                 </DataTrigger.EnterActions>
@@ -97,5 +68,5 @@
                    Foreground="DarkSlateGray"
                    Opacity="0.6" />
         </DockPanel>
-    </Grid>
+    </UniformGrid>
 </UserControl>

@@ -16,9 +16,7 @@
                 <RowDefinition Height="5*" />
                 <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
-            <GroupBox Grid.Column="0"
-                      Margin="5"
-                      Header="Download Options (Airing Series)">
+            <GroupBox Grid.Column="0" Header="Download Options (Airing Series)">
                 <ListBox ItemsSource="{Binding Options}" SelectedItem="{Binding SelectedRadio}">
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="{x:Type ListBoxItem}">
@@ -28,9 +26,9 @@
                                         <RadioButton Margin="5"
                                                      VerticalAlignment="Center"
                                                      VerticalContentAlignment="Center"
-                                                     FocusVisualStyle="{x:Null}" 
                                                      d:DataContext="{d:DesignInstance d:Type=models:RadioModel}"
                                                      Content="{Binding Header}"
+                                                     FocusVisualStyle="{x:Null}"
                                                      IsChecked="{Binding RelativeSource={RelativeSource TemplatedParent},
                                                                          Path=IsSelected}"
                                                      Style="{StaticResource {x:Type RadioButton}}" />

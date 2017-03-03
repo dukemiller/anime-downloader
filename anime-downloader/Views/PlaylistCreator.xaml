@@ -22,7 +22,7 @@
                    TextWrapping="Wrap" />
         <StackPanel Grid.Row="1">
             <DockPanel>
-                <GroupBox Margin="5"
+                <GroupBox Margin="0, 0, 5, 0"
                           HorizontalAlignment="Left"
                           VerticalAlignment="Top"
                           Header="Sort by">
@@ -54,7 +54,7 @@
                     </StackPanel>
                 </GroupBox>
                 <GroupBox MaxWidth="280"
-                          Margin="5"
+                          Margin="0, 0, 5, 0"
                           HorizontalAlignment="Left"
                           VerticalAlignment="Top"
                           Header="Options">
@@ -83,7 +83,7 @@
                                   ToolTip="Reverse the order." />
                     </StackPanel>
                 </GroupBox>
-                <GroupBox Margin="5" Header="Example of output">
+                <GroupBox Margin="0, 0, 5, 0" Header="Example of output">
                     <ItemsControl ItemsSource="{Binding DemoPlaylist.Source}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>

@@ -87,7 +87,6 @@
                 <i:EventTrigger EventName="SelectionChanged">
                     <i:InvokeCommandAction Command="{Binding SelectionChangedCommand}" CommandParameter="{Binding SelectedItems, ElementName=DataGrid}" />
                 </i:EventTrigger>
-                <!--<xaml:MultiSelectionBehavior SelectedItems="{Binding SelectedAnimes}" />-->
             </i:Interaction.Triggers>
             <DataGrid.Resources>
                 <Style BasedOn="{StaticResource MaterialDesignDataGridCell}" TargetType="DataGridCell">

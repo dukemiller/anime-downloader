@@ -28,4 +28,6 @@ namespace anime_downloader.Models
             set { Set(() => Data, ref _data, value); }
         }
     }
+
+    public abstract class RadioModel: RadioModel<string> { }
 }

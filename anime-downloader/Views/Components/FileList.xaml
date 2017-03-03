@@ -63,7 +63,7 @@
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="8*" />
+            <RowDefinition Height="6*" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
 
@@ -71,7 +71,9 @@
         <GroupBox>
             <GroupBox.Header>
                 <DockPanel Grid.Row="0">
-                    <TextBlock Text="{Binding Title}" VerticalAlignment="Center" Foreground="White" >
+                    <TextBlock VerticalAlignment="Center"
+                               Foreground="White"
+                               Text="{Binding Title}">
                         <TextBlock.InputBindings>
                             <MouseBinding Command="{Binding FolderCommand}" MouseAction="LeftClick" />
                         </TextBlock.InputBindings>
@@ -81,8 +83,7 @@
             </GroupBox.Header>
 
             <!--  Episodes  -->
-            <ListBox Grid.Row="1"
-                     xaml:AttachedProperties.SelectedItems="{Binding SelectedFiles}"
+            <ListBox Name="ListBox"
                      xaml:DragSelectionHelper.IsDragSelectionEnabled="true"
                      ItemsSource="{Binding FilteredFiles,
                                            UpdateSourceTrigger=PropertyChanged}"
@@ -91,6 +92,9 @@
                      SelectionMode="Multiple"
                      Style="{StaticResource Episodes}">
                 <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction Command="{Binding SelectionChangedCommand}" CommandParameter="{Binding SelectedItems, ElementName=ListBox}" />
+                    </i:EventTrigger>
                     <i:EventTrigger EventName="MouseDoubleClick">
                         <i:InvokeCommandAction Command="{Binding OpenCommand}" />
                     </i:EventTrigger>
@@ -101,7 +105,10 @@
                 </ListBox.InputBindings>
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock d:DataContext="{d:DesignInstance Type=models:AnimeFile}" Text="{Binding StrippedFilename}" ToolTip="{Binding StrippedFilename}" />
+                        <TextBlock d:DataContext="{d:DesignInstance Type=models:AnimeFile}"
+                                   Margin="-3"
+                                   Text="{Binding StrippedFilename}"
+                                   ToolTip="{Binding StrippedFilename}" />
                     </DataTemplate>
                 </ListBox.ItemTemplate>
                 <ListBox.ContextMenu>
@@ -117,13 +124,19 @@
         </GroupBox>
 
         <!--  Filter bar  -->
-        <Grid Margin="0,5,0,0" Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-            </Grid.ColumnDefinitions>
-
-            <TextBox materialDesign:HintAssist.Hint="Filter by name ..."
+        <DockPanel Grid.Row="1" Margin="0,5,0,0">
+            <Rectangle DockPanel.Dock="Right">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseDown">
+                        <i:InvokeCommandAction Command="{Binding MoveCommand}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <Rectangle.Fill>
+                    <ImageBrush ImageSource="{Binding ImageResourcePath}" />
+                </Rectangle.Fill>
+            </Rectangle>
+            <TextBox Margin="5"
+                     materialDesign:HintAssist.Hint="Filter by name ..."
                      Style="{DynamicResource Filter}"
                      Text="{Binding Filter,
                                     UpdateSourceTrigger=PropertyChanged}">
@@ -131,21 +144,6 @@
                     <KeyBinding Key="Escape" Command="{Binding ClearFilterCommand}" />
                 </TextBox.InputBindings>
             </TextBox>
-
-            <Grid Grid.Column="1">
-                <DockPanel>
-                    <Rectangle>
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="MouseDown">
-                                <i:InvokeCommandAction Command="{Binding MoveCommand}" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                        <Rectangle.Fill>
-                            <ImageBrush ImageSource="{Binding ImageResourcePath}" />
-                        </Rectangle.Fill>
-                    </Rectangle>
-                </DockPanel>
-            </Grid>
-        </Grid>
+        </DockPanel>
     </Grid>
 </UserControl>

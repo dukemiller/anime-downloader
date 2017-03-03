@@ -20,7 +20,7 @@
                 <RowDefinition Height="5*" />
                 <RowDefinition Height="2*" />
             </Grid.RowDefinitions>
-            <GroupBox Margin="5" Header="Paths">
+            <GroupBox Header="Paths">
                 <Grid Row="0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
@@ -58,7 +58,7 @@
             </GroupBox>
 
             <GroupBox Grid.Row="1"
-                      Margin="5"
+                      Margin="0, 5"
                       Header="Tray / Downloading">
                 <StackPanel Orientation="Horizontal">
                     <!--  Exit  -->

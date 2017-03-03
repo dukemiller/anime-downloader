@@ -39,7 +39,7 @@
             </TextBlock>
             <DockPanel Grid.Row="1">
                 <StackPanel>
-                    <DockPanel Margin="5">
+                    <DockPanel Margin="0, 0, 5, 0">
                         <GroupBox Header="MyAnimeList Synchronization">
                             <Grid>
                                 <Grid.RowDefinitions>
@@ -137,7 +137,7 @@
                             </Grid>
                         </GroupBox>
                     </DockPanel>
-                    <GroupBox Margin="5" Header="Search ">
+                    <GroupBox Margin="0, 5, 5, 0" Header="Search ">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="2*" />
@@ -164,7 +164,7 @@
                     </GroupBox>
                 </StackPanel>
                 <StackPanel>
-                    <GroupBox Margin="5" Header="Launch Website">
+                    <GroupBox Header="Launch Website">
                         <StackPanel>
                             <Button Margin="5"
                                     HorizontalAlignment="Stretch"
@@ -180,7 +180,7 @@
                                     Content="Nyaa" />
                         </StackPanel>
                     </GroupBox>
-                    <GroupBox Margin="5"
+                    <GroupBox Margin="0, 5"
                               VerticalAlignment="Bottom"
                               Header="Usage Notes">
                         <Button HorizontalAlignment="Stretch"

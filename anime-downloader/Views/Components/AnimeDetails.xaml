@@ -62,7 +62,7 @@
             </Grid.RowDefinitions>
 
             <DockPanel>
-                <GroupBox Margin="5" DockPanel.Dock="Top">
+                <GroupBox DockPanel.Dock="Top">
                     <StackPanel>
                         <DockPanel DockPanel.Dock="Top">
                             <Label Content="Name: " ToolTip="A hopefully close approximation to the name of the show." />
@@ -147,7 +147,7 @@
                     </StackPanel>
 
                 </GroupBox>
-                <GroupBox Margin="5" Header="Download Options">
+                <GroupBox Margin="0, 5, 5, 0" Header="Download Options">
                     <StackPanel>
                         <DockPanel>
                             <Label Content="Resolution: " ToolTip="The quality that will be downloaded." />
@@ -206,7 +206,7 @@
                     </StackPanel>
                 </GroupBox>
 
-                <GroupBox Margin="5" Header="MyAnimeList Details">
+                <GroupBox Margin="0, 5, 0, 0" Header="MyAnimeList Details">
                     <DockPanel>
                         <Label HorizontalAlignment="Center"
                                Content="{Binding Anime.MyAnimeList.TitleAndEnglish,

@@ -62,51 +62,51 @@
                 <ColumnDefinition Width="2*" />
                 <ColumnDefinition Width="9*" />
             </Grid.ColumnDefinitions>
-            <Grid Background="{StaticResource BackgroundColor}" Column="0">
-                <StackPanel>
-                    <RadioButton xaml:FocusBehavior.IsFocused="True"
-                                 Command="{Binding HomeCommand}"
-                                 Content="Home"
-                                 IsChecked="{Binding SelectedIndex,
-                                                     Converter={StaticResource CompareConverter},
-                                                     ConverterParameter=1}" />
-                    <RadioButton Command="{Binding AnimeCommand}"
-                                 Content="Anime"
-                                 IsChecked="{Binding SelectedIndex,
-                                                     Converter={StaticResource CompareConverter},
-                                                     ConverterParameter=2}" />
-                    <RadioButton Command="{Binding SettingsCommand}"
-                                 Content="Settings"
-                                 IsChecked="{Binding SelectedIndex,
-                                                     Converter={StaticResource CompareConverter},
-                                                     ConverterParameter=3}" />
-                    <RadioButton Command="{Binding DownloadCommand}"
-                                 Content="Download"
-                                 IsChecked="{Binding SelectedIndex,
-                                                     Converter={StaticResource CompareConverter},
-                                                     ConverterParameter=4}" />
-                    <RadioButton Command="{Binding ManageCommand}"
-                                 Content="Manage"
-                                 IsChecked="{Binding SelectedIndex,
-                                                     Converter={StaticResource CompareConverter},
-                                                     ConverterParameter=5}" />
-                    <RadioButton Command="{Binding PlaylistCreatorCommand}"
-                                 Content="Playlists"
-                                 IsChecked="{Binding SelectedIndex,
-                                                     Converter={StaticResource CompareConverter},
-                                                     ConverterParameter=6}" />
-                    <RadioButton Command="{Binding WebCommand}"
-                                 Content="Web"
-                                 IsChecked="{Binding SelectedIndex,
-                                                     Converter={StaticResource CompareConverter},
-                                                     ConverterParameter=7}" />
-                    <RadioButton Command="{Binding MiscCommand}"
-                                 Content="Misc"
-                                 IsChecked="{Binding SelectedIndex,
-                                                     Converter={StaticResource CompareConverter},
-                                                     ConverterParameter=8}" />
-                </StackPanel>
-            </Grid>
+            <UniformGrid Background="{StaticResource BackgroundColor}"
+                         Columns="1"
+                         Rows="10">
+                <RadioButton xaml:FocusBehavior.IsFocused="True"
+                             Command="{Binding HomeCommand}"
+                             Content="Home"
+                             IsChecked="{Binding SelectedIndex,
+                                                 Converter={StaticResource CompareConverter},
+                                                 ConverterParameter=1}" />
+                <RadioButton Command="{Binding AnimeCommand}"
+                             Content="Anime"
+                             IsChecked="{Binding SelectedIndex,
+                                                 Converter={StaticResource CompareConverter},
+                                                 ConverterParameter=2}" />
+                <RadioButton Command="{Binding SettingsCommand}"
+                             Content="Settings"
+                             IsChecked="{Binding SelectedIndex,
+                                                 Converter={StaticResource CompareConverter},
+                                                 ConverterParameter=3}" />
+                <RadioButton Command="{Binding DownloadCommand}"
+                             Content="Download"
+                             IsChecked="{Binding SelectedIndex,
+                                                 Converter={StaticResource CompareConverter},
+                                                 ConverterParameter=4}" />
+                <RadioButton Command="{Binding ManageCommand}"
+                             Content="Manage"
+                             IsChecked="{Binding SelectedIndex,
+                                                 Converter={StaticResource CompareConverter},
+                                                 ConverterParameter=5}" />
+                <RadioButton Command="{Binding PlaylistCreatorCommand}"
+                             Content="Playlists"
+                             IsChecked="{Binding SelectedIndex,
+                                                 Converter={StaticResource CompareConverter},
+                                                 ConverterParameter=6}" />
+                <RadioButton Command="{Binding WebCommand}"
+                             Content="Web"
+                             IsChecked="{Binding SelectedIndex,
+                                                 Converter={StaticResource CompareConverter},
+                                                 ConverterParameter=7}" />
+                <RadioButton Command="{Binding MiscCommand}"
+                             Content="Misc"
+                             IsChecked="{Binding SelectedIndex,
+                                                 Converter={StaticResource CompareConverter},
+                                                 ConverterParameter=8}" />
+            </UniformGrid>
             <ContentPresenter Grid.Column="1"
                               Margin="20,0"
                               Content="{Binding CurrentView,
@@ -120,5 +120,4 @@
             </ContentPresenter>
         </Grid>
     </materialDesign:DialogHost>
-
 </Window>
