@@ -5,11 +5,15 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using anime_downloader.Classes;
+using anime_downloader.Models.Configurations;
 using anime_downloader.Services.Interfaces;
+using anime_downloader.ViewModels.Dialogs;
+using anime_downloader.Views.Dialogs;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using HtmlAgilityPack;
+using MaterialDesignThemes.Wpf;
 
 namespace anime_downloader.ViewModels
 {
@@ -17,11 +21,11 @@ namespace anime_downloader.ViewModels
     {
         private string _searchbox;
 
-        private string _syncText;
+        private bool _synced;
 
-        private bool _upToDate;
+        private bool _loggedIn;
 
-        private bool _works;
+        private readonly ISettingsService _settingsService;
 
         private readonly IAnimeService _animeService;
 
@@ -29,45 +33,24 @@ namespace anime_downloader.ViewModels
 
         private readonly IMyAnimeListApi _api;
 
+        private string _synchronize;
+
+        private string _log;
+
+        private RelayCommand _logCommand;
+
         public WebViewModel(ISettingsService settingsService, IAnimeService animeService, 
                            IMyAnimeListService malService, IMyAnimeListApi api)
         {
-            SettingsService = settingsService;
+            _settingsService = settingsService;
             _animeService = animeService;
             _malService = malService;
             _api = api;
 
             // 
 
-            Works = SettingsService.MyAnimeListConfig.Works;
-            UpToDate = _animeService.Animes.Any() && !_animeService.NeedsUpdates.Any();
-            SyncText = UpToDate ? "Synced" : "Sync";
-
-            // 
-
-            MyAnimeListCommand = new RelayCommand(() => Process.Start("http://myanimelist.net/"));
-            AnichartCommand = new RelayCommand(() => Process.Start("http://anichart.net/"));
-            NyaaCommand = new RelayCommand(() => Process.Start("https://www.nyaa.se/"));
-
-            ProfileCommand = new RelayCommand(
-                () => Process.Start($"http://myanimelist.net/profile/{SettingsService.MyAnimeListConfig.Username}"),
-                () => SettingsService.MyAnimeListConfig.Works
-            );
-
-            SyncCommand = new RelayCommand(
-                Sync,
-                () => SettingsService.MyAnimeListConfig.Works
-            );
-
-            SearchCommand = new RelayCommand(Search);
-            SearchFirstResultCommand = new RelayCommand(SearchFirstResult);
-            LoginCommand = new RelayCommand(Login);
-            UsageNotesCommand = new RelayCommand(UsageNotes);
-            ImportCommand = new RelayCommand(
-                Import, 
-                () => SettingsService.MyAnimeListConfig.Works);
-
-            // Only called by the tray
+            SetCommands();
+            CheckSyncAndLog();
             MessengerInstance.Register<NotificationMessage>(this, _ =>
             {
                 if (_.Notification.Equals("tray_sync"))
@@ -77,20 +60,18 @@ namespace anime_downloader.ViewModels
 
         // 
 
-        public ISettingsService SettingsService { get; set; }
+        private DateTime LoginAttempt { get; set; } = DateTime.Now;
 
-        private DateTime WaitDelay { get; set; } = DateTime.Now;
-
-        public bool UpToDate
+        public bool Synced
         {
-            get { return _upToDate; }
-            set { Set(() => UpToDate, ref _upToDate, value); }
+            get { return _synced; }
+            set { Set(() => Synced, ref _synced, value); }
         }
 
-        public string SyncText
+        public bool LoggedIn
         {
-            get { return _syncText; }
-            set { Set(() => SyncText, ref _syncText, value); }
+            get { return _loggedIn; }
+            set { Set(() => LoggedIn, ref _loggedIn, value); }
         }
 
         public string Searchbox
@@ -99,16 +80,19 @@ namespace anime_downloader.ViewModels
             set { Set(() => Searchbox, ref _searchbox, value); }
         }
 
-        public bool Works
+        public string Synchronize
         {
-            get { return _works; }
-            set
-            {
-                Set(() => Works, ref _works, value);
-                SettingsService.MyAnimeListConfig.Works = value;
-                SettingsService.Save();
-            }
+            get { return _synchronize; }
+            set { Set(() => Synchronize, ref _synchronize, value); }
         }
+
+        public string Log
+        {
+            get { return _log; }
+            set { Set(() => Log, ref _log, value); }
+        }
+
+        // 
 
         public RelayCommand ProfileCommand { get; set; }
 
@@ -126,19 +110,81 @@ namespace anime_downloader.ViewModels
 
         public RelayCommand SearchFirstResultCommand { get; set; }
 
-        public RelayCommand LoginCommand { get; set; }
+        public RelayCommand LogCommand
+        {
+            get { return _logCommand; }
+            set { Set(() => LogCommand, ref _logCommand, value); }
+        }
 
         public RelayCommand UsageNotesCommand { get; set; }
 
         // 
 
+        private void SetCommands()
+        {
+            // Open website
+
+            MyAnimeListCommand = new RelayCommand(() => Process.Start("http://myanimelist.net/"));
+            AnichartCommand = new RelayCommand(() => Process.Start("http://anichart.net/"));
+            NyaaCommand = new RelayCommand(() => Process.Start("https://www.nyaa.se/"));
+
+            // Just text
+
+            UsageNotesCommand = new RelayCommand(UsageNotes);
+
+            // Searches
+
+            SearchCommand = new RelayCommand(Search);
+            SearchFirstResultCommand = new RelayCommand(SearchFirstResult);
+
+            // MyAnimeList
+
+            ProfileCommand = new RelayCommand(
+                () => Process.Start($"http://myanimelist.net/profile/{_settingsService.MyAnimeListConfig.Username}"),
+                () => _settingsService.MyAnimeListConfig.LoggedIn
+            );
+
+            ImportCommand = new RelayCommand(
+                Import, 
+                () => _settingsService.MyAnimeListConfig.LoggedIn
+            );
+
+            SyncCommand = new RelayCommand(
+                Sync, 
+                () => _settingsService.MyAnimeListConfig.LoggedIn && !Synced
+            );
+        }
+
         private void RaiseCommandExecutions()
         {
-            LoginCommand.RaiseCanExecuteChanged();
             ProfileCommand.RaiseCanExecuteChanged();
             SyncCommand.RaiseCanExecuteChanged();
             ImportCommand.RaiseCanExecuteChanged();
         }
+
+        private void CheckSyncAndLog()
+        {
+            LoggedIn = _settingsService.MyAnimeListConfig.LoggedIn;
+
+            if (LoggedIn)
+            {
+                Log = "Log out";
+                LogCommand = new RelayCommand(Logout);
+            }
+
+            else
+            {
+                Log = "Log in";
+                LogCommand = new RelayCommand(Login);
+            }
+
+            Synced = _animeService.Synced;
+            Synchronize = Synced ? "Synched" : "Synchronize";
+
+            RaiseCommandExecutions();
+        }
+
+        // 
 
         private static void UsageNotes()
         {
@@ -162,14 +208,27 @@ namespace anime_downloader.ViewModels
 
         private async void Login()
         {
-            if (DateTime.Now < WaitDelay)
+            var view = new MyAnimeListLoginDialog();
+            var result = await DialogHost.Show(view) as MyAnimeListConfiguration;
+
+            if (result == null || result.Password?.Length < 1 || result.Username?.Length < 1 || DateTime.Now < LoginAttempt)
                 return;
 
             MessengerInstance.Send(new WorkMessage {Working = true});
-            Works = await _api.VerifyCredentialsAsync();
+            _settingsService.MyAnimeListConfig = result;
+            _settingsService.MyAnimeListConfig.LoggedIn = await _api.VerifyCredentialsAsync();
+            _settingsService.Save();
             MessengerInstance.Send(new WorkMessage {Working = false});
-            RaiseCommandExecutions();
-            WaitDelay = DateTime.Now.AddSeconds(5);
+
+            LoginAttempt = DateTime.Now.AddSeconds(5);
+            CheckSyncAndLog();
+        }
+
+        private void Logout()
+        {
+            _settingsService.MyAnimeListConfig = new MyAnimeListConfiguration();
+            _settingsService.Save();
+            CheckSyncAndLog();
         }
 
         private async void Import()
@@ -177,10 +236,8 @@ namespace anime_downloader.ViewModels
             MessengerInstance.Send(new WorkMessage { Working = true });
             var animes = await Task.Run(async () => await _malService.GetProfileAnime());
             foreach (var anime in animes)
-            {
                 if (!_animeService.Animes.Any(a => a.MyAnimeList.Id.Equals(anime.MyAnimeList.Id)))
                     _animeService.Add(anime);
-            }
             MessengerInstance.Send(new WorkMessage { Working = false });
         }
 
@@ -190,7 +247,7 @@ namespace anime_downloader.ViewModels
             if (text?.Length > 0)
             {
                 MessengerInstance.Send(new WorkMessage {Working = true});
-                await SearchAndOpenAsync(text);
+                await SearchAndOpen(text);
                 MessengerInstance.Send(new WorkMessage {Working = false});
             }
         }
@@ -205,16 +262,16 @@ namespace anime_downloader.ViewModels
 
         private async void Sync()
         {
-            SyncText = "Syncing ...";
             MessengerInstance.Send(new WorkMessage {Working = true});
+            Synchronize = "Synchronizing";
             await _malService.Synchronize();
             MessengerInstance.Send(new WorkMessage {Working = false});
+
             RaiseCommandExecutions();
-            UpToDate = _animeService.Animes.Any() && !_animeService.NeedsUpdates.Any();
-            SyncText = UpToDate ? "Synced" : "Sync";
+            CheckSyncAndLog();
         }
 
-        private async Task SearchAndOpenAsync(string text)
+        private async Task SearchAndOpen(string text)
         {
             var result = await _malService.FindProfilePage(text);
             if (result != null)

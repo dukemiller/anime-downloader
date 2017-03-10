@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using anime_downloader.ViewModels.Components;
-using anime_downloader.Views.Components;
+using anime_downloader.ViewModels.Dialogs;
 using MaterialDesignThemes.Wpf;
+using Dialog = anime_downloader.Views.Dialogs.Dialog;
 
 namespace anime_downloader.Classes
 {

@@ -9,7 +9,7 @@ namespace anime_downloader.Models.Configurations
     {
         private string _password;
         private string _username;
-        private bool _works;
+        private bool _loggedIn;
 
         [XmlAttribute("username")]
         public string Username
@@ -25,11 +25,11 @@ namespace anime_downloader.Models.Configurations
             set { Set(() => Password, ref _password, value); }
         }
 
-        [XmlAttribute("working")]
-        public bool Works
+        [XmlAttribute("logged_in")]
+        public bool LoggedIn
         {
-            get { return _works; }
-            set { Set(() => Works, ref _works, value); }
+            get { return _loggedIn; }
+            set { Set(() => LoggedIn, ref _loggedIn, value); }
         }
     }
 }

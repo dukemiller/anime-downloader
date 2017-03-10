@@ -48,6 +48,11 @@ namespace anime_downloader.Services.Interfaces
         /// <returns></returns>
         IEnumerable<Anime> HasId { get; }
 
+        /// <summary>
+        ///     If the collection is completely synchronized or not
+        /// </summary>
+        bool Synced { get; }
+
         // Collection operations
 
         /// <summary>

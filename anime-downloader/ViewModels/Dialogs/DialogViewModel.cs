@@ -1,6 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 
-namespace anime_downloader.ViewModels.Components
+namespace anime_downloader.ViewModels.Dialogs
 {
     public class DialogViewModel: ViewModelBase
     {

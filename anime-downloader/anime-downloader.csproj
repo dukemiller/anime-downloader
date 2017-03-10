@@ -156,13 +156,14 @@
     <Compile Include="ViewModels\Components\AnimeDetailsMultipleViewModel.cs" />
     <Compile Include="ViewModels\Components\AnimeDetailsViewModel.cs" />
     <Compile Include="ViewModels\Components\AnimeListViewModel.cs" />
-    <Compile Include="ViewModels\Components\DialogViewModel.cs" />
+    <Compile Include="ViewModels\Dialogs\DialogViewModel.cs" />
     <Compile Include="ViewModels\Components\DownloaderViewModel.cs" />
     <Compile Include="ViewModels\Components\DownloadLogViewModel.cs" />
     <Compile Include="ViewModels\Components\DownloadOptionsViewModel.cs" />
     <Compile Include="ViewModels\Components\FileListViewModel.cs" />
     <Compile Include="ViewModels\Components\FindViewModel.cs" />
     <Compile Include="ViewModels\Components\MyAnimeListBarViewModel.cs" />
+    <Compile Include="ViewModels\Dialogs\MyAnimeListLoginDialogViewModel.cs" />
     <Compile Include="ViewModels\DownloadViewModel.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
@@ -183,7 +184,7 @@
     <Compile Include="Views\Components\AnimeList.xaml.cs">
       <DependentUpon>AnimeList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Components\Dialog.xaml.cs">
+    <Compile Include="Views\Dialogs\Dialog.xaml.cs">
       <DependentUpon>Dialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Components\DownloadLog.xaml.cs">
@@ -203,6 +204,9 @@
     </Compile>
     <Compile Include="Views\Components\MyAnimeListBar.xaml.cs">
       <DependentUpon>MyAnimeListBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Dialogs\MyAnimeListLoginDialog.xaml.cs">
+      <DependentUpon>MyAnimeListLoginDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Download.xaml.cs">
       <DependentUpon>Download.xaml</DependentUpon>
@@ -229,7 +233,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Components\Dialog.xaml">
+    <Page Include="Views\Dialogs\Dialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -238,6 +242,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Components\MyAnimeListBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Dialogs\MyAnimeListLoginDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -166,7 +166,7 @@ namespace anime_downloader.ViewModels
             WebCommand = new RelayCommand(
                 () =>
                 {
-                    CurrentView = SimpleIoc.Default.GetInstance<WebViewModel>();
+                    CurrentView = SimpleIoc.Default.GetUniqueInstance<WebViewModel>();
                     SelectedIndex = 7;
                 },
                 () => !Busy

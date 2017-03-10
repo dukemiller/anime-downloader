@@ -27,14 +27,14 @@ namespace anime_downloader.ViewModels.Components
             _settings = settings;
             _malService = malService;
 
-            FindCommand = new RelayCommand(Find, () => _settings.MyAnimeListConfig.Works);
+            FindCommand = new RelayCommand(Find, () => _settings.MyAnimeListConfig.LoggedIn);
             ClearCommand = new RelayCommand(Clear);
             ProfileCommand = new RelayCommand(Profile);
             RefreshCommand = new RelayCommand(Refresh);
 
             _settings.MyAnimeListConfig.PropertyChanged += (sender, args) =>
             {
-                if (args.PropertyName.Equals("Works"))
+                if (args.PropertyName.Equals("LoggedIn"))
                     RaisePropertyChanged(nameof(LoggedIntoMal));
             };
         }
@@ -54,7 +54,7 @@ namespace anime_downloader.ViewModels.Components
 
         // 
 
-        public bool LoggedIntoMal => _settings.MyAnimeListConfig.Works;
+        public bool LoggedIntoMal => _settings.MyAnimeListConfig.LoggedIn;
 
         public Visibility HasId => _anime.MyAnimeList.HasId ? Visibility.Visible : Visibility.Collapsed;
 

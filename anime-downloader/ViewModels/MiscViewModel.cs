@@ -38,7 +38,7 @@ namespace anime_downloader.ViewModels
 
         public RelayCommand SubmitCommand { get; set; }
 
-        public bool LoggedIntoMal => _settings.MyAnimeListConfig.Works;
+        public bool LoggedIntoMal => _settings.MyAnimeListConfig.LoggedIn;
 
         // 
 

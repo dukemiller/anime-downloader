@@ -168,7 +168,7 @@ namespace anime_downloader.Classes
                 new MenuItem("&Sync MyAnimeList...", (sender, args) =>
                 {
                     BringWindowToFocus();
-                    if (_settings.MyAnimeListConfig.Works)
+                    if (_settings.MyAnimeListConfig.LoggedIn)
                     {
                         MessengerInstance.Send(ViewDisplay.Web);
                         MessengerInstance.Send(new NotificationMessage("tray_sync"));

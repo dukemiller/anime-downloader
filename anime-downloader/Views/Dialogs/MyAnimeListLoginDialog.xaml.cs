@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace anime_downloader.Views.Components
+namespace anime_downloader.Views.Dialogs
 {
     /// <summary>
-    /// Interaction logic for Dialog.xaml
+    /// Interaction logic for MyAnimeListLoginDialog.xaml
     /// </summary>
-    public partial class Dialog : UserControl
+    public partial class MyAnimeListLoginDialog : UserControl
     {
-        public Dialog()
+        public MyAnimeListLoginDialog()
         {
             InitializeComponent();
         }

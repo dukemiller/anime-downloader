@@ -75,6 +75,8 @@ namespace anime_downloader.Services
 
         public IEnumerable<Anime> HasId => Animes.Where(a => !string.IsNullOrEmpty(a.MyAnimeList.Id));
 
+        public bool Synced => Animes.Any() && !NeedsUpdates.Any();
+
         public Anime ClosestAnime(string name)
         {
             return Animes
