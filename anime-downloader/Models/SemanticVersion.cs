@@ -40,12 +40,16 @@ namespace anime_downloader.Models
 
         public static bool operator <(SemanticVersion left, SemanticVersion right)
         {
-            return left._major < right._major || (left._minor < right._minor || left._patch < right._patch);
+            return left._major < right._major 
+                || left._major == right._major && left._minor < right._minor 
+                || left._major == right._major && left._minor == right._minor && left._patch < right._patch;
         }
 
         public static bool operator >(SemanticVersion left, SemanticVersion right)
         {
-            return left._major > right._major || (left._minor > right._minor || left._patch > right._patch);
+            return left._major > right._major
+                || left._major == right._major && left._minor > right._minor
+                || left._major == right._major && left._minor == right._minor && left._patch > right._patch;
         }
 
         public override string ToString() => $"{_major}.{_minor}.{_patch}";
