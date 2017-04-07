@@ -23,8 +23,8 @@ namespace anime_downloader.Models
         /// </summary>
         public ObservableCollection<AnimeFile> Source
         {
-            get { return _source; }
-            set { Set(() => Source, ref _source, value); }
+            get => _source;
+            set => Set(() => Source, ref _source, value);
         }
 
         /// <summary>
@@ -123,6 +123,7 @@ namespace anime_downloader.Models
 
             if (Options.HasFlag(PlaylistOptions.AdditionalEpisodesFirst))
                 stream = AdditionalEpisodesFirst(stream, Options.HasFlag(PlaylistOptions.SeparateShowOrder));
+
             else if (Options.HasFlag(PlaylistOptions.SeparateShowOrder))
                 stream = SeparateShowOrder(stream);
 

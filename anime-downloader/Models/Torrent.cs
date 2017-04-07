@@ -12,32 +12,34 @@ namespace anime_downloader.Models
         /// <summary>
         ///     The description containing seeder & measurement information.
         /// </summary>
-        public string Description;
+        public string Description { get; set; }
 
         /// <summary>
         ///     The given download link.
         /// </summary>
-        public string Link;
+        public string Link { get; set; }
 
         /// <summary>
         ///     The unit of measurement used in size.
         /// </summary>
-        public string Measurement;
+        public string Measurement { get; set; }
 
         /// <summary>
         ///     The Torrent's parsed filename.
         /// </summary>
-        public string Name;
+        public string Name { get; set; }
 
         /// <summary>
         ///     The amount of people seeding the torrent.
         /// </summary>
-        public int Seeders;
+        public int Seeders { get; set; }
 
         /// <summary>
         ///     The size of the download.
         /// </summary>
-        public double Size;
+        public double Size { get; set; }
+
+        //
 
         public string StrippedName => Methods.Strip(Name);
 
@@ -50,6 +52,8 @@ namespace anime_downloader.Models
         ///     Summary of torrent providers' values
         /// </returns>
         public override string ToString() => $"{GetType().Name}<name={Name}, link={Link}, size={Size} MB>";
+
+        // 
 
         /// <summary>
         ///     Gathers the torrent's filename from it's meta-data.

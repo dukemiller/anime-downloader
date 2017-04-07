@@ -10,24 +10,15 @@ namespace anime_downloader.Models
     public class AnimeFile : IComparable<AnimeFile>
     {
         /// <param name="path">The full path filename, e.g. "{C:/.../.../anime.mp4}".</param>
-        public AnimeFile(string path)
-        {
-            Path = path;
-        }
+        public AnimeFile(string path) => Path = path;
 
         /// <summary>
         ///     The anime name gathered from the filename, e.g. "{Show} - 01.mp4"
         /// </summary>
-        public string Name
-        {
-            get
-            {
-                return string.Join("-",
-                        StrippedFilename.Split('-')
-                            .Take(StrippedFilename.Count(x => x == '-')))
-                    .Trim();
-            }
-        }
+        public string Name => string.Join("-",
+                StrippedFilename.Split('-')
+                    .Take(StrippedFilename.Count(x => x == '-')))
+            .Trim();
 
         /// <summary>
         ///     The episode gathered from the filename, e.g. "Show - {01}.mp4".
@@ -65,10 +56,7 @@ namespace anime_downloader.Models
         /// <summary>
         ///     Comparator used for the AddSorted extension method
         /// </summary>
-        public int CompareTo(AnimeFile other)
-        {
-            return string.Compare(StrippedFilename, other.StrippedFilename, StringComparison.Ordinal);
-        }
-        
+        public int CompareTo(AnimeFile other) => 
+            string.Compare(StrippedFilename, other.StrippedFilename, StringComparison.Ordinal);
     }
 }

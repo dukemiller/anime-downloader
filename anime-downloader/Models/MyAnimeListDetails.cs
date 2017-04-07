@@ -10,21 +10,29 @@ namespace anime_downloader.Models
     public sealed class MyAnimeListDetails : ObservableObject
     {
         private static int CurrentYear() => DateTime.Now.Year;
+
         private static Season CurrentSeason() => (Season) Math.Ceiling(Convert.ToDouble(DateTime.Now.Month) / 3);
 
         private string _english;
+
         private string _id;
+
         private bool _needsUpdating;
+
         private int _overallTotal;
+
         private string _synonyms;
+
         private string _synopsis;
+
         private string _title;
+
         private int _totalEpisodes;
 
         [XmlAttribute("id")]
         public string Id
         {
-            get { return _id; }
+            get => _id;
             set
             {
                 Set(() => Id, ref _id, value);
@@ -35,8 +43,8 @@ namespace anime_downloader.Models
         [XmlAttribute("synopsis")]
         public string Synopsis
         {
-            get { return _synopsis; }
-            set { Set(() => Synopsis, ref _synopsis, value); }
+            get => _synopsis;
+            set => Set(() => Synopsis, ref _synopsis, value);
         }
 
         [XmlAttribute("image")]
@@ -45,7 +53,7 @@ namespace anime_downloader.Models
         [XmlAttribute("title")]
         public string Title
         {
-            get { return _title; }
+            get => _title;
             set
             {
                 Set(() => Title, ref _title, value);
@@ -56,7 +64,7 @@ namespace anime_downloader.Models
         [XmlAttribute("english")]
         public string English
         {
-            get { return _english; }
+            get => _english;
             set
             {
                 Set(() => English, ref _english, value);
@@ -67,7 +75,7 @@ namespace anime_downloader.Models
         [XmlAttribute("synonyms")]
         public string Synonyms
         {
-            get { return _synonyms; }
+            get => _synonyms;
             set
             {
                 Set(() => Synonyms, ref _synonyms, value);
@@ -78,14 +86,14 @@ namespace anime_downloader.Models
         [XmlAttribute("needs_updates")]
         public bool NeedsUpdating
         {
-            get { return _needsUpdating; }
-            set { Set(() => NeedsUpdating, ref _needsUpdating, value); }
+            get => _needsUpdating;
+            set => Set(() => NeedsUpdating, ref _needsUpdating, value);
         }
 
         [XmlAttribute("total_episodes")]
         public int TotalEpisodes
         {
-            get { return _totalEpisodes; }
+            get => _totalEpisodes;
             set
             {
                 Set(() => TotalEpisodes, ref _totalEpisodes, value);
@@ -96,7 +104,7 @@ namespace anime_downloader.Models
         [XmlAttribute("overall_total")]
         public int OverallTotal
         {
-            get { return _overallTotal; }
+            get => _overallTotal;
             set
             {
                 Set(() => OverallTotal, ref _overallTotal, value);

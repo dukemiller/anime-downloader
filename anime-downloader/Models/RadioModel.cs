@@ -12,20 +12,20 @@ namespace anime_downloader.Models
 
         public string Header
         {
-            get { return _header; }
-            set { Set(() => Header, ref _header, value); }
+            get => _header;
+            set => Set(() => Header, ref _header, value);
         }
 
         public string ToolTip
         {
-            get { return _tooltip; }
-            set { Set(() => ToolTip, ref _tooltip, value); }
+            get => _tooltip;
+            set => Set(() => ToolTip, ref _tooltip, value);
         }
 
         public T Data
         {
-            get { return _data; }
-            set { Set(() => Data, ref _data, value); }
+            get => _data;
+            set => Set(() => Data, ref _data, value);
         }
     }
 

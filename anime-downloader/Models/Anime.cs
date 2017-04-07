@@ -17,29 +17,35 @@ namespace anime_downloader.Models
         public static int SortedRateFlag;
 
         /// <summary>
-        ///    Another variable used sort of like a bit flag for sorting in the data grid.
+        ///     Another variable used sort of like a bit flag for sorting in the data grid.
         /// </summary>
         public static int SortedAiredFlag;
 
         private bool _airing;
+
         private int _episode;
+
         private MyAnimeListDetails _myAnimeList;
 
         private string _name;
+
         private bool _nameStrict;
+
         private string _notes;
+
         private string _preferredSubgroup;
+
         private string _rating;
+
         private string _resolution;
-        private Status _status;
+
         private bool _secondSeason;
+
+        private Status _status;
 
         // 
 
-        public Anime()
-        {
-            MyAnimeList = new MyAnimeListDetails();
-        }
+        public Anime() => MyAnimeList = new MyAnimeListDetails();
 
         // 
 
@@ -49,8 +55,8 @@ namespace anime_downloader.Models
         [XmlAttribute("name")]
         public string Name
         {
-            get { return _name; }
-            set { Set(() => Name, ref _name, value); }
+            get => _name;
+            set => Set(() => Name, ref _name, value);
         }
 
         /// <summary>
@@ -59,7 +65,7 @@ namespace anime_downloader.Models
         [XmlAttribute("episode")]
         public int Episode
         {
-            get { return _episode; }
+            get => _episode;
             set
             {
                 Set(() => Episode, ref _episode, value);
@@ -74,7 +80,7 @@ namespace anime_downloader.Models
         [XmlAttribute("status")]
         public Status Status
         {
-            get { return _status; }
+            get => _status;
             set
             {
                 Set(() => Status, ref _status, value);
@@ -89,8 +95,8 @@ namespace anime_downloader.Models
         [XmlAttribute("resolution")]
         public string Resolution
         {
-            get { return _resolution; }
-            set { Set(() => Resolution, ref _resolution, value); }
+            get => _resolution;
+            set => Set(() => Resolution, ref _resolution, value);
         }
 
         /// <summary>
@@ -99,8 +105,8 @@ namespace anime_downloader.Models
         [XmlAttribute("airing")]
         public bool Airing
         {
-            get { return _airing; }
-            set { Set(() => Airing, ref _airing, value); }
+            get => _airing;
+            set => Set(() => Airing, ref _airing, value);
         }
 
         /// <summary>
@@ -109,8 +115,8 @@ namespace anime_downloader.Models
         [XmlAttribute("name_strict")]
         public bool NameStrict
         {
-            get { return _nameStrict; }
-            set { Set(() => NameStrict, ref _nameStrict, value); }
+            get => _nameStrict;
+            set => Set(() => NameStrict, ref _nameStrict, value);
         }
 
         /// <summary>
@@ -119,8 +125,8 @@ namespace anime_downloader.Models
         [XmlAttribute("preferred_subgroup")]
         public string PreferredSubgroup
         {
-            get { return _preferredSubgroup; }
-            set { Set(() => PreferredSubgroup, ref _preferredSubgroup, value); }
+            get => _preferredSubgroup;
+            set => Set(() => PreferredSubgroup, ref _preferredSubgroup, value);
         }
 
         /// <summary>
@@ -129,21 +135,21 @@ namespace anime_downloader.Models
         [XmlAttribute("rating")]
         public string Rating
         {
-            get { return _rating; }
-            set { Set(() => Rating, ref _rating, value); }
+            get => _rating;
+            set => Set(() => Rating, ref _rating, value);
         }
 
         [XmlElement("my_anime_list")]
         public MyAnimeListDetails MyAnimeList
         {
-            get { return _myAnimeList; }
-            set { Set(() => MyAnimeList, ref _myAnimeList, value); }
+            get => _myAnimeList;
+            set => Set(() => MyAnimeList, ref _myAnimeList, value);
         }
 
         [XmlAttribute("notes")]
         public string Notes
         {
-            get { return _notes; }
+            get => _notes;
             set
             {
                 Set(() => Notes, ref _notes, value);
@@ -155,8 +161,8 @@ namespace anime_downloader.Models
         [XmlAttribute("is_second_season")]
         public bool SecondSeason
         {
-            get { return _secondSeason; }
-            set { Set(() => SecondSeason, ref _secondSeason, value); }
+            get => _secondSeason;
+            set => Set(() => SecondSeason, ref _secondSeason, value);
         }
 
         //////////////////////////////////////////////////////////////////////////////////////
