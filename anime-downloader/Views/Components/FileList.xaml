@@ -90,6 +90,9 @@
                      SelectedItem="{Binding SelectedFile,
                                             UpdateSourceTrigger=PropertyChanged}"
                      SelectionMode="Multiple"
+                     IsTextSearchCaseSensitive="False"
+                     IsTextSearchEnabled="True"
+                     TextSearch.TextPath="StrippedFilename"
                      Style="{StaticResource Episodes}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged">
