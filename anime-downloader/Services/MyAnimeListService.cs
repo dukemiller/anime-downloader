@@ -274,5 +274,12 @@ namespace anime_downloader.Services
 
             return result;
         }
+
+        public async Task<FindResult> GetFindResult(Anime anime)
+        {
+            var animeResults = await Find(HttpUtility.UrlEncode(anime.MyAnimeList.Title));
+            var result = animeResults.FirstOrDefault(r => r.Id.Equals(anime.MyAnimeList.Id));
+            return result;
+        }
     }
 }

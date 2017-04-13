@@ -81,12 +81,11 @@ namespace anime_downloader.ViewModels
 
                 foreach (var anime in needsUpdating)
                 {
-                    var results = await _malSevice.Find(HttpUtility.UrlEncode(anime.Title));
-                    var closest = results.FirstOrDefault(r => r.Id.Equals(anime.MyAnimeList.Id));
-                    if (closest != null && !anime.MyAnimeList.TotalEpisodes.Equals(closest.TotalEpisodes))
+                    var remoteAnime = await _malSevice.GetFindResult(anime);
+                    if (!anime.MyAnimeList.TotalEpisodes.Equals(remoteAnime.TotalEpisodes))
                     {
                         updated.Add(anime.Title);
-                        anime.MyAnimeList.TotalEpisodes = closest.TotalEpisodes;
+                        anime.MyAnimeList.TotalEpisodes = remoteAnime.TotalEpisodes;
                     }
                 }
 

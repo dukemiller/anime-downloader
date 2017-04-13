@@ -69,5 +69,10 @@ namespace anime_downloader.Services.Interfaces
         /// </summary>
         /// <returns>If a result is found, returns the url for the page, otherwise null.</returns>
         Task<string> FindProfilePage(string text);
+
+        /// <summary>
+        ///     Get an anime of a find result based on it's id
+        /// </summary>
+        Task<FindResult> GetFindResult(Anime anime);
     }
 }
