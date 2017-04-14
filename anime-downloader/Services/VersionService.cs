@@ -74,6 +74,10 @@ namespace anime_downloader.Services
             // Download the new file to the original name
             _downloader.DownloadFile(new Uri(release), path);
 
+            // Set the version as up to date
+            _settings.Version.NeedsUpdate = false;
+            _settings.Save();
+
             // Close and start the application again
             Application.Current.Shutdown();
             Process.Start(path);
