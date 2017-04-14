@@ -18,6 +18,7 @@ namespace anime_downloader.ViewModels
         private readonly IAnimeService _animeService;
         private readonly IMyAnimeListService _malSevice;
         private readonly IFileService _fileService;
+        private bool _doingAction;
 
         public MiscViewModel(ISettingsService settings, IAnimeService animeService, 
                              IMyAnimeListService malSevice, IFileService fileService)
@@ -27,16 +28,27 @@ namespace anime_downloader.ViewModels
             _malSevice = malSevice;
             _fileService = fileService;
             SelectedIndex = 0;
-            SubmitCommand = new RelayCommand(DoAction);
+            SubmitCommand = new RelayCommand(DoAction, () => !DoingAction);
+            // 
         }
 
         public int SelectedIndex
         {
-            get { return _selectedIndex; }
-            set { Set(() => SelectedIndex, ref _selectedIndex, value); }
+            get => _selectedIndex;
+            set => Set(() => SelectedIndex, ref _selectedIndex, value);
         }
 
         public RelayCommand SubmitCommand { get; set; }
+
+        public bool DoingAction
+        {
+            private get => _doingAction;
+            set
+            {
+                Set(() => DoingAction, ref _doingAction, value);
+                SubmitCommand.RaiseCanExecuteChanged();
+            }
+        }
 
         public bool LoggedIntoMal => _settings.MyAnimeListConfig.LoggedIn;
 
@@ -45,6 +57,7 @@ namespace anime_downloader.ViewModels
         private async void DoAction()
         {
             MessengerInstance.Send(new WorkMessage {Working = true});
+            DoingAction = true;
 
             // Mark fully watched as completed
             if (SelectedIndex == 1)
@@ -126,6 +139,7 @@ namespace anime_downloader.ViewModels
             }
             
             MessengerInstance.Send(new WorkMessage {Working = false});
+            DoingAction = false;
         }
 
         // 
