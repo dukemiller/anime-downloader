@@ -85,7 +85,11 @@ namespace anime_downloader.Services
                 var result = (FindResultRoot)ResultDeserializer.Deserialize(response);
                 return result.Entries.Where(anime =>
                 {
-                    return (!anime.Type.Equals("Movie") && !anime.Type.Equals("OVA") && (anime.TotalEpisodes == 0 || anime.TotalEpisodes > 4)) || anime.Type.Equals("Special");
+                    return (!anime.Type.Equals("Movie") 
+                    && !anime.Type.Equals("OVA") 
+                    && (anime.TotalEpisodes == 0 || anime.TotalEpisodes > 4)) 
+                    // || anime.Type.Equals("Special")
+                    ;
                 });
             }
         }

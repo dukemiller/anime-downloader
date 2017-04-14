@@ -85,7 +85,7 @@ namespace anime_downloader.Services
         public async Task<bool> GetId(Anime anime)
         {
             // get all results from searching the name
-            var animeResults = (await _api.FindAsync(anime.Title.Replace(":", ""))).ToList();
+            var animeResults = (await _api.FindAsync(anime.Title.Replace(":", " "))).ToList();
 
             // if there were absolutely no results from the query
             if (!animeResults.Any())
