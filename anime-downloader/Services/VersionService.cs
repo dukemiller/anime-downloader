@@ -14,6 +14,8 @@ namespace anime_downloader.Services
 {
     public class VersionService : IVersionService
     {
+        private readonly ISettingsService _settings;
+
         private const string Server = @"http://52.42.210.220";
 
         private readonly HttpClient _client;
@@ -24,8 +26,9 @@ namespace anime_downloader.Services
 
         // 
 
-        public VersionService()
+        public VersionService(ISettingsService settings)
         {
+            _settings = settings;
             _client = new HttpClient();
             _downloader = new WebClient();
             StartTimer();
@@ -45,7 +48,11 @@ namespace anime_downloader.Services
         {
             try
             {
-                return LocalVersion < await OnlineVersion;
+                if (_settings.Version.NeedsUpdate)
+                    return true;
+                _settings.Version.NeedsUpdate = LocalVersion < await OnlineVersion;
+                _settings.Save();
+                return _settings.Version.NeedsUpdate;
             }
             catch
             {
@@ -90,6 +97,7 @@ namespace anime_downloader.Services
                 var version = await response.Content.ReadAsStringAsync();
                 return new SemanticVersion(version);
             }
+
             catch
             {
                 return null;

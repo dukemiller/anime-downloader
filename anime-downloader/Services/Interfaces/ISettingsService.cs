@@ -10,6 +10,7 @@ namespace anime_downloader.Services.Interfaces
         PathConfiguration PathConfig { get; set; }
         FlagConfiguration FlagConfig { get; set; }
         MyAnimeListConfiguration MyAnimeListConfig { get; set; }
+        VersionCheck Version { get; set; }
 
         string SortBy { get; set; }
         string FilterBy { get; set; }
@@ -17,7 +18,6 @@ namespace anime_downloader.Services.Interfaces
         List<Anime> Animes { get; set; }
 
         bool CrucialDirectoriesExist();
-        DateTime UpdateCheckDelay { get; set; }
 
         void Save();
     }

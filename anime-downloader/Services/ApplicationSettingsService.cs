@@ -100,5 +100,7 @@ namespace anime_downloader.Services
         public void Save() => Settings.Default.Save();
 
         public DateTime UpdateCheckDelay { get; set; }
+
+        public VersionCheck Version { get; set; }
     }
 }

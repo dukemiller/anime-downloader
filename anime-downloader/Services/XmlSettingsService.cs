@@ -41,7 +41,7 @@ namespace anime_downloader.Services
             Subgroups = new List<string>();
             SortBy = "name";
             FilterBy = "";
-            UpdateCheckDelay = DateTime.Now;
+            Version = new VersionCheck {LastChecked = DateTime.Now, NeedsUpdate = false};
         }
 
         // 
@@ -54,6 +54,9 @@ namespace anime_downloader.Services
 
         [XmlElement("MyAnimeList")]
         public MyAnimeListConfiguration MyAnimeListConfig { get; set; }
+
+        [XmlElement("Version")]
+        public VersionCheck Version { get; set; }
 
         [NeedsUpdating]
         public bool CrucialDirectoriesExist()
@@ -86,8 +89,6 @@ namespace anime_downloader.Services
 
         public List<Anime> Animes { get; set; }
 
-        public DateTime UpdateCheckDelay { get; set; }
-
         // 
 
         public void Save()
@@ -119,7 +120,7 @@ namespace anime_downloader.Services
                     FilterBy = settings.FilterBy;
                     Subgroups = settings.Subgroups;
                     Animes = settings.Animes;
-                    UpdateCheckDelay = settings.UpdateCheckDelay;
+                    Version = settings.Version;
                 }
             return this;
         }

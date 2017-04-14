@@ -136,6 +136,7 @@
     <Compile Include="Classes\Converters.cs" />
     <Compile Include="Classes\Xaml\DragSelectionHelper.cs" />
     <Compile Include="Classes\Xaml\PasswordBoxAssistant.cs" />
+    <Compile Include="Models\VersionCheck.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Services\FileService.cs" />
     <Compile Include="Services\AnimeService.cs" />

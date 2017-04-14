@@ -29,24 +29,17 @@ namespace anime_downloader.ViewModels
         {
             _settingsService = settingsService;
             _versionService = versionService;
-            
-            UpdateCommand = new RelayCommand(Update);
-            Version = "v" + _versionService.LocalVersion;
-            
-            if (DateTime.Now >= _settingsService.UpdateCheckDelay)
-            {
-                CheckForUpdates();
-                SetRepeatingUpdateTimer();
-            }
 
-            else
-                DelayedCheckForUpdates();
+            Version = "v" + _versionService.LocalVersion;
+            UpdateCommand = new RelayCommand(Update);
+
+            UpdateNotificationLogic();
 
             MessengerInstance.Register<NotificationMessage>(this, async msg =>
             {
                 if (msg.Notification.Equals("check_for_updates") 
                     && DateTime.Now > _updateCheckDelay
-                    && DateTime.Now > _settingsService.UpdateCheckDelay)
+                    && DateTime.Now > _settingsService.Version.LastChecked)
                 {
                     await _versionService.RefreshVersion();
                     CheckForUpdates();
@@ -55,18 +48,36 @@ namespace anime_downloader.ViewModels
             });
         }
 
+        private void UpdateNotificationLogic()
+        {
+            // We already know it needs an update, dont set any timers
+            if (_settingsService.Version.NeedsUpdate)
+                NeedsUpdate = true;
+
+            // Check if it needs an update
+            else if (DateTime.Now >= _settingsService.Version.LastChecked)
+            {
+                CheckForUpdates();
+                SetTimer();
+            }
+
+            // Schedule for a future check if inbetween delay
+            else
+                DelayedCheckForUpdates();
+        }
+
         // 
 
         public bool NeedsUpdate
         {
-            get { return _needsUpdate; }
-            set { Set(() => NeedsUpdate, ref _needsUpdate, value); }
+            get => _needsUpdate;
+            set => Set(() => NeedsUpdate, ref _needsUpdate, value);
         }
 
         public string Version
         {
-            get { return _version; }
-            set { Set(() => Version, ref _version, value); }
+            get => _version;
+            set => Set(() => Version, ref _version, value);
         }
 
         // 
@@ -78,15 +89,20 @@ namespace anime_downloader.ViewModels
         private async void CheckForUpdates()
         {
             NeedsUpdate = await _versionService.NeedsUpdate();
-            _settingsService.UpdateCheckDelay = DateTime.Now.AddMinutes(20);
-            _settingsService.Save();
+            _settingsService.Version.NeedsUpdate = NeedsUpdate;
+
+            if (!NeedsUpdate)
+            {
+                _settingsService.Version.LastChecked = DateTime.Now.AddMinutes(20);
+                _settingsService.Save();
+            }
         }
 
         private void DelayedCheckForUpdates()
         {
             var timer = new System.Timers.Timer
             {
-                Interval = (_settingsService.UpdateCheckDelay - DateTime.Now).TotalMilliseconds,
+                Interval = (_settingsService.Version.LastChecked - DateTime.Now).TotalMilliseconds,
                 AutoReset = false,
                 Enabled = true
             };
@@ -94,11 +110,11 @@ namespace anime_downloader.ViewModels
             timer.Elapsed += (sender, args) =>
             {
                 CheckForUpdates();
-                SetRepeatingUpdateTimer();
+                SetTimer();
             };
         }
 
-        private void SetRepeatingUpdateTimer()
+        private void SetTimer()
         {
             var timer = new System.Timers.Timer
             {
