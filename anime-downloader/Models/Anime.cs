@@ -26,7 +26,6 @@ namespace anime_downloader.Models
         private int _episode;
 
         private MyAnimeListDetails _myAnimeList;
-
         private string _name;
 
         private bool _nameStrict;

@@ -49,5 +49,7 @@ namespace anime_downloader.Tests.Services
         {
             throw new NotImplementedException();
         }
+
+        public bool Synced { get; }
     }
 }

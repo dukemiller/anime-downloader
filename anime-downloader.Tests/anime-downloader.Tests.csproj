@@ -78,6 +78,7 @@
     <Compile Include="CredentialsLocal.cs" />
     <Compile Include="MyAnimeListServiceTests.cs" />
     <Compile Include="NyaaServiceTests.cs" />
+    <Compile Include="SemanticVersionTest.cs" />
     <Compile Include="Services\MockAnimeService.cs" />
     <Compile Include="Services\MockXmlSettingsService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

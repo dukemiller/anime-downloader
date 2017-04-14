@@ -71,9 +71,9 @@ namespace anime_downloader.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::anime_downloader.Models.Configurations.MyAnimesListConfiguration MyAnimeListConfiguration {
+        public global::anime_downloader.Models.Configurations.MyAnimeListConfiguration MyAnimeListConfiguration {
             get {
-                return ((global::anime_downloader.Models.Configurations.MyAnimesListConfiguration)(this["MyAnimeListConfiguration"]));
+                return ((global::anime_downloader.Models.Configurations.MyAnimeListConfiguration)(this["MyAnimeListConfiguration"]));
             }
             set {
                 this["MyAnimeListConfiguration"] = value;
