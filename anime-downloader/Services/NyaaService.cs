@@ -7,6 +7,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using anime_downloader.Classes;
+using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Services.Interfaces;
 using HtmlAgilityPack;
@@ -15,6 +16,10 @@ namespace anime_downloader.Services
 {
     public class NyaaService : IDownloadService
     {
+        private static Season CurrentSeason() => (Season) Math.Ceiling(Convert.ToDouble(DateTime.Now.Month) / 3);
+
+        private static int MaxAge = (DateTime.Now - DateTime.Parse($"{(((int) CurrentSeason() - 1) * 3 + 1)}/1")).Days;
+
         private const string YearPattern = @"[^a-zA-Z](\d{4})[^a-zA-Z]";
 
         private const string EnglishTranslated = "1_37";
@@ -94,7 +99,8 @@ namespace anime_downloader.Services
             var url = new Uri("https://www.nyaa.se/?page=rss" +
                               $"&cats={EnglishTranslated}" +
                               $"&term={NyaaTerms(anime, episode)}" +
-                              $"&sort={BySeeders}");
+                              $"&sort={BySeeders}" +
+                              $"&minage=0&maxage={MaxAge}");
 
             Console.WriteLine(url);
 
