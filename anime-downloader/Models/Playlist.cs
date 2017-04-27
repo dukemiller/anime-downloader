@@ -28,6 +28,11 @@ namespace anime_downloader.Models
         }
 
         /// <summary>
+        ///     Specify if any of the sorting options should be applied.
+        /// </summary>
+        public bool Sort { get; set; } = true;
+
+        /// <summary>
         ///     The order of how the files will be initially sorted from Source.
         /// </summary>
         public PlaylistOrder Order { private get; set; }
@@ -138,7 +143,8 @@ namespace anime_downloader.Models
         /// </summary>
         public async Task<string> Create()
         {
-            ApplyConfiguration();
+            if (Sort)
+                ApplyConfiguration();
 
             using (var writer = new StreamWriter(PathConfiguration.Playlist, false))
                 foreach (var file in Source)
