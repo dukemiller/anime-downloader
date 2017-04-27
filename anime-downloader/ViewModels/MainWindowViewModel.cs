@@ -54,13 +54,13 @@ namespace anime_downloader.ViewModels
         
         public int SelectedIndex
         {
-            get { return _selectedIndex; }
-            set { Set(() => SelectedIndex, ref _selectedIndex, value); }
+            get => _selectedIndex;
+            set => Set(() => SelectedIndex, ref _selectedIndex, value);
         }
 
         public ViewModelBase CurrentView
         {
-            get { return _currentView; }
+            get => _currentView;
             set
             {
                 CurrentView?.Cleanup();
@@ -70,7 +70,7 @@ namespace anime_downloader.ViewModels
 
         private bool Busy
         {
-            get { return _busy; }
+            get => _busy;
             set
             {
                 Set(() => Busy, ref _busy, value);

@@ -8,8 +8,8 @@ namespace anime_downloader.ViewModels.Dialogs
 
         public string Message
         {
-            get { return _message; }
-            set { Set(() => Message, ref _message, value); }
+            get => _message;
+            set => Set(() => Message, ref _message, value);
         }
     }
 }

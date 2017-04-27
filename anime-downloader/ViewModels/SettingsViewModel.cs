@@ -34,20 +34,20 @@ namespace anime_downloader.ViewModels
 
         public ISettingsService Settings
         {
-            get { return _settings; }
-            set { Set(() => Settings, ref _settings, value); }
+            get => _settings;
+            set => Set(() => Settings, ref _settings, value);
         }
 
         public string Subgroups
         {
-            get { return _subgroups; }
-            set { Set(() => Subgroups, ref _subgroups, value); }
+            get => _subgroups;
+            set => Set(() => Subgroups, ref _subgroups, value);
         }
 
         public bool ChangeMade
         {
-            get { return _changeMade; }
-            set { Set(() => ChangeMade, ref _changeMade, value); }
+            get => _changeMade;
+            set => Set(() => ChangeMade, ref _changeMade, value);
         }
 
         public RelayCommand SaveCommand { get; set; }

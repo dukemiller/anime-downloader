@@ -77,7 +77,7 @@ namespace anime_downloader.ViewModels.Components
         /// </summary>
         private ObservableCollection<AnimeFile> Files
         {
-            get { return _files; }
+            get => _files;
             set
             {
                 Set(() => Files, ref _files, value);
@@ -95,8 +95,8 @@ namespace anime_downloader.ViewModels.Components
         /// </summary>
         public bool HideLabel
         {
-            get { return _hideLabel; }
-            set { Set(() => HideLabel, ref _hideLabel, value); }
+            get => _hideLabel;
+            set => Set(() => HideLabel, ref _hideLabel, value);
         }
 
         /// <summary>
@@ -104,8 +104,8 @@ namespace anime_downloader.ViewModels.Components
         /// </summary>
         public ObservableCollection<AnimeFile> FilteredFiles
         {
-            get { return _filteredFiles; }
-            set { Set(() => FilteredFiles, ref _filteredFiles, value); }
+            get => _filteredFiles;
+            set => Set(() => FilteredFiles, ref _filteredFiles, value);
         }
 
         /// <summary>
@@ -113,8 +113,8 @@ namespace anime_downloader.ViewModels.Components
         /// </summary>
         public AnimeFile SelectedFile
         {
-            get { return _selectedFile; }
-            set { Set(() => SelectedFile, ref _selectedFile, value); }
+            get => _selectedFile;
+            set => Set(() => SelectedFile, ref _selectedFile, value);
         }
 
         /// <summary>
@@ -127,7 +127,7 @@ namespace anime_downloader.ViewModels.Components
         /// </summary>
         public EpisodeStatus EpisodeType
         {
-            get { return _episodeType; }
+            get => _episodeType;
             set
             {
                 Set(() => EpisodeType, ref _episodeType, value);
@@ -142,8 +142,8 @@ namespace anime_downloader.ViewModels.Components
         /// </summary>
         public string MovePath
         {
-            private get { return _movePath; }
-            set { Set(() => MovePath, ref _movePath, value); }
+            private get => _movePath;
+            set => Set(() => MovePath, ref _movePath, value);
         }
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace anime_downloader.ViewModels.Components
         /// </summary>
         public string StartPath
         {
-            private get { return _startPath; }
+            private get => _startPath;
             set
             {
                 Set(() => StartPath, ref _startPath, value);
@@ -177,8 +177,8 @@ namespace anime_downloader.ViewModels.Components
         /// </summary>
         public string Title
         {
-            get { return _title; }
-            set { Set(() => Title, ref _title, value); }
+            get => _title;
+            set => Set(() => Title, ref _title, value);
         }
 
         /// <summary>
@@ -186,7 +186,7 @@ namespace anime_downloader.ViewModels.Components
         /// </summary>
         public string Filter
         {
-            get { return _filter; }
+            get => _filter;
             set
             {
                 Set(() => Filter, ref _filter, value);
@@ -204,8 +204,8 @@ namespace anime_downloader.ViewModels.Components
         /// </summary>
         public string ImageResourcePath
         {
-            get { return _imageResourcePath; }
-            set { Set(() => ImageResourcePath, ref _imageResourcePath, value); }
+            get => _imageResourcePath;
+            set => Set(() => ImageResourcePath, ref _imageResourcePath, value);
         }
 
         // Commands
@@ -266,7 +266,7 @@ namespace anime_downloader.ViewModels.Components
 
             if (anime != null)
             {
-                MessengerInstance.Send(Enums.ViewDisplay.Anime);
+                MessengerInstance.Send(ViewDisplay.Anime);
                 MessengerInstance.Send(anime);
             }
 

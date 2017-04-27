@@ -20,10 +20,9 @@ namespace anime_downloader.ViewModels.Components
         private readonly IAnimeService _animeService;
         private bool _editing;
 
-        public AnimeDetailsMultipleViewModel(IAnimeService animeService)
-        {
-            _animeService = animeService;
-        }
+        // 
+
+        public AnimeDetailsMultipleViewModel(IAnimeService animeService) => _animeService = animeService;
 
         // 
 
@@ -63,28 +62,28 @@ namespace anime_downloader.ViewModels.Components
 
         public bool Editing
         {
-            get { return _editing; }
-            set { Set(() => Editing, ref _editing, value); }
+            get => _editing;
+            set => Set(() => Editing, ref _editing, value);
         }
 
         private IList<Anime> _animes;
 
         public string Header
         {
-            get { return _header; }
-            set { Set(() => Header, ref _header, value); }
+            get => _header;
+            set => Set(() => Header, ref _header, value);
         }
 
         public string Input
         {
-            get { return _input; }
-            set { Set(() => Input, ref _input, value); }
+            get => _input;
+            set => Set(() => Input, ref _input, value);
         }
 
         public MultipleAnimeDetails Details
         {
-            get { return _details; }
-            set { Set(() => Details, ref _details, value); }
+            get => _details;
+            set => Set(() => Details, ref _details, value);
         }
         
         public double LoadOpacity => Editing ? 0.6 : 1.0;
@@ -93,8 +92,8 @@ namespace anime_downloader.ViewModels.Components
 
         public RelayCommand SubmitActionCommand
         {
-            get { return _submitActionCommand; }
-            set { Set(() => SubmitActionCommand, ref _submitActionCommand, value); }
+            get => _submitActionCommand;
+            set => Set(() => SubmitActionCommand, ref _submitActionCommand, value);
         }
 
         private void Create()

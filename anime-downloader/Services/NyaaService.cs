@@ -21,7 +21,7 @@ namespace anime_downloader.Services
         private static int MaxAge = (DateTime.Now - DateTime.Parse($"{(((int) CurrentSeason() - 1) * 3 + 1)}/1")).Days;
 
         private const string YearPattern = @"[^a-zA-Z](\d{4})[^a-zA-Z]";
-
+        
         private const string EnglishTranslated = "1_37";
 
         private const string BySeeders = "2";
@@ -51,8 +51,8 @@ namespace anime_downloader.Services
 
             // Not the right subgroup
             if (anime.PreferredSubgroup != null && torrent.Subgroup() != null)
-                if (!string.IsNullOrEmpty(anime.PreferredSubgroup) &&
-                    !torrent.Subgroup().Contains(anime.PreferredSubgroup))
+                if (!string.IsNullOrEmpty(anime.PreferredSubgroup) 
+                    && !torrent.Subgroup().Contains(anime.PreferredSubgroup))
                     return false;
 
             if (_settingsService.FlagConfig.OnlyWhitelisted)
@@ -186,10 +186,8 @@ namespace anime_downloader.Services
                 return false;
 
             foreach (var torrent in torrents.Where(torrent => CanDownload(torrent, anime)))
-            {
                 if (await DownloadEpisode(anime, torrent, output))
                     return true;
-            }
 
             return false;
         }

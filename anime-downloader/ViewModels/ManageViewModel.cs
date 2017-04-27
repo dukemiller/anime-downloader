@@ -38,14 +38,14 @@ namespace anime_downloader.ViewModels
         
         public FileListViewModel Unwatched
         {
-            get { return _unwatched; }
-            set { Set(() => Unwatched, ref _unwatched, value); }
+            get => _unwatched;
+            set => Set(() => Unwatched, ref _unwatched, value);
         }
 
         public FileListViewModel Watched
         {
-            get { return _watched; }
-            set { Set(() => Watched, ref _watched, value); }
+            get => _watched;
+            set => Set(() => Watched, ref _watched, value);
         }
     }
 }

@@ -80,7 +80,7 @@ namespace anime_downloader.ViewModels.Components
 
         public string FilterText
         {
-            get { return _filterText; }
+            get => _filterText;
             set
             {
                 _filterText = value;
@@ -105,28 +105,28 @@ namespace anime_downloader.ViewModels.Components
 
         public FindViewModel Find
         {
-            get { return _find; }
-            set { Set(() => Find, ref _find, value); }
+            get => _find;
+            set => Set(() => Find, ref _find, value);
         }
 
         public Anime SelectedAnime
         {
-            get { return _selectedAnime; }
-            set { Set(() => SelectedAnime, ref _selectedAnime, value); }
+            get => _selectedAnime;
+            set => Set(() => SelectedAnime, ref _selectedAnime, value);
         }
 
         public ObservableCollection<Anime> Animes
         {
-            get { return _animes; }
-            set { Set(() => Animes, ref _animes, value); }
+            get => _animes;
+            set => Set(() => Animes, ref _animes, value);
         }
 
         private List<Anime> SelectedAnimes { get; set; } = new List<Anime>();
 
         public ISettingsService Settings
         {
-            get { return _settings; }
-            set { Set(() => Settings, ref _settings, value); }
+            get => _settings;
+            set => Set(() => Settings, ref _settings, value);
         }
 
         public RelayCommand AddCommand { get; set; }

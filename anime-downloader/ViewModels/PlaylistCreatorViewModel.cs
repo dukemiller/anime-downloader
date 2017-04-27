@@ -102,13 +102,13 @@ namespace anime_downloader.ViewModels
 
         public ObservableCollection<RadioModel<PlaylistOrder>> Options
         {
-            get { return _options; }
-            set { Set(() => Options, ref _options, value); }
+            get => _options;
+            set => Set(() => Options, ref _options, value);
         }
 
         public RadioModel<PlaylistOrder> SelectedRadio
         {
-            get { return _selectedRadio; }
+            get => _selectedRadio;
             set
             {
                 Set(() => SelectedRadio, ref _selectedRadio, value);
@@ -120,7 +120,7 @@ namespace anime_downloader.ViewModels
 
         public bool SeparateShowOrder
         {
-            get { return _separateShowOrder; }
+            get => _separateShowOrder;
             set
             {
                 Set(() => SeparateShowOrder, ref _separateShowOrder, value);
@@ -132,7 +132,7 @@ namespace anime_downloader.ViewModels
 
         public bool ReverseOrder
         {
-            get { return _reverseOrder; }
+            get => _reverseOrder;
             set
             {
                 Set(() => ReverseOrder, ref _reverseOrder, value);
@@ -144,7 +144,7 @@ namespace anime_downloader.ViewModels
 
         public bool AdditionalEpisodesFirst
         {
-            get { return _additionalEpisodesFirst; }
+            get => _additionalEpisodesFirst;
             set
             {
                 Set(() => AdditionalEpisodesFirst, ref _additionalEpisodesFirst, value);
@@ -164,7 +164,7 @@ namespace anime_downloader.ViewModels
         
         private bool FileExists
         {
-            get { return _fileExists; }
+            get => _fileExists;
             set
             {
                 Set(() => FileExists, ref _fileExists, value);

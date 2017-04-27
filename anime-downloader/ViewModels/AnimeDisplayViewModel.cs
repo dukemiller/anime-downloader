@@ -49,7 +49,7 @@ namespace anime_downloader.ViewModels
 
         public ViewModelBase Display
         {
-            get { return _display; }
+            get => _display;
             set
             {
                 Display?.Cleanup();

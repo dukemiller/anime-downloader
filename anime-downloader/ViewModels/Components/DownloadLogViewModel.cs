@@ -19,8 +19,8 @@ namespace anime_downloader.ViewModels.Components
 
         public string Text
         {
-            get { return _text; }
-            set { Set(() => Text, ref _text, value); }
+            get => _text;
+            set => Set(() => Text, ref _text, value);
         }
 
         public async void DisplayLogResults()

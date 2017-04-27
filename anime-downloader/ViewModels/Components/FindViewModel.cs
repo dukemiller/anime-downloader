@@ -28,14 +28,14 @@ namespace anime_downloader.ViewModels.Components
 
         public string Text
         {
-            get { return _text; }
-            set { Set(() => Text, ref _text, value); }
+            get => _text;
+            set => Set(() => Text, ref _text, value);
         }
 
         public Visibility Visible
         {
-            get { return _visible; }
-            set { Set(() => Visible, ref _visible, value); }
+            get => _visible;
+            set => Set(() => Visible, ref _visible, value);
         }
 
         public RelayCommand ClearCommand { get; set; }

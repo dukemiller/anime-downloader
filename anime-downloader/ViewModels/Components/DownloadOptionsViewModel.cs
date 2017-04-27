@@ -46,14 +46,14 @@ namespace anime_downloader.ViewModels.Components
 
         public ObservableCollection<RadioModel<DownloadOption>> Options
         {
-            get { return _options; }
-            set { Set(() => Options, ref _options, value); }
+            get => _options;
+            set => Set(() => Options, ref _options, value);
         }
 
         public RadioModel<DownloadOption> SelectedRadio
         {
-            get { return _selectedRadio; }
-            set { Set(() => SelectedRadio, ref _selectedRadio, value); }
+            get => _selectedRadio;
+            set => Set(() => SelectedRadio, ref _selectedRadio, value);
         }
 
         public RelayCommand SearchCommand { get; set; }

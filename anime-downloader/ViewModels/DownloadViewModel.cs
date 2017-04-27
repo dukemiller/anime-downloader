@@ -40,7 +40,7 @@ namespace anime_downloader.ViewModels
 
         public ViewModelBase CurrentDisplay
         {
-            get { return _currentDisplay; }
+            get => _currentDisplay;
             set
             {
                 CurrentDisplay?.Cleanup();

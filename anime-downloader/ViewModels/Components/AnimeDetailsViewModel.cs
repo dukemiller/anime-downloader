@@ -113,26 +113,26 @@ namespace anime_downloader.ViewModels.Components
 
         public ISettingsService Settings
         {
-            get { return _settings; }
-            set { Set(() => Settings, ref _settings, value); }
+            get => _settings;
+            set => Set(() => Settings, ref _settings, value);
         }
 
         private bool LastEpisodeAvailable
         {
-            get { return _lastEpisodeAvailable; }
-            set { Set(() => LastEpisodeAvailable, ref _lastEpisodeAvailable, value); }
+            get => _lastEpisodeAvailable;
+            set => Set(() => LastEpisodeAvailable, ref _lastEpisodeAvailable, value);
         }
 
         public string ButtonText
         {
-            get { return _buttonText; }
-            set { Set(() => ButtonText, ref _buttonText, value); }
+            get => _buttonText;
+            set => Set(() => ButtonText, ref _buttonText, value);
         }
 
         public RelayCommand ButtonCommand
         {
-            get { return _buttonCommand; }
-            set { Set(() => ButtonCommand, ref _buttonCommand, value); }
+            get => _buttonCommand;
+            set => Set(() => ButtonCommand, ref _buttonCommand, value);
         }
 
         public RelayCommand LastEpisodeCommand { get; set; }
@@ -147,13 +147,13 @@ namespace anime_downloader.ViewModels.Components
 
         public MyAnimeListBarViewModel MyAnimeListBar
         {
-            get { return _myAnimeListBar; }
-            set { Set(() => MyAnimeListBar, ref _myAnimeListBar, value); }
+            get => _myAnimeListBar;
+            set => Set(() => MyAnimeListBar, ref _myAnimeListBar, value);
         }
 
         public string SelectedSubgroup
         {
-            get { return _selectedSubgroup; }
+            get => _selectedSubgroup;
             set
             {
                 Set(() => SelectedSubgroup, ref _selectedSubgroup, value);
@@ -163,7 +163,7 @@ namespace anime_downloader.ViewModels.Components
 
         public Anime Anime
         {
-            get { return _anime; }
+            get => _anime;
             set
             {
                 Set(() => Anime, ref _anime, value);

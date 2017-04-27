@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Reflection;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using anime_downloader.Classes;
-using anime_downloader.Models;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;

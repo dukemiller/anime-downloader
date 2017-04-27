@@ -94,25 +94,13 @@ namespace anime_downloader.Classes.Xaml
         public static readonly DependencyProperty SelectedItemsProperty = DependencyProperty.RegisterAttached(
             "SelectedItems", typeof(IList), typeof(Ex), new PropertyMetadata(default(IList), OnSelectedItemsChanged));
 
-        public static void SetIsSubscribedToSelectionChanged(DependencyObject element, bool value)
-        {
-            element.SetValue(IsSubscribedToSelectionChangedProperty, value);
-        }
+        public static void SetIsSubscribedToSelectionChanged(DependencyObject element, bool value) => element.SetValue(IsSubscribedToSelectionChangedProperty, value);
 
-        public static bool GetIsSubscribedToSelectionChanged(DependencyObject element)
-        {
-            return (bool) element.GetValue(IsSubscribedToSelectionChangedProperty);
-        }
+        public static bool GetIsSubscribedToSelectionChanged(DependencyObject element) => (bool) element.GetValue(IsSubscribedToSelectionChangedProperty);
 
-        public static void SetSelectedItems(DependencyObject element, IList value)
-        {
-            element.SetValue(SelectedItemsProperty, value);
-        }
+        public static void SetSelectedItems(DependencyObject element, IList value) => element.SetValue(SelectedItemsProperty, value);
 
-        public static IList GetSelectedItems(DependencyObject element)
-        {
-            return (IList) element.GetValue(SelectedItemsProperty);
-        }
+        public static IList GetSelectedItems(DependencyObject element) => (IList) element.GetValue(SelectedItemsProperty);
 
         /// <summary>
         ///     Attaches a list or observable collection to the grid or listbox, syncing both lists (one way sync for simple
@@ -232,9 +220,7 @@ namespace anime_downloader.Classes.Xaml
             {
                 listbox.SelectionChanged -= OnSelectorSelectionChanged;
                 if (e.Action == NotifyCollectionChangedAction.Reset)
-                {
                     listbox.SelectedItems.Clear();
-                }
                 else
                 {
                     foreach (var oldItem in e.OldItems) listbox.SelectedItems.Remove(oldItem);
@@ -247,9 +233,7 @@ namespace anime_downloader.Classes.Xaml
             {
                 grid.SelectionChanged -= OnSelectorSelectionChanged;
                 if (e.Action == NotifyCollectionChangedAction.Reset)
-                {
                     grid.SelectedItems.Clear();
-                }
                 else
                 {
                     foreach (var oldItem in e.OldItems) grid.SelectedItems.Remove(oldItem);

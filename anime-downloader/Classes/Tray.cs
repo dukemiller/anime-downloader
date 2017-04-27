@@ -54,8 +54,8 @@ namespace anime_downloader.Classes
 
         private bool Visible
         {
-            get { return _trayIcon.Visible; }
-            set { _trayIcon.Visible = value; }
+            get => _trayIcon.Visible;
+            set => _trayIcon.Visible = value;
         }
 
         // Events
@@ -63,9 +63,8 @@ namespace anime_downloader.Classes
         private void FlagChanged(object sender, PropertyChangedEventArgs args)
         {
             if (_settings.FlagConfig.AlwaysShowTray)
-            {
                 Visible = true;
-            }
+
             else
             {
                 if (MainWindow.WindowState == WindowState.Minimized)

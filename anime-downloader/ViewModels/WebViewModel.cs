@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using anime_downloader.Classes;
 using anime_downloader.Models.Configurations;
 using anime_downloader.Services.Interfaces;
-using anime_downloader.ViewModels.Dialogs;
 using anime_downloader.Views.Dialogs;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
-using HtmlAgilityPack;
 using MaterialDesignThemes.Wpf;
 
 namespace anime_downloader.ViewModels
@@ -64,32 +61,32 @@ namespace anime_downloader.ViewModels
 
         public bool Synced
         {
-            get { return _synced; }
-            set { Set(() => Synced, ref _synced, value); }
+            get => _synced;
+            set => Set(() => Synced, ref _synced, value);
         }
 
         public bool LoggedIn
         {
-            get { return _loggedIn; }
-            set { Set(() => LoggedIn, ref _loggedIn, value); }
+            get => _loggedIn;
+            set => Set(() => LoggedIn, ref _loggedIn, value);
         }
 
         public string Searchbox
         {
-            get { return _searchbox; }
-            set { Set(() => Searchbox, ref _searchbox, value); }
+            get => _searchbox;
+            set => Set(() => Searchbox, ref _searchbox, value);
         }
 
         public string Synchronize
         {
-            get { return _synchronize; }
-            set { Set(() => Synchronize, ref _synchronize, value); }
+            get => _synchronize;
+            set => Set(() => Synchronize, ref _synchronize, value);
         }
 
         public string Log
         {
-            get { return _log; }
-            set { Set(() => Log, ref _log, value); }
+            get => _log;
+            set => Set(() => Log, ref _log, value);
         }
 
         // 
@@ -112,8 +109,8 @@ namespace anime_downloader.ViewModels
 
         public RelayCommand LogCommand
         {
-            get { return _logCommand; }
-            set { Set(() => LogCommand, ref _logCommand, value); }
+            get => _logCommand;
+            set => Set(() => LogCommand, ref _logCommand, value);
         }
 
         public RelayCommand UsageNotesCommand { get; set; }
