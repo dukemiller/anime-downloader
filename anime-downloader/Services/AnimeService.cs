@@ -12,10 +12,7 @@ namespace anime_downloader.Services
     {
         private readonly ISettingsService _settings;
 
-        public AnimeService(ISettingsService settings)
-        {
-            _settings = settings;
-        }
+        public AnimeService(ISettingsService settings) => _settings = settings;
 
         public IEnumerable<Anime> Watching => Animes.Where(a => a.Status == Status.Watching);
 

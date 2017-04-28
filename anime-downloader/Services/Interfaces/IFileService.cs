@@ -20,13 +20,33 @@ namespace anime_downloader.Services.Interfaces
         AnimeFile FirstEpisode(Anime anime);
         AnimeFile LastEpisode(Anime anime);
 
-        // First/last of everything in sequence
+        /* First or last of everything in sequence */
+
+        /// <summary>
+        ///     Retrieve the first episode of every unique series in the collection
+        /// </summary>
         IEnumerable<AnimeFile> FirstEpisodes(IEnumerable<AnimeFile> files);
+
+        /// <summary>
+        ///     Retrieve the last episode of every unique series in the collection
+        /// </summary>
         IEnumerable<AnimeFile> LastEpisodes(IEnumerable<AnimeFile> files);
 
-        // Closest
+        /* Close matches */
+
+        /// <summary>
+        ///     The closest anime file compared to {name} in {files} collection
+        /// </summary>
         AnimeFile ClosestFile(IEnumerable<AnimeFile> files, string name);
+
+        /// <summary>
+        ///     The closest anime compared to {name} in {animes} collection
+        /// </summary>
         Anime ClosestAnime(IEnumerable<Anime> animes, string name);
+
+        /// <summary>
+        ///     The closest anime compared to {file}'s name in {animes} collection
+        /// </summary>
         Anime ClosestAnime(IEnumerable<Anime> animes, AnimeFile file);
 
         // 

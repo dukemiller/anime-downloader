@@ -18,7 +18,7 @@ namespace anime_downloader.Services
     {
         private static Season CurrentSeason() => (Season) Math.Ceiling(Convert.ToDouble(DateTime.Now.Month) / 3);
 
-        private static int MaxAge = (DateTime.Now - DateTime.Parse($"{(((int) CurrentSeason() - 1) * 3 + 1)}/1")).Days;
+        private static int MaxAge => (DateTime.Now - DateTime.Parse($"{((int) CurrentSeason() - 1) * 3 + 1}/1")).Days;
 
         private const string YearPattern = @"[^a-zA-Z](\d{4})[^a-zA-Z]";
         
@@ -45,6 +45,9 @@ namespace anime_downloader.Services
 
         public bool CanDownload(Torrent torrent, Anime anime)
         {
+            if (anime == null || torrent == null)
+                return false;
+
             // Most likely wrong torrent
             if (anime.NameStrict && !anime.Name.ToLower().Equals(torrent.StrippedWithNoEpisode.ToLower()))
                 return false;

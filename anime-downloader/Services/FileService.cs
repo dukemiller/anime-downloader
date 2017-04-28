@@ -11,6 +11,7 @@ using anime_downloader.Services.Interfaces;
 
 namespace anime_downloader.Services
 {
+
     public class FileService : IFileService
     {
         private static readonly string[] FileExtensions =
@@ -26,7 +27,7 @@ namespace anime_downloader.Services
         private readonly ISettingsService _settings;
 
         /* Easy debug functions */
-
+        
         public IEnumerable<AnimeFile> AllEpisodes => GetEpisodes(EpisodeStatus.All);
 
         public IEnumerable<AnimeFile> UnwatchedEpisodes => GetEpisodes(EpisodeStatus.Unwatched);

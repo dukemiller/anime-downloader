@@ -48,9 +48,11 @@ namespace anime_downloader.Services.Interfaces
         /// <summary>
         ///     'Refresh' the MyAnimeList details on an anime object, replacing current existing
         ///     information with any information done on a new `Find` on that anime's existing id.
+        /// </summary>
+        /// <remarks>
         ///     This operation should only be done on an Anime that already has a MyAnimeList ID, to
         ///     find the ID instead use `GetId(Anime)`.
-        /// </summary>
+        /// </remarks>
         Task<bool> Refresh(Anime anime);
 
         /// <summary>

@@ -171,8 +171,7 @@ namespace anime_downloader.Services
             anime.MyAnimeList.Title = result.Title;
             anime.MyAnimeList.English = result.English;
             anime.MyAnimeList.Synonyms = result.Synonyms;
-            DateTime date;
-            if (DateTime.TryParse(result.StartDate, out date))
+            if (DateTime.TryParse(result.StartDate, out DateTime date))
             {
                 anime.MyAnimeList.Aired = new AnimeSeason
                 {
@@ -181,8 +180,7 @@ namespace anime_downloader.Services
                 };
             }
 
-            DateTime end;
-            if (DateTime.TryParse(result.EndDate, out end))
+            if (DateTime.TryParse(result.EndDate, out DateTime end))
             {
                 anime.MyAnimeList.Ended = new AnimeSeason
                 {
@@ -226,8 +224,7 @@ namespace anime_downloader.Services
             anime.MyAnimeList.Synopsis = result.Synopsis;
             anime.MyAnimeList.TotalEpisodes = result.TotalEpisodes;
 
-            DateTime start;
-            if (DateTime.TryParse(result.StartDate, out start))
+            if (DateTime.TryParse(result.StartDate, out DateTime start))
             {
                 anime.MyAnimeList.Aired = new AnimeSeason
                 {
@@ -236,8 +233,7 @@ namespace anime_downloader.Services
                 };
             }
 
-            DateTime end;
-            if (DateTime.TryParse(result.EndDate, out end))
+            if (DateTime.TryParse(result.EndDate, out DateTime end))
             {
                 anime.MyAnimeList.Ended = new AnimeSeason
                 {
