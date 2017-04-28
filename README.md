@@ -4,7 +4,7 @@ A program to download and manage a collection of currently airing anime shows.
 
 ### Demo 
 
-![demo](http://i.imgur.com/2Z6bugU.gif)  
+![demo](http://i.imgur.com/PeZqICe.gif)  
 
 ---
 
