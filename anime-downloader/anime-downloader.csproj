@@ -138,6 +138,7 @@
     <Compile Include="Classes\Xaml\PasswordBoxAssistant.cs" />
     <Compile Include="Models\VersionCheck.cs" />
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="Services\Abstract\DownloadServiceBase.cs" />
     <Compile Include="Services\FileService.cs" />
     <Compile Include="Services\AnimeService.cs" />
     <Compile Include="Services\Interfaces\IDownloadService.cs" />
