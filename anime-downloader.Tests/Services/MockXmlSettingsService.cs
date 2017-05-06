@@ -11,6 +11,7 @@ namespace anime_downloader.Tests.Services
         public PathConfiguration PathConfig { get; set; } = new PathConfiguration();
         public FlagConfiguration FlagConfig { get; set; } = new FlagConfiguration();
         public MyAnimeListConfiguration MyAnimeListConfig { get; set; } = new MyAnimeListConfiguration();
+        public VersionCheck Version { get; set; }
         public string SortBy { get; set; } = "";
         public string FilterBy { get; set; } = "";
         public List<string> Subgroups { get; set; } = new List<string>();
