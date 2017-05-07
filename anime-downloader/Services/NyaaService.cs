@@ -126,7 +126,7 @@ namespace anime_downloader.Services
             var torrent = new Torrent
             {
                 Name = WebUtility.HtmlDecode(node.Element("title").InnerText.Replace("Â", "")),
-                Link = node.Element("#text").InnerText.Replace("#38;", "")
+                Remote = node.Element("#text").InnerText.Replace("#38;", "")
             };
 
             var description = node.Element("description").InnerText;

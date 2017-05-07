@@ -109,6 +109,7 @@
     <Compile Include="Enums\Season.cs" />
     <Compile Include="Enums\ViewDisplay.cs" />
     <Compile Include="Enums\Status.cs" />
+    <Compile Include="Models\Abstract\RemoteMedia.cs" />
     <Compile Include="Models\Anime.cs" />
     <Compile Include="Models\AnimeFile.cs" />
     <Compile Include="Classes\Extensions.cs" />

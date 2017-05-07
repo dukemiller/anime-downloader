@@ -164,7 +164,7 @@ namespace anime_downloader.Services.Abstract
                 {
                     try
                     {
-                        Downloader.DownloadFile(torrent.Link, filePath);
+                        Downloader.DownloadFile(torrent.Remote, filePath);
                     }
 
                     // TODO: heh heh heh
