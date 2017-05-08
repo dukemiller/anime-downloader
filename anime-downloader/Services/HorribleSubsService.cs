@@ -44,8 +44,8 @@ namespace anime_downloader.Services
                 .Where(item => item.StrippedName.Contains(episode.ToString()))
                 .Where(item => // Name contains everything
                 {
-                    var title = item.Name.ToLower();
-                    var words = anime.Name.Split(' ').ToList();
+                    var title = item.StrippedWithNoEpisode.ToLower();
+                    var words = anime.Name.ToLower().Split(' ').ToList();
                     return words.Count(word => title.Contains(word)) > (words.Count / 2);
                 });
         }
