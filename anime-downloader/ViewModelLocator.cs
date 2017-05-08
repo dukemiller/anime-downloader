@@ -16,7 +16,7 @@ namespace anime_downloader
             // Services (order is important)
             SimpleIoc.Default.Register<ISettingsService>(new XmlSettingsService().Load);
             SimpleIoc.Default.Register<IAnimeService, AnimeService>();
-            SimpleIoc.Default.Register<IDownloadService, NyaaService>();
+            SimpleIoc.Default.Register<IDownloadService, HorribleSubsService>();
             SimpleIoc.Default.Register<IFileService, FileService>();
             SimpleIoc.Default.Register<IMyAnimeListApi, MyAnimeListApi>();
             SimpleIoc.Default.Register<IMyAnimeListService, MyAnimeListService>();
