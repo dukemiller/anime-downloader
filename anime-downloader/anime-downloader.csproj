@@ -401,22 +401,23 @@
     <Resource Include="Resources\Images\find.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Vendor\boost_chrono-vc120-mt-1_55.dll">
+    <Content Include="boost_chrono-vc120-mt-1_55.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Vendor\boost_date_time-vc120-mt-1_55.dll">
+    <Content Include="boost_date_time-vc120-mt-1_55.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Vendor\boost_system-vc120-mt-1_55.dll">
+    <Content Include="boost_system-vc120-mt-1_55.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Vendor\boost_thread-vc120-mt-1_55.dll">
+    <Content Include="boost_thread-vc120-mt-1_55.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Vendor\torrent.dll">
+    <Content Include="torrent.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy $(TargetPath) $(SolutionDir)</PostBuildEvent>
