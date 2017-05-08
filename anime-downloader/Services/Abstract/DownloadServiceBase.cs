@@ -192,8 +192,6 @@ namespace anime_downloader.Services.Abstract
 
                 case MagnetLink magnet:
                 {
-                    TorrentHandle handle;
-
                     // Create the AddTorrentParams with info about the torrent
                     // we'd like to add.
                     var addParams = new AddTorrentParams
@@ -207,7 +205,7 @@ namespace anime_downloader.Services.Abstract
                         using (var session = new Session())
                         {
                             session.ListenOn(6881, 6889);
-                            handle = session.AddTorrent(addParams);
+                            var handle = session.AddTorrent(addParams);
                             while (!handle.HasMetadata)
                                 await Task.Delay(100);
                             session.Pause();
@@ -215,7 +213,8 @@ namespace anime_downloader.Services.Abstract
                             var info = handle.TorrentFile;
                             var file = new TorrentCreator(info);
                             var name = Path.Combine(SettingsService.PathConfig.Torrents, $"{info.Name}.torrent");
-                            File.WriteAllBytes(name, file.Generate());
+                            if (!File.Exists(name))
+                                File.WriteAllBytes(name, file.Generate());
                             command = $"/DIRECTORY \"{fileDirectory}\" \"{name}\"";
                         }
                     });
