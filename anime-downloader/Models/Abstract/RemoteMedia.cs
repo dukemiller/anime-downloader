@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using anime_downloader.Classes;
 
@@ -19,6 +20,11 @@ namespace anime_downloader.Models.Abstract
         ///     The given contextually dependant remote accesser (download link, irc message, ...).
         /// </summary>
         public string Remote { get; set; }
+
+        /// <summary>
+        ///     The date published of the remote accessor, if available.
+        /// </summary>
+        public DateTime? Date { get; set; }
 
         /// <summary>
         ///     Returns the subgroup from the name of the file.
