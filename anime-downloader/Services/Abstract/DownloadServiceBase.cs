@@ -22,6 +22,8 @@ namespace anime_downloader.Services.Abstract
     {
         // Absolutely generic
 
+        public string ServiceName => GetType().Name.Replace("Service", "");
+
         public async Task<int> DownloadAll(IEnumerable<Anime> animes, Action<string> output)
         {
             var downloaded = 0;
@@ -251,8 +253,6 @@ namespace anime_downloader.Services.Abstract
         protected abstract IAnimeService AnimeService { get; }
 
         protected abstract WebClient Downloader { get; }
-
-        public abstract string ServiceName { get; }
 
         public abstract string ServiceUrl { get; }
 

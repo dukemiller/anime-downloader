@@ -37,7 +37,6 @@ namespace anime_downloader.Services
 
         private static int MaxAge => (DateTime.Now - DateTime.Parse($"{((int) CurrentSeason() - 1) * 3 + 1}/1")).Days;
 
-        public override string ServiceName => "Nyaa";
 
         public override string ServiceUrl => "https://www.nyaa.se/";
 
