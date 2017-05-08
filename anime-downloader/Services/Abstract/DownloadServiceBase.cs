@@ -9,6 +9,7 @@ using anime_downloader.Classes;
 using anime_downloader.Models;
 using anime_downloader.Models.Abstract;
 using anime_downloader.Services.Interfaces;
+using Ragnar;
 using MagnetLink = anime_downloader.Models.MagnetLink;
 
 namespace anime_downloader.Services.Abstract
@@ -146,42 +147,82 @@ namespace anime_downloader.Services.Abstract
         public virtual async Task<DownloadResult> DownloadMedia(Anime anime, RemoteMedia media)
         {
             var downloadResult = new DownloadResult {Successful = false};
-            var torrentName = await torrent.GetTorrentNameAsync();
-            if (torrentName == null)
-                return downloadResult;
+            string command = null;
 
-            var filePath = Path.Combine(SettingsService.PathConfig.Torrents, torrentName);
             var fileDirectory = SettingsService.PathConfig.Unwatched;
-
             if (SettingsService.FlagConfig.IndividualShowFolders)
                 fileDirectory = Path.Combine(fileDirectory, anime.Title);
-
-            var command = $"/DIRECTORY \"{fileDirectory}\" \"{filePath}\"";
 
             // Create directory
             if (!Directory.Exists(fileDirectory))
                 Directory.CreateDirectory(fileDirectory);
 
-            // Download file and call utorrent
-            if (!File.Exists(filePath))
-                return await Task.Run(() =>
+            switch (media)
+            {
+                case Torrent torrent:
                 {
-                    try
-                    {
-                        Downloader.DownloadFile(torrent.Remote, filePath);
-                    }
-
-                    // TODO: heh heh heh
-                    catch (Exception)
-                    {
-                        downloadResult.Successful = false;
+                    var torrentName = await torrent.GetTorrentNameAsync();
+                    if (torrentName == null)
                         return downloadResult;
-                    }
+                    var filePath = Path.Combine(SettingsService.PathConfig.Torrents, torrentName);
+                    command = $"/DIRECTORY \"{fileDirectory}\" \"{filePath}\"";
 
-                    downloadResult.Command = command;
-                    downloadResult.Successful = true;
-                    return downloadResult;
-                });
+                    // Download file and call utorrent
+                    if (!File.Exists(filePath))
+                        return await Task.Run(() =>
+                        {
+                            try
+                            {
+                                Downloader.DownloadFile(media.Remote, filePath);
+                            }
+
+                            // TODO: heh heh heh
+                            catch (Exception)
+                            {
+                                downloadResult.Successful = false;
+                                return downloadResult;
+                            }
+
+                            downloadResult.Command = command;
+                            downloadResult.Successful = true;
+                            return downloadResult;
+                        });
+                    break;
+                }
+
+                case MagnetLink magnet:
+                {
+                    TorrentHandle handle;
+
+                    // Create the AddTorrentParams with info about the torrent
+                    // we'd like to add.
+                    var addParams = new AddTorrentParams
+                    {
+                        SavePath = SettingsService.PathConfig.Torrents,
+                        Url = magnet.Remote
+                    };
+
+                    await Task.Run(async () =>
+                    {
+                        using (var session = new Session())
+                        {
+                            session.ListenOn(6881, 6889);
+                            handle = session.AddTorrent(addParams);
+                            while (!handle.HasMetadata)
+                                await Task.Delay(100);
+                            session.Pause();
+
+                            var info = handle.TorrentFile;
+                            var file = new TorrentCreator(info);
+                            var name = Path.Combine(SettingsService.PathConfig.Torrents, $"{info.Name}.torrent");
+                            File.WriteAllBytes(name, file.Generate());
+                            command = $"/DIRECTORY \"{fileDirectory}\" \"{name}\"";
+                        }
+                    });
+
+                    break;
+                }
+            }
 
             downloadResult.Command = command;
             downloadResult.Successful = true;
