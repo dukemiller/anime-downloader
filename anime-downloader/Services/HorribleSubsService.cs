@@ -34,7 +34,7 @@ namespace anime_downloader.Services
                 await RetrieveNodes();
 
             return _nodes
-                .Where(item => item.StrippedName.Contains(episode.ToString()))
+                .Where(item => item.StrippedName.Contains(episode.ToString("D2")))
                 .Where(item =>
                 {
                     var title = item.Name.ToLower();
