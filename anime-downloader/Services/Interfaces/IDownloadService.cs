@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using anime_downloader.Classes;
 using anime_downloader.Models;
+using anime_downloader.Models.Abstract;
 
 namespace anime_downloader.Services.Interfaces
 {
@@ -37,31 +38,36 @@ namespace anime_downloader.Services.Interfaces
         /// <summary>
         ///     Gathers every episode (unfiltered by settings) for {anime}
         /// </summary>
-        Task<IEnumerable<Torrent>> FindAllTorrents(Anime anime, int episode);
+        Task<IEnumerable<RemoteMedia>> FindAllMedia(Anime anime, int episode);
 
         /// <summary>
-        ///     Get the a list of torrents for the next episode in succession for the show.
+        ///     Get the a list of media for the next episode in succession for the show.
         /// </summary>
-        Task<IEnumerable<Torrent>> GetNextEpisode(Anime anime);
+        Task<IEnumerable<RemoteMedia>> GetNextEpisode(Anime anime);
 
         /// <summary>
-        ///     Attempt to download a single torrent from the list of torrents.
+        ///     Attempt to start a single piece of media from the list of media.
         /// </summary>
-        Task<bool> AttemptDownload(Anime anime, IEnumerable<Torrent> torrents, Action<string> output);
+        Task<bool> AttemptDownload(Anime anime, IEnumerable<RemoteMedia> medias, Action<string> output);
 
         /// <summary>
-        ///     Downloads the torrent for the given anime episode.
+        ///     Downloads the media for the given anime episode.
         /// </summary>
-        Task<DownloadResult> DownloadTorrent(Anime anime, Torrent torrent);
+        Task<DownloadResult> DownloadMedia(Anime anime, RemoteMedia media);
+
+        /// <summary>
+        ///     Initiate the media.
+        /// </summary>
+        void StartMedia(RemoteMedia media, string command);
 
         /// <summary>
         ///     Attempts to download the episode and returns the result of doing so.
         /// </summary>
-        Task<bool> DownloadEpisode(Anime anime, Torrent torrent, Action<string> output);
+        Task<bool> DownloadEpisode(Anime anime, RemoteMedia media, Action<string> output);
 
         /// <summary>
-        ///     Check if able to download the torrent based on setting rules and anime matching checks.
+        ///     Check if able to download the media based on setting rules and anime matching checks.
         /// </summary>
-        bool CanDownload(Torrent torrent, Anime anime);
+        bool CanDownload(RemoteMedia media, Anime anime);
     }
 }

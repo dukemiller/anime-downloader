@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using anime_downloader.Enums;
 using anime_downloader.Models;
+using anime_downloader.Models.Abstract;
 using anime_downloader.Services.Abstract;
 using anime_downloader.Services.Interfaces;
 using HtmlAgilityPack;
@@ -14,12 +15,6 @@ namespace anime_downloader.Services
 {
     public class NyaaService : DownloadServiceBase
     {
-        protected override ISettingsService SettingsService { get; }
-
-        protected override IAnimeService AnimeService { get; }
-
-        protected override WebClient Downloader { get; }
-
         private const string YearPattern = @"[^a-zA-Z](\d{4})[^a-zA-Z]";
 
         private const string EnglishTranslated = "1_37";
@@ -35,19 +30,17 @@ namespace anime_downloader.Services
             Downloader = new WebClient();
         }
 
-        private static int MaxAge => (DateTime.Now - DateTime.Parse($"{((int) CurrentSeason() - 1) * 3 + 1}/1")).Days;
-
+        // 
 
         public override string ServiceUrl => "https://www.nyaa.se/";
 
-        private static Season CurrentSeason()
-        {
-            return (Season) Math.Ceiling(Convert.ToDouble(DateTime.Now.Month) / 3);
-        }
+        protected override ISettingsService SettingsService { get; }
 
-        // 
+        protected override IAnimeService AnimeService { get; }
 
-        public override async Task<IEnumerable<Torrent>> FindAllTorrents(Anime anime, int episode)
+        protected override WebClient Downloader { get; }
+
+        public override async Task<IEnumerable<RemoteMedia>> FindAllMedia(Anime anime, int episode)
         {
             var document = new HtmlDocument();
 
@@ -68,7 +61,14 @@ namespace anime_downloader.Services
             return ParseResults(anime, episode, document);
         }
 
-        // Query functions
+        // 
+
+        private static int MaxAge => (DateTime.Now - DateTime.Parse($"{((int)CurrentSeason() - 1) * 3 + 1}/1")).Days;
+
+        private static Season CurrentSeason()
+        {
+            return (Season) Math.Ceiling(Convert.ToDouble(DateTime.Now.Month) / 3);
+        }
 
         private static string NyaaTerms(Anime anime, int episode)
         {

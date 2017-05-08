@@ -120,7 +120,7 @@ namespace anime_downloader.ViewModels.Components
                     bool downloaded;
                     do
                     {
-                        var links = await _downloadService.FindAllTorrents(anime, anime.NextEpisode);
+                        var links = await _downloadService.FindAllMedia(anime, anime.NextEpisode);
                         downloaded = await _downloadService.AttemptDownload(anime, links, AddToText);
                         if (downloaded)
                             total++;

@@ -7,7 +7,9 @@ using System.Net;
 using System.Threading.Tasks;
 using anime_downloader.Classes;
 using anime_downloader.Models;
+using anime_downloader.Models.Abstract;
 using anime_downloader.Services.Interfaces;
+using MagnetLink = anime_downloader.Models.MagnetLink;
 
 namespace anime_downloader.Services.Abstract
 {
@@ -79,56 +81,56 @@ namespace anime_downloader.Services.Abstract
             return downloaded;
         }
 
-        public bool CanDownload(Torrent torrent, Anime anime)
+        public bool CanDownload(RemoteMedia media, Anime anime)
         {
-            if (anime == null || torrent == null)
+            if (anime == null || media == null)
                 return false;
 
             // Most likely wrong torrent
-            if (anime.NameStrict && !anime.Name.ToLower().Equals(torrent.StrippedWithNoEpisode.ToLower()))
+            if (anime.NameStrict && !anime.Name.ToLower().Equals(media.StrippedWithNoEpisode.ToLower()))
                 return false;
 
             // Not the right subgroup
-            if (anime.PreferredSubgroup != null && torrent.Subgroup() != null)
+            if (anime.PreferredSubgroup != null && media.Subgroup() != null)
                 if (!string.IsNullOrEmpty(anime.PreferredSubgroup)
-                    && !torrent.Subgroup().Contains(anime.PreferredSubgroup))
+                    && !media.Subgroup().Contains(anime.PreferredSubgroup))
                     return false;
 
             if (SettingsService.FlagConfig.OnlyWhitelisted)
             {
                 // Torrent listing with no subgroup in the title
-                if (!torrent.HasSubgroup())
+                if (!media.HasSubgroup())
                     return false;
 
                 // Torrent listing with wrong subgroup
-                if (!SettingsService.Subgroups.Select(s => s.ToLower()).Contains(torrent.Subgroup().ToLower()))
+                if (!SettingsService.Subgroups.Select(s => s.ToLower()).Contains(media.Subgroup().ToLower()))
                     return false;
             }
 
             return true;
         }
 
-        public async Task<bool> AttemptDownload(Anime anime, IEnumerable<Torrent> torrents, Action<string> output)
+        public async Task<bool> AttemptDownload(Anime anime, IEnumerable<RemoteMedia> medias, Action<string> output)
         {
-            if (torrents == null || anime == null)
+            if (medias == null || anime == null)
                 return false;
 
-            foreach (var torrent in torrents.Where(torrent => CanDownload(torrent, anime)))
-                if (await DownloadEpisode(anime, torrent, output))
+            foreach (var media in medias.Where(m => CanDownload(m, anime)))
+                if (await DownloadEpisode(anime, media, output))
                     return true;
 
             return false;
         }
 
-        public async Task<bool> DownloadEpisode(Anime anime, Torrent torrent, Action<string> output)
+        public virtual async Task<bool> DownloadEpisode(Anime anime, RemoteMedia media, Action<string> output)
         {
             output($"Downloading '{anime.Title}' episode '{anime.NextEpisode}'.");
 
-            var download = await DownloadTorrent(anime, torrent);
+            var download = await DownloadMedia(anime, media);
 
             if (download.Successful)
             {
-                StartTorrent(download.Command);
+                StartMedia(media, download.Command);
                 anime.Episode++;
                 await Log(anime);
             }
@@ -141,7 +143,7 @@ namespace anime_downloader.Services.Abstract
             return download.Successful;
         }
 
-        public async Task<DownloadResult> DownloadTorrent(Anime anime, Torrent torrent)
+        public virtual async Task<DownloadResult> DownloadMedia(Anime anime, RemoteMedia media)
         {
             var downloadResult = new DownloadResult {Successful = false};
             var torrentName = await torrent.GetTorrentNameAsync();
@@ -186,7 +188,18 @@ namespace anime_downloader.Services.Abstract
             return downloadResult;
         }
 
-        protected void StartTorrent(string command)
+        public virtual void StartMedia(RemoteMedia media, string command)
+        {
+            switch (media)
+            {
+                case Torrent _:
+                case MagnetLink _:
+                    StartInTorrentClient(command);
+                    break;
+            }
+        }
+
+        private void StartInTorrentClient(string command)
         {
             var info = new ProcessStartInfo
             {
@@ -208,7 +221,7 @@ namespace anime_downloader.Services.Abstract
         {
             try
             {
-                var request = (HttpWebRequest)WebRequest.Create(ServiceUrl);
+                var request = (HttpWebRequest) WebRequest.Create(ServiceUrl);
                 request.Timeout = 3000;
                 request.AllowAutoRedirect = false;
                 request.Method = "HEAD";
@@ -237,11 +250,11 @@ namespace anime_downloader.Services.Abstract
 
         // Borders the line
 
-        public async Task<IEnumerable<Torrent>> GetNextEpisode(Anime anime)
+        public async Task<IEnumerable<RemoteMedia>> GetNextEpisode(Anime anime)
         {
-            var result = await FindAllTorrents(anime, anime.NextEpisode);
+            var result = await FindAllMedia(anime, anime.NextEpisode);
             return result?
-                .Select(torrent => new StringDistance<Torrent>(torrent, torrent.StrippedWithNoEpisode, anime.Name))
+                .Select(torrent => new StringDistance<RemoteMedia>(torrent, torrent.StrippedWithNoEpisode, anime.Name))
                 .Where(ctd => ctd.Distance <= 25)
                 .Select(ctd => ctd.Item);
         }
@@ -256,6 +269,6 @@ namespace anime_downloader.Services.Abstract
 
         public abstract string ServiceUrl { get; }
 
-        public abstract Task<IEnumerable<Torrent>> FindAllTorrents(Anime anime, int episode);
+        public abstract Task<IEnumerable<RemoteMedia>> FindAllMedia(Anime anime, int episode);
     }
 }
