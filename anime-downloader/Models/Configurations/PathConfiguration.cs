@@ -16,6 +16,9 @@ namespace anime_downloader.Models.Configurations
 
         private string _watched;
 
+        /// <summary>
+        ///     The path to the directory that files will initially download to.
+        /// </summary>
         [XmlAttribute("unwatched")]
         public string Unwatched
         {
@@ -23,6 +26,9 @@ namespace anime_downloader.Models.Configurations
             set => Set(() => Unwatched, ref _unwatched, value);
         }
 
+        /// <summary>
+        ///     The path to the directory where watched files will be moved to.
+        /// </summary>
         [XmlAttribute("watched")]
         public string Watched
         {
@@ -30,6 +36,9 @@ namespace anime_downloader.Models.Configurations
             set => Set(() => Watched, ref _watched, value);
         }
 
+        /// <summary>
+        ///     The path to the directory containing torrents.
+        /// </summary>
         [XmlAttribute("torrents")]
         public string Torrents
         {
@@ -37,6 +46,9 @@ namespace anime_downloader.Models.Configurations
             set => Set(() => Torrents, ref _torrents, value);
         }
 
+        /// <summary>
+        ///     The path to the torrent executable.
+        /// </summary>
         [XmlAttribute("torrent_downloader")]
         public string TorrentDownloader
         {

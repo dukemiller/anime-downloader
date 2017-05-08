@@ -72,6 +72,5 @@ namespace anime_downloader.Models
                 response?.Close();
             }
         }
-
     }
 }
