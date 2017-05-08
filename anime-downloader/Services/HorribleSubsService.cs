@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Models.Abstract;
 using anime_downloader.Services.Abstract;
@@ -34,8 +35,14 @@ namespace anime_downloader.Services
                 await RetrieveNodes();
 
             return _nodes
-                .Where(item => item.StrippedName.Contains(episode.ToString("D2")))
-                .Where(item =>
+                .Where(item =>  // Episode is this season
+                {
+                    if (item.Date.HasValue) 
+                       return (item.Date.Value - DateTime.Now).Days <= MaxAge;
+                    return true;
+                })
+                .Where(item => item.StrippedName.Contains(episode.ToString()))
+                .Where(item => // Name contains everything
                 {
                     var title = item.Name.ToLower();
                     var words = anime.Name.Split(' ').ToList();
@@ -83,6 +90,13 @@ namespace anime_downloader.Services
                 Remote = WebUtility.HtmlDecode(link),
                 Date = DateTime.Parse(item.Element("pubdate").InnerText)
             };
+        }
+
+        private static int MaxAge => (DateTime.Now - DateTime.Parse($"{((int)CurrentSeason() - 1) * 3 + 1}/1")).Days;
+
+        private static Season CurrentSeason()
+        {
+            return (Season)Math.Ceiling(Convert.ToDouble(DateTime.Now.Month) / 3);
         }
     }
 }
