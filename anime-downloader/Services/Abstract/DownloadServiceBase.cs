@@ -9,7 +9,6 @@ using anime_downloader.Classes;
 using anime_downloader.Models;
 using anime_downloader.Models.Abstract;
 using anime_downloader.Services.Interfaces;
-using Ragnar;
 using MagnetLink = anime_downloader.Models.MagnetLink;
 
 namespace anime_downloader.Services.Abstract
@@ -192,33 +191,7 @@ namespace anime_downloader.Services.Abstract
 
                 case MagnetLink magnet:
                 {
-                    // Create the AddTorrentParams with info about the torrent
-                    // we'd like to add.
-                    var addParams = new AddTorrentParams
-                    {
-                        SavePath = SettingsService.PathConfig.Torrents,
-                        Url = magnet.Remote
-                    };
-
-                    await Task.Run(async () =>
-                    {
-                        using (var session = new Session())
-                        {
-                            session.ListenOn(6881, 6889);
-                            var handle = session.AddTorrent(addParams);
-                            while (!handle.HasMetadata)
-                                await Task.Delay(100);
-                            session.Pause();
-
-                            var info = handle.TorrentFile;
-                            var file = new TorrentCreator(info);
-                            var name = Path.Combine(SettingsService.PathConfig.Torrents, $"{info.Name}.torrent");
-                            if (!File.Exists(name))
-                                File.WriteAllBytes(name, file.Generate());
-                            command = $"/DIRECTORY \"{fileDirectory}\" \"{name}\"";
-                        }
-                    });
-
+                    command = magnet.Remote;
                     break;
                 }
             }
@@ -233,8 +206,10 @@ namespace anime_downloader.Services.Abstract
             switch (media)
             {
                 case Torrent _:
-                case MagnetLink _:
                     StartInTorrentClient(command);
+                    break;
+                case MagnetLink _:
+                    Process.Start(command);
                     break;
             }
         }
