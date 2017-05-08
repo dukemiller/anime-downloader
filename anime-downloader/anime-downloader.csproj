@@ -137,6 +137,7 @@
     <Compile Include="Models\AnimeFile.cs" />
     <Compile Include="Classes\Extensions.cs" />
     <Compile Include="Models\AnimeSeason.cs" />
+    <Compile Include="Models\MagnetLink.cs" />
     <Compile Include="Models\MultipleAnimeDetails.cs" />
     <Compile Include="Models\AnimeFileRange.cs" />
     <Compile Include="Models\MyAnimeListDetails.cs" />
