@@ -35,10 +35,10 @@ namespace anime_downloader.Services
                 await RetrieveNodes();
 
             return _nodes
-                .Where(item =>  // Episode is this season
+                .Where(item => // Episode is this season
                 {
-                    if (item.Date.HasValue) 
-                       return (item.Date.Value - DateTime.Now).Days <= MaxAge;
+                    if (item.Date.HasValue)
+                        return (item.Date.Value - DateTime.Now).Days <= MaxAge;
                     return true;
                 })
                 .Where(item => item.StrippedName.Contains(episode.ToString()))
@@ -96,11 +96,11 @@ namespace anime_downloader.Services
             };
         }
 
-        private static int MaxAge => (DateTime.Now - DateTime.Parse($"{((int)CurrentSeason() - 1) * 3 + 1}/1")).Days;
+        private static int MaxAge => (DateTime.Now - DateTime.Parse($"{((int) CurrentSeason() - 1) * 3 + 1}/1")).Days;
 
         private static Season CurrentSeason()
         {
-            return (Season)Math.Ceiling(Convert.ToDouble(DateTime.Now.Month) / 3);
+            return (Season) Math.Ceiling(Convert.ToDouble(DateTime.Now.Month) / 3);
         }
     }
 }
