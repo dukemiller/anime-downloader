@@ -84,11 +84,15 @@ namespace anime_downloader.Services
             var ls = item.InnerHtml.IndexOf("<link>", StringComparison.Ordinal) + 6;
             var guid = item.InnerHtml.IndexOf("<guid", StringComparison.Ordinal);
             var link = item.InnerHtml.Substring(ls, guid - ls);
+            var remote = WebUtility.HtmlDecode(link);
+            
             return new MagnetLink
             {
                 Name = item.Element("title").InnerText,
-                Remote = WebUtility.HtmlDecode(link),
-                Date = DateTime.Parse(item.Element("pubdate").InnerText)
+                Remote = remote,
+                Date = DateTime.Parse(item.Element("pubdate").InnerText),
+                Hash = remote.Split('&')[0],
+                Trackers = remote.Split(new[] {"&tr="}, StringSplitOptions.None).Skip(1).ToList()
             };
         }
 
