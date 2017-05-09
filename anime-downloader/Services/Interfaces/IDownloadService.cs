@@ -53,7 +53,7 @@ namespace anime_downloader.Services.Interfaces
         /// <summary>
         ///     Downloads the media for the given anime episode.
         /// </summary>
-        Task<DownloadResult> DownloadMedia(Anime anime, RemoteMedia media);
+        Task<(bool successful, string command)> DownloadMedia(Anime anime, RemoteMedia media);
 
         /// <summary>
         ///     Initiate the media.

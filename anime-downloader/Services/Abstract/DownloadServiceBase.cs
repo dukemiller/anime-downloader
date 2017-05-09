@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using anime_downloader.Classes;
 using anime_downloader.Models;
 using anime_downloader.Models.Abstract;
+using anime_downloader.Models.Configurations;
 using anime_downloader.Services.Interfaces;
 using MagnetLink = anime_downloader.Models.MagnetLink;
 
@@ -22,6 +23,106 @@ namespace anime_downloader.Services.Abstract
     /// </remarks>
     public abstract class DownloadServiceBase : IDownloadService
     {
+        // 
+
+        private static string AriaDirectory => Path.Combine(PathConfiguration.ApplicationDirectory, "aria2");
+
+        private static string AriaExecutable => Path.Combine(AriaDirectory, "aria2c.exe");
+
+        private async Task DownloadAria()
+        {
+            const string url =
+                @"https://github.com/aria2/aria2/releases/download/release-1.31.0/aria2-1.31.0-win-32bit-build1.zip";
+            var path = Path.Combine(PathConfiguration.ApplicationDirectory, "aria2.zip");
+            await Downloader.DownloadFileTaskAsync(url, path);
+            System.IO.Compression.ZipFile.ExtractToDirectory(path, PathConfiguration.ApplicationDirectory);
+            File.Delete(path);
+            Directory.Move(
+                Path.Combine(PathConfiguration.ApplicationDirectory, "aria2-1.31.0-win-32bit-build1"),
+                Path.Combine(AriaDirectory));
+        }
+
+        private async Task<(bool successful, string path)> RetrieveFromAria(MagnetLink magnet)
+        {
+            if (!Directory.Exists(AriaDirectory))
+                await DownloadAria();
+
+            var info = new ProcessStartInfo
+            {
+                FileName = AriaExecutable,
+                Arguments = $"--bt-metadata-only=true --bt-save-metadata=true --bt-tracker={string.Join(",", magnet.Trackers)} {magnet.Hash}",
+                WorkingDirectory = SettingsService.PathConfig.Torrents,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                CreateNoWindow = true
+            };
+
+            var process = new Process
+            {
+                StartInfo = info
+            };
+
+            process.Start();
+
+            var result = await process.StandardOutput.ReadToEndAsync();
+
+            var file =
+                result.Split('\n')
+                    .First(line => line.Contains("Saved metadata as"))
+                    .Split(new[] {"Saved metadata as"}, StringSplitOptions.None)[1]
+                    .Split(Path.PathSeparator)
+                    .Last()
+                    .TrimEnd('.')
+                    .TrimStart(' ');
+
+            return (true, file);
+        }
+
+        private async Task<(bool successful, string path)> DownloadTorrent(Torrent torrent)
+        {
+            var torrentName = await torrent.GetTorrentNameAsync();
+            if (torrentName == null)
+                return (false, null);
+            var filePath = Path.Combine(SettingsService.PathConfig.Torrents, torrentName);
+
+            // Download file 
+            if (!File.Exists(filePath))
+                return await Task.Run(() =>
+                {
+                    try
+                    {
+                        Downloader.DownloadFile(torrent.Remote, filePath);
+                    }
+
+                    // TODO: heh heh heh
+                    catch (Exception)
+                    {
+                        return (false, null);
+                    }
+                    return (true, filePath);
+                });
+
+            return (true, filePath);
+        }
+
+        private void StartInTorrentClient(string command)
+        {
+            var info = new ProcessStartInfo
+            {
+                FileName = SettingsService.PathConfig.TorrentDownloader,
+                Arguments = command,
+                UseShellExecute = false,
+                RedirectStandardOutput = true
+            };
+
+            var process = new Process
+            {
+                StartInfo = info
+            };
+
+            Task.Run(() => process.Start());
+        }
+
         // Absolutely generic
 
         public string ServiceName => GetType().Name.Replace("Service", "");
@@ -122,15 +223,15 @@ namespace anime_downloader.Services.Abstract
             return false;
         }
 
-        public virtual async Task<bool> DownloadEpisode(Anime anime, RemoteMedia media, Action<string> output)
+        public async Task<bool> DownloadEpisode(Anime anime, RemoteMedia media, Action<string> output)
         {
             output($"Downloading '{anime.Title}' episode '{anime.NextEpisode}'.");
 
             var download = await DownloadMedia(anime, media);
 
-            if (download.Successful)
+            if (download.successful)
             {
-                StartMedia(media, download.Command);
+                StartMedia(media, download.command);
                 anime.Episode++;
                 await Log(anime);
             }
@@ -140,13 +241,13 @@ namespace anime_downloader.Services.Abstract
                 output($"Download of '{anime.Title}' failed.");
             }
 
-            return download.Successful;
+            return download.successful;
         }
 
-        public virtual async Task<DownloadResult> DownloadMedia(Anime anime, RemoteMedia media)
+        public async Task<(bool successful, string command)> DownloadMedia(Anime anime, RemoteMedia media)
         {
-            var downloadResult = new DownloadResult {Successful = false};
-            string command = null;
+            var path = "";
+            bool successful;
 
             var fileDirectory = SettingsService.PathConfig.Unwatched;
             if (SettingsService.FlagConfig.IndividualShowFolders)
@@ -160,45 +261,24 @@ namespace anime_downloader.Services.Abstract
             {
                 case Torrent torrent:
                 {
-                    var torrentName = await torrent.GetTorrentNameAsync();
-                    if (torrentName == null)
-                        return downloadResult;
-                    var filePath = Path.Combine(SettingsService.PathConfig.Torrents, torrentName);
-                    command = $"/DIRECTORY \"{fileDirectory}\" \"{filePath}\"";
-
-                    // Download file and call utorrent
-                    if (!File.Exists(filePath))
-                        return await Task.Run(() =>
-                        {
-                            try
-                            {
-                                Downloader.DownloadFile(media.Remote, filePath);
-                            }
-
-                            // TODO: heh heh heh
-                            catch (Exception)
-                            {
-                                downloadResult.Successful = false;
-                                return downloadResult;
-                            }
-
-                            downloadResult.Command = command;
-                            downloadResult.Successful = true;
-                            return downloadResult;
-                        });
+                    (successful, path) = await DownloadTorrent(torrent);
+                    if (!successful)
+                        return (false, null);
                     break;
                 }
 
                 case MagnetLink magnet:
                 {
-                    command = magnet.Remote;
+                    (successful, path) = await RetrieveFromAria(magnet);
+                    if (!successful)
+                        return (false, null);
                     break;
                 }
             }
 
-            downloadResult.Command = command;
-            downloadResult.Successful = true;
-            return downloadResult;
+            var command = $"/DIRECTORY \"{fileDirectory}\" \"{path}\"";
+
+            return (true, command);
         }
 
         public virtual void StartMedia(RemoteMedia media, string command)
@@ -206,30 +286,10 @@ namespace anime_downloader.Services.Abstract
             switch (media)
             {
                 case Torrent _:
+                case MagnetLink _:
                     StartInTorrentClient(command);
                     break;
-                case MagnetLink _:
-                    Process.Start(command);
-                    break;
             }
-        }
-
-        private void StartInTorrentClient(string command)
-        {
-            var info = new ProcessStartInfo
-            {
-                FileName = SettingsService.PathConfig.TorrentDownloader,
-                Arguments = command,
-                UseShellExecute = false,
-                RedirectStandardOutput = true
-            };
-
-            var process = new Process
-            {
-                StartInfo = info
-            };
-
-            Task.Run(() => process.Start());
         }
 
         public async Task<bool> ServiceAvailable()
