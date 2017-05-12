@@ -72,8 +72,9 @@ namespace anime_downloader.Services
                 .Select(e => new GroupFileDistance(e, anime))
                 .Where(e => e.Distance <= 25)
                 .OrderBy(e => e.Distance)
-                .FirstOrDefault()?.Group
-                .Select(e => e);
+                .FirstOrDefault()
+                ?.Group
+                ?.Select(e => e);
             return collection ?? new List<AnimeFile>();
         }
 
