@@ -16,22 +16,19 @@ namespace anime_downloader.ViewModels.Components
     public class AnimeDetailsViewModel : ViewModelBase
     {
         private readonly IAnimeService _animeService;
-        private readonly IFileService _fileService;
         private Anime _anime;
         private RelayCommand _buttonCommand;
         private string _buttonText;
-        private bool _lastEpisodeAvailable;
         private MyAnimeListBarViewModel _myAnimeListBar;
         private string _selectedSubgroup;
         private ISettingsService _settings;
 
         // 
 
-        public AnimeDetailsViewModel(ISettingsService settings, IAnimeService animeService, IFileService fileService)
+        public AnimeDetailsViewModel(ISettingsService settings, IAnimeService animeService)
         {
             Settings = settings;
             _animeService = animeService;
-            _fileService = fileService;
         }
 
         // 
@@ -61,18 +58,6 @@ namespace anime_downloader.ViewModels.Components
             PreviousCommand = new RelayCommand(Previous);
 
             ClearSubgroupCommand = new RelayCommand(() => SelectedSubgroup = null);
-
-            // Default of true to avoid the flicker on the majority case that the file is found
-            LastEpisodeAvailable = true;
-
-            LastEpisodeCommand = new RelayCommand(
-                PlayLastEpisode,
-                () => LastEpisodeAvailable
-            );
-
-            // It's an expensive operation so it has to be async or creating the view makes an upward
-            // of 400ms delay
-            GetLastEpisode();
 
             return this;
         }
@@ -117,12 +102,6 @@ namespace anime_downloader.ViewModels.Components
             set => Set(() => Settings, ref _settings, value);
         }
 
-        private bool LastEpisodeAvailable
-        {
-            get => _lastEpisodeAvailable;
-            set => Set(() => LastEpisodeAvailable, ref _lastEpisodeAvailable, value);
-        }
-
         public string ButtonText
         {
             get => _buttonText;
@@ -134,8 +113,6 @@ namespace anime_downloader.ViewModels.Components
             get => _buttonCommand;
             set => Set(() => ButtonCommand, ref _buttonCommand, value);
         }
-
-        public RelayCommand LastEpisodeCommand { get; set; }
 
         public RelayCommand ExitCommand { get; set; }
 
@@ -176,18 +153,6 @@ namespace anime_downloader.ViewModels.Components
         }
 
         // 
-
-        private async void GetLastEpisode()
-        {
-            await Task.Run(() =>
-            {
-                var path = _fileService.LastEpisode(Anime);
-                LastEpisodeAvailable = path != null;
-                Application.Current.Dispatcher.InvokeAsync(() => LastEpisodeCommand.RaiseCanExecuteChanged());
-            });
-        }
-
-        private void PlayLastEpisode() => Process.Start(_fileService.LastEpisode(Anime).Path);
 
         private void Edit()
         {

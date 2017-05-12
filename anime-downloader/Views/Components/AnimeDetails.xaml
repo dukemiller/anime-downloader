@@ -232,10 +232,6 @@
 
                 <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                     <Button Margin="5"
-                            Command="{Binding LastEpisodeCommand}"
-                            Content="Last episode" />
-
-                    <Button Margin="5"
                             Command="{Binding ButtonCommand}"
                             Content="{Binding ButtonText}"
                             IsDefault="True" />
