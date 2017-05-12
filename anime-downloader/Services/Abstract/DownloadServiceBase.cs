@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using anime_downloader.Classes;
+using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Models.Abstract;
 using anime_downloader.Models.Configurations;
@@ -24,6 +25,13 @@ namespace anime_downloader.Services.Abstract
     public abstract class DownloadServiceBase : IDownloadService
     {
         // 
+
+        /// <summary>
+        ///     The max age (in days) a torrent can be for it to still be in this season
+        /// </summary>
+        protected static int MaxAge => (DateTime.Now - DateTime.Parse($"{((int)CurrentSeason() - 1) * 3 + 1}/1")).Days;
+
+        private static Season CurrentSeason() => (Season)Math.Ceiling(Convert.ToDouble(DateTime.Now.Month) / 3);
 
         private static string AriaDirectory => Path.Combine(PathConfiguration.ApplicationDirectory, "aria2");
 

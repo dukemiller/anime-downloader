@@ -96,11 +96,6 @@ namespace anime_downloader.Services
             };
         }
 
-        private static int MaxAge => (DateTime.Now - DateTime.Parse($"{((int) CurrentSeason() - 1) * 3 + 1}/1")).Days;
-
-        private static Season CurrentSeason()
-        {
-            return (Season) Math.Ceiling(Convert.ToDouble(DateTime.Now.Month) / 3);
-        }
+        
     }
 }
