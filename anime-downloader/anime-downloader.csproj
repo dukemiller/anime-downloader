@@ -178,7 +178,6 @@
     <Compile Include="Services\MyAnimeListApi.cs" />
     <Compile Include="Services\MyAnimeListService.cs" />
     <Compile Include="Services\NyaaService.cs" />
-    <Compile Include="Services\ApplicationSettingsService.cs" />
     <Compile Include="Services\XmlSettingsService.cs" />
     <Compile Include="ViewModelLocator.cs" />
     <Compile Include="ViewModels\AnimeDisplayViewModel.cs" />
