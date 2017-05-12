@@ -52,6 +52,8 @@ namespace anime_downloader.Services.Abstract
 
         private async Task<(bool successful, string path)> RetrieveFromAria(MagnetLink magnet)
         {
+            var file = "";
+
             if (!Directory.Exists(AriaDirectory))
                 await DownloadAria();
 
@@ -74,14 +76,27 @@ namespace anime_downloader.Services.Abstract
 
             var result = await process.StandardOutput.ReadToEndAsync();
 
-            var file =
-                result.Split('\n')
-                    .First(line => line.Contains("Saved metadata as"))
-                    .Split(new[] {"Saved metadata as"}, StringSplitOptions.None)[1]
-                    .Split(Path.PathSeparator)
+            if (result.Contains("Maybe file already exists"))
+            {
+                var torrent = result.Split('\n')
+                    .First(line => line.Contains(".torrent"))
+                    .Split('/')
                     .Last()
-                    .TrimEnd('.')
-                    .TrimStart(' ');
+                    .Split('.')
+                    .First() + ".torrent";
+
+                file = Path.Combine(SettingsService.PathConfig.Torrents, torrent);
+            }
+
+            else
+            {
+                file =
+                    result.Split('\n')
+                        .First(line => line.Contains("Saved metadata as"))
+                        .Split(new[] {"Saved metadata as"}, StringSplitOptions.None)[1]
+                        .TrimEnd('.')
+                        .TrimStart(' ');
+            }
 
             return (true, file);
         }
