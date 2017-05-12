@@ -27,14 +27,22 @@ namespace anime_downloader.Models
         {
             get
             {
-                var _ = string.Join("", StrippedFilename.Replace(" ", "")
-                    .Split('-')
-                    .Last(stripped => stripped.Any(char.IsNumber))
-                    .TakeWhile(char.IsNumber));
-                int number;
-                var result = int.TryParse(_, out number);
-                var value = result ? number : 0;
-                return value;
+                var episode = 0;
+
+                if (StrippedFilename.Any(char.IsDigit) && StrippedFilename.Contains("-"))
+                {
+                    var _ = string.Join("",
+                            StrippedFilename.Replace(" ", "")
+                            .Split('-')
+                            .Last(stripped => stripped.Any(char.IsNumber))
+                            .TakeWhile(char.IsNumber)
+                    );
+
+                    var result = int.TryParse(_, out int number);
+                    episode = result ? number : 0;
+                }
+
+                return episode;
             }
         }
 
@@ -56,7 +64,7 @@ namespace anime_downloader.Models
         /// <summary>
         ///     Comparator used for the AddSorted extension method
         /// </summary>
-        public int CompareTo(AnimeFile other) => 
+        public int CompareTo(AnimeFile other) =>
             string.Compare(StrippedFilename, other.StrippedFilename, StringComparison.Ordinal);
     }
 }
