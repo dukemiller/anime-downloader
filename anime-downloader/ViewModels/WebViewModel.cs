@@ -30,15 +30,21 @@ namespace anime_downloader.ViewModels
 
         private readonly IMyAnimeListApi _api;
 
+        public IDownloadService DownloadService { get; }
+
         private string _synchronize;
 
         private string _log;
 
         private RelayCommand _logCommand;
 
-        public WebViewModel(ISettingsService settingsService, IAnimeService animeService, 
-                           IMyAnimeListService malService, IMyAnimeListApi api)
+        public WebViewModel(ISettingsService settingsService,
+            IAnimeService animeService,
+            IMyAnimeListService malService,
+            IMyAnimeListApi api,
+            IDownloadService downloadService)
         {
+            DownloadService = downloadService;
             _settingsService = settingsService;
             _animeService = animeService;
             _malService = malService;
@@ -97,7 +103,7 @@ namespace anime_downloader.ViewModels
 
         public RelayCommand AnichartCommand { get; set; }
 
-        public RelayCommand NyaaCommand { get; set; }
+        public RelayCommand ServiceProviderCommand { get; set; }
 
         public RelayCommand SyncCommand { get; set; }
 
@@ -123,7 +129,7 @@ namespace anime_downloader.ViewModels
 
             MyAnimeListCommand = new RelayCommand(() => Process.Start("http://myanimelist.net/"));
             AnichartCommand = new RelayCommand(() => Process.Start("http://anichart.net/"));
-            NyaaCommand = new RelayCommand(() => Process.Start("https://www.nyaa.se/"));
+            ServiceProviderCommand = new RelayCommand(() => Process.Start(DownloadService.ServiceUrl));
 
             // Just text
 

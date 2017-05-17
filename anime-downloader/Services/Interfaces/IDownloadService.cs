@@ -19,6 +19,11 @@ namespace anime_downloader.Services.Interfaces
         string ServiceName { get; }
 
         /// <summary>
+        ///     The url for the front page of the service.
+        /// </summary>
+        string ServiceUrl { get; }
+
+        /// <summary>
         ///     Determine if the service is online.
         /// </summary>
         Task<bool> ServiceAvailable();

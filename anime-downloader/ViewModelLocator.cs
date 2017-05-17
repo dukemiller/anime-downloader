@@ -1,4 +1,6 @@
-﻿using anime_downloader.Services;
+﻿using System;
+using anime_downloader.Enums;
+using anime_downloader.Services;
 using anime_downloader.Services.Interfaces;
 using anime_downloader.ViewModels;
 using anime_downloader.ViewModels.Components;
@@ -16,7 +18,7 @@ namespace anime_downloader
             // Services (order is important)
             SimpleIoc.Default.Register<ISettingsService>(new XmlSettingsService().Load);
             SimpleIoc.Default.Register<IAnimeService, AnimeService>();
-            SimpleIoc.Default.Register<IDownloadService, HorribleSubsService>();
+            RegisterIDownloadService();
             SimpleIoc.Default.Register<IFileService, FileService>();
             SimpleIoc.Default.Register<IMyAnimeListApi, MyAnimeListApi>();
             SimpleIoc.Default.Register<IMyAnimeListService, MyAnimeListService>();
@@ -41,6 +43,26 @@ namespace anime_downloader
             SimpleIoc.Default.Register<DownloadLogViewModel>();
             SimpleIoc.Default.Register<DownloadOptionsViewModel>();
             SimpleIoc.Default.Register<MyAnimeListBarViewModel>();
+        }
+
+        public static void RegisterIDownloadService()
+        {
+            SimpleIoc.Default.Unregister<IDownloadService>();
+
+            switch (ServiceLocator.Current.GetInstance<ISettingsService>().Provider)
+            {
+                case DownloadProvider.NyaaPantsu:
+                    SimpleIoc.Default.Register<IDownloadService, NyaaPantsuService>();
+                    break;
+                case DownloadProvider.NyaaSi:
+                    SimpleIoc.Default.Register<IDownloadService, NyaaSiService>();
+                    break;
+                case DownloadProvider.HorribleSubs:
+                    SimpleIoc.Default.Register<IDownloadService, HorribleSubsService>();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         public static MainWindowViewModel Main => ServiceLocator.Current.GetInstance<MainWindowViewModel>();

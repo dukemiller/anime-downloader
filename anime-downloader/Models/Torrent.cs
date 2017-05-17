@@ -57,8 +57,8 @@ namespace anime_downloader.Models
             try
             {
                 response = (HttpWebResponse) await request.GetResponseAsync();
-                var disposition = response.Headers["content-disposition"];
-                var filename = disposition?.Split(new[] {"filename=\""}, StringSplitOptions.None)[1].Split('"')[0];
+                var disposition = Uri.UnescapeDataString(response.Headers["content-disposition"]);
+                var filename = disposition?.Split(new[] {"filename=\"", "filename*=UTF-8''"}, StringSplitOptions.None)[1].Split('"')[0];
                 return filename;
             }
 

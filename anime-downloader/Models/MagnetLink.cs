@@ -14,5 +14,10 @@ namespace anime_downloader.Models
         ///     The collection of trackers
         /// </summary>
         public List<string> Trackers { get; set; } = new List<string>();
+
+        /// <summary>
+        ///     The explicit (if given) name of the resulting downloaded file.
+        /// </summary>
+        public string DirectName { get; set; }
     }
 }

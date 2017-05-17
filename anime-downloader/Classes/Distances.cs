@@ -114,6 +114,7 @@ namespace anime_downloader.Classes
     public class StringDistance<T>
     {
         private readonly double _distance;
+
         private readonly double _relevance;
 
         public StringDistance(T item, string name, string comparison)
@@ -128,11 +129,11 @@ namespace anime_downloader.Classes
 
         public T Item { get; }
 
-        private static Tuple<string[], string[]> Data(string name, string comparison)
+        private static (string[], string[]) Data(string name, string comparison)
         {
             var namesplit = name.ToLower().Trim().Split(' ').Distinct().ToArray();
             var groupsplit = comparison.ToLower().Trim().Split(' ').Distinct().ToArray();
-            return new Tuple<string[], string[]>(namesplit, groupsplit);
+            return (namesplit, groupsplit);
         }
     }
 }

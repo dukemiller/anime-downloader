@@ -6,6 +6,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:models="clr-namespace:anime_downloader.Models"
              xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              d:DataContext="{d:DesignInstance components:DownloadOptionsViewModel}"
              d:DesignHeight="360"
              d:DesignWidth="680"
@@ -17,28 +18,35 @@
                 <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
             <GroupBox Grid.Column="0" Header="Download Options (Airing Series)">
-                <ListBox ItemsSource="{Binding Options}" SelectedItem="{Binding SelectedRadio}">
-                    <ListBox.ItemContainerStyle>
-                        <Style TargetType="{x:Type ListBoxItem}">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                        <RadioButton Margin="5"
-                                                     VerticalAlignment="Center"
-                                                     VerticalContentAlignment="Center"
-                                                     d:DataContext="{d:DesignInstance d:Type=models:RadioModel}"
-                                                     Content="{Binding Header}"
-                                                     FocusVisualStyle="{x:Null}"
-                                                     IsChecked="{Binding RelativeSource={RelativeSource TemplatedParent},
+                <DockPanel>
+                    <DockPanel DockPanel.Dock="Bottom">
+                        <Label VerticalContentAlignment="Center" Margin="0,0,10,0">Download provider:</Label>
+                        <ComboBox materialDesign:ComboBoxAssist.ClassicMode="True" SelectedItem="{Binding CurrentProvider}" ItemsSource="{Binding Providers}"/>
+                    </DockPanel>
+                    <ListBox ItemsSource="{Binding Options}" SelectedItem="{Binding SelectedRadio}">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="{x:Type ListBoxItem}">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                            <RadioButton Margin="5"
+                                                         VerticalAlignment="Center"
+                                                         VerticalContentAlignment="Center"
+                                                         d:DataContext="{d:DesignInstance d:Type=models:RadioModel}"
+                                                         Content="{Binding Header}"
+                                                         FocusVisualStyle="{x:Null}"
+                                                         IsChecked="{Binding RelativeSource={RelativeSource TemplatedParent},
                                                                          Path=IsSelected}"
-                                                     Style="{StaticResource {x:Type RadioButton}}" />
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </ListBox.ItemContainerStyle>
-                </ListBox>
+                                                         Style="{StaticResource {x:Type RadioButton}}" />
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                    </ListBox>
+                </DockPanel>
             </GroupBox>
+
             <Button Grid.Row="1"
                     HorizontalAlignment="Right"
                     Command="{Binding SearchCommand}"

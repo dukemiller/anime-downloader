@@ -156,7 +156,8 @@ namespace anime_downloader.Services.Abstract
 
             foreach (var anime in animes)
             {
-                var download = await AttemptDownload(anime, await GetNextEpisode(anime), output);
+                var result = await FindAllMedia(anime, anime.NextEpisode);
+                var download = await AttemptDownload(anime, result, output);
                 if (download)
                     downloaded++;
             }

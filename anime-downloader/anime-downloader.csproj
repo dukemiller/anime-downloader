@@ -129,6 +129,7 @@
     <Compile Include="Classes\Xaml\MouseBindings.cs" />
     <Compile Include="Classes\Xaml\MyMultiSelectBehavior.cs" />
     <Compile Include="Enums\DownloadOption.cs" />
+    <Compile Include="Enums\DownloadProvider.cs" />
     <Compile Include="Enums\Season.cs" />
     <Compile Include="Enums\ViewDisplay.cs" />
     <Compile Include="Enums\Status.cs" />
@@ -174,6 +175,8 @@
     <Compile Include="Services\Interfaces\IMyAnimeListService.cs" />
     <Compile Include="Services\Interfaces\ISettingsService.cs" />
     <Compile Include="Services\Interfaces\IVersionService.cs" />
+    <Compile Include="Services\NyaaPantsuService.cs" />
+    <Compile Include="Services\NyaaSiService.cs" />
     <Compile Include="Services\VersionService.cs" />
     <Compile Include="Services\MyAnimeListApi.cs" />
     <Compile Include="Services\MyAnimeListService.cs" />

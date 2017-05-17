@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 using anime_downloader.Classes;
+using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Models.Configurations;
 using anime_downloader.Services.Interfaces;
@@ -57,6 +58,8 @@ namespace anime_downloader.Services
 
         [XmlElement("Version")]
         public VersionCheck Version { get; set; }
+
+        public DownloadProvider Provider { get; set; } = DownloadProvider.NyaaPantsu;
 
         [NeedsUpdating]
         public bool CrucialDirectoriesExist()
@@ -121,6 +124,7 @@ namespace anime_downloader.Services
                     Subgroups = settings.Subgroups;
                     Animes = settings.Animes;
                     Version = settings.Version;
+                    Provider = settings.Provider;
                 }
             return this;
         }

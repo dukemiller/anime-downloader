@@ -109,8 +109,8 @@
                             <Button
                                 Margin="5"
                                 HorizontalAlignment="Stretch"
-                                Command="{Binding NyaaCommand}"
-                                Content="Nyaa" />
+                                Command="{Binding ServiceProviderCommand}"
+                                Content="{Binding DownloadService.ServiceName}" />
                         </StackPanel>
                     </GroupBox>
                     <GroupBox

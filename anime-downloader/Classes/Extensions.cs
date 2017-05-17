@@ -47,5 +47,10 @@ namespace anime_downloader.Classes
         {
             return ioc.GetInstance<TService>(Guid.NewGuid().ToString());
         }
+
+        public static IEnumerable<T> GetValues<T>()
+        {
+            return Enum.GetValues(typeof(T)).Cast<T>();
+        }
     }
 }
