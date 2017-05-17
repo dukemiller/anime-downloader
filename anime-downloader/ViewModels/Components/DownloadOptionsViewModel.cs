@@ -41,6 +41,7 @@ namespace anime_downloader.ViewModels.Components
         public DownloadOptionsViewModel(ISettingsService settings)
         {
             _settings = settings;
+            _currentProvider = _settings.Provider;
             Options = new ObservableCollection<RadioModel<DownloadOption>> { NextEpisode, Continually, Missing };
             SelectedRadio = Options.First();
             SearchCommand = new RelayCommand(() => MessengerInstance.Send(SelectedRadio));

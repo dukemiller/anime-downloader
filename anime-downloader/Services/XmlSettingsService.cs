@@ -59,7 +59,7 @@ namespace anime_downloader.Services
         [XmlElement("Version")]
         public VersionCheck Version { get; set; }
 
-        public DownloadProvider Provider { get; set; } = DownloadProvider.NyaaPantsu;
+        public DownloadProvider Provider { get; set; }
 
         [NeedsUpdating]
         public bool CrucialDirectoriesExist()
