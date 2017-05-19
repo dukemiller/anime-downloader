@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using anime_downloader.Classes;
@@ -22,15 +24,15 @@ namespace anime_downloader.ViewModels.Components
 
         private readonly IDownloadService _downloadService;
 
-        public DownloaderViewModel(ISettingsService settings, IFileService fileService, 
-                                   IAnimeService animeService, IDownloadService downloadService)
+        public DownloaderViewModel(ISettingsService settings, IFileService fileService,
+            IAnimeService animeService, IDownloadService downloadService)
         {
             _settings = settings;
             _fileService = fileService;
             _animeService = animeService;
             _downloadService = downloadService;
         }
-        
+
         public string Text
         {
             get => _text;
@@ -66,9 +68,15 @@ namespace anime_downloader.ViewModels.Components
                     }
                 }
 
-                catch (Exception)
+                catch (Exception exception)
                 {
-                    Text += ">> An error occured while attempting to download, try again.";
+                    if (exception is WebException webException
+                        && webException.Status == WebExceptionStatus.ProtocolError
+                        && Regex.IsMatch(webException.Message, @"\(5\d{2}\)"))
+                        Text += ">> The server returned an internal error. Try again in a bit.";
+
+                    else
+                        Text += ">> An error occured while attempting to download, try again.";
                 }
 
             else
