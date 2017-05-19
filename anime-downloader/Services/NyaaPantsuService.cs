@@ -54,7 +54,7 @@ namespace anime_downloader.Services
             }
 
             var result = document.DocumentNode
-                ?.SelectNodes("//item")
+                ?.SelectNodes("//entry")
                 ?.Select(ToMagnet)
                 .Where(item => // Episode is this season
                 {
@@ -76,8 +76,8 @@ namespace anime_downloader.Services
 
         private static MagnetLink ToMagnet(HtmlNode item)
         {
-            var ls = item.InnerHtml.IndexOf("<link>", StringComparison.Ordinal) + 6;
-            var guid = item.InnerHtml.IndexOf("<description", StringComparison.Ordinal);
+            var ls = item.InnerHtml.IndexOf("<link href=\"", StringComparison.Ordinal) + 12;
+            var guid = item.InnerHtml.IndexOf("\">\n", StringComparison.Ordinal);
             var link = item.InnerHtml.Substring(ls, guid - ls);
             var remote = WebUtility.HtmlDecode(link);
 
@@ -85,7 +85,7 @@ namespace anime_downloader.Services
             {
                 Name = item.Element("title").InnerText,
                 Remote = remote,
-                Date = DateTime.Parse(item.Element("pubdate").InnerText),
+                Date = DateTime.Parse(item.Element("updated").InnerText),
                 Hash = remote.Split('&')[0],
                 Trackers = remote.Split(new[] {"&tr="}, StringSplitOptions.None).Skip(1).ToList()
             };
