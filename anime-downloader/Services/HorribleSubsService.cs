@@ -41,7 +41,8 @@ namespace anime_downloader.Services
                         return (item.Date.Value - DateTime.Now).Days <= MaxAge;
                     return true;
                 })
-                .Where(item => item.StrippedName.Contains(episode.ToString()))
+                .Where(item => item.StrippedName.Contains(episode.ToString()) 
+                                && !item.StrippedName.Contains(episode.ToString() + ".5"))
                 .Where(item => // Name contains everything
                 {
                     var title = item.StrippedWithNoEpisode.ToLower();

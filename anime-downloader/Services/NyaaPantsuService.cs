@@ -62,7 +62,9 @@ namespace anime_downloader.Services
                         return (item.Date.Value - DateTime.Now).Days <= MaxAge;
                     return true;
                 })
-                .Where(item => Regex.Split(item.StrippedName, " ").Any(s => s.Contains(episode.ToString("D2"))));
+                .Where(item => Regex
+                    .Split(item.StrippedName, " ")
+                    .Any(s => s.Contains(episode.ToString("D2")) && !s.Contains(episode.ToString("D2") + ".5")));
 
             if (anime.NameCollection.Any(c => Regex.Replace(c, YearPattern, "").Contains(episode.ToString("D2"))))
                 result = result?
