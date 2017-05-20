@@ -48,7 +48,8 @@ namespace anime_downloader.Services
                     var title = item.StrippedWithNoEpisode.ToLower();
                     var words = anime.Name.ToLower().Split(' ').ToList();
                     return words.Count(word => title.Contains(word)) > (words.Count / 2);
-                });
+                })
+                .OrderByDescending(n => n.Name.Contains(anime.Resolution));
         }
 
         // 

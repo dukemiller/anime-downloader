@@ -52,9 +52,9 @@ namespace anime_downloader.Services
                 var html = await client.DownloadStringTaskAsync(url);
                 document.LoadHtml(html);
             }
-
+            
             var result = document.DocumentNode
-                ?.SelectNodes("//entry")
+                ?.SelectNodes("//item")
                 ?.Select(ToMagnet)
                 .Where(item => // Episode is this season
                 {
@@ -73,24 +73,29 @@ namespace anime_downloader.Services
                                        .Count(c => c.Contains(episode.ToString("D2")))
                                    >= 2);
 
-            return result;
+            return result?.OrderByDescending(n => n.Name.Contains(anime.Resolution));
         }
 
         private static MagnetLink ToMagnet(HtmlNode item)
         {
-            var ls = item.InnerHtml.IndexOf("<link href=\"", StringComparison.Ordinal) + 12;
-            var guid = item.InnerHtml.IndexOf("\">\n", StringComparison.Ordinal);
-            var link = item.InnerHtml.Substring(ls, guid - ls);
+            var ls = item.InnerHtml.IndexOf("<link>", StringComparison.Ordinal) + 6;
+            var guid = item.InnerHtml.IndexOf("<description>", StringComparison.Ordinal);
+            var link = item.InnerHtml.Substring(ls, guid - ls).Replace("\n", "").Replace("\t", "").Trim();
             var remote = WebUtility.HtmlDecode(link);
 
-            return new MagnetLink
+            var magnet = new MagnetLink
             {
                 Name = item.Element("title").InnerText,
                 Remote = remote,
-                Date = DateTime.Parse(item.Element("updated").InnerText),
+                Date = DateTime.Parse(item.Element("pubdate").InnerText),
                 Hash = remote.Split('&')[0],
                 Trackers = remote.Split(new[] {"&tr="}, StringSplitOptions.None).Skip(1).ToList()
             };
+
+            if (remote.Contains("&dn"))
+                magnet.DirectName = remote.Split(new[] {"&dn="}, StringSplitOptions.None)[1].Split('&')[0];
+
+            return magnet;
         }
 
         private static string NyaaTerms(Anime anime, int episode)

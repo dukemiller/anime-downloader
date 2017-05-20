@@ -55,10 +55,9 @@ namespace anime_downloader.Services
                     return true;
                 })
                 .Where(item => Regex.Split(item.StrippedName, " ")
-                                    .Any(s => s.Contains(episode.ToString("D2")) && !s.Contains(episode.ToString("D2") + ".5")))
-                .OrderByDescending(n => n.Name.Contains(anime.Resolution));
+                    .Any(s => s.Contains(episode.ToString("D2")) && !s.Contains(episode.ToString("D2") + ".5")));
 
-            return result;
+            return result?.OrderByDescending(n => n.Name.Contains(anime.Resolution));
         }
         
         private static RemoteMedia ToMedia(HtmlNode item)
