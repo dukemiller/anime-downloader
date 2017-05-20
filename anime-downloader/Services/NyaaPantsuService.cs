@@ -44,7 +44,7 @@ namespace anime_downloader.Services
                               "&s=" +
                               $"&sort={BySeeders}" +
                               "&order=desc" +
-                              "&max=10" +
+                              "&max=20" +
                               $"&q={NyaaTerms(anime, episode)}");
 
             using (var client = new WebClient())
