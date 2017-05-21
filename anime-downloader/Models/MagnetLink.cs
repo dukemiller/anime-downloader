@@ -19,5 +19,12 @@ namespace anime_downloader.Models
         ///     The explicit (if given) name of the resulting downloaded file.
         /// </summary>
         public string DirectName { get; set; }
+
+        public override string ToString()
+        {
+            return DirectName != null
+                ? $"MagnetLink<name={DirectName}, hash={Hash}>"
+                : $"MagnetLink<name={Name}, hash={Hash}>";
+        }
     }
 }
