@@ -73,27 +73,24 @@ namespace anime_downloader.Services
                                        .Count(c => c.Contains(episode.ToString("D2")))
                                    >= 2);
 
-            return result?.OrderByDescending(n => n.Name.Contains(anime.Resolution));
+            return result?.OrderByDescending(n => n.Name.Contains(anime.Resolution)).ThenByDescending(n => n.Seeders);
         }
 
         private static MagnetLink ToMagnet(XmlNode item)
         {
-            (var title, var link, var pubdate) =
-                (item.SelectSingleNode("title")?.InnerText, 
-                item.SelectSingleNode("link")?.InnerText, 
-                DateTime.Parse(item.SelectSingleNode("pubDate")?.InnerText));
-            
             var magnet = new MagnetLink
             {
-                Name = title,
-                Remote = link,
-                Date = pubdate,
-                Hash = link.Split('&')[0],
-                Trackers = link.Split(new[] {"&tr="}, StringSplitOptions.None).Skip(1).ToList()
+                DirectName = item["torrent:fileName"]?.InnerText,
+                Name = item["title"]?.InnerText,
+                Remote = item["torrent:magnetURI"]?.InnerText,
+                Date = DateTime.Parse(item["pubDate"]?.InnerText),
+                Seeders = int.Parse(item["torrent:seeds"]?.InnerText ?? "0"),
+                Hash = item["torrent:magnetURI"]?.InnerText.Split('&')[0],
+                Trackers = item["torrent:magnetURI"]
+                    ?.InnerText.Split(new[] {"&tr="}, StringSplitOptions.None)
+                    .Skip(1)
+                    .ToList()
             };
-
-            if (link.Contains("&dn"))
-                magnet.DirectName = link.Split(new[] {"&dn="}, StringSplitOptions.None)[1].Split('&')[0];
 
             return magnet;
         }
