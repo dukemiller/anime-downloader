@@ -64,7 +64,7 @@ namespace anime_downloader.Models
 
             catch (Exception ex) when (ex is WebException || ex is InvalidOperationException)
             {
-                return null;
+                return !string.IsNullOrEmpty(Name) ? $"{Name}.torrent" : null;
             }
 
             finally

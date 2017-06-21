@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -55,7 +56,7 @@ namespace anime_downloader.Services
             
             var result = document.SelectNodes("//item")
                 ?.Cast<XmlNode>()
-                .Select(ToMagnet)
+                .Select(ToTorrent)
                 .Where(item => // Episode is this season
                 {
                     if (item.Date.HasValue)
@@ -73,23 +74,16 @@ namespace anime_downloader.Services
                                        .Count(c => c.Contains(episode.ToString("D2")))
                                    >= 2);
 
-            return result?.OrderByDescending(n => n.Name.Contains(anime.Resolution)).ThenByDescending(n => n.Seeders);
+            return result?.OrderByDescending(n => n.Name.Contains(anime.Resolution));
         }
 
-        private static MagnetLink ToMagnet(XmlNode item)
+        private static Torrent ToTorrent(XmlNode item)
         {
-            var magnet = new MagnetLink
+            var magnet = new Torrent
             {
-                DirectName = item["torrent:fileName"]?.InnerText,
                 Name = item["title"]?.InnerText,
-                Remote = item["torrent:magnetURI"]?.InnerText,
-                Date = DateTime.Parse(item["pubDate"]?.InnerText),
-                Seeders = int.Parse(item["torrent:seeds"]?.InnerText ?? "0"),
-                Hash = item["torrent:magnetURI"]?.InnerText.Split('&')[0],
-                Trackers = item["torrent:magnetURI"]
-                    ?.InnerText.Split(new[] {"&tr="}, StringSplitOptions.None)
-                    .Skip(1)
-                    .ToList()
+                Remote = item["link"]?.InnerText,
+                Date = DateTime.ParseExact(item["pubDate"]?.InnerText, "dd MMM yy HH:mm UTC", CultureInfo.CurrentCulture),
             };
 
             return magnet;

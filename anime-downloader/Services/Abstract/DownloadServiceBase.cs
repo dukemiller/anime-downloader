@@ -262,7 +262,7 @@ namespace anime_downloader.Services.Abstract
 
             else
             {
-                output($"Download of '{anime.Title}' failed.");
+                output($"Download of '{anime.Title}' failed (most likely due to server error).");
             }
 
             return download.successful;
