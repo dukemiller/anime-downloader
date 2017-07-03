@@ -138,10 +138,12 @@
     <Compile Include="Enums\ViewDisplay.cs" />
     <Compile Include="Enums\Status.cs" />
     <Compile Include="Models\Abstract\RemoteMedia.cs" />
+    <Compile Include="Models\AniList\ClientCredentials.cs" />
     <Compile Include="Models\Anime.cs" />
     <Compile Include="Models\AnimeFile.cs" />
     <Compile Include="Classes\Extensions.cs" />
     <Compile Include="Models\AnimeSeason.cs" />
+    <Compile Include="Models\Configurations\AniListConfiguration.cs" />
     <Compile Include="Models\MagnetLink.cs" />
     <Compile Include="Models\MultipleAnimeDetails.cs" />
     <Compile Include="Models\AnimeFileRange.cs" />
