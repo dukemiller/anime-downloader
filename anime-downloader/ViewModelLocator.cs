@@ -22,6 +22,7 @@ namespace anime_downloader
             SimpleIoc.Default.Register<IFileService, FileService>();
             SimpleIoc.Default.Register<IMyAnimeListApi, MyAnimeListApi>();
             SimpleIoc.Default.Register<IMyAnimeListService, MyAnimeListService>();
+            SimpleIoc.Default.Register<IFindSeasonAnimeService, AniListService>();
             SimpleIoc.Default.Register<IVersionService, VersionService>();
 
             // Viewmodels
