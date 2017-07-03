@@ -11,6 +11,7 @@ namespace anime_downloader.Services.Interfaces
         PathConfiguration PathConfig { get; set; }
         FlagConfiguration FlagConfig { get; set; }
         MyAnimeListConfiguration MyAnimeListConfig { get; set; }
+        AniListConfiguration AniListConfiguration { get; set; }
         VersionCheck Version { get; set; }
 
         DownloadProvider Provider { get; set; }

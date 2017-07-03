@@ -38,6 +38,7 @@ namespace anime_downloader.Services
             };
 
             MyAnimeListConfig = new MyAnimeListConfiguration();
+            AniListConfiguration = new AniListConfiguration();
             Animes = new List<Anime>();
             Subgroups = new List<string>();
             SortBy = "name";
@@ -55,6 +56,9 @@ namespace anime_downloader.Services
 
         [XmlElement("MyAnimeList")]
         public MyAnimeListConfiguration MyAnimeListConfig { get; set; }
+
+        [XmlElement("AniList")]
+        public AniListConfiguration AniListConfiguration { get; set; }
 
         [XmlElement("Version")]
         public VersionCheck Version { get; set; }
@@ -119,6 +123,7 @@ namespace anime_downloader.Services
                     PathConfig = settings.PathConfig;
                     FlagConfig = settings.FlagConfig;
                     MyAnimeListConfig = settings.MyAnimeListConfig;
+                    AniListConfiguration = settings.AniListConfiguration;
                     SortBy = settings.SortBy;
                     FilterBy = settings.FilterBy;
                     Subgroups = settings.Subgroups;
