@@ -138,7 +138,10 @@
     <Compile Include="Enums\ViewDisplay.cs" />
     <Compile Include="Enums\Status.cs" />
     <Compile Include="Models\Abstract\RemoteMedia.cs" />
+    <Compile Include="Models\AniList\Airing.cs" />
+    <Compile Include="Models\AniList\AiringAnime.cs" />
     <Compile Include="Models\AniList\ClientCredentials.cs" />
+    <Compile Include="Models\AniList\Tag.cs" />
     <Compile Include="Models\Anime.cs" />
     <Compile Include="Models\AnimeFile.cs" />
     <Compile Include="Classes\Extensions.cs" />
