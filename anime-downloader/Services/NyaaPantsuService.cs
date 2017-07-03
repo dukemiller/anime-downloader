@@ -79,14 +79,14 @@ namespace anime_downloader.Services
 
         private static Torrent ToTorrent(XmlNode item)
         {
-            var magnet = new Torrent
+            var torrent = new Torrent
             {
                 Name = item["title"]?.InnerText,
                 Remote = item["link"]?.InnerText,
                 Date = DateTime.ParseExact(item["pubDate"]?.InnerText, "dd MMM yy HH:mm UTC", CultureInfo.CurrentCulture),
             };
 
-            return magnet;
+            return torrent;
         }
 
         private static string NyaaTerms(Anime anime, int episode)

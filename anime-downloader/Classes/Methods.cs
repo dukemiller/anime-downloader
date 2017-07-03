@@ -142,5 +142,10 @@ namespace anime_downloader.Classes
                 textbox.SelectionStart = 1;
             }
         }
+
+        public static int Mod(int x, int m) => (x % m + m) % m;
+
+        public static bool InRange(int number, int inclusiveBottom, int inclusiveTop) => number >= inclusiveBottom &&
+                                                                                         number <= inclusiveTop;
     }
 }
