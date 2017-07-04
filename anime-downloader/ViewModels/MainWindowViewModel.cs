@@ -44,7 +44,6 @@ namespace anime_downloader.ViewModels
 
             // Initializations
 
-            CloseCommand = new RelayCommand(Application.Current.MainWindow.Close);
             CurrentView = SimpleIoc.Default.GetInstance<HomeViewModel>();
 
             // Etc
@@ -101,13 +100,17 @@ namespace anime_downloader.ViewModels
 
         public RelayCommand WebCommand { get; set; }
 
-        public RelayCommand TrayCommand { get; set; }
+        public RelayCommand LoadedCommand { get; set; }
 
         // 
 
         private void SetCommands()
         {
-            TrayCommand = new RelayCommand(CreateTray);
+            LoadedCommand = new RelayCommand(() =>
+            {
+                CloseCommand = new RelayCommand(Application.Current.MainWindow.Close);
+                CreateTray();
+            });
 
             HomeCommand = new RelayCommand(
                 () =>
