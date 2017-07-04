@@ -6,6 +6,8 @@
              xmlns:models="clr-namespace:anime_downloader.Models"
              xmlns:viewModels="clr-namespace:anime_downloader.ViewModels"
              d:DataContext="{d:DesignInstance viewModels:MiscViewModel}"
+             DataContext="{Binding Source={StaticResource Locator},
+                              Path=Misc}"
              d:DesignHeight="320"
              d:DesignWidth="560"
              mc:Ignorable="d">
@@ -92,8 +94,7 @@
                     </GroupBox>
                 </StackPanel>
                 <StackPanel Grid.Column="1">
-                    <GroupBox Margin="0, 0, 5, 0"
-                              Header="MyAnimeList"
+                    <GroupBox Header="MyAnimeList"
                               IsHitTestVisible="{Binding LoggedIntoMal}"
                               Opacity="{Binding LoggedIntoMal,
                                                 Converter={StaticResource BooleanOpacityConverter}}">

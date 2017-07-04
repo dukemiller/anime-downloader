@@ -8,6 +8,7 @@
         xmlns:viewModels="clr-namespace:anime_downloader.ViewModels"
         xmlns:views="clr-namespace:anime_downloader.Views"
         xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
+        xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
         Title="Anime Downloader"
         Width="920"
         Height="400"
@@ -53,71 +54,74 @@
     </Window.InputBindings>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding TrayCommand}" />
+            <i:InvokeCommandAction Command="{Binding LoadedCommand}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <materialDesign:DialogHost FocusVisualStyle="{x:Null}">
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*" />
-                <ColumnDefinition Width="9*" />
-            </Grid.ColumnDefinitions>
-            <UniformGrid Background="{StaticResource BackgroundColor}"
-                         Columns="1"
-                         Rows="10">
-                <RadioButton xaml:FocusBehavior.IsFocused="True"
-                             Command="{Binding HomeCommand}"
-                             Content="Home"
-                             IsChecked="{Binding SelectedIndex,
-                                                 Converter={StaticResource CompareConverter},
-                                                 ConverterParameter=1}" />
-                <RadioButton Command="{Binding AnimeCommand}"
-                             Content="Anime"
-                             IsChecked="{Binding SelectedIndex,
-                                                 Converter={StaticResource CompareConverter},
-                                                 ConverterParameter=2}" />
-                <RadioButton Command="{Binding SettingsCommand}"
-                             Content="Settings"
-                             IsChecked="{Binding SelectedIndex,
-                                                 Converter={StaticResource CompareConverter},
-                                                 ConverterParameter=3}" />
-                <RadioButton Command="{Binding DownloadCommand}"
-                             Content="Download"
-                             IsChecked="{Binding SelectedIndex,
-                                                 Converter={StaticResource CompareConverter},
-                                                 ConverterParameter=4}" />
-                <RadioButton Command="{Binding ManageCommand}"
-                             Content="Manage"
-                             IsChecked="{Binding SelectedIndex,
-                                                 Converter={StaticResource CompareConverter},
-                                                 ConverterParameter=5}" />
-                <RadioButton Command="{Binding PlaylistCreatorCommand}"
-                             Content="Playlists"
-                             IsChecked="{Binding SelectedIndex,
-                                                 Converter={StaticResource CompareConverter},
-                                                 ConverterParameter=6}" />
-                <RadioButton Command="{Binding WebCommand}"
-                             Content="Web"
-                             IsChecked="{Binding SelectedIndex,
-                                                 Converter={StaticResource CompareConverter},
-                                                 ConverterParameter=7}" />
-                <RadioButton Command="{Binding MiscCommand}"
-                             Content="Misc"
-                             IsChecked="{Binding SelectedIndex,
-                                                 Converter={StaticResource CompareConverter},
-                                                 ConverterParameter=8}" />
-            </UniformGrid>
-            <ContentPresenter Grid.Column="1"
-                              Margin="20,0"
-                              Content="{Binding CurrentView,
-                                                NotifyOnTargetUpdated=True,
-                                                UpdateSourceTrigger=PropertyChanged}">
-                <ContentPresenter.Triggers>
-                    <EventTrigger RoutedEvent="Binding.TargetUpdated">
-                        <BeginStoryboard Storyboard="{StaticResource FadeTransition}" />
-                    </EventTrigger>
-                </ContentPresenter.Triggers>
-            </ContentPresenter>
-        </Grid>
+        <DockPanel>
+            <controls:MetroAnimatedSingleRowTabControl TabStripPlacement="Left"
+                                                       DockPanel.Dock="Left" 
+                                                       Margin="0, 0, 5, 0"
+                                                       FocusVisualStyle="{x:Null}"
+                                                       Focusable="False"
+                                                       SelectedIndex="{Binding SelectedIndex}">
+                <controls:MetroAnimatedSingleRowTabControl.ItemContainerStyle>
+                    <Style TargetType="controls:MetroTabItem">
+                        <Setter Property="IsEnabled" Value="True"/>
+                        <Setter Property="Opacity" Value="1.0"></Setter>
+                        <Style.Triggers>
+                            <DataTrigger Value="True" Binding="{Binding Busy}">
+                                <Setter Property="IsEnabled" Value="False"/>
+                                <DataTrigger.EnterActions>
+                                    <BeginStoryboard >
+                                        <Storyboard >
+                                            <DoubleAnimation Duration="0:0:0.35"
+                                                             From="1.0"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             To="0.4" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.EnterActions>
+                                <DataTrigger.ExitActions>
+                                    <BeginStoryboard >
+                                        <Storyboard >
+                                            <DoubleAnimation Duration="0:0:0.35"
+                                                             From="0.4"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             To="1.0" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.ExitActions>
+                            </DataTrigger>
+                            
+                        </Style.Triggers>
+                    </Style>
+                </controls:MetroAnimatedSingleRowTabControl.ItemContainerStyle>
+                <controls:MetroTabItem Header="Home">
+                    <views:Home />
+                </controls:MetroTabItem>
+                <controls:MetroTabItem Header="Anime" PreviewMouseDown="RefreshView">
+                    <views:AnimeDisplay />
+                </controls:MetroTabItem>
+                <controls:MetroTabItem Header="Settings">
+                    <views:Settings />
+                </controls:MetroTabItem>
+                <controls:MetroTabItem Header="Download" PreviewMouseDown="RefreshView">
+                    <views:Download />
+                </controls:MetroTabItem>
+                <controls:MetroTabItem Header="Manage">
+                    <views:Manage />
+                </controls:MetroTabItem>
+                <controls:MetroTabItem Header="Playlists">
+                    <views:PlaylistCreator />
+                </controls:MetroTabItem>
+                <controls:MetroTabItem Header="Web">
+                    <views:Web />
+                </controls:MetroTabItem>
+                <controls:MetroTabItem Header="Misc">
+                    <views:Misc />
+                </controls:MetroTabItem>
+            </controls:MetroAnimatedSingleRowTabControl>
+        </DockPanel>
     </materialDesign:DialogHost>
 </Window>

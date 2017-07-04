@@ -68,6 +68,22 @@ namespace anime_downloader
 
         public static MainWindowViewModel Main => ServiceLocator.Current.GetInstance<MainWindowViewModel>();
 
+        public static AnimeDisplayViewModel Anime => ServiceLocator.Current.GetInstance<AnimeDisplayViewModel>();
+
+        public static SettingsViewModel Settings => ServiceLocator.Current.GetInstance<SettingsViewModel>();
+
+        public static DownloadViewModel Download => ServiceLocator.Current.GetInstance<DownloadViewModel>();
+
+        public static HomeViewModel Home => ServiceLocator.Current.GetInstance<HomeViewModel>();
+
+        public static MiscViewModel Misc => ServiceLocator.Current.GetInstance<MiscViewModel>();
+
+        public static ManageViewModel Manage => ServiceLocator.Current.GetInstance<ManageViewModel>();
+
+        public static PlaylistCreatorViewModel Playlist => ServiceLocator.Current.GetInstance<PlaylistCreatorViewModel>();
+
+        public static WebViewModel Web => ServiceLocator.Current.GetInstance<WebViewModel>();
+
         public static bool Loaded => true;
     }
 }

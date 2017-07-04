@@ -8,6 +8,8 @@
     xmlns:viewModels="clr-namespace:anime_downloader.ViewModels"
     xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
     d:DataContext="{d:DesignInstance viewModels:WebViewModel}"
+    DataContext="{Binding Source={StaticResource Locator},
+                              Path=Web}"
     d:DesignHeight="360"
     d:DesignWidth="680"
     mc:Ignorable="d">

@@ -6,6 +6,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:anime_downloader.ViewModels"
              d:DataContext="{d:DesignInstance viewModels:HomeViewModel}"
+             DataContext="{Binding Source={StaticResource Locator},
+                              Path=Home}"
              Background="White"
              mc:Ignorable="d">
     <UserControl.Resources>

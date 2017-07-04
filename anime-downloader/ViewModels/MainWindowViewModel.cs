@@ -7,15 +7,14 @@ using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Ioc;
+using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace anime_downloader.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
         private bool _busy;
-
-        private ViewModelBase _currentView;
-
+        
         private int _selectedIndex;
 
         /// <summary>
@@ -42,10 +41,6 @@ namespace anime_downloader.ViewModels
             MessengerInstance.Register<WorkMessage>(this, message => Busy = message.Working);
             MessengerInstance.Register<ViewDisplay>(this, ChangeView);
 
-            // Initializations
-
-            CurrentView = SimpleIoc.Default.GetInstance<HomeViewModel>();
-
             // Etc
 
             HomeCommand.Execute(1);
@@ -54,20 +49,23 @@ namespace anime_downloader.ViewModels
         public int SelectedIndex
         {
             get => _selectedIndex;
-            set => Set(() => SelectedIndex, ref _selectedIndex, value);
-        }
-
-        public ViewModelBase CurrentView
-        {
-            get => _currentView;
             set
             {
-                CurrentView?.Cleanup();
-                Set(() => CurrentView, ref _currentView, value);
+                if (SelectedIndex == 1 || SelectedIndex == 3)
+                    RefreshView();
+                Set(() => SelectedIndex, ref _selectedIndex, value);
             }
         }
 
-        private bool Busy
+        /// <summary>
+        ///     An unfortunate consequence of the default being to 'reset' some views
+        /// </summary>
+        public void RefreshView()
+        {
+            MessengerInstance.Send("reset");
+        }
+
+        public bool Busy
         {
             get => _busy;
             set
@@ -113,74 +111,42 @@ namespace anime_downloader.ViewModels
             });
 
             HomeCommand = new RelayCommand(
-                () =>
-                {
-                    CurrentView = SimpleIoc.Default.GetInstance<HomeViewModel>();
-                    SelectedIndex = 1;
-                },
+                () => SelectedIndex = 0,
                 () => !Busy
             );
 
             AnimeCommand = new RelayCommand(
-                () =>
-                {
-                    CurrentView = SimpleIoc.Default.GetUniqueInstance<AnimeDisplayViewModel>();
-                    SelectedIndex = 2;
-                },
+                () => SelectedIndex = 1,
                 () => !Busy
             );
 
             SettingsCommand = new RelayCommand(
-                () =>
-                {
-                    CurrentView = SimpleIoc.Default.GetInstance<SettingsViewModel>();
-                    SelectedIndex = 3;
-                },
+                () => SelectedIndex = 2,
                 () => !Busy
             );
 
             DownloadCommand = new RelayCommand(
-                () =>
-                {
-                    CurrentView = SimpleIoc.Default.GetUniqueInstance<DownloadViewModel>();
-                    SelectedIndex = 4;
-                },
+                () => SelectedIndex = 3,
                 () => !Busy
             );
 
             ManageCommand = new RelayCommand(
-                () =>
-                {
-                    CurrentView = SimpleIoc.Default.GetUniqueInstance<ManageViewModel>();
-                    SelectedIndex = 5;
-                },
+                () => SelectedIndex = 4,
                 () => !Busy
             );
 
             PlaylistCreatorCommand = new RelayCommand(
-                () =>
-                {
-                    CurrentView = SimpleIoc.Default.GetInstance<PlaylistCreatorViewModel>();
-                    SelectedIndex = 6;
-                },
+                () => SelectedIndex = 5,
                 () => !Busy
             );
 
             WebCommand = new RelayCommand(
-                () =>
-                {
-                    CurrentView = SimpleIoc.Default.GetUniqueInstance<WebViewModel>();
-                    SelectedIndex = 7;
-                },
+                () => SelectedIndex = 6,
                 () => !Busy
             );
 
             MiscCommand = new RelayCommand(
-                () =>
-                {
-                    CurrentView = SimpleIoc.Default.GetInstance<MiscViewModel>();
-                    SelectedIndex = 8;
-                },
+                () => SelectedIndex = 7,
                 () => !Busy
             );
 

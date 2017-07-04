@@ -60,7 +60,7 @@ namespace anime_downloader.ViewModels
                     SyncCommand.Execute(1);
             });
         }
-
+        
         // 
 
         private DateTime LoginAttempt { get; set; } = DateTime.Now;

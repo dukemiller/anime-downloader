@@ -25,6 +25,20 @@ namespace anime_downloader.ViewModels
             MessengerInstance.Register<List<Anime>>(this, 
                 animes => Display = SimpleIoc.Default.GetInstance<AnimeDetailsMultipleViewModel>().EditExisting(animes));
 
+            MessengerInstance.Register<string>(this, _ =>
+            {
+                switch (_)
+                {
+                    case "reset":
+                        if (Display.GetType() != typeof(AnimeListViewModel))
+                            Display = SimpleIoc.Default.GetUniqueInstance<AnimeListViewModel>();
+                        break;
+
+                    default:
+                        break;
+                }
+            });
+
             MessengerInstance.Register<NotificationMessage>(this, _ =>
             {
                 switch (_.Notification)

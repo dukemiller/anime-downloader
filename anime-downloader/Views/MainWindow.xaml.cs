@@ -1,7 +1,13 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Windows;
+using System.Windows.Input;
+using anime_downloader.ViewModels;
+using MahApps.Metro.Controls;
 using static anime_downloader.Classes.OperatingSystemApi;
+using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace anime_downloader.Views
 {
@@ -32,6 +38,13 @@ namespace anime_downloader.Views
                 var name = Path.GetFileNameWithoutExtension(Assembly.GetEntryAssembly().Location);
                 return Process.GetProcessesByName(name).Length > 1;
             }
+        }
+
+        private void RefreshView(object sender, MouseButtonEventArgs e)
+        {
+            // Only refresh view if i'm over the header tab item
+            if (e.Source.GetType() == typeof(MetroTabItem))
+                 (DataContext as MainWindowViewModel)?.RefreshView();
         }
     }
 }

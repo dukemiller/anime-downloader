@@ -1,4 +1,5 @@
-﻿using anime_downloader.Classes;
+﻿using System.Web.Configuration;
+using anime_downloader.Classes;
 using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.ViewModels.Components;
@@ -30,11 +31,16 @@ namespace anime_downloader.ViewModels
 
             MessengerInstance.Register<string>(this, _ =>
             {
-                if (_.Equals("download_log"))
+                switch (_)
                 {
-                    var log = SimpleIoc.Default.GetUniqueInstance<DownloadLogViewModel>();
-                    CurrentDisplay = log;
-                    log.DisplayLogResults();
+                    case "download_log":
+                        var log = SimpleIoc.Default.GetUniqueInstance<DownloadLogViewModel>();
+                        CurrentDisplay = log;
+                        log.DisplayLogResults();
+                        break;
+                    case "reset":
+                        CurrentDisplay = SimpleIoc.Default.GetInstance<DownloadOptionsViewModel>();
+                        break;
                 }
             });
         }

@@ -5,6 +5,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:anime_downloader.ViewModels"
              d:DataContext="{d:DesignInstance viewModels:AnimeDisplayViewModel}"
+             DataContext="{Binding Source={StaticResource Locator},
+                              Path=Anime}"
              d:DesignHeight="360"
              d:DesignWidth="680"
              mc:Ignorable="d">
