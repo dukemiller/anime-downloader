@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using anime_downloader.Classes;
@@ -92,25 +94,33 @@ namespace anime_downloader.ViewModels
                     .Where(a => a.MyAnimeList.HasId && a.MyAnimeList.TotalEpisodes == 0)
                     .ToList();
 
-                foreach (var anime in needsUpdating)
+                try
                 {
-                    var remoteAnime = await _malSevice.GetFindResult(anime);
-                    if (!anime.MyAnimeList.TotalEpisodes.Equals(remoteAnime.TotalEpisodes))
+                    foreach (var anime in needsUpdating)
                     {
-                        updated.Add(anime.Title);
-                        anime.MyAnimeList.TotalEpisodes = remoteAnime.TotalEpisodes;
+                        var remoteAnime = await _malSevice.GetFindResult(anime);
+                        if (!anime.MyAnimeList.TotalEpisodes.Equals(remoteAnime.TotalEpisodes))
+                        {
+                            updated.Add(anime.Title);
+                            anime.MyAnimeList.TotalEpisodes = remoteAnime.TotalEpisodes;
+                        }
+                    }
+
+                    if (updated.Count > 0)
+                    {
+                        var updateResult = string.Join(", ", updated);
+                        Methods.Alert($"Updated total episodes for {updateResult}.");
+                    }
+
+                    else
+                    {
+                        Methods.Alert($"No shows were updated for an attempted {needsUpdating.Count} shows.");
                     }
                 }
 
-                if (updated.Count > 0)
+                catch (HttpRequestException e)
                 {
-                    var updateResult = string.Join(", ", updated);
-                    Methods.Alert($"Updated total episodes for {updateResult}.");
-                }
-
-                else
-                {
-                    Methods.Alert($"No shows were updated for an attempted {needsUpdating.Count} shows.");
+                    Methods.Alert("There was a problem making a connection.");
                 }
             }
 
