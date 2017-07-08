@@ -1,0 +1,69 @@
+﻿<UserControl x:Class="anime_downloader.Views.Discover"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:anime_downloader.Views"
+             xmlns:viewModels="clr-namespace:anime_downloader.ViewModels"
+             xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:models="clr-namespace:anime_downloader.Models"
+             xmlns:aniList="clr-namespace:anime_downloader.Models.AniList"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:dialogs="clr-namespace:anime_downloader.Views.Dialogs"
+             xmlns:components="clr-namespace:anime_downloader.Views.Components"
+             d:DataContext="{d:DesignInstance viewModels:DiscoverViewModel}"
+             DataContext="{Binding Source={StaticResource Locator},
+                              Path=Discover}"
+             IsVisibleChanged="Discover_OnIsVisibleChanged"
+             d:DesignHeight="360"
+             d:DesignWidth="680"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <DataTemplate DataType="{x:Type aniList:AiringAnime}">
+            <components:AiringAnime />
+        </DataTemplate>
+    </UserControl.Resources>
+    <Grid Background="White">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="9*" />
+                <RowDefinition Height="1*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="4*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Style="{StaticResource MaterialDesignHeadlineTextBlock}"
+                       Grid.Row="1" Grid.Column="1"
+                       FontWeight="DemiBold"
+                       FontStyle="Italic"
+                       Opacity="0.6"
+                       Text="{Binding Season.Title}" />
+            <controls:MetroAnimatedSingleRowTabControl TabStripMargin="5"
+                                                       FocusVisualStyle="{x:Null}"
+                                                       Grid.Row="0"
+                                                       Grid.RowSpan="2"
+                                                       Grid.ColumnSpan="2"
+                                                       Grid.Column="0"
+                                                       TabStripPlacement="Bottom"
+                                                       x:Name="ParentTabControl"
+                                                       controls:TabControlHelper.Underlined="TabPanel"
+                                                       SelectedIndex="{Binding SelectedIndex}">
+                <controls:MetroTabItem Header="Now airing">
+                    <controls:FlipView CircularNavigation="True"
+                                       IsBannerEnabled="False"
+                                       BorderThickness="0"
+                                       MouseOverGlowEnabled="False"
+                                       SelectedItem="{Binding SelectedAiring}"
+                                       ItemsSource="{Binding AiringShows, Mode=TwoWay}" />
+                </controls:MetroTabItem>
+                <controls:MetroTabItem Header="Leftovers">
+                    <controls:FlipView CircularNavigation="True"
+                                       IsBannerEnabled="False"
+                                       BorderThickness="0"
+                                       MouseOverGlowEnabled="False"
+                                       SelectedItem="{Binding SelectedLeftover}"
+                                       ItemsSource="{Binding LeftoverShows, Mode=TwoWay}" />
+                </controls:MetroTabItem>
+            </controls:MetroAnimatedSingleRowTabControl>
+        </Grid>
+</UserControl>

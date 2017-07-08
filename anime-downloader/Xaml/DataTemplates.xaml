@@ -13,6 +13,10 @@
     <DataTemplate DataType="{x:Type viewModels:HomeViewModel}">
         <views:Home DataContext="{Binding}" />
     </DataTemplate>
+    
+    <DataTemplate DataType="{x:Type viewModels:DiscoverViewModel}">
+        <views:Discover DataContext="{Binding}" />
+    </DataTemplate>
 
     <DataTemplate DataType="{x:Type viewModels:AnimeDisplayViewModel}">
         <views:AnimeDisplay DataContext="{Binding}" />

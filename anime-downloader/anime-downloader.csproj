@@ -220,6 +220,7 @@
     <Compile Include="ViewModels\Components\MyAnimeListBarViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\LoadingViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\MyAnimeListLoginDialogViewModel.cs" />
+    <Compile Include="ViewModels\DiscoverViewModel.cs" />
     <Compile Include="ViewModels\DownloadViewModel.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
@@ -267,6 +268,9 @@
     <Compile Include="Views\Dialogs\MyAnimeListLoginDialog.xaml.cs">
       <DependentUpon>MyAnimeListLoginDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Discover.xaml.cs">
+      <DependentUpon>Discover.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Download.xaml.cs">
       <DependentUpon>Download.xaml</DependentUpon>
     </Compile>
@@ -309,6 +313,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Dialogs\MyAnimeListLoginDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Discover.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -27,6 +27,7 @@ namespace anime_downloader
 
             // Viewmodels
             SimpleIoc.Default.Register<MainWindowViewModel>();
+            SimpleIoc.Default.Register<DiscoverViewModel>();
             SimpleIoc.Default.Register<AnimeDisplayViewModel>();
             SimpleIoc.Default.Register<DownloadViewModel>();
             SimpleIoc.Default.Register<HomeViewModel>();
@@ -67,6 +68,8 @@ namespace anime_downloader
         }
 
         public static MainWindowViewModel Main => ServiceLocator.Current.GetInstance<MainWindowViewModel>();
+
+        public static DiscoverViewModel Discover => ServiceLocator.Current.GetInstance<DiscoverViewModel>();
 
         public static AnimeDisplayViewModel Anime => ServiceLocator.Current.GetInstance<AnimeDisplayViewModel>();
 

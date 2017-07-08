@@ -4,6 +4,7 @@
     {
         Home,
         Anime,
+        Discover,
         Download,
         Manage,
         Misc,
