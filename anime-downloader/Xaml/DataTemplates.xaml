@@ -7,13 +7,13 @@
     xmlns:viewModelComponents="clr-namespace:anime_downloader.ViewModels.Components"
     xmlns:viewModelDialogs="clr-namespace:anime_downloader.ViewModels.Dialogs"
     xmlns:viewModels="clr-namespace:anime_downloader.ViewModels">
-    
+
     <!--  Views  -->
 
     <DataTemplate DataType="{x:Type viewModels:HomeViewModel}">
         <views:Home DataContext="{Binding}" />
     </DataTemplate>
-    
+
     <DataTemplate DataType="{x:Type viewModels:DiscoverViewModel}">
         <views:Discover DataContext="{Binding}" />
     </DataTemplate>
