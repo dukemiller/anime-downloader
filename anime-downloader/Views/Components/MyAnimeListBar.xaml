@@ -15,30 +15,22 @@
         </Style>
     </UserControl.Resources>
 
-    <DockPanel IsHitTestVisible="{Binding LoggedIntoMal}" Opacity="{Binding LoggedIntoMal, Converter={StaticResource BooleanOpacityConverter}}">
-        <Border Background="White"
-                BorderBrush="#2e51a2"
-                BorderThickness="0, 2"
-                DockPanel.Dock="Top">
-            <StackPanel Width="Auto" Orientation="Horizontal">
-                <Label VerticalAlignment="Center"
-                       Content="MyAnimeList"
-                       FontFamily="Segoe UI Black"
-                       Foreground="#2e51a2" />
-                <Label Content="Sync to get options." Visibility="{Binding HasId, Converter={StaticResource ReverseVisibilityConverter}}" />
-                <Button Command="{Binding ProfileCommand}"
-                        Content="Profile"
-                        ToolTip="Go to the MyAnimeList profile of this show."
-                        Visibility="{Binding HasId}" />
-                <Button Command="{Binding RefreshCommand}"
-                        Content="Refresh"
-                        ToolTip="Refresh/update any information since the last time it was gathered."
-                        Visibility="{Binding HasId}" />
-                <Button Command="{Binding ClearCommand}"
-                        Content="Clear"
-                        ToolTip="Remove all MyAnimeList data about this show."
-                        Visibility="{Binding HasId}" />
-            </StackPanel>
-        </Border>
+    <DockPanel IsHitTestVisible="{Binding LoggedIntoMal}"
+               LastChildFill="False"
+               Opacity="{Binding LoggedIntoMal, Converter={StaticResource BooleanOpacityConverter}}">
+        <Label Content="Sync to get options."
+               Visibility="{Binding HasId, Converter={StaticResource ReverseVisibilityConverter}}" />
+        <Button Command="{Binding ProfileCommand}"
+                Content="Open profile page"
+                ToolTip="Go to the MyAnimeList profile of this show."
+                Visibility="{Binding HasId}" />
+        <Button Command="{Binding RefreshCommand}"
+                Content="Refresh gathered data"
+                ToolTip="Refresh/update any information since the last time it was gathered."
+                Visibility="{Binding HasId}" />
+        <Button Command="{Binding ClearCommand}"
+                Content="Clear data"
+                ToolTip="Remove all MyAnimeList data about this show."
+                Visibility="{Binding HasId}" />
     </DockPanel>
 </UserControl>
