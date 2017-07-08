@@ -265,6 +265,8 @@ namespace anime_downloader.Classes
             if (synopsis == null)
                 return "";
             synopsis = synopsis.Replace("&ndash;", "-");
+            synopsis = Regex.Replace(synopsis, @"</?br>", "");
+            synopsis = Regex.Replace(synopsis, @"\(Source: [a-zA-Z\s,]+\)", "");
             synopsis = new[]
                 {
                     @"\[/?[a-zA-Z0-9=]*\]", // Style tags [b]
@@ -321,6 +323,19 @@ namespace anime_downloader.Classes
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return string.IsNullOrEmpty(System.Convert.ToString(value));
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class AddOneConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return System.Convert.ToInt32(value) + 1;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

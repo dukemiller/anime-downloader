@@ -64,6 +64,7 @@
             <classes:BooleanSymbolConverter x:Key="BooleanSymbolConverter" />
             <classes:BooleanColorConverter x:Key="BooleanColorConverter" />
             <classes:BooleanOpacityConverter x:Key="BooleanOpacityConverter" />
+            <classes:AddOneConverter x:Key="AddOneConverter" />
 
             <!--  Storyboards  -->
             <Storyboard x:Key="FadeTransition">
