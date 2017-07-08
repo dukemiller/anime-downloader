@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+using System.Net;
 using anime_downloader.Enums;
 using anime_downloader.Models;
+using anime_downloader.Models.AniList;
+using anime_downloader.Services;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -15,13 +16,14 @@ namespace anime_downloader.ViewModels.Components
 {
     public class AnimeDetailsViewModel : ViewModelBase
     {
+        private static readonly WebClient Downloader = new WebClient();
         private readonly IAnimeService _animeService;
-        private Anime _anime;
-        private RelayCommand _buttonCommand;
-        private string _buttonText;
-        private MyAnimeListBarViewModel _myAnimeListBar;
-        private string _selectedSubgroup;
         private ISettingsService _settings;
+        private Anime _anime;
+        private RelayCommand _command;
+        private MyAnimeListBarViewModel _myAnimeListBar;
+        private string _text;
+        private string _image;
 
         // 
 
@@ -29,6 +31,9 @@ namespace anime_downloader.ViewModels.Components
         {
             Settings = settings;
             _animeService = animeService;
+
+            // Behaviors that are the same no matter what condition
+            ClearSubgroupCommand = new RelayCommand(() => Anime.PreferredSubgroup = null);
         }
 
         // 
@@ -36,40 +41,41 @@ namespace anime_downloader.ViewModels.Components
         public AnimeDetailsViewModel EditExisting(Anime anime)
         {
             Anime = anime;
-            SelectedSubgroup = Anime.PreferredSubgroup;
-
-            ButtonText = "Edit";
-
-            ButtonCommand = new RelayCommand(
-                Edit,
-                () => Anime?.Name?.Length > 0
-            );
             SetupImage();
 
             ExitCommand = new RelayCommand(() =>
             {
                 Settings.Save();
-                MessengerInstance.Send(Enums.ViewDisplay.Anime);
+                MessengerInstance.Send(ViewDisplay.Anime);
             });
 
             MyAnimeListBar = SimpleIoc.Default.GetInstance<MyAnimeListBarViewModel>().Load(Anime);
             NextCommand = new RelayCommand(Next);
             PreviousCommand = new RelayCommand(Previous);
 
-            ClearSubgroupCommand = new RelayCommand(() => SelectedSubgroup = null);
+            // Button
+            Text = "Edit";
+            Command = new RelayCommand(
+                Edit,
+                () => Anime?.Name?.Length > 0
+            );
 
             return this;
         }
 
         private void SetupImage()
         {
-            if (Anime.MyAnimeList.HasId)
+            if (File.Exists(Anime.MyAnimeList.Image))
+                Image = Anime.MyAnimeList.Image;
+
+            else if (Anime.MyAnimeList.HasId)
             {
                 if (Anime.MyAnimeList.Image.Contains("https://"))
                     DownloadImage();
                 else
                     Image = Anime.MyAnimeList.Image;
             }
+
             else
             {
                 Image = null;
@@ -88,11 +94,11 @@ namespace anime_downloader.ViewModels.Components
             };
             Image = null;
 
-            ButtonText = "Add";
+            ExitCommand = new RelayCommand(() => MessengerInstance.Send(ViewDisplay.Anime));
 
-            SelectedSubgroup = Anime.PreferredSubgroup;
-
-            ButtonCommand = new RelayCommand(
+            // Button
+            Text = "Add";
+            Command = new RelayCommand(
                 Create,
                 () =>
                     !_animeService.Animes.Any(
@@ -100,10 +106,31 @@ namespace anime_downloader.ViewModels.Components
                     && Anime?.Name?.Length > 0
             );
 
-            ExitCommand = new RelayCommand(() => MessengerInstance.Send(Enums.ViewDisplay.Anime));
+            return this;
+        }
 
-            ClearSubgroupCommand = new RelayCommand(() => SelectedSubgroup = null);
+        public AnimeDetailsViewModel CreateNewFromAiring(AiringAnime airing)
+        {
+            Anime = new Anime
+            {
+                Name = airing.TitleEnglish,
+                Episode = 0,
+                Status = Status.Watching,
+                Resolution = "720",
+                Airing = true,
+                MyAnimeList = { NeedsUpdating = true, Image = airing.ImagePath }
+            };
+            Image = airing.ImagePath;
 
+            // 
+            Text = "Add";
+            Command = new RelayCommand(
+                CreateAndReturn,
+                () =>
+                    !_animeService.Animes.Any(
+                        a => a.Name.ToLower().Trim().Equals(Anime?.Name?.ToLower().Trim()))
+                    && Anime?.Name?.Length > 0
+            );
             return this;
         }
 
@@ -117,16 +144,24 @@ namespace anime_downloader.ViewModels.Components
             set => Set(() => Settings, ref _settings, value);
         }
 
-        public string ButtonText
+        public string Text
         {
-            get => _buttonText;
-            set => Set(() => ButtonText, ref _buttonText, value);
+            get => _text;
+            set => Set(() => Text, ref _text, value);
         }
 
-        public RelayCommand ButtonCommand
+        public string Image
         {
-            get => _buttonCommand;
-            set => Set(() => ButtonCommand, ref _buttonCommand, value);
+            get => _image;
+            set => Set(() => Image, ref _image, value);
+        }
+
+        // 
+
+        public RelayCommand Command
+        {
+            get => _command;
+            set => Set(() => Command, ref _command, value);
         }
 
         public RelayCommand ExitCommand { get; set; }
@@ -143,16 +178,6 @@ namespace anime_downloader.ViewModels.Components
             set => Set(() => MyAnimeListBar, ref _myAnimeListBar, value);
         }
 
-        public string SelectedSubgroup
-        {
-            get => _selectedSubgroup;
-            set
-            {
-                Set(() => SelectedSubgroup, ref _selectedSubgroup, value);
-                Anime.PreferredSubgroup = SelectedSubgroup;
-            }
-        }
-
         public Anime Anime
         {
             get => _anime;
@@ -162,7 +187,7 @@ namespace anime_downloader.ViewModels.Components
                 Anime.PropertyChanged += (sender, args) =>
                 {
                     if (args.PropertyName.Equals("Name"))
-                        ButtonCommand.RaiseCanExecuteChanged();
+                        Command.RaiseCanExecuteChanged();
                 };
             }
         }
@@ -189,15 +214,20 @@ namespace anime_downloader.ViewModels.Components
         private void Edit()
         {
             Settings.Save();
-            MessengerInstance.Send(Enums.ViewDisplay.Anime);
+            MessengerInstance.Send(ViewDisplay.Anime);
         }
 
         private void Create()
         {
-            if (!string.IsNullOrEmpty(SelectedSubgroup))
-                Anime.PreferredSubgroup = SelectedSubgroup;
             _animeService.Add(Anime);
-            MessengerInstance.Send(Enums.ViewDisplay.Anime);
+            MessengerInstance.Send(ViewDisplay.Anime);
+        }
+
+        private void CreateAndReturn()
+        {
+            _animeService.Add(Anime);
+            MessengerInstance.Send("refresh");
+            MessengerInstance.Send(ViewDisplay.Discover);
         }
 
         private void Next()

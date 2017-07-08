@@ -171,6 +171,7 @@ namespace anime_downloader.ViewModels.Components
                     Animes.Remove(anime);
                 }
             RaisePropertyChanged(nameof(Stats));
+            MessengerInstance.Send("refresh");
             _find.Close();
         }
 
