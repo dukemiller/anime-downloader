@@ -213,7 +213,7 @@ namespace anime_downloader.ViewModels
         {
             var view = new MyAnimeListLoginDialog();
             var result = await DialogHost.Show(view) as MyAnimeListConfiguration;
-
+            
             if (result == null || result.Password?.Length < 1 || result.Username?.Length < 1 || DateTime.Now < LoginAttempt)
                 return;
 

@@ -118,7 +118,7 @@ namespace anime_downloader.ViewModels
                     }
                 }
 
-                catch (HttpRequestException e)
+                catch (HttpRequestException)
                 {
                     Methods.Alert("There was a problem making a connection.");
                 }
