@@ -7,7 +7,23 @@ namespace anime_downloader.Services.Interfaces
 {
     public interface IFindSeasonAnimeService
     {
-        Task<IEnumerable<AiringAnime>> New(AnimeSeason season);
-        Task<IEnumerable<AiringAnime>> Leftover(AnimeSeason season);
+        /// <summary>
+        ///     Retrieve the new animes airing in that season
+        /// </summary>
+        Task<List<AiringAnime>> New(AnimeSeason season);
+
+        /// <summary>
+        ///     Retrieve the leftover animes airing from the previous season to the given season
+        /// </summary>
+        Task<List<AiringAnime>> Leftover(AnimeSeason season);
+
+        /// <summary>
+        ///     Fill in any missing information about the series.
+        /// </summary>
+        /// <remarks>
+        ///     The 'New' and 'Leftover' methods return essentially an AiringAnimeSmall, this will 
+        ///     promote their information to be equivalent to an AiringAnime
+        /// </remarks>
+        Task FillInDetails(AnimeSeason season, bool isNew, AiringAnime anime);
     }
 }

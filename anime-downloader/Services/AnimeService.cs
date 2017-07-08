@@ -83,6 +83,8 @@ namespace anime_downloader.Services
                 .FirstOrDefault()?.Item;
         }
 
+        public bool ListContainsName(string name) => ClosestAnime(name) != null;
+
         public void Add(Anime anime)
         {
             _settings.Animes.Add(anime);

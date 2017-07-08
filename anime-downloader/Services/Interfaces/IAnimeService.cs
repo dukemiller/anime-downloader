@@ -76,5 +76,10 @@ namespace anime_downloader.Services.Interfaces
         ///     The anime in the collection with the name closest to the input string.
         /// </summary>
         Anime ClosestAnime(string name);
+
+        /// <summary>
+        ///     The list contains a show title that is equals or is close to the name
+        /// </summary>
+        bool ListContainsName(string name);
     }
 }
