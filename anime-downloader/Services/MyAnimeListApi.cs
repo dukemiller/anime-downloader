@@ -53,6 +53,8 @@ namespace anime_downloader.Services
 
         public async Task<IEnumerable<ProfileAnimeResult>> GetProfile()
         {
+            await VerificationCheck();
+
             var url = string.Format(ApiProfile, _settings.MyAnimeListConfig.Username);
             var request = await GetAsync(url);
             var data = await request.ReadAsStreamAsync();
@@ -74,6 +76,8 @@ namespace anime_downloader.Services
 
         public async Task<IEnumerable<FindResult>> FindAsync(string q)
         {
+            await VerificationCheck();
+
             q = HttpUtility.UrlPathEncode(q).Replace("%20", "%25");
             var url = string.Format(ApiSearch, q);
             var request = await GetAsync(url);
@@ -137,5 +141,22 @@ namespace anime_downloader.Services
             var response = await PostAsync(url, data);
             return response;
         }
+
+        public bool IsVerified { get; set; }
+
+        private async Task VerificationCheck()
+        {
+            if (!IsVerified)
+            {
+                IsVerified = await VerifyCredentialsAsync();
+                if (!IsVerified)
+                    throw new MyAnimeListCredentialsException();
+            }
+        }
+    }
+
+    public class MyAnimeListCredentialsException : Exception
+    {
+        
     }
 }

@@ -31,5 +31,10 @@ namespace anime_downloader.Services.Interfaces
         Task<HttpContent> UpdateAsync(string id, string data);
 
         Task<HttpContent> DeleteAsync(string id, string data);
+
+        /// <summary>
+        ///     A new change that will require all API endpoints to have verified credentials
+        /// </summary>
+        bool IsVerified { get; set; }
     }
 }
