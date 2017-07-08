@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
 using System.Windows.Input;
+using anime_downloader.Enums;
 using anime_downloader.ViewModels.Dialogs;
+using GalaSoft.MvvmLight.Messaging;
 using MaterialDesignThemes.Wpf;
 using Dialog = anime_downloader.Views.Dialogs.Dialog;
 
@@ -90,11 +93,7 @@ namespace anime_downloader.Classes
         /// </summary>
         public static async void Alert(string msg = "")
         {
-            var view = new Dialog
-            {
-                DataContext = new DialogViewModel { Message = msg }
-            };
-            await DialogHost.Show(view);
+            await DialogHost.Show(new DialogViewModel {Message = msg});
         }
 
         public static void AnimeRatingRules(TextBox textbox, TextCompositionEventArgs e)
@@ -147,5 +146,6 @@ namespace anime_downloader.Classes
 
         public static bool InRange(int number, int inclusiveBottom, int inclusiveTop) => number >= inclusiveBottom &&
                                                                                          number <= inclusiveTop;
+
     }
 }

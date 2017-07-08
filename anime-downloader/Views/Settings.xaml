@@ -6,31 +6,40 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:anime_downloader.ViewModels"
              xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
+             xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
              d:DataContext="{d:DesignInstance viewModels:SettingsViewModel}"
              DataContext="{Binding Source={StaticResource Locator},
                               Path=Settings}"
              d:DesignHeight="360"
-             d:DesignWidth="680"
+             d:DesignWidth="600"
              mc:Ignorable="d">
     <Grid Background="White">
         <Grid.RowDefinitions>
-            <RowDefinition Height="5*" />
+            <RowDefinition Height="9*" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="5*" />
-                <RowDefinition Height="2*" />
-            </Grid.RowDefinitions>
-            <GroupBox Header="Paths">
-                <Grid Row="0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="4*" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+
+        <controls:MetroAnimatedSingleRowTabControl TabStripMargin="5"
+                                                   FocusVisualStyle="{x:Null}"
+                                                   Grid.Row="0"
+                                                   Grid.RowSpan="2"
+                                                   Grid.ColumnSpan="2"
+                                                   Grid.Column="0"
+                                                   controls:TabControlHelper.Underlined="TabPanel"
+                                                   TabStripPlacement="Bottom">
+            <controls:MetroTabItem Header="Paths">
+                <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="3*" />
                     </Grid.ColumnDefinitions>
                     <UniformGrid Grid.Column="0"
                                  Columns="1"
-                                 Rows="5">
+                                 Rows="10">
                         <Label VerticalAlignment="Center"
                                Content="Episode downloads to: "
                                ToolTip="Path to where episodes will be downloaded to." />
@@ -49,102 +58,69 @@
                     </UniformGrid>
                     <UniformGrid Grid.Column="1"
                                  Columns="1"
-                                 Rows="5">
-                        <TextBox VerticalAlignment="Center" Text="{Binding Settings.PathConfig.Unwatched, UpdateSourceTrigger=PropertyChanged}" />
-                        <TextBox VerticalAlignment="Center" Text="{Binding Settings.PathConfig.Watched, UpdateSourceTrigger=PropertyChanged}" />
-                        <TextBox VerticalAlignment="Center" Text="{Binding Settings.PathConfig.Torrents, UpdateSourceTrigger=PropertyChanged}" />
-                        <TextBox VerticalAlignment="Center" Text="{Binding Settings.PathConfig.TorrentDownloader, UpdateSourceTrigger=PropertyChanged}" />
+                                 Rows="10">
+                        <TextBox VerticalAlignment="Center"
+                                 Text="{Binding Settings.PathConfig.Unwatched, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox VerticalAlignment="Center"
+                                 Text="{Binding Settings.PathConfig.Watched, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox VerticalAlignment="Center"
+                                 Text="{Binding Settings.PathConfig.Torrents, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox VerticalAlignment="Center"
+                                 Text="{Binding Settings.PathConfig.TorrentDownloader, UpdateSourceTrigger=PropertyChanged}" />
                         <TextBox VerticalAlignment="Center" Text="{Binding Subgroups}" />
                     </UniformGrid>
                 </Grid>
-            </GroupBox>
+            </controls:MetroTabItem>
+            <controls:MetroTabItem Header="Tray/Downloading">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="3*" />
+                    </Grid.ColumnDefinitions>
 
-            <GroupBox Grid.Row="1"
-                      Margin="0, 5"
-                      Header="Tray / Downloading">
-                <StackPanel Orientation="Horizontal">
-                    <!--  Exit  -->
-                    <CheckBox Margin="0, 0, 25, 0"
-                              HorizontalAlignment="Left"
-                              FlowDirection="RightToLeft"
-                              IsChecked="{Binding Path=Settings.FlagConfig.ExitOnClose,
+                    <UniformGrid Grid.Column="0"
+                                 Columns="1"
+                                 Rows="10">
+                        <Label Content="Exit to system tray:"
+                               ToolTip="Instead of closing the program on exit, it is brought to the tray" />
+                        <Label 
+                               VerticalAlignment="Center"
+                               ToolTip="Always have the tray enabled regardless of window state."
+                               Content="Always keep tray open:" />
+                        <Label 
+                               VerticalAlignment="Center"
+                               ToolTip="Whether or not to only download from subgroups that are on the whitelisted subgroups list"
+                               Content="Whitelist-only download: " />
+                        <Label 
+                               VerticalAlignment="Center"
+                               ToolTip="Put each episode inside a folder named after the show"
+                               Content="Download in series folder:" />
+                    </UniformGrid>
+                    <UniformGrid Grid.Column="1"
+                                 Columns="1"
+                                 Rows="10">
+                        <CheckBox Margin="0, 0, 25, 0"
+                                  HorizontalAlignment="Left"
+                                  FlowDirection="RightToLeft"
+                                  IsChecked="{Binding Path=Settings.FlagConfig.ExitOnClose,
                                                   UpdateSourceTrigger=PropertyChanged,
-                                                  Converter={StaticResource NotConverter}}"
-                              ToolTip=".Instead of closing the program on exit, it is brought to the tray">
-                        <TextBlock Margin="0,-5,0,0"
-                                   VerticalAlignment="Center"
-                                   FlowDirection="LeftToRight"
-                                   Text="Exit to tray:" />
-                    </CheckBox>
-
-                    <!--  AlwaysTray  -->
-                    <CheckBox Margin="0, 0, 25, 0"
-                              HorizontalAlignment="Left"
-                              Command="{Binding TrayToggleCommand}"
-                              FlowDirection="RightToLeft"
-                              IsChecked="{Binding Settings.FlagConfig.AlwaysShowTray,
-                                                  UpdateSourceTrigger=PropertyChanged}"
-                              ToolTip=".Always have the tray enabled">
-                        <TextBlock Margin="0,-5,0,0"
-                                   VerticalAlignment="Center"
-                                   FlowDirection="LeftToRight"
-                                   Text="Keep tray open:" />
-                    </CheckBox>
-
-                    <!--  Whitelisted  -->
-                    <CheckBox Margin="0, 0, 25, 0"
-                              HorizontalAlignment="Left"
-                              FlowDirection="RightToLeft"
-                              IsChecked="{Binding Settings.FlagConfig.OnlyWhitelisted,
-                                                  UpdateSourceTrigger=PropertyChanged}"
-                              ToolTip=".Whether or not to only download from subgroups that are on the whitelisted subgroups list">
-                        <TextBlock Margin="0,-5,0,0"
-                                   VerticalAlignment="Center"
-                                   FlowDirection="LeftToRight"
-                                   Text="Only whitelisted subs: " />
-                    </CheckBox>
-
-                    <!--  Named folders  -->
-                    <CheckBox Margin="0, 0, 25, 0"
-                              HorizontalAlignment="Left"
-                              FlowDirection="RightToLeft"
-                              IsChecked="{Binding Settings.FlagConfig.IndividualShowFolders,
-                                                  UpdateSourceTrigger=PropertyChanged}"
-                              ToolTip="Put each episode inside a folder named after the show">
-                        <TextBlock Margin="0,-5,0,0"
-                                   VerticalAlignment="Center"
-                                   FlowDirection="LeftToRight"
-                                   Text="Show named folders:" />
-                    </CheckBox>
-
-
-
-
-                </StackPanel>
-            </GroupBox>
-        </Grid>
-        <DockPanel Grid.Row="1">
-            <Label HorizontalAlignment="Left" VerticalAlignment="Center">
-                <Label.Style>
-                    <Style TargetType="Label">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding ChangeMade}" Value="True">
-                                <Setter Property="Content">
-                                    <Setter.Value>
-                                        <TextBlock FontSize="14" Foreground="Red">
-                                            <Italic>*Unsaved changes pending</Italic>
-                                        </TextBlock>
-                                    </Setter.Value>
-                                </Setter>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Label.Style>
-            </Label>
-            <Button HorizontalAlignment="Right"
-                    Command="{Binding SaveCommand}"
-                    Content="Edit"
-                    IsDefault="True" />
-        </DockPanel>
+                                                  Converter={StaticResource NotConverter}}" />
+                        <CheckBox Margin="0, 0, 25, 0"
+                                  HorizontalAlignment="Left"
+                                  Command="{Binding TrayToggleCommand}"
+                                  IsChecked="{Binding Settings.FlagConfig.AlwaysShowTray,
+                                                  UpdateSourceTrigger=PropertyChanged}" />
+                        <CheckBox Margin="0, 0, 25, 0"
+                                  HorizontalAlignment="Left"
+                                  IsChecked="{Binding Settings.FlagConfig.OnlyWhitelisted,
+                                                  UpdateSourceTrigger=PropertyChanged}" />
+                        <CheckBox Margin="0, 0, 25, 0"
+                                  HorizontalAlignment="Left"
+                                  IsChecked="{Binding Settings.FlagConfig.IndividualShowFolders,
+                                                  UpdateSourceTrigger=PropertyChanged}" />
+                    </UniformGrid>
+                </Grid>
+            </controls:MetroTabItem>
+        </controls:MetroAnimatedSingleRowTabControl>
     </Grid>
 </UserControl>

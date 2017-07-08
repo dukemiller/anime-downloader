@@ -14,8 +14,10 @@ namespace anime_downloader.Services
     [XmlRoot("Settings")]
     public class XmlSettingsService : ISettingsService
     {
-        private static readonly string SettingsPath = Path.Combine(PathConfiguration.ApplicationDirectory,
+        public static string SettingsPath => Path.Combine(PathConfiguration.ApplicationDirectory,
             "settings.xml");
+
+        public static string ImageDirectory => Path.Combine(PathConfiguration.ApplicationDirectory, "images");
 
         // 
 

@@ -143,12 +143,8 @@ namespace anime_downloader.Models
             get
             {
                 return Aired != null
-                       && (Aired.Year < CurrentYear()
-                           || (Aired.Year == CurrentYear()
-                               && (int) Aired.Season <= (int) CurrentSeason()))
-                       && (Ended == null
-                           || (Ended.Year == CurrentYear()
-                               && (int) Ended.Season == (int) CurrentSeason()));
+                       && (Aired.Year < CurrentYear() || (Aired.Year == CurrentYear() && (int) Aired.Season <= (int) CurrentSeason()))
+                       && (Ended == null || (Ended.Year == CurrentYear() && (int) Ended.Season == (int) CurrentSeason()));
             }
         }
 
