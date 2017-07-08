@@ -1,0 +1,22 @@
+﻿<UserControl x:Class="anime_downloader.Views.Dialogs.Loading"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:anime_downloader.Views.Dialogs"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+             mc:Ignorable="d" 
+             Width="350"
+             Height="120"
+             TextElement.FontSize="22"
+             FocusVisualStyle="{x:Null}" Focusable="False" IsTabStop="False"
+             Background="{StaticResource MaterialDesignBackground}"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}">
+    <DockPanel Margin="16" FocusVisualStyle="{x:Null}" Focusable="False" >
+        <StackPanel VerticalAlignment="Center" FocusVisualStyle="{x:Null}" Focusable="False" >
+            <Label Margin="8" HorizontalAlignment="Center" FocusVisualStyle="{x:Null}" Focusable="False" IsTabStop="False">Loading ...</Label>
+            <controls:ProgressRing Width="35" Height="35" FocusVisualStyle="{x:Null}" Focusable="False" IsTabStop="False" />
+        </StackPanel>
+    </DockPanel>
+</UserControl>

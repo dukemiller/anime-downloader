@@ -4,23 +4,26 @@ using System.Windows;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
 using anime_downloader.Services.Interfaces;
+using anime_downloader.ViewModels.Dialogs;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Ioc;
-using MessageBox = System.Windows.Forms.MessageBox;
+using MaterialDesignThemes.Wpf;
 
 namespace anime_downloader.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
         private bool _busy;
-        
+
         private int _selectedIndex;
 
         /// <summary>
         ///     Handles logic related to creating and the features of the system tray.
         /// </summary>
         private Tray _tray;
+
+        private bool _isShowing;
 
         // 
 
@@ -40,6 +43,18 @@ namespace anime_downloader.ViewModels
 
             MessengerInstance.Register<WorkMessage>(this, message => Busy = message.Working);
             MessengerInstance.Register<ViewDisplay>(this, ChangeView);
+            MessengerInstance.Register<string>(this, async _ =>
+            {
+                switch (_)
+                {
+                    case "loading":
+                        if (IsShowing)
+                            IsShowing = false;
+                        else
+                            await DialogHost.Show(new LoadingViewModel());
+                        break;
+                }
+            });
 
             // Etc
 
@@ -77,6 +92,12 @@ namespace anime_downloader.ViewModels
         }
 
         // 
+
+        public bool IsShowing
+        {
+            get => _isShowing;
+            set => Set(() => IsShowing, ref _isShowing, value);
+        }
 
         private IEnumerable<RelayCommand> ButtonCommands { get; }
 
