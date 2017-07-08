@@ -7,9 +7,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:anime_downloader.ViewModels"
         xmlns:views="clr-namespace:anime_downloader.Views"
-        xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
         xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
-        xmlns:dialogs="clr-namespace:anime_downloader.Views.Dialogs"
         Title="Anime Downloader"
         Width="920"
         Height="400"
@@ -21,36 +19,36 @@
         TextElement.FontSize="16"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         mc:Ignorable="d">
-    <Window.Resources>
-        <Style BasedOn="{StaticResource LargeButtonStyle}" TargetType="RadioButton" />
-    </Window.Resources>
     <Window.InputBindings>
         <KeyBinding Key="X"
                     Command="{Binding CloseCommand}"
                     Modifiers="Control" />
         <KeyBinding Key="D1"
-                    Command="{Binding HomeCommand}"
+                    Command="{Binding Home}"
                     Modifiers="Alt" />
         <KeyBinding Key="D2"
-                    Command="{Binding AnimeCommand}"
+                    Command="{Binding Anime}"
                     Modifiers="Alt" />
         <KeyBinding Key="D3"
-                    Command="{Binding SettingsCommand}"
+                    Command="{Binding Discover}"
                     Modifiers="Alt" />
         <KeyBinding Key="D4"
-                    Command="{Binding DownloadCommand}"
+                    Command="{Binding Download}"
                     Modifiers="Alt" />
         <KeyBinding Key="D5"
-                    Command="{Binding ManageCommand}"
+                    Command="{Binding Manage}"
                     Modifiers="Alt" />
         <KeyBinding Key="D6"
-                    Command="{Binding PlaylistCreatorCommand}"
+                    Command="{Binding Playlist}"
                     Modifiers="Alt" />
         <KeyBinding Key="D7"
-                    Command="{Binding WebCommand}"
+                    Command="{Binding Web}"
                     Modifiers="Alt" />
         <KeyBinding Key="D8"
-                    Command="{Binding MiscCommand}"
+                    Command="{Binding Settings}"
+                    Modifiers="Alt" />
+        <KeyBinding Key="D9"
+                    Command="{Binding Misc}"
                     Modifiers="Alt" />
     </Window.InputBindings>
     <i:Interaction.Triggers>
@@ -58,73 +56,77 @@
             <i:InvokeCommandAction Command="{Binding LoadedCommand}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
-    <materialDesign:DialogHost 
-        FocusVisualStyle="{x:Null}" 
+    <materialDesign:DialogHost
+        FocusVisualStyle="{x:Null}"
         IsOpen="{Binding IsShowing}">
-        <DockPanel>
-            <controls:MetroAnimatedSingleRowTabControl TabStripPlacement="Left"
-                                                       DockPanel.Dock="Left" 
-                                                       Margin="0, 0, 5, 0"
-                                                       FocusVisualStyle="{x:Null}"
-                                                       Focusable="False"
-                                                       SelectedIndex="{Binding SelectedIndex}">
-                <controls:MetroAnimatedSingleRowTabControl.ItemContainerStyle>
-                    <Style TargetType="controls:MetroTabItem">
-                        <Setter Property="IsEnabled" Value="True"/>
-                        <Setter Property="Opacity" Value="1.0"></Setter>
-                        <Style.Triggers>
-                            <DataTrigger Value="True" Binding="{Binding Busy}">
-                                <Setter Property="IsEnabled" Value="False"/>
-                                <DataTrigger.EnterActions>
-                                    <BeginStoryboard >
-                                        <Storyboard >
-                                            <DoubleAnimation Duration="0:0:0.35"
-                                                             From="1.0"
-                                                             Storyboard.TargetProperty="Opacity"
-                                                             To="0.4" />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </DataTrigger.EnterActions>
-                                <DataTrigger.ExitActions>
-                                    <BeginStoryboard >
-                                        <Storyboard >
-                                            <DoubleAnimation Duration="0:0:0.35"
-                                                             From="0.4"
-                                                             Storyboard.TargetProperty="Opacity"
-                                                             To="1.0" />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </DataTrigger.ExitActions>
-                            </DataTrigger>
-                            
-                        </Style.Triggers>
-                    </Style>
-                </controls:MetroAnimatedSingleRowTabControl.ItemContainerStyle>
-                <controls:MetroTabItem Header="Home">
-                    <views:Home />
-                </controls:MetroTabItem>
-                <controls:MetroTabItem Header="Anime" PreviewMouseDown="RefreshView">
-                    <views:AnimeDisplay />
-                </controls:MetroTabItem>
-                <controls:MetroTabItem Header="Settings">
-                    <views:Settings />
-                </controls:MetroTabItem>
-                <controls:MetroTabItem Header="Download" PreviewMouseDown="RefreshView">
-                    <views:Download />
-                </controls:MetroTabItem>
-                <controls:MetroTabItem Header="Manage">
-                    <views:Manage />
-                </controls:MetroTabItem>
-                <controls:MetroTabItem Header="Playlists">
-                    <views:PlaylistCreator />
-                </controls:MetroTabItem>
-                <controls:MetroTabItem Header="Web">
-                    <views:Web />
-                </controls:MetroTabItem>
-                <controls:MetroTabItem Header="Misc">
-                    <views:Misc />
-                </controls:MetroTabItem>
-            </controls:MetroAnimatedSingleRowTabControl>
-        </DockPanel>
+        <controls:MetroAnimatedSingleRowTabControl TabStripPlacement="Left"
+                                                   DockPanel.Dock="Left"
+                                                   Margin="0, 0, 5, 0"
+                                                   FocusVisualStyle="{x:Null}"
+                                                   IsTabStop="False"
+                                                   Focusable="False"
+                                                   Template="{StaticResource MetroTabControlCustomTemplate}"
+                                                   SelectedIndex="{Binding SelectedIndex}">
+            <controls:MetroAnimatedSingleRowTabControl.ItemContainerStyle>
+                <Style TargetType="controls:MetroTabItem">
+                    <Setter Property="IsTabStop" Value="False" />
+                    <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                    <Setter Property="IsEnabled" Value="True" />
+                    <Setter Property="Opacity" Value="1.0" />
+                    <Style.Triggers>
+                        <DataTrigger Value="True" Binding="{Binding Busy}">
+                            <Setter Property="IsEnabled" Value="False" />
+                            <DataTrigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Duration="0:0:0.35"
+                                                         From="1.0"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="0.4" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.EnterActions>
+                            <DataTrigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Duration="0:0:0.35"
+                                                         From="0.4"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="1.0" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.ExitActions>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </controls:MetroAnimatedSingleRowTabControl.ItemContainerStyle>
+            <controls:MetroTabItem Header="Home">
+                <views:Home />
+            </controls:MetroTabItem>
+            <controls:MetroTabItem Header="Anime" PreviewMouseDown="RefreshView">
+                <views:AnimeDisplay />
+            </controls:MetroTabItem>
+            <controls:MetroTabItem Header="Discover">
+                <views:Discover />
+            </controls:MetroTabItem>
+            <controls:MetroTabItem FocusVisualStyle="{x:Null}" Header="Download" PreviewMouseDown="RefreshView">
+                <views:Download />
+            </controls:MetroTabItem>
+            <controls:MetroTabItem Header="Manage">
+                <views:Manage />
+            </controls:MetroTabItem>
+            <controls:MetroTabItem Header="Playlists">
+                <views:PlaylistCreator />
+            </controls:MetroTabItem>
+            <controls:MetroTabItem Header="Web">
+                <views:Web />
+            </controls:MetroTabItem>
+            <controls:MetroTabItem Header="Settings">
+                <views:Settings />
+            </controls:MetroTabItem>
+            <controls:MetroTabItem Header="Misc">
+                <views:Misc />
+            </controls:MetroTabItem>
+        </controls:MetroAnimatedSingleRowTabControl>
     </materialDesign:DialogHost>
 </Window>

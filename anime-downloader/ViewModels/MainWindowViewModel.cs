@@ -34,9 +34,9 @@ namespace anime_downloader.ViewModels
             SetCommands();
             ButtonCommands = new[]
             {
-                HomeCommand, AnimeCommand, DownloadCommand,
-                ManageCommand, MiscCommand, PlaylistCreatorCommand,
-                SettingsCommand, WebCommand
+                Home, Anime, Download,
+                Discover, Manage, Misc,
+                Playlist, Settings, Web
             };
 
             // Messages
@@ -58,9 +58,9 @@ namespace anime_downloader.ViewModels
 
             // Etc
 
-            HomeCommand.Execute(1);
+            Home.Execute(1);
         }
-        
+
         public int SelectedIndex
         {
             get => _selectedIndex;
@@ -103,23 +103,25 @@ namespace anime_downloader.ViewModels
 
         public RelayCommand CloseCommand { get; set; }
 
-        public RelayCommand HomeCommand { get; set; }
-
-        public RelayCommand AnimeCommand { get; set; }
-
-        public RelayCommand DownloadCommand { get; set; }
-
-        public RelayCommand ManageCommand { get; set; }
-
-        public RelayCommand MiscCommand { get; set; }
-
-        public RelayCommand PlaylistCreatorCommand { get; set; }
-
-        public RelayCommand SettingsCommand { get; set; }
-
-        public RelayCommand WebCommand { get; set; }
-
         public RelayCommand LoadedCommand { get; set; }
+
+        public RelayCommand Home { get; set; }
+
+        public RelayCommand Anime { get; set; }
+
+        public RelayCommand Download { get; set; }
+
+        public RelayCommand Manage { get; set; }
+
+        public RelayCommand Misc { get; set; }
+
+        public RelayCommand Playlist { get; set; }
+
+        public RelayCommand Settings { get; set; }
+
+        public RelayCommand Web { get; set; }
+        
+        public RelayCommand Discover { get; set; }
 
         // 
 
@@ -131,45 +133,15 @@ namespace anime_downloader.ViewModels
                 CreateTray();
             });
 
-            HomeCommand = new RelayCommand(
-                () => SelectedIndex = 0,
-                () => !Busy
-            );
-
-            AnimeCommand = new RelayCommand(
-                () => SelectedIndex = 1,
-                () => !Busy
-            );
-
-            SettingsCommand = new RelayCommand(
-                () => SelectedIndex = 2,
-                () => !Busy
-            );
-
-            DownloadCommand = new RelayCommand(
-                () => SelectedIndex = 3,
-                () => !Busy
-            );
-
-            ManageCommand = new RelayCommand(
-                () => SelectedIndex = 4,
-                () => !Busy
-            );
-
-            PlaylistCreatorCommand = new RelayCommand(
-                () => SelectedIndex = 5,
-                () => !Busy
-            );
-
-            WebCommand = new RelayCommand(
-                () => SelectedIndex = 6,
-                () => !Busy
-            );
-
-            MiscCommand = new RelayCommand(
-                () => SelectedIndex = 7,
-                () => !Busy
-            );
+            Home     = new RelayCommand(() => SelectedIndex = 0, () => !Busy);
+            Anime    = new RelayCommand(() => SelectedIndex = 1, () => !Busy);
+            Discover = new RelayCommand(() => SelectedIndex = 2, () => !Busy);
+            Download = new RelayCommand(() => SelectedIndex = 3, () => !Busy);
+            Manage   = new RelayCommand(() => SelectedIndex = 4, () => !Busy);
+            Playlist = new RelayCommand(() => SelectedIndex = 5, () => !Busy);
+            Web      = new RelayCommand(() => SelectedIndex = 6, () => !Busy);
+            Settings = new RelayCommand(() => SelectedIndex = 7, () => !Busy);
+            Misc     = new RelayCommand(() => SelectedIndex = 8, () => !Busy);
 
             // 
         }
@@ -179,36 +151,43 @@ namespace anime_downloader.ViewModels
             switch (view)
             {
                 case ViewDisplay.Home:
-                    HomeCommand.Execute(1);
+                    Home.Execute(1);
                     break;
 
                 case ViewDisplay.Anime:
-                    AnimeCommand.Execute(1);
+                    Anime.Execute(1);
                     break;
 
                 case ViewDisplay.Settings:
-                    SettingsCommand.Execute(1);
+                    Settings.Execute(1);
                     break;
 
                 case ViewDisplay.Download:
-                    DownloadCommand.Execute(1);
+                    Download.Execute(1);
                     break;
 
                 case ViewDisplay.Manage:
-                    ManageCommand.Execute(1);
+                    Manage.Execute(1);
                     break;
 
                 case ViewDisplay.Misc:
-                    MiscCommand.Execute(1);
+                    Misc.Execute(1);
                     break;
 
                 case ViewDisplay.Playlist:
-                    PlaylistCreatorCommand.Execute(1);
+                    Playlist.Execute(1);
                     break;
 
                 case ViewDisplay.Web:
-                    WebCommand.Execute(1);
+                    Web.Execute(1);
                     break;
+
+                case ViewDisplay.Discover:
+                    Discover.Execute(1);
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(view), view, null);
             }
         }
 

@@ -1,0 +1,46 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:custom="http://metro.mahapps.com/winfx/xaml/controls"
+                    xmlns:behaviours="http://metro.mahapps.com/winfx/xaml/shared">
+    <ControlTemplate x:Key="MetroTabControlCustomTemplate" TargetType="{x:Type custom:MetroAnimatedSingleRowTabControl}">
+        <Grid KeyboardNavigation.TabNavigation="Local">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="ColumnDefinition0" Width="*"/>
+                <ColumnDefinition x:Name="ColumnDefinition1" Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <ScrollViewer x:Name="HeaderPanelScroll" 
+                          FocusVisualStyle="{x:Null}"
+                          Focusable="False"
+                          Grid.Column="1" HorizontalScrollBarVisibility="Disabled" Margin="{TemplateBinding TabStripMargin}" Style="{DynamicResource MetroScrollViewer}" VerticalScrollBarVisibility="Auto" Panel.ZIndex="1">
+                <Grid x:Name="HeaderPanelGrid">
+                    <custom:Underline x:Name="Underline" BorderBrush="{TemplateBinding custom:TabControlHelper.UnderlineBrush}" Background="Transparent" LineThickness="1" Placement="Bottom" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Visibility="Collapsed"/>
+                    <TabPanel x:Name="HeaderPanel" IsItemsHost="True" KeyboardNavigation.TabIndex="1"/>
+                </Grid>
+            </ScrollViewer>
+            <custom:TransitioningContentControl FocusVisualStyle="{x:Null}"
+                                                Focusable="False" x:Name="ContentPanel" Grid.Column="0" behaviours:ReloadBehavior.OnSelectedTabChanged="True" RestartTransitionOnContentChange="True" Transition="{TemplateBinding custom:TabControlHelper.Transition}" UseLayoutRounding="True">
+                <ContentPresenter FocusVisualStyle="{x:Null}"
+                                  Focusable="False" x:Name="PART_SelectedContentHost" ContentTemplate="{TemplateBinding SelectedContentTemplate}" Content="{TemplateBinding SelectedContent}" ContentStringFormat="{TemplateBinding SelectedContentStringFormat}" ContentSource="SelectedContent" Margin="{TemplateBinding Padding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" UseLayoutRounding="False"/>
+            </custom:TransitioningContentControl>
+        </Grid>
+        <ControlTemplate.Triggers>
+            <Trigger Property="custom:TabControlHelper.Underlined" Value="TabPanel">
+                <Setter Property="Visibility" TargetName="Underline" Value="Visible"/>
+            </Trigger>
+            <Trigger Property="TabStripPlacement" Value="Left">
+                <Setter Property="Width" TargetName="ColumnDefinition0" Value="Auto"/>
+                <Setter Property="Width" TargetName="ColumnDefinition1" Value="*"/>
+                <Setter Property="Grid.Column" TargetName="ContentPanel" Value="1"/>
+                <Setter Property="Grid.Column" TargetName="HeaderPanelScroll" Value="0"/>
+                <Setter Property="Placement" TargetName="Underline" Value="Right"/>
+            </Trigger>
+            <Trigger Property="TabStripPlacement" Value="Right">
+                <Setter Property="Width" TargetName="ColumnDefinition0" Value="*"/>
+                <Setter Property="Width" TargetName="ColumnDefinition1" Value="Auto"/>
+                <Setter Property="Grid.Column" TargetName="ContentPanel" Value="0"/>
+                <Setter Property="Grid.Column" TargetName="HeaderPanelScroll" Value="1"/>
+                <Setter Property="Placement" TargetName="Underline" Value="Left"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+</ResourceDictionary>

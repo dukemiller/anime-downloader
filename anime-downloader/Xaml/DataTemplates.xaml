@@ -49,7 +49,7 @@
     <!--  Components  -->
 
     <DataTemplate DataType="{x:Type viewModelComponents:AnimeDetailsViewModel}">
-        <components:AnimeDetails DataContext="{Binding}" />
+        <components:Details DataContext="{Binding}" />
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type viewModelComponents:AnimeDetailsMultipleViewModel}">
@@ -85,6 +85,10 @@
     </DataTemplate>
 
     <!--  Dialogs  -->
+
+    <DataTemplate DataType="{x:Type viewModelDialogs:LoadingViewModel}">
+        <dialogs:Loading DataContext="{Binding}" />
+    </DataTemplate>
 
     <DataTemplate DataType="{x:Type viewModelDialogs:DialogViewModel}">
         <dialogs:Dialog DataContext="{Binding}" />

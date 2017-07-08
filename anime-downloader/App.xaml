@@ -38,6 +38,7 @@
 
                 <!--  Me  -->
                 <ResourceDictionary Source="Xaml/DataTemplates.xaml" />
+                <ResourceDictionary Source="Xaml/Templates.xaml" />
                 <ResourceDictionary Source="Xaml/Colors.xaml" />
                 <ResourceDictionary Source="Xaml/Buttons.xaml" />
             </ResourceDictionary.MergedDictionaries>
