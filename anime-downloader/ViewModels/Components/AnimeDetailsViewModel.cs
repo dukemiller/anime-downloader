@@ -44,6 +44,7 @@ namespace anime_downloader.ViewModels.Components
                 Edit,
                 () => Anime?.Name?.Length > 0
             );
+            SetupImage();
 
             ExitCommand = new RelayCommand(() =>
             {
@@ -52,14 +53,27 @@ namespace anime_downloader.ViewModels.Components
             });
 
             MyAnimeListBar = SimpleIoc.Default.GetInstance<MyAnimeListBarViewModel>().Load(Anime);
-
             NextCommand = new RelayCommand(Next);
-
             PreviousCommand = new RelayCommand(Previous);
 
             ClearSubgroupCommand = new RelayCommand(() => SelectedSubgroup = null);
 
             return this;
+        }
+
+        private void SetupImage()
+        {
+            if (Anime.MyAnimeList.HasId)
+            {
+                if (Anime.MyAnimeList.Image.Contains("https://"))
+                    DownloadImage();
+                else
+                    Image = Anime.MyAnimeList.Image;
+            }
+            else
+            {
+                Image = null;
+            }
         }
 
         public AnimeDetailsViewModel CreateNew()
@@ -72,6 +86,7 @@ namespace anime_downloader.ViewModels.Components
                 Airing = true,
                 MyAnimeList = { NeedsUpdating = true }
             };
+            Image = null;
 
             ButtonText = "Add";
 
@@ -153,6 +168,23 @@ namespace anime_downloader.ViewModels.Components
         }
 
         // 
+
+        private async void DownloadImage()
+        {
+            var image = Anime.MyAnimeList.Image;
+            var downloadPath = Path.Combine(XmlSettingsService.ImageDirectory, $"{Anime.MyAnimeList.Id}.png");
+            try
+            {
+                if (!File.Exists(downloadPath))
+                    await Downloader.DownloadFileTaskAsync(image, downloadPath);
+                Anime.MyAnimeList.Image = downloadPath;
+                Image = Anime.MyAnimeList.Image;
+            }
+            catch
+            {
+                Image = null;
+            }
+        }
 
         private void Edit()
         {
