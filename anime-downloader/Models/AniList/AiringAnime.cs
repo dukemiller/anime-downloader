@@ -1,80 +1,85 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace anime_downloader.Models.AniList
 {
-    public class AiringAnime
+    public class AiringAnime: AiringAnimeSmall
     {
-        [JsonProperty("id")]
-        public int Id { get; set; }
+        private string _description;
+        private IList<Studio> _studio;
+        private string _source;
+        
+        [JsonProperty("start_date")]
+        public DateTime StartDate { get; set; }
 
-        [JsonProperty("title_romaji")]
-        public string TitleRomaji { get; set; }
+        [JsonProperty("end_date")]
+        public object EndDate { get; set; }
 
-        [JsonProperty("title_english")]
-        public string TitleEnglish { get; set; }
+        [JsonProperty("description")]
+        public string Description
+        {
+            get => _description;
+            set => Set(() => Description, ref _description, value);
+        }
 
-        [JsonProperty("title_japanese")]
-        public string TitleJapanese { get; set; }
+        [JsonProperty("mean_score")]
+        public int MeanScore { get; set; }
 
-        [JsonProperty("type")]
-        public string Type { get; set; }
+        [JsonProperty("favourite")]
+        public bool Favourite { get; set; }
 
-        [JsonProperty("start_date_fuzzy")]
-        public int StartDateFuzzy { get; set; }
+        [JsonProperty("youtube_id")]
+        public string YoutubeId { get; set; }
+        
+        [JsonProperty("score_distribution")]
+        public object ScoreDistribution { get; set; }
 
-        [JsonProperty("end_date_fuzzy")]
-        public int? EndDateFuzzy { get; set; }
+        [JsonProperty("list_stats")]
+        public ListStats ListStats { get; set; }
+        
+        [JsonProperty("duration")]
+        public object Duration { get; set; }
 
-        [JsonProperty("season")]
-        public int? Season { get; set; }
+        [JsonProperty("source")]
+        public string Source
+        {
+            get => _source;
+            set => Set(() => Source, ref _source, value);
+        }
 
-        [JsonProperty("series_type")]
-        public string SeriesType { get; set; }
+        [JsonProperty("classification")]
+        public string Classification { get; set; }
 
-        [JsonProperty("synonyms")]
-        public IList<string> Synonyms { get; set; }
+        [JsonProperty("airing_stats")]
+        public object AiringStats { get; set; }
 
-        [JsonProperty("genres")]
-        public IList<string> Genres { get; set; }
+        [JsonProperty("characters")]
+        public IList<Character> Characters { get; set; }
 
-        [JsonProperty("adult")]
-        public bool Adult { get; set; }
+        [JsonProperty("staff")]
+        public IList<Staff> Staff { get; set; }
 
-        [JsonProperty("average_score")]
-        public double AverageScore { get; set; }
+        [JsonProperty("studio")]
+        public IList<Studio> Studio
+        {
+            get => _studio;
+            set => Set(() => Studio, ref _studio, value);
+        }
 
-        [JsonProperty("popularity")]
-        public int Popularity { get; set; }
+        [JsonProperty("external_links")]
+        public IList<ExternalLink> ExternalLinks { get; set; }
 
-        [JsonProperty("updated_at")]
-        public int UpdatedAt { get; set; }
+        [JsonProperty("rankings")]
+        public IList<Ranking> Rankings { get; set; }
 
-        [JsonProperty("hashtag")]
-        public string Hashtag { get; set; }
+        [JsonProperty("relations")]
+        public IList<Relation> Relations { get; set; }
 
-        [JsonProperty("image_url_sml")]
-        public string ImageUrlSml { get; set; }
-
-        [JsonProperty("image_url_med")]
-        public string ImageUrlMed { get; set; }
-
-        [JsonProperty("image_url_lge")]
-        public string ImageUrlLge { get; set; }
-
-        [JsonProperty("image_url_banner")]
-        public string ImageUrlBanner { get; set; }
-
-        [JsonProperty("total_episodes")]
-        public int TotalEpisodes { get; set; }
-
-        [JsonProperty("airing_status")]
-        public string AiringStatus { get; set; }
-
-        [JsonProperty("airing")]
-        public Airing Airing { get; set; }
-
-        [JsonProperty("tags")]
-        public IList<Tag> Tags { get; set; }
+        [JsonProperty("relations_manga")]
+        public IList<object> RelationsManga { get; set; }
+        
+        [JsonProperty("reviews")]
+        public IList<object> Reviews { get; set; }
     }
 }
