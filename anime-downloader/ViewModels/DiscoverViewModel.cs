@@ -132,16 +132,18 @@ namespace anime_downloader.ViewModels
             switch (SelectedIndex)
             {
                 case 0:
-                    SelectedAiring = _previousIndex != null && _previousIndex.Value > 0 &&
-                                     _previousIndex.Value < AiringShows.Count && AiringShows.Count > 0
-                        ? AiringShows[_previousIndex.Value - 1]
-                        : AiringShows.FirstOrDefault();
+                    if (AiringShows != null)
+                        SelectedAiring = _previousIndex != null && _previousIndex.Value > 0 &&
+                                         _previousIndex.Value < AiringShows.Count && AiringShows.Count > 0
+                            ? AiringShows[_previousIndex.Value - 1]
+                            : AiringShows.FirstOrDefault();
                     break;
                 case 1:
-                    SelectedLeftover = _previousIndex != null && _previousIndex.Value > 0 &&
-                                       _previousIndex.Value < LeftoverShows.Count && LeftoverShows.Count > 0
-                        ? LeftoverShows[_previousIndex.Value - 1]
-                        : LeftoverShows.FirstOrDefault();
+                    if (LeftoverShows != null)
+                        SelectedLeftover = _previousIndex != null && _previousIndex.Value > 0 &&
+                                           _previousIndex.Value < LeftoverShows.Count && LeftoverShows.Count > 0
+                            ? LeftoverShows[_previousIndex.Value - 1]
+                            : LeftoverShows.FirstOrDefault();
                     break;
                 default:
                     SelectedAiring = null;
