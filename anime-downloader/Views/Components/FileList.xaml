@@ -62,87 +62,91 @@
         </Style>
     </UserControl.Resources>
 
-    <!--  Titlebar  -->
-    <GroupBox>
-        <GroupBox.Header>
-            <DockPanel Grid.Row="0" Margin="0,-4">
-                <TextBlock VerticalAlignment="Center"
-                           Foreground="White"
-                           Text="{Binding Title}">
-                    <TextBlock.InputBindings>
-                        <MouseBinding Command="{Binding FolderCommand}" MouseAction="LeftClick" />
-                    </TextBlock.InputBindings>
-                </TextBlock>
-                <Label Content="{Binding Label, Mode=OneWay}" Style="{DynamicResource Label}" />
-            </DockPanel>
-        </GroupBox.Header>
-        <DockPanel>
-            <!--  Filter bar  -->
-            <DockPanel DockPanel.Dock="Bottom">
-                <Rectangle DockPanel.Dock="Right">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="MouseDown">
-                            <i:InvokeCommandAction Command="{Binding MoveCommand}" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                    <Rectangle.Fill>
-                        <ImageBrush ImageSource="{Binding ImageResourcePath}" />
-                    </Rectangle.Fill>
-                </Rectangle>
-                <TextBox Margin="4"
-                            materialDesign:HintAssist.Hint="Filter by name ..."
-                            Style="{DynamicResource Filter}"
-                            Text="{Binding Filter,
-                                    UpdateSourceTrigger=PropertyChanged}">
-                    <TextBox.InputBindings>
-                        <KeyBinding Key="Escape" Command="{Binding ClearFilterCommand}" />
-                    </TextBox.InputBindings>
-                </TextBox>
-            </DockPanel>
+    <DockPanel>
 
-            <!--  Episodes  -->
-            <ListBox Name="ListBox"
-                     xaml:DragSelectionHelper.IsDragSelectionEnabled="true"
-                     ItemsSource="{Binding FilteredFiles,
-                                               UpdateSourceTrigger=PropertyChanged}"
-                     SelectedItem="{Binding SelectedFile,
-                                                UpdateSourceTrigger=PropertyChanged}"
-                     SelectionMode="Multiple"
-                     IsTextSearchCaseSensitive="False"
-                     IsTextSearchEnabled="True"
-                     TextSearch.TextPath="StrippedFilename"
-                     Style="{StaticResource Episodes}">
+        <!--  Filter bar  -->
+        <DockPanel DockPanel.Dock="Bottom">
+            <Rectangle DockPanel.Dock="Right">
                 <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="SelectionChanged">
-                        <i:InvokeCommandAction Command="{Binding SelectionChangedCommand}"
-                                               CommandParameter="{Binding SelectedItems, ElementName=ListBox}" />
-                    </i:EventTrigger>
-                    <i:EventTrigger EventName="MouseDoubleClick">
-                        <i:InvokeCommandAction Command="{Binding OpenCommand}" />
+                    <i:EventTrigger EventName="MouseDown">
+                        <i:InvokeCommandAction Command="{Binding MoveCommand}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-                <ListBox.InputBindings>
-                    <KeyBinding Key="Return" Command="{Binding OpenCommand}" />
-                    <KeyBinding Key="Delete" Command="{Binding DeleteCommand}" />
-                </ListBox.InputBindings>
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock d:DataContext="{d:DesignInstance Type=models:AnimeFile}"
-                                   Margin="-6.5"
-                                   Text="{Binding StrippedFilename}"
-                                   ToolTip="{Binding StrippedFilename}" />
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-                <ListBox.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Command="{Binding MoveCommand}" Header="Move" />
-                        <MenuItem Command="{Binding ProfileCommand}" Header="Profile" />
-                        <MenuItem Command="{Binding MalCommand}" Header="MyAnimeList" />
-                        <MenuItem Command="{Binding OpenCommand}" Header="Open" />
-                        <MenuItem Command="{Binding DeleteCommand}" Header="Delete" />
-                    </ContextMenu>
-                </ListBox.ContextMenu>
-            </ListBox>
+                <Rectangle.Fill>
+                    <ImageBrush ImageSource="{Binding ImageResourcePath}" />
+                </Rectangle.Fill>
+            </Rectangle>
+            <TextBox Margin="4"
+                     materialDesign:HintAssist.Hint="Filter by name ..."
+                     Style="{DynamicResource Filter}"
+                     Text="{Binding Filter,
+                                    UpdateSourceTrigger=PropertyChanged}">
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Escape" Command="{Binding ClearFilterCommand}" />
+                </TextBox.InputBindings>
+            </TextBox>
         </DockPanel>
-    </GroupBox>
+        
+        <!--  Titlebar  -->
+        <GroupBox>
+            <GroupBox.Header>
+                <DockPanel Grid.Row="0" Margin="0,-4">
+                    <TextBlock VerticalAlignment="Center"
+                               Foreground="White"
+                               Text="{Binding Title}">
+                        <TextBlock.InputBindings>
+                            <MouseBinding Command="{Binding FolderCommand}" MouseAction="LeftClick" />
+                        </TextBlock.InputBindings>
+                    </TextBlock>
+                    <Label Content="{Binding Label, Mode=OneWay}" Style="{DynamicResource Label}" />
+                </DockPanel>
+            </GroupBox.Header>
+            <DockPanel>
+
+                <!--  Episodes  -->
+                <ListBox Name="ListBox"
+                         xaml:DragSelectionHelper.IsDragSelectionEnabled="true"
+                         ItemsSource="{Binding FilteredFiles,
+                                               UpdateSourceTrigger=PropertyChanged}"
+                         SelectedItem="{Binding SelectedFile,
+                                                UpdateSourceTrigger=PropertyChanged}"
+                         SelectionMode="Multiple"
+                         IsTextSearchCaseSensitive="False"
+                         IsTextSearchEnabled="True"
+                         TextSearch.TextPath="StrippedFilename"
+                         Style="{StaticResource Episodes}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <i:InvokeCommandAction Command="{Binding SelectionChangedCommand}"
+                                                   CommandParameter="{Binding SelectedItems, ElementName=ListBox}" />
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="MouseDoubleClick">
+                            <i:InvokeCommandAction Command="{Binding OpenCommand}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <ListBox.InputBindings>
+                        <KeyBinding Key="Return" Command="{Binding OpenCommand}" />
+                        <KeyBinding Key="Delete" Command="{Binding DeleteCommand}" />
+                    </ListBox.InputBindings>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock d:DataContext="{d:DesignInstance Type=models:AnimeFile}"
+                                       Margin="-6.5"
+                                       Text="{Binding StrippedFilename}"
+                                       ToolTip="{Binding StrippedFilename}" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <ListBox.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Command="{Binding MoveCommand}" Header="Move" />
+                            <MenuItem Command="{Binding ProfileCommand}" Header="Profile" />
+                            <MenuItem Command="{Binding MalCommand}" Header="MyAnimeList" />
+                            <MenuItem Command="{Binding OpenCommand}" Header="Open" />
+                            <MenuItem Command="{Binding DeleteCommand}" Header="Delete" />
+                        </ContextMenu>
+                    </ListBox.ContextMenu>
+                </ListBox>
+            </DockPanel>
+        </GroupBox>
+    </DockPanel>
 </UserControl>
