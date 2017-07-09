@@ -15,6 +15,9 @@ namespace anime_downloader.ViewModels.Components
         private readonly ISettingsService _settings;
 
         private readonly IMyAnimeListService _malService;
+        private bool _loggedIntoMal;
+        private bool _hasId;
+        private Visibility _hasIdVisibility;
 
         // 
 
@@ -31,7 +34,7 @@ namespace anime_downloader.ViewModels.Components
             _settings.MyAnimeListConfig.PropertyChanged += (sender, args) =>
             {
                 if (args.PropertyName.Equals("LoggedIn"))
-                    RaisePropertyChanged(nameof(LoggedIntoMal));
+                    LoggedIntoMal = _settings.MyAnimeListConfig.LoggedIn;
             };
         }
 
@@ -39,10 +42,17 @@ namespace anime_downloader.ViewModels.Components
         {
             _anime = anime;
 
+            LoggedIntoMal = _settings.MyAnimeListConfig.LoggedIn;
+            HasId = _anime.MyAnimeList.HasId;
+            HasIdVisibility = HasId ? Visibility.Visible : Visibility.Collapsed;
+
             _anime.MyAnimeList.PropertyChanged += (sender, args) =>
             {
                 if (args.PropertyName.Equals("Id"))
-                    RaisePropertyChanged(nameof(HasId));
+                {
+                    HasId = _anime.MyAnimeList.HasId;
+                    HasIdVisibility = HasId ? Visibility.Visible : Visibility.Collapsed;
+                }
             };
 
             return this;
@@ -50,9 +60,23 @@ namespace anime_downloader.ViewModels.Components
 
         // 
 
-        public bool LoggedIntoMal => _settings.MyAnimeListConfig.LoggedIn;
+        public bool LoggedIntoMal
+        {
+            get => _loggedIntoMal;
+            set => Set(() => LoggedIntoMal, ref _loggedIntoMal, value);
+        }
 
-        public Visibility HasId => _anime.MyAnimeList.HasId ? Visibility.Visible : Visibility.Collapsed;
+        public bool HasId
+        {
+            get => _hasId;
+            set => Set(() => HasId, ref _hasId, value);
+        }
+
+        public Visibility HasIdVisibility
+        {
+            get => _hasIdVisibility;
+            set => Set(() => HasIdVisibility, ref _hasIdVisibility, value);
+        }
 
         public RelayCommand FindCommand { get; set; }
 
@@ -68,7 +92,7 @@ namespace anime_downloader.ViewModels.Components
         {
             MessengerInstance.Send(new WorkMessage {Working = true});
             var id = await _malService.GetId(_anime);
-            RaisePropertyChanged(nameof(HasId));
+            RaisePropertyChanged(nameof(HasIdVisibility));
             _settings.Save();
             if (!id)
                 Methods.Alert($"No ID found for {_anime.Name}.");
@@ -83,7 +107,7 @@ namespace anime_downloader.ViewModels.Components
             if (response == MessageBoxResult.Yes)
             {
                 _anime.MyAnimeList = new MyAnimeListDetails {Id = null, NeedsUpdating = true};
-                RaisePropertyChanged(nameof(HasId));
+                RaisePropertyChanged(nameof(HasIdVisibility));
                 _settings.Save();
             }
         }
@@ -95,7 +119,7 @@ namespace anime_downloader.ViewModels.Components
             MessengerInstance.Send(new WorkMessage {Working = true});
             if (!await _malService.Refresh(_anime))
                 Methods.Alert("Had trouble finding this show on MAL.");
-            RaisePropertyChanged(nameof(HasId));
+            RaisePropertyChanged(nameof(HasIdVisibility));
             MessengerInstance.Send(new WorkMessage {Working = false});
         }
     }

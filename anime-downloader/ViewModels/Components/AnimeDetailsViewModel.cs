@@ -62,26 +62,7 @@ namespace anime_downloader.ViewModels.Components
 
             return this;
         }
-
-        private void SetupImage()
-        {
-            if (File.Exists(Anime.MyAnimeList.Image))
-                Image = Anime.MyAnimeList.Image;
-
-            else if (Anime.MyAnimeList.HasId)
-            {
-                if (Anime.MyAnimeList.Image.Contains("https://"))
-                    DownloadImage();
-                else
-                    Image = Anime.MyAnimeList.Image;
-            }
-
-            else
-            {
-                Image = null;
-            }
-        }
-
+        
         public AnimeDetailsViewModel CreateNew()
         {
             Anime = new Anime
@@ -118,7 +99,16 @@ namespace anime_downloader.ViewModels.Components
                 Status = Status.Watching,
                 Resolution = "720",
                 Airing = true,
-                MyAnimeList = { NeedsUpdating = true, Image = airing.ImagePath }
+                MyAnimeList =
+                {
+                    NeedsUpdating = true,
+                    Image = airing.ImagePath,
+                    Synopsis = airing.Description,
+                    Title = airing.TitleRomaji,
+                    English = airing.TitleEnglish,
+                    Aired = airing.AnimeSeason,
+                    TotalEpisodes = airing.TotalEpisodes
+                }
             };
             Image = airing.ImagePath;
 
@@ -193,6 +183,25 @@ namespace anime_downloader.ViewModels.Components
         }
 
         // 
+
+        private void SetupImage()
+        {
+            if (File.Exists(Anime.MyAnimeList.Image))
+                Image = Anime.MyAnimeList.Image;
+
+            else if (Anime.MyAnimeList.HasId)
+            {
+                if (Anime.MyAnimeList.Image.Contains("https://"))
+                    DownloadImage();
+                else
+                    Image = Anime.MyAnimeList.Image;
+            }
+
+            else
+            {
+                Image = null;
+            }
+        }
 
         private async void DownloadImage()
         {

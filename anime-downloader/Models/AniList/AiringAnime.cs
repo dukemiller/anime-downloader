@@ -9,6 +9,9 @@ namespace anime_downloader.Models.AniList
         private string _description;
         private IList<Studio> _studio;
         private string _source;
+
+        [JsonIgnore]
+        public AnimeSeason AnimeSeason { get; set; }
         
         [JsonProperty("start_date")]
         public DateTime StartDate { get; set; }

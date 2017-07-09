@@ -165,19 +165,34 @@ namespace anime_downloader.Services
 
             // add all the details available
             anime.MyAnimeList.Id = result.Id;
-            anime.MyAnimeList.TotalEpisodes = result.TotalEpisodes;
-            anime.MyAnimeList.Synopsis = result.Synopsis;
-            anime.MyAnimeList.Image = result.Image;
-            anime.MyAnimeList.Title = result.Title;
-            anime.MyAnimeList.English = result.English;
+
+            if (anime.MyAnimeList.TotalEpisodes <= 0)
+                anime.MyAnimeList.TotalEpisodes = result.TotalEpisodes;
+
+            if (string.IsNullOrEmpty(anime.MyAnimeList.Synopsis) || result.Synopsis.Length > anime.MyAnimeList.Synopsis?.Length)
+                anime.MyAnimeList.Synopsis = result.Synopsis;
+
+            if (string.IsNullOrEmpty(anime.MyAnimeList.Image))
+                anime.MyAnimeList.Image = result.Image;
+
+            if (string.IsNullOrEmpty(anime.MyAnimeList.Title))
+                anime.MyAnimeList.Title = result.Title;
+
+            if (string.IsNullOrEmpty(anime.MyAnimeList.English))
+                anime.MyAnimeList.English = result.English;
+
             anime.MyAnimeList.Synonyms = result.Synonyms;
-            if (DateTime.TryParse(result.StartDate, out DateTime date))
+
+            if (anime.MyAnimeList.Aired == null)
             {
-                anime.MyAnimeList.Aired = new AnimeSeason
+                if (DateTime.TryParse(result.StartDate, out DateTime date))
                 {
-                    Year = date.Year,
-                    Season = (Season)Math.Ceiling(Convert.ToDouble(date.Month) / 3)
-                };
+                    anime.MyAnimeList.Aired = new AnimeSeason
+                    {
+                        Year = date.Year,
+                        Season = (Season) Math.Ceiling(Convert.ToDouble(date.Month) / 3)
+                    };
+                }
             }
 
             if (DateTime.TryParse(result.EndDate, out DateTime end))

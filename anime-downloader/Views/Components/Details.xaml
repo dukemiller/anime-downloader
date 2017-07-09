@@ -183,7 +183,7 @@
 
                 </DockPanel>
             </controls:MetroTabItem>
-            <controls:MetroTabItem Header="MyAnimeList">
+            <controls:MetroTabItem Header="Details">
                 <DockPanel>
                     <TextBlock HorizontalAlignment="Center"
                                Style="{StaticResource MaterialDesignTitleTextBlock}"
@@ -191,6 +191,7 @@
                                                  Converter={StaticResource StringJoinConverter}}"
                                DockPanel.Dock="Top" />
                     <ContentPresenter
+                        HorizontalAlignment="Center"
                         DockPanel.Dock="Bottom"
                         Margin="5"
                         Content="{Binding MyAnimeListBar}" />

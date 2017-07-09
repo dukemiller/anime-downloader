@@ -15,22 +15,22 @@
         </Style>
     </UserControl.Resources>
 
-    <DockPanel IsHitTestVisible="{Binding LoggedIntoMal}"
+    <DockPanel IsHitTestVisible="{Binding HasId}"
                LastChildFill="False"
-               Opacity="{Binding LoggedIntoMal, Converter={StaticResource BooleanOpacityConverter}}">
-        <Label Content="Sync to get options."
-               Visibility="{Binding HasId, Converter={StaticResource ReverseVisibilityConverter}}" />
+               Opacity="{Binding HasId, Converter={StaticResource BooleanOpacityConverter}}">
+        <Label Content="Sync to get MyAnimeList options."
+               Visibility="{Binding HasIdVisibility, Converter={StaticResource ReverseVisibilityConverter}}" />
         <Button Command="{Binding ProfileCommand}"
                 Content="Open profile page"
                 ToolTip="Go to the MyAnimeList profile of this show."
-                Visibility="{Binding HasId}" />
+                Visibility="{Binding HasIdVisibility}" />
         <Button Command="{Binding RefreshCommand}"
                 Content="Refresh gathered data"
                 ToolTip="Refresh/update any information since the last time it was gathered."
-                Visibility="{Binding HasId}" />
+                Visibility="{Binding HasIdVisibility}" />
         <Button Command="{Binding ClearCommand}"
                 Content="Clear data"
                 ToolTip="Remove all MyAnimeList data about this show."
-                Visibility="{Binding HasId}" />
+                Visibility="{Binding HasIdVisibility}" />
     </DockPanel>
 </UserControl>

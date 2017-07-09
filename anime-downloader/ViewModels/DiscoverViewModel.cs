@@ -117,7 +117,7 @@ namespace anime_downloader.ViewModels
             if (_visible)
                 LoadPage();
         }
-
+        
         private void Refresh()
         {
             if (_airing != null)
@@ -202,6 +202,7 @@ namespace anime_downloader.ViewModels
             var anime = SelectedIndex == 0 ? SelectedAiring : SelectedLeftover;
             if (anime != null)
             {
+                anime.AnimeSeason = Season;
                 MessengerInstance.Send(ViewDisplay.Anime);
                 MessengerInstance.Send(anime);
                 _previousIndex = SelectedIndex == 0 ? AiringShows.IndexOf(anime) : LeftoverShows.IndexOf(anime);
