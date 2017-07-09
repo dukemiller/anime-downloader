@@ -265,7 +265,7 @@ namespace anime_downloader.Classes
             if (synopsis == null)
                 return "";
             synopsis = synopsis.Replace("&ndash;", "-");
-            synopsis = Regex.Replace(synopsis, @"</?br>", "");
+            synopsis = Regex.Replace(synopsis, @"</?[a-zA-Z]{0,3}>", "");
             synopsis = Regex.Replace(synopsis, @"\(Source: [a-zA-Z\s,]+\)", "");
             synopsis = new[]
                 {
