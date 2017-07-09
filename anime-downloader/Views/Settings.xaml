@@ -28,7 +28,7 @@
                     Content="Save"
                     DockPanel.Dock="Right"
                     IsDefault="True" />
-            <Label>
+            <Label VerticalAlignment="Center">
                 <Label.Style>
                     <Style TargetType="Label">
                         <Style.Triggers>
