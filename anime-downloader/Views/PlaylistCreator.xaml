@@ -13,16 +13,10 @@
              mc:Ignorable="d">
     <Grid Background="White">
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*" />
-            <RowDefinition Height="9*" />
+            <RowDefinition Height="10*" />
             <RowDefinition Height="2*" />
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0"
-                   FontSize="16"
-                   Text="Create a playlist from all unwatched anime episodes as the filename 'playlist.m3u'."
-                   TextAlignment="Justify"
-                   TextWrapping="Wrap" />
-        <StackPanel Grid.Row="1">
+        <StackPanel Grid.Row="0">
             <DockPanel>
                 <GroupBox Margin="0, 0, 5, 0"
                           HorizontalAlignment="Left"
@@ -98,7 +92,7 @@
                 </GroupBox>
             </DockPanel>
         </StackPanel>
-        <DockPanel Grid.Row="2" LastChildFill="False">
+        <DockPanel Grid.Row="1" LastChildFill="False">
             <Button Command="{Binding OpenCommand}"
                     Content="Open"
                     DockPanel.Dock="Left" />

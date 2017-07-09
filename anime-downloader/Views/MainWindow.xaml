@@ -115,7 +115,7 @@
             <controls:MetroTabItem Header="Manage">
                 <views:Manage />
             </controls:MetroTabItem>
-            <controls:MetroTabItem Header="Playlists">
+            <controls:MetroTabItem Header="Playlist">
                 <views:PlaylistCreator />
             </controls:MetroTabItem>
             <controls:MetroTabItem Header="Web">

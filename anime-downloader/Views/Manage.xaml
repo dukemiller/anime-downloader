@@ -9,25 +9,15 @@
                               Path=Manage}"
              d:DesignHeight="360"
              d:DesignWidth="680"
+             Background="White"
              mc:Ignorable="d">
-    <Grid Background="White">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="1*" />
-                <RowDefinition Height="11*" />
-            </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0">
-                Manage and move episodes from your download directory to the watched directory.
-            </TextBlock>
-            <Grid Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="30*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="30*" />
-                </Grid.ColumnDefinitions>
-                <ContentPresenter Grid.Column="0" Content="{Binding Unwatched}" />
-                <ContentPresenter Grid.Column="2" Content="{Binding Watched}" />
-            </Grid>
-        </Grid>
+    <Grid Margin="4">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="30*" />
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="30*" />
+        </Grid.ColumnDefinitions>
+        <ContentPresenter Grid.Column="0" Content="{Binding Unwatched}" />
+        <ContentPresenter Grid.Column="2" Content="{Binding Watched}" />
     </Grid>
 </UserControl>

@@ -43,80 +43,68 @@
         </Style>
     </UserControl.Resources>
     <Grid Background="White">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="1*" />
-                <RowDefinition Height="9*" />
-                <RowDefinition Height="2*" />
-            </Grid.RowDefinitions>
-
-            <TextBlock Grid.Row="0"
-                       FontFamily="{StaticResource MainFont}"
-                       FontSize="16"
-                       Text="Other features that don't fit much into other sections."
-                       TextAlignment="Justify"
-                       TextWrapping="Wrap" />
-
-            <Grid Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                </Grid.ColumnDefinitions>
-                <StackPanel Grid.Column="0">
-                    <GroupBox Margin="0, 0, 5, 0" Header="Anime">
-                        <StackPanel>
-                            <Label Content="Status"
-                                   FontStyle="Italic"
-                                   Foreground="DarkGray" />
-                            <RadioButton Content="Mark fully watched as completed"
-                                         FocusVisualStyle="{x:Null}"
-                                         IsChecked="{Binding SelectedIndex,
-                                                             Converter={StaticResource CompareConverter},
-                                                             ConverterParameter=1}" />
-                            <Label Content="Files"
-                                   FontStyle="Italic"
-                                   Foreground="DarkGray" />
-                            <RadioButton Content="Move duplicates to 'My Videos'"
-                                         FocusVisualStyle="{x:Null}"
-                                         IsChecked="{Binding SelectedIndex,
-                                                             Converter={StaticResource CompareConverter},
-                                                             ConverterParameter=2}" />
-                            <Label Content="Episode"
-                                   FontStyle="Italic"
-                                   Foreground="DarkGray" />
-                            <RadioButton Content="Set episode to last found episode #"
-                                         FocusVisualStyle="{x:Null}"
-                                         IsChecked="{Binding SelectedIndex,
-                                                             Converter={StaticResource CompareConverter},
-                                                             ConverterParameter=4}"
-                                         ToolTip="For every airing show, find the last downloaded episode of it and set the anime's current watched episode to that. This is helpful for re-indexing if something goes wrong." />
-                        </StackPanel>
-                    </GroupBox>
-                </StackPanel>
-                <StackPanel Grid.Column="1">
-                    <GroupBox Header="MyAnimeList"
-                              IsHitTestVisible="{Binding LoggedIntoMal}"
-                              Opacity="{Binding LoggedIntoMal,
-                                                Converter={StaticResource BooleanOpacityConverter}}">
-                        <StackPanel>
-                            <Label Content="API"
-                                   FontStyle="Italic"
-                                   Foreground="DarkGray" />
-                            <RadioButton Content="Regather shows with no ep. total"
-                                         FocusVisualStyle="{x:Null}"
-                                         IsChecked="{Binding SelectedIndex,
-                                                             Converter={StaticResource CompareConverter},
-                                                             ConverterParameter=3}" />
-                        </StackPanel>
-                    </GroupBox>
-                </StackPanel>
-            </Grid>
-
-            <Button Grid.Row="2"
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10*" />
+            <RowDefinition Height="2*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0">
+                <GroupBox Margin="0, 0, 5, 0" Header="Anime">
+                    <StackPanel>
+                        <Label Content="Status"
+                                FontStyle="Italic"
+                                Foreground="DarkGray" />
+                        <RadioButton Content="Mark fully watched shows as completed"
+                                        FocusVisualStyle="{x:Null}"
+                                        IsChecked="{Binding SelectedIndex,
+                                                            Converter={StaticResource CompareConverter},
+                                                            ConverterParameter=1}" />
+                        <Label Content="Files"
+                                FontStyle="Italic"
+                                Foreground="DarkGray" />
+                        <RadioButton Content="Move any duplicates to 'My Videos'"
+                                        FocusVisualStyle="{x:Null}"
+                                        IsChecked="{Binding SelectedIndex,
+                                                            Converter={StaticResource CompareConverter},
+                                                            ConverterParameter=2}" />
+                        <Label Content="Episode"
+                                FontStyle="Italic"
+                                Foreground="DarkGray" />
+                        <RadioButton Content="Set episode to last found episode #"
+                                        FocusVisualStyle="{x:Null}"
+                                        IsChecked="{Binding SelectedIndex,
+                                                            Converter={StaticResource CompareConverter},
+                                                            ConverterParameter=4}"
+                                        ToolTip="For every airing show, find the last downloaded episode of it and set the anime's current watched episode to that. This is helpful for re-indexing if something goes wrong." />
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+            <StackPanel Grid.Column="1">
+                <GroupBox Header="MyAnimeList"
+                            IsHitTestVisible="{Binding LoggedIntoMal}"
+                            Opacity="{Binding LoggedIntoMal,
+                                            Converter={StaticResource BooleanOpacityConverter}}">
+                    <StackPanel>
+                        <Label Content="API"
+                                FontStyle="Italic"
+                                Foreground="DarkGray" />
+                        <RadioButton Content="Regather info on shows without final episode #"
+                                        FocusVisualStyle="{x:Null}"
+                                        IsChecked="{Binding SelectedIndex,
+                                                            Converter={StaticResource CompareConverter},
+                                                            ConverterParameter=3}" />
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+        </Grid>
+        <Button Grid.Row="1"
                     HorizontalAlignment="Right"
                     Command="{Binding SubmitCommand}"
                     Content="Submit"
                     IsDefault="True" />
-        </Grid>
     </Grid>
 </UserControl>

@@ -6,7 +6,6 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:anime_downloader.ViewModels"
-    xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
     d:DataContext="{d:DesignInstance viewModels:WebViewModel}"
     DataContext="{Binding Source={StaticResource Locator},
                               Path=Web}"
@@ -22,110 +21,94 @@
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
     </UserControl.Resources>
-    <Grid Background="White">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="1*" />
-                <RowDefinition Height="11*" />
-            </Grid.RowDefinitions>
-            <TextBlock
-                Grid.Row="0"
-                FontSize="16"
-                Style="{DynamicResource FontStyle}"
-                TextAlignment="Justify"
-                TextWrapping="Wrap">
-                Sync your anime list with your MyAnimeList profile and quickly visit pages.
-            </TextBlock>
-            <DockPanel Grid.Row="1">
-                <StackPanel>
-                    <DockPanel Margin="0,0,5,0">
-                        <GroupBox Header="MyAnimeList Panel">
-                            <DockPanel>
-                                <UniformGrid Rows="2">
-                                    <Button
-                                        Margin="5"
-                                        Command="{Binding LogCommand}"
-                                        Content="{Binding Log}"
-                                        Focusable="False" />
-                                    <Button
-                                        Margin="5"
-                                        Command="{Binding ProfileCommand}"
-                                        Content="Open Profile Page"
-                                        Focusable="False" />
-                                    <Button
-                                        Margin="5"
-                                        Background="LightGreen"
-                                        Command="{Binding SyncCommand}"
-                                        Content="{Binding Synchronize}"
-                                        Focusable="False" />
-                                    <Button
-                                        Margin="5"
-                                        Command="{Binding ImportCommand}"
-                                        Content="Import from profile"
-                                        Focusable="False" />
-                                </UniformGrid>
-                            </DockPanel>
-                        </GroupBox>
+    <DockPanel Background="White">
+        <StackPanel>
+            <DockPanel Margin="0,0,5,0">
+                <GroupBox Header="MyAnimeList Panel">
+                    <DockPanel>
+                        <UniformGrid Rows="2">
+                            <Button
+                                Margin="5"
+                                Command="{Binding LogCommand}"
+                                Content="{Binding Log}"
+                                Focusable="False" />
+                            <Button
+                                Margin="5"
+                                Command="{Binding ProfileCommand}"
+                                Content="Open Profile Page"
+                                Focusable="False" />
+                            <Button
+                                Margin="5"
+                                Background="LightGreen"
+                                Command="{Binding SyncCommand}"
+                                Content="{Binding Synchronize}"
+                                Focusable="False" />
+                            <Button
+                                Margin="5"
+                                Command="{Binding ImportCommand}"
+                                Content="Import from profile"
+                                Focusable="False" />
+                        </UniformGrid>
                     </DockPanel>
-                    <GroupBox Margin="0,5,5,0" Header="Search ">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="2*" />
-                                <ColumnDefinition Width="1*" />
-                            </Grid.ColumnDefinitions>
-
-                            <TextBox
-                                Grid.Column="0"
-                                Width="300"
-                                Margin="5"
-                                VerticalContentAlignment="Center"
-                                materialDesign:HintAssist.Hint="Search for anime on MyAnimeList ..."
-                                Text="{Binding Searchbox}" />
-
-                            <DockPanel Grid.Column="1" HorizontalAlignment="Left">
-                                <Button
-                                    Margin="5"
-                                    Command="{Binding SearchCommand}"
-                                    Content="Search" />
-                                <Button
-                                    Margin="5"
-                                    Command="{Binding SearchFirstResultCommand}"
-                                    Content="First Result" />
-                            </DockPanel>
-                        </Grid>
-                    </GroupBox>
-                </StackPanel>
-                <StackPanel>
-                    <GroupBox Header="Launch Website">
-                        <StackPanel>
-                            <Button
-                                Margin="5"
-                                HorizontalAlignment="Stretch"
-                                Command="{Binding MyAnimeListCommand}"
-                                Content="MyAnimeList" />
-                            <Button
-                                Margin="5"
-                                HorizontalAlignment="Stretch"
-                                Command="{Binding AnichartCommand}"
-                                Content="Anichart" />
-                            <Button
-                                Margin="5"
-                                HorizontalAlignment="Stretch"
-                                Command="{Binding ServiceProviderCommand}"
-                                Content="{Binding DownloadService.ServiceName}" />
-                        </StackPanel>
-                    </GroupBox>
-                    <GroupBox
-                        Margin="0,5"
-                        VerticalAlignment="Bottom"
-                        Header="Usage Notes">
-                        <Button
-                            HorizontalAlignment="Stretch"
-                            Command="{Binding UsageNotesCommand}"
-                            Content="Click me" />
-                    </GroupBox>
-                </StackPanel>
+                </GroupBox>
             </DockPanel>
-        </Grid>
-    </Grid>
+            <GroupBox Margin="0,5,5,0" Header="Search ">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="1*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox
+                        Grid.Column="0"
+                        Width="300"
+                        Margin="5"
+                        VerticalContentAlignment="Center"
+                        materialDesign:HintAssist.Hint="Search for anime on MyAnimeList ..."
+                        Text="{Binding Searchbox}" />
+
+                    <DockPanel Grid.Column="1" HorizontalAlignment="Left">
+                        <Button
+                            Margin="5"
+                            Command="{Binding SearchCommand}"
+                            Content="Search" />
+                        <Button
+                            Margin="5"
+                            Command="{Binding SearchFirstResultCommand}"
+                            Content="First Result" />
+                    </DockPanel>
+                </Grid>
+            </GroupBox>
+        </StackPanel>
+        <StackPanel>
+            <GroupBox Header="Launch Website">
+                <StackPanel>
+                    <Button
+                        Margin="5"
+                        HorizontalAlignment="Stretch"
+                        Command="{Binding MyAnimeListCommand}"
+                        Content="MyAnimeList" />
+                    <Button
+                        Margin="5"
+                        HorizontalAlignment="Stretch"
+                        Command="{Binding AnichartCommand}"
+                        Content="Anichart" />
+                    <Button
+                        Margin="5"
+                        HorizontalAlignment="Stretch"
+                        Command="{Binding ServiceProviderCommand}"
+                        Content="{Binding DownloadService.ServiceName}" />
+                </StackPanel>
+            </GroupBox>
+            <GroupBox
+                Margin="0,5"
+                VerticalAlignment="Bottom"
+                Header="Usage Notes">
+                <Button
+                    HorizontalAlignment="Stretch"
+                    Command="{Binding UsageNotesCommand}"
+                    Content="Click me" />
+            </GroupBox>
+        </StackPanel>
+    </DockPanel>
 </UserControl>

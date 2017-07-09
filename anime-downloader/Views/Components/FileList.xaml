@@ -61,34 +61,52 @@
             </Style.Triggers>
         </Style>
     </UserControl.Resources>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="6*" />
-            <RowDefinition Height="1*" />
-        </Grid.RowDefinitions>
 
-        <!--  Titlebar  -->
-        <GroupBox>
-            <GroupBox.Header>
-                <DockPanel Grid.Row="0">
-                    <TextBlock VerticalAlignment="Center"
-                               Foreground="White"
-                               Text="{Binding Title}">
-                        <TextBlock.InputBindings>
-                            <MouseBinding Command="{Binding FolderCommand}" MouseAction="LeftClick" />
-                        </TextBlock.InputBindings>
-                    </TextBlock>
-                    <Label Content="{Binding Label, Mode=OneWay}" Style="{DynamicResource Label}" />
-                </DockPanel>
-            </GroupBox.Header>
+    <!--  Titlebar  -->
+    <GroupBox>
+        <GroupBox.Header>
+            <DockPanel Grid.Row="0" Margin="0,-4">
+                <TextBlock VerticalAlignment="Center"
+                           Foreground="White"
+                           Text="{Binding Title}">
+                    <TextBlock.InputBindings>
+                        <MouseBinding Command="{Binding FolderCommand}" MouseAction="LeftClick" />
+                    </TextBlock.InputBindings>
+                </TextBlock>
+                <Label Content="{Binding Label, Mode=OneWay}" Style="{DynamicResource Label}" />
+            </DockPanel>
+        </GroupBox.Header>
+        <DockPanel>
+            <!--  Filter bar  -->
+            <DockPanel DockPanel.Dock="Bottom">
+                <Rectangle DockPanel.Dock="Right">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseDown">
+                            <i:InvokeCommandAction Command="{Binding MoveCommand}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <Rectangle.Fill>
+                        <ImageBrush ImageSource="{Binding ImageResourcePath}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+                <TextBox Margin="4"
+                            materialDesign:HintAssist.Hint="Filter by name ..."
+                            Style="{DynamicResource Filter}"
+                            Text="{Binding Filter,
+                                    UpdateSourceTrigger=PropertyChanged}">
+                    <TextBox.InputBindings>
+                        <KeyBinding Key="Escape" Command="{Binding ClearFilterCommand}" />
+                    </TextBox.InputBindings>
+                </TextBox>
+            </DockPanel>
 
             <!--  Episodes  -->
             <ListBox Name="ListBox"
                      xaml:DragSelectionHelper.IsDragSelectionEnabled="true"
                      ItemsSource="{Binding FilteredFiles,
-                                           UpdateSourceTrigger=PropertyChanged}"
+                                               UpdateSourceTrigger=PropertyChanged}"
                      SelectedItem="{Binding SelectedFile,
-                                            UpdateSourceTrigger=PropertyChanged}"
+                                                UpdateSourceTrigger=PropertyChanged}"
                      SelectionMode="Multiple"
                      IsTextSearchCaseSensitive="False"
                      IsTextSearchEnabled="True"
@@ -96,7 +114,8 @@
                      Style="{StaticResource Episodes}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged">
-                        <i:InvokeCommandAction Command="{Binding SelectionChangedCommand}" CommandParameter="{Binding SelectedItems, ElementName=ListBox}" />
+                        <i:InvokeCommandAction Command="{Binding SelectionChangedCommand}"
+                                               CommandParameter="{Binding SelectedItems, ElementName=ListBox}" />
                     </i:EventTrigger>
                     <i:EventTrigger EventName="MouseDoubleClick">
                         <i:InvokeCommandAction Command="{Binding OpenCommand}" />
@@ -109,7 +128,7 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock d:DataContext="{d:DesignInstance Type=models:AnimeFile}"
-                                   Margin="-3"
+                                   Margin="-6.5"
                                    Text="{Binding StrippedFilename}"
                                    ToolTip="{Binding StrippedFilename}" />
                     </DataTemplate>
@@ -117,36 +136,13 @@
                 <ListBox.ContextMenu>
                     <ContextMenu>
                         <MenuItem Command="{Binding MoveCommand}" Header="Move" />
-                        <MenuItem Command="{Binding ProfileCommand}" Header="Details" />
+                        <MenuItem Command="{Binding ProfileCommand}" Header="Profile" />
                         <MenuItem Command="{Binding MalCommand}" Header="MyAnimeList" />
                         <MenuItem Command="{Binding OpenCommand}" Header="Open" />
                         <MenuItem Command="{Binding DeleteCommand}" Header="Delete" />
                     </ContextMenu>
                 </ListBox.ContextMenu>
             </ListBox>
-        </GroupBox>
-
-        <!--  Filter bar  -->
-        <DockPanel Grid.Row="1" Margin="0,5,0,0">
-            <Rectangle DockPanel.Dock="Right">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="MouseDown">
-                        <i:InvokeCommandAction Command="{Binding MoveCommand}" />
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-                <Rectangle.Fill>
-                    <ImageBrush ImageSource="{Binding ImageResourcePath}" />
-                </Rectangle.Fill>
-            </Rectangle>
-            <TextBox Margin="5"
-                     materialDesign:HintAssist.Hint="Filter by name ..."
-                     Style="{DynamicResource Filter}"
-                     Text="{Binding Filter,
-                                    UpdateSourceTrigger=PropertyChanged}">
-                <TextBox.InputBindings>
-                    <KeyBinding Key="Escape" Command="{Binding ClearFilterCommand}" />
-                </TextBox.InputBindings>
-            </TextBox>
         </DockPanel>
-    </Grid>
+    </GroupBox>
 </UserControl>

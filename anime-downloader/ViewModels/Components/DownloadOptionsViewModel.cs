@@ -14,19 +14,19 @@ namespace anime_downloader.ViewModels.Components
 
         private static readonly RadioModel<DownloadOption> NextEpisode = new RadioModel<DownloadOption>
         {
-            Header = "Next Found Episode",
+            Header = "Search for next found episode",
             Data = DownloadOption.Next
         };
 
         private static readonly RadioModel<DownloadOption> Continually = new RadioModel<DownloadOption>
         {
-            Header = "Continually until no more are found (good for getting up to date)",
+            Header = "Continually search until no more are found (good for getting up to date)",
             Data = DownloadOption.Continually
         };
 
         private static readonly RadioModel<DownloadOption> Missing = new RadioModel<DownloadOption>
         {
-            Header = "Any missing episodes between first and last episode",
+            Header = "Download any missing episodes between first and last downloaded episode",
             Data = DownloadOption.Missing
         };
 

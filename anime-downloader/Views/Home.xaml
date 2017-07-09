@@ -9,6 +9,8 @@
              DataContext="{Binding Source={StaticResource Locator},
                               Path=Home}"
              Background="White"
+             d:DesignHeight="360"
+             d:DesignWidth="680"
              mc:Ignorable="d">
     <UserControl.Resources>
         <Style TargetType="{x:Type Label}">
