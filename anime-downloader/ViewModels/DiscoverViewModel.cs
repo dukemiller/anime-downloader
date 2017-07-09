@@ -17,6 +17,7 @@ namespace anime_downloader.ViewModels
         private readonly IAnimeService _animeService;
         private bool _visible;
         private int _selectedIndex;
+        private int? _previousIndex;
         private AnimeSeason _season = AnimeSeason.Current;
         private ObservableCollection<AiringAnime> _airingShows;
         private ObservableCollection<AiringAnime> _leftoverShows;
@@ -121,23 +122,30 @@ namespace anime_downloader.ViewModels
         {
             if (_airing != null)
                 AiringShows = new ObservableCollection<AiringAnime>(_airing
-                    .Where(anime =>    !_animeService.ListContainsName(anime.TitleEnglish)
+                    .Where(anime => !_animeService.ListContainsName(anime.TitleEnglish)
                                     && !_animeService.ListContainsName(anime.TitleRomaji)));
             if (_leftover != null)
                 LeftoverShows = new ObservableCollection<AiringAnime>(_leftover
-                    .Where(anime =>    !_animeService.ListContainsName(anime.TitleEnglish)
+                    .Where(anime => !_animeService.ListContainsName(anime.TitleEnglish)
                                     && !_animeService.ListContainsName(anime.TitleRomaji)));
 
             switch (SelectedIndex)
             {
                 case 0:
-                    SelectedAiring = AiringShows.FirstOrDefault();
+                    SelectedAiring = _previousIndex != null && _previousIndex.Value > 0 &&
+                                     _previousIndex.Value < AiringShows.Count && AiringShows.Count > 0
+                        ? AiringShows[_previousIndex.Value - 1]
+                        : AiringShows.FirstOrDefault();
                     break;
                 case 1:
-                    SelectedAiring = LeftoverShows.FirstOrDefault();
+                    SelectedLeftover = _previousIndex != null && _previousIndex.Value > 0 &&
+                                       _previousIndex.Value < LeftoverShows.Count && LeftoverShows.Count > 0
+                        ? LeftoverShows[_previousIndex.Value - 1]
+                        : LeftoverShows.FirstOrDefault();
                     break;
                 default:
                     SelectedAiring = null;
+                    SelectedLeftover = null;
                     break;
             }
         }
@@ -168,7 +176,7 @@ namespace anime_downloader.ViewModels
                         _leftover = await _findService.Leftover(Season);
                         await Task.Run(() =>
                             LeftoverShows = new ObservableCollection<AiringAnime>(_leftover
-                                .Where(anime =>    !_animeService.ListContainsName(anime.TitleEnglish)
+                                .Where(anime => !_animeService.ListContainsName(anime.TitleEnglish)
                                                 && !_animeService.ListContainsName(anime.TitleRomaji))));
                         MessengerInstance.Send("loading");
                     }
@@ -196,6 +204,7 @@ namespace anime_downloader.ViewModels
             {
                 MessengerInstance.Send(ViewDisplay.Anime);
                 MessengerInstance.Send(anime);
+                _previousIndex = SelectedIndex == 0 ? AiringShows.IndexOf(anime) : LeftoverShows.IndexOf(anime);
             }
         }
     }
