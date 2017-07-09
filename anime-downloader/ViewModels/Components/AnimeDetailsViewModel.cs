@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Windows;
 using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Models.AniList;
@@ -107,7 +108,8 @@ namespace anime_downloader.ViewModels.Components
                     Title = airing.TitleRomaji,
                     English = airing.TitleEnglish,
                     Aired = airing.AnimeSeason,
-                    TotalEpisodes = airing.TotalEpisodes
+                    TotalEpisodes = airing.TotalEpisodes,
+                    OverallTotal = airing.TotalEpisodes
                 }
             };
             Image = airing.ImagePath;
@@ -125,6 +127,10 @@ namespace anime_downloader.ViewModels.Components
         }
 
         // 
+
+        public Visibility HasIdOrTotal => Anime.MyAnimeList.HasId || Anime.MyAnimeList.TotalEpisodes > 0
+            ? Visibility.Visible
+            : Visibility.Collapsed;
 
         public static IEnumerable<Status> Statuses => Enum.GetValues(typeof(Status)).Cast<Status>();
 

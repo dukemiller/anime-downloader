@@ -196,7 +196,7 @@ namespace anime_downloader.Models
             get
             {
                 // If there's data about the episode number, retrieve it
-                if (MyAnimeList.HasId)
+                if (MyAnimeList.TotalEpisodes > 0 || MyAnimeList.HasId)
                 {
                     // If it has an overall total, this was a mislabeled show and this
                     // needs to be preferred first

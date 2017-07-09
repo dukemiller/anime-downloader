@@ -113,8 +113,7 @@
                                                             Mode=OneWay,
                                                             Converter={StaticResource EpisodeConverter},
                                                             StringFormat={}/{0}}"
-                                     Visibility="{Binding Anime.MyAnimeList.Id,
-                                                                  Converter={StaticResource StringLengthVisibilityConverter}}" />
+                                     Visibility="{Binding HasIdOrTotal}" />
                         </DockPanel>
 
 
