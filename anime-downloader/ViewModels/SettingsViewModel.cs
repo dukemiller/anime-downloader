@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -17,29 +16,21 @@ namespace anime_downloader.ViewModels
         public SettingsViewModel(ISettingsService settings)
         {
             Settings = settings;
-            Setup();
-        }
+            Subgroups = string.Join(", ", Settings.Subgroups);
 
-        private async void Setup()
-        {
-            await Task.Run(() =>
+            TrayToggleCommand = new RelayCommand(() => { });
+            SaveCommand = new RelayCommand(() =>
             {
-                Subgroups = string.Join(", ", Settings.Subgroups);
-
-                TrayToggleCommand = new RelayCommand(() => { });
-                SaveCommand = new RelayCommand(() =>
-                {
-                    Settings.Subgroups = Regex.Split(Subgroups, ", ").ToList();
-                    Settings.Save();
-                    ChangeMade = false;
-                });
-
-                Settings.MyAnimeListConfig.PropertyChanged += Model_PropertyChanged;
-                Settings.FlagConfig.PropertyChanged += Model_PropertyChanged;
-                Settings.PathConfig.PropertyChanged += Model_PropertyChanged;
+                Settings.Subgroups = Regex.Split(Subgroups, ", ").ToList();
+                Settings.Save();
+                ChangeMade = false;
             });
-        }
 
+            Settings.MyAnimeListConfig.PropertyChanged += Model_PropertyChanged;
+            Settings.FlagConfig.PropertyChanged += Model_PropertyChanged;
+            Settings.PathConfig.PropertyChanged += Model_PropertyChanged;
+        }
+        
         public ISettingsService Settings
         {
             get => _settings;
