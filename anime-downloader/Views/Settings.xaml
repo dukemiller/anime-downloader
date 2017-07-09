@@ -41,20 +41,18 @@
                                  Columns="1"
                                  Rows="10">
                         <Label VerticalAlignment="Center"
-                               Content="Episode downloads to: "
+                               Content="Download episodes to: "
                                ToolTip="Path to where episodes will be downloaded to." />
                         <Label VerticalAlignment="Center"
-                               Content="Watched files to: "
+                               Content="Watched files moved to:"
                                ToolTip="Path where watched episodes will be moved to." />
                         <Label VerticalAlignment="Center"
-                               Content="Torrent downloads to: "
+                               Content=".torrent files downloads to: "
                                ToolTip="Path to the folder that all .torrent files will be downloaded into." />
                         <Label VerticalAlignment="Center"
-                               Content="uTorrent exe file: "
+                               Content="uTorrent exe: "
                                ToolTip="Path to uTorrent.exe." />
-                        <Label VerticalAlignment="Center"
-                               Content="Whitelist subgroups: "
-                               ToolTip="A comma + space (', ') separated list of preferred subgroups, e.g. '{subgroup1}, {subgroup2}, {subgroup3}'" />
+
                     </UniformGrid>
                     <UniformGrid Grid.Column="1"
                                  Columns="1"
@@ -67,7 +65,6 @@
                                  Text="{Binding Settings.PathConfig.Torrents, UpdateSourceTrigger=PropertyChanged}" />
                         <TextBox VerticalAlignment="Center"
                                  Text="{Binding Settings.PathConfig.TorrentDownloader, UpdateSourceTrigger=PropertyChanged}" />
-                        <TextBox VerticalAlignment="Center" Text="{Binding Subgroups}" />
                     </UniformGrid>
                 </Grid>
             </controls:MetroTabItem>
@@ -81,24 +78,33 @@
                     <UniformGrid Grid.Column="0"
                                  Columns="1"
                                  Rows="10">
+                        <Label VerticalAlignment="Center"
+                               Content="Whitelist subgroups: "
+                               ToolTip="A comma + space (', ') separated list of preferred subgroups, e.g. '{subgroup1}, {subgroup2}, {subgroup3}'" />
+                        <Label
+                            VerticalAlignment="Center"
+                            ToolTip="Whether or not to only download from subgroups that are on the whitelisted subgroups list"
+                            Content="Whitelist-only download: " />
                         <Label Content="Exit to system tray:"
+                               VerticalAlignment="Center"
                                ToolTip="Instead of closing the program on exit, it is brought to the tray" />
-                        <Label 
-                               VerticalAlignment="Center"
-                               ToolTip="Always have the tray enabled regardless of window state."
-                               Content="Always keep tray open:" />
-                        <Label 
-                               VerticalAlignment="Center"
-                               ToolTip="Whether or not to only download from subgroups that are on the whitelisted subgroups list"
-                               Content="Whitelist-only download: " />
-                        <Label 
-                               VerticalAlignment="Center"
-                               ToolTip="Put each episode inside a folder named after the show"
-                               Content="Download in series folder:" />
+                        <Label
+                            VerticalAlignment="Center"
+                            ToolTip="Always have the tray enabled regardless of window state."
+                            Content="Always keep tray open:" />
+                        <Label
+                            VerticalAlignment="Center"
+                            ToolTip="Put each episode inside a folder named after the show"
+                            Content="Download in series folder:" />
                     </UniformGrid>
                     <UniformGrid Grid.Column="1"
                                  Columns="1"
                                  Rows="10">
+                        <TextBox VerticalAlignment="Center" Text="{Binding Subgroups}" />
+                        <CheckBox Margin="0, 0, 25, 0"
+                                  HorizontalAlignment="Left"
+                                  IsChecked="{Binding Settings.FlagConfig.OnlyWhitelisted,
+                                                  UpdateSourceTrigger=PropertyChanged}" />
                         <CheckBox Margin="0, 0, 25, 0"
                                   HorizontalAlignment="Left"
                                   FlowDirection="RightToLeft"
@@ -110,10 +116,7 @@
                                   Command="{Binding TrayToggleCommand}"
                                   IsChecked="{Binding Settings.FlagConfig.AlwaysShowTray,
                                                   UpdateSourceTrigger=PropertyChanged}" />
-                        <CheckBox Margin="0, 0, 25, 0"
-                                  HorizontalAlignment="Left"
-                                  IsChecked="{Binding Settings.FlagConfig.OnlyWhitelisted,
-                                                  UpdateSourceTrigger=PropertyChanged}" />
+
                         <CheckBox Margin="0, 0, 25, 0"
                                   HorizontalAlignment="Left"
                                   IsChecked="{Binding Settings.FlagConfig.IndividualShowFolders,
