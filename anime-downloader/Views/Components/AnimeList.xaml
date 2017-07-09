@@ -12,6 +12,14 @@
              d:DesignWidth="780"
              mc:Ignorable="d">
     <UserControl.Resources>
+        <Style x:Key="Centered"
+               BasedOn="{StaticResource MaterialDesignDataGridCell}"
+               TargetType="DataGridCell">
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="TextBlock.TextAlignment" Value="Center" />
+        </Style>
         <Style TargetType="{x:Type Rectangle}">
             <Setter Property="Width" Value="25" />
             <Setter Property="Height" Value="25" />
@@ -54,22 +62,32 @@
                   SelectionUnit="FullRow"
                   Sorting="DataGrid_OnSorting"
                   UseLayoutRounding="True">
+            <DataGrid.ColumnHeaderStyle>
+                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
+                    <Setter Property="Margin" Value="-4"/>
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
             <DataGrid.Columns>
                 <DataGridTextColumn Width="300"
                                     Binding="{Binding Title}"
-                                    Header="Name" />
+                                    Header="Name" >
+                </DataGridTextColumn>
                 <DataGridTextColumn Width="73"
+                                    CellStyle="{StaticResource Centered}"
                                     Binding="{Binding EpisodeTotal}"
                                     Header="Episode"
                                     SortMemberPath="Episode" />
-                <DataGridTextColumn Width="95"
+                <DataGridTextColumn Width="98"
+                                    CellStyle="{StaticResource Centered}"
                                     Binding="{Binding Status}"
                                     Header="Status" />
                 <DataGridTextColumn Width="60"
+                                    CellStyle="{StaticResource Centered}"
                                     Binding="{Binding Rating}"
                                     Header="Rating"
                                     SortMemberPath="SortedRating" />
                 <DataGridTextColumn Width="114"
+                                    CellStyle="{StaticResource Centered}"
                                     Binding="{Binding MyAnimeList.Aired.Title}"
                                     Header="Aired in"
                                     SortMemberPath="SeasonSort" />
@@ -93,14 +111,6 @@
                     <Setter Property="BorderThickness" Value="0" />
                     <Setter Property="FocusVisualStyle" Value="{x:Null}" />
                 </Style>
-                <Style x:Key="Centered"
-                       BasedOn="{StaticResource MaterialDesignDataGridCell}"
-                       TargetType="DataGridCell">
-                    <Setter Property="BorderThickness" Value="0" />
-                    <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-                    <Setter Property="HorizontalAlignment" Value="Stretch" />
-                    <Setter Property="TextBlock.TextAlignment" Value="Center" />
-                </Style>
             </DataGrid.Resources>
             <DataGrid.RowStyle>
                 <Style BasedOn="{StaticResource MaterialDesignDataGridRow}" TargetType="{x:Type DataGridRow}">
@@ -113,7 +123,11 @@
                                 <Condition Binding="{Binding MyAnimeList.HasId}" Value="True" />
                                 <Condition Binding="{Binding MyAnimeList.NeedsUpdating}" Value="True" />
                             </MultiDataTrigger.Conditions>
-                            <Setter Property="Background" Value="LightGreen" />
+                            <Setter Property="Background">
+                                <Setter.Value>
+                                    <SolidColorBrush Color="LightGreen" Opacity="0.6" />
+                                </Setter.Value>
+                            </Setter>
                         </MultiDataTrigger>
                     </Style.Triggers>
                 </Style>
