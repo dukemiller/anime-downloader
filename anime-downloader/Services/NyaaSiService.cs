@@ -45,9 +45,12 @@ namespace anime_downloader.Services
                 document.LoadXml(html);
             }
 
+            var manager = new XmlNamespaceManager(document.NameTable);
+            manager.AddNamespace("nyaa", "https://nyaa.si/xmlns/nyaa");
+
             var result = document.SelectNodes("//item")?
                 .Cast<XmlNode>()
-                .Select(ToMedia)
+                .Select(node => ToMedia(node, manager))
                 .Where(item => // Episode is this season
                 {
                     if (item.Date.HasValue)
@@ -57,15 +60,17 @@ namespace anime_downloader.Services
                 .Where(item => Regex.Split(item.StrippedName, " ")
                     .Any(s => s.Contains(episode.ToString("D2")) && !s.Contains(episode.ToString("D2") + ".5")));
 
-            return result?.OrderByDescending(n => n.Name.Contains(anime.Resolution));
+            return result?.OrderByDescending(n => n.Name.Contains(anime.Resolution)).ThenByDescending(n => n.Health);
         }
         
-        private static RemoteMedia ToMedia(XmlNode item)
+        private static RemoteMedia ToMedia(XmlNode item, XmlNamespaceManager manager)
         {
-            (var title, var link, var pubdate) =
+            (var title, var link, var pubdate, var seeders) =
                 (item.SelectSingleNode("title")?.InnerText, 
                 item.SelectSingleNode("link")?.InnerText, 
-                DateTime.Parse(item.SelectSingleNode("pubDate")?.InnerText));
+                DateTime.Parse(item.SelectSingleNode("pubDate")?.InnerText),
+                int.Parse(item.SelectSingleNode("nyaa:seeders", manager)?.InnerText ?? "0")
+            );
             
             if (link.Contains("magnet:?"))
             {
@@ -79,6 +84,7 @@ namespace anime_downloader.Services
                         .Split('&')
                         .FirstOrDefault()),
                     Hash = link.Split('&')[0],
+                    Seeders = seeders,
                     Trackers = link.Split(new[] {"&tr="}, StringSplitOptions.None)
                         .Skip(1)
                         .Select(i => HttpUtility.UrlDecode(i.Replace("\t", "").Replace("\n", "")))
@@ -87,7 +93,7 @@ namespace anime_downloader.Services
             }
 
             else
-                return new Torrent {Name = title, Remote = link, Date = pubdate };
+                return new Torrent {Name = title, Remote = link, Date = pubdate, Seeders = seeders };
         }
         
         private static string NyaaTerms(string name, int episode)

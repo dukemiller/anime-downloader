@@ -5,6 +5,8 @@ namespace anime_downloader.Models
 {
     public class MagnetLink: RemoteMedia
     {
+        private int _seeders;
+
         /// <summary>
         ///     The hashcode associated with the magnet.
         /// </summary>
@@ -18,7 +20,15 @@ namespace anime_downloader.Models
         /// <summary>
         ///     Seeder information.
         /// </summary>
-        public int Seeders { get; set; }
+        public int Seeders
+        {
+            get { return _seeders; }
+            set
+            {
+                _seeders = value;
+                Health = value;
+            }
+        }
 
         /// <summary>
         ///     The explicit (if given) name of the resulting downloaded file.

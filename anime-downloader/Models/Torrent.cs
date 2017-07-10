@@ -7,6 +7,8 @@ namespace anime_downloader.Models
 {
     public class Torrent: RemoteMedia
     {
+        private int _seeders;
+
         /// <summary>
         ///     The description containing seeder & measurement information.
         /// </summary>
@@ -20,7 +22,15 @@ namespace anime_downloader.Models
         /// <summary>
         ///     The amount of people seeding the torrent.
         /// </summary>
-        public int Seeders { get; set; }
+        public int Seeders
+        {
+            get { return _seeders; }
+            set
+            {
+                _seeders = value;
+                Health = value;
+            }
+        }
 
         /// <summary>
         ///     The size of the download.

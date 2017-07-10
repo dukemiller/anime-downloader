@@ -27,6 +27,11 @@ namespace anime_downloader.Models.Abstract
         public DateTime? Date { get; set; }
 
         /// <summary>
+        ///     An abstract "healthiness" of the media, if by seeders or download count or ...
+        /// </summary>
+        public int Health { get; set; }
+
+        /// <summary>
         ///     Returns the subgroup from the name of the file.
         /// </summary>
         public string Subgroup()
