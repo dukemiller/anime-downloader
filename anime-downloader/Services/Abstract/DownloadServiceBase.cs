@@ -146,6 +146,46 @@ namespace anime_downloader.Services.Abstract
             Task.Run(() => process.Start());
         }
 
+        /// <summary>
+        ///     A one time but potentially expensive cost to find out the preferred name
+        /// </summary>
+        /// <returns></returns>
+        private async Task<IEnumerable<RemoteMedia>> GetMedia(Anime anime, int episode)
+        {
+            IEnumerable<RemoteMedia> media;
+            
+            // If there is both an english and romanji title
+            if (!string.IsNullOrEmpty(anime.MyAnimeList.Title) && !string.IsNullOrEmpty(anime.MyAnimeList.English))
+            {
+                if (!string.IsNullOrEmpty(anime.MyAnimeList.PreferredSearchTitle))
+                    media = await FindAllMedia(anime, anime.MyAnimeList.PreferredSearchTitle, episode);
+
+                // If there is no preference toward either of them, time to set them
+                else
+                {
+                    media = (await FindAllMedia(anime, anime.MyAnimeList.Title, episode)).ToList();
+
+                    if (media.Any())
+                        anime.MyAnimeList.PreferredSearchTitle = anime.MyAnimeList.Title;
+
+                    else
+                    {
+                        media = (await FindAllMedia(anime, anime.MyAnimeList.English, episode)).ToList();
+
+                        if (media.Any())
+                            anime.MyAnimeList.PreferredSearchTitle = anime.MyAnimeList.English;
+                    }
+
+                    SettingsService.Save();
+                }
+            }
+
+            else
+                media = await FindAllMedia(anime, anime.Name, episode);
+
+            return media;
+        }
+
         // Absolutely generic
 
         public string ServiceName => GetType().Name.Replace("Service", "");
@@ -156,7 +196,7 @@ namespace anime_downloader.Services.Abstract
 
             foreach (var anime in animes)
             {
-                var result = await FindAllMedia(anime, anime.NextEpisode);
+                var result = await GetMedia(anime, anime.NextEpisode); 
                 var download = await AttemptDownload(anime, result, output);
                 if (download)
                     downloaded++;
@@ -358,6 +398,11 @@ namespace anime_downloader.Services.Abstract
                 .Select(ctd => ctd.Item);
         }
 
+        public async Task<IEnumerable<RemoteMedia>> FindAllMedia(Anime anime, int episode)
+        {
+            return await GetMedia(anime, episode);
+        }
+
         // Abstract inheritors
 
         protected abstract ISettingsService SettingsService { get; }
@@ -368,6 +413,6 @@ namespace anime_downloader.Services.Abstract
 
         public abstract string ServiceUrl { get; }
 
-        public abstract Task<IEnumerable<RemoteMedia>> FindAllMedia(Anime anime, int episode);
+        public abstract Task<IEnumerable<RemoteMedia>> FindAllMedia(Anime anime, string name, int episode);
     }
 }

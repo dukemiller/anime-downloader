@@ -43,6 +43,11 @@ namespace anime_downloader.Services.Interfaces
         /// <summary>
         ///     Gathers every episode (unfiltered by settings) for {anime}
         /// </summary>
+        Task<IEnumerable<RemoteMedia>> FindAllMedia(Anime anime, string name, int episode);
+
+        /// <summary>
+        ///     Gathers every episode (unfiltered by settings) for {anime}, automatically determining the appropriate name.
+        /// </summary>
         Task<IEnumerable<RemoteMedia>> FindAllMedia(Anime anime, int episode);
 
         /// <summary>

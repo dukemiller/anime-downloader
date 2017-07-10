@@ -30,12 +30,12 @@ namespace anime_downloader.Services
             Downloader = new WebClient();
         }
         
-        public override async Task<IEnumerable<RemoteMedia>> FindAllMedia(Anime anime, int episode)
+        public override async Task<IEnumerable<RemoteMedia>> FindAllMedia(Anime anime, string name, int episode)
         {
             var document = new XmlDocument();
             
             var url = new Uri("https://nyaa.si/?page=rss" +
-                              $"&q={NyaaTerms(anime, episode)}" +
+                              $"&q={NyaaTerms(name, episode)}" +
                               "&c=0_0" +
                               "&f=0");
 
@@ -90,9 +90,9 @@ namespace anime_downloader.Services
                 return new Torrent {Name = title, Remote = link, Date = pubdate };
         }
         
-        private static string NyaaTerms(Anime anime, int episode)
+        private static string NyaaTerms(string name, int episode)
         {
-            var name = anime.Name
+            var terms = name
                 .Replace(" ", "+")
                 .Replace("'s", "")
                 .Replace(".", "+")
@@ -100,7 +100,7 @@ namespace anime_downloader.Services
                 .Replace("!", "%21")
                 .Replace("'", "%27")
                 .Replace("-", "%2D");
-            return $"{name}+{episode:D2}";
+            return $"{terms}+{episode:D2}";
         }
     }
 }

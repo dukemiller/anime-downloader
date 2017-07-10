@@ -36,7 +36,7 @@ namespace anime_downloader.Services
 
         public override string ServiceUrl => "https://nyaa.pantsu.cat/";
 
-        public override async Task<IEnumerable<RemoteMedia>> FindAllMedia(Anime anime, int episode)
+        public override async Task<IEnumerable<RemoteMedia>> FindAllMedia(Anime anime, string name, int episode)
         {
             var document = new XmlDocument();
 
@@ -46,7 +46,7 @@ namespace anime_downloader.Services
                               $"&sort={BySeeders}" +
                               "&order=desc" +
                               "&max=20" +
-                              $"&q={NyaaTerms(anime, episode)}");
+                              $"&q={NyaaTerms(name, episode)}");
 
             using (var client = new WebClient())
             {
@@ -89,9 +89,9 @@ namespace anime_downloader.Services
             return torrent;
         }
 
-        private static string NyaaTerms(Anime anime, int episode)
+        private static string NyaaTerms(string name, int episode)
         {
-            var name = anime.Name
+            var terms = name
                 .Replace(" ", "+")
                 .Replace("'s", "")
                 .Replace(".", "+")
@@ -99,7 +99,7 @@ namespace anime_downloader.Services
                 .Replace("!", "%21")
                 .Replace("'", "%27")
                 .Replace("-", "%2D");
-            return $"{name}+{episode:D2}";
+            return $"{terms}+{episode:D2}";
         }
     }
 }

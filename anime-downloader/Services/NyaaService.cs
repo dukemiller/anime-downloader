@@ -40,13 +40,13 @@ namespace anime_downloader.Services
 
         protected override WebClient Downloader { get; }
 
-        public override async Task<IEnumerable<RemoteMedia>> FindAllMedia(Anime anime, int episode)
+        public override async Task<IEnumerable<RemoteMedia>> FindAllMedia(Anime anime, string name, int episode)
         {
             var document = new HtmlDocument();
 
             var url = new Uri("https://www.nyaa.se/?page=rss" +
                               $"&cats={EnglishTranslated}" +
-                              $"&term={NyaaTerms(anime, episode)}" +
+                              $"&term={NyaaTerms(name, episode)}" +
                               $"&sort={BySeeders}" +
                               $"&minage=0&maxage={MaxAge}");
 
@@ -63,9 +63,9 @@ namespace anime_downloader.Services
 
         // 
 
-        private static string NyaaTerms(Anime anime, int episode)
+        private static string NyaaTerms(string name, int episode)
         {
-            var name = anime.Name
+            var term = name
                 .Replace(" ", "+")
                 .Replace("'s", "")
                 .Replace(".", "+")
@@ -73,7 +73,7 @@ namespace anime_downloader.Services
                 .Replace("!", "%21")
                 .Replace("'", "%27")
                 .Replace("-", "%2D");
-            return $"{name}+{episode:D2}";
+            return $"{term}+{episode:D2}";
         }
 
         private static IEnumerable<Torrent> ParseResults(Anime anime, int episode, HtmlDocument document)

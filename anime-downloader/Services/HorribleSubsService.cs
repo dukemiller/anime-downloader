@@ -27,8 +27,8 @@ namespace anime_downloader.Services
         }
 
         public override string ServiceUrl => "http://horriblesubs.info";
-
-        public override async Task<IEnumerable<RemoteMedia>> FindAllMedia(Anime anime, int episode)
+        
+        public override async Task<IEnumerable<RemoteMedia>> FindAllMedia(Anime anime, string name, int episode)
         {
             if (_nodes == null || (DateTime.Now - _lastUpdatedNodes).Minutes > 10)
                 await RetrieveNodes();
@@ -45,7 +45,7 @@ namespace anime_downloader.Services
                 .Where(item => // Name contains everything
                 {
                     var title = item.StrippedWithNoEpisode.ToLower();
-                    var words = anime.Name.ToLower().Split(' ').ToList();
+                    var words = name.ToLower().Split(' ').ToList();
                     return words.Count(word => title.Contains(word)) > (words.Count / 2);
                 })
                 .OrderByDescending(n => n.Name.Contains(anime.Resolution));

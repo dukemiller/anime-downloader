@@ -121,6 +121,9 @@ namespace anime_downloader.Models
         [XmlElement("ended")]
         public AnimeSeason Ended { get; set; }
 
+        [XmlElement("preferred_search_title")]
+        public string PreferredSearchTitle { get; set; }
+
         // 
 
         public bool AiringNow
