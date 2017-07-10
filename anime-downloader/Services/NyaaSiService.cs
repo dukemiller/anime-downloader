@@ -103,6 +103,7 @@ namespace anime_downloader.Services
                 .Replace("'s", "")
                 .Replace(".", "+")
                 .Replace(":", " ")
+                .Replace("/", " ")
                 .Replace("!", "%21")
                 .Replace("'", "%27")
                 .Replace("-", "%2D");
