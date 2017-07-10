@@ -36,7 +36,7 @@ namespace anime_downloader.Services
             
             var url = new Uri("https://nyaa.si/?page=rss" +
                               $"&q={NyaaTerms(name, episode)}" +
-                              "&c=0_0" +
+                              "&c=1_2" +
                               "&f=0");
 
             using (var client = new WebClient())
