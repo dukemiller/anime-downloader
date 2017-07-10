@@ -108,6 +108,8 @@ namespace anime_downloader.Services
 
         public async Task<HttpContent> PostAsync(string url, string data)
         {
+            await VerificationCheck();
+
             var handler = new HttpClientHandler { Credentials = GetCredentials() };
             var client = new HttpClient(handler);
             var pairs = new Dictionary<string, string>
