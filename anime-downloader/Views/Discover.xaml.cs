@@ -1,36 +1,46 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Windows.Threading;
 using anime_downloader.ViewModels;
-using MessageBox = System.Windows.Forms.MessageBox;
+using GalaSoft.MvvmLight.Ioc;
+using MahApps.Metro.Controls;
 
 namespace anime_downloader.Views
 {
     /// <summary>
     /// Interaction logic for Discover.xaml
     /// </summary>
-    public partial class Discover : UserControl
+    public partial class Discover
     {
         public Discover()
         {
             InitializeComponent();
         }
 
-        private void Discover_OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private async void VisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            // Dispatcher.BeginInvoke(new Action(() => MessageBox.Show($"{e.NewValue}, {e.OldValue}, {e.Property}")));
-            (DataContext as DiscoverViewModel)?.VisibilityChanged((bool) e.NewValue);
+            var isVisible = (bool) e.NewValue;
+            (DataContext as DiscoverViewModel)?.VisibilityChanged(isVisible);
+
+            while (SimpleIoc.Default.GetInstance<MainWindowViewModel>().IsShowing)
+                await Task.Delay(100);
+
+            if (isVisible)
+            {
+                var currentFlipView = (ParentTabControl.SelectedItem as MetroTabItem)?.Content as FlipView;
+
+                if (currentFlipView == null)
+                    return;
+
+                await Dispatcher.BeginInvoke(DispatcherPriority.Input,
+                    new Action(() =>
+                    {
+                        currentFlipView.Focus(); // Set Logical Focus
+                        Keyboard.Focus(currentFlipView); // Set Keyboard Focus
+                    }));
+            }
         }
     }
 }

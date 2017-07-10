@@ -18,7 +18,7 @@
                 <RowDefinition Height="8*" />
                 <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
-            <Image Grid.RowSpan="2" Width="226" xaml:FocusBehavior.IsFocused="True" Source="{Binding ImagePath}" />
+            <Image Grid.RowSpan="2" Width="226" Source="{Binding ImagePath}" />
             <Rectangle Grid.Row="1" Opacity="0.7" Fill="Black" />
             <Label VerticalAlignment="Center"
                    Foreground="#62BDFF"
@@ -43,6 +43,8 @@
                         HorizontalAlignment="Right"
                         Height="48"
                         Margin="4,0,-20,0"
+                        IsDefault="True"
+                        IsTabStop="False"
                         Command="{Binding ElementName=ParentTabControl, Path=DataContext.AddCommand}"
                         Style="{DynamicResource MahApps.Metro.Styles.MetroCircleButtonStyle}">
                     <materialDesign:PackIcon Width="20"
