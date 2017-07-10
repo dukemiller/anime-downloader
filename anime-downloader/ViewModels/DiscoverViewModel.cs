@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,7 +22,10 @@ namespace anime_downloader.ViewModels
         private AnimeSeason _season = AnimeSeason.Current;
         private ObservableCollection<AiringAnime> _airingShows;
         private ObservableCollection<AiringAnime> _leftoverShows;
+        private List<AiringAnime> _airing;
+        private List<AiringAnime> _leftover;
         private AiringAnime _selectedAiring;
+        private AiringAnime _selectedLeftover;
 
         // 
 
@@ -98,18 +102,11 @@ namespace anime_downloader.ViewModels
 
         public RelayCommand AddCommand { get; set; }
 
-        private List<AiringAnime> _airing;
-
-        private List<AiringAnime> _leftover;
-
-        private AiringAnime _selectedLeftover;
-
         // 
 
         /// <summary>
         ///     Only attempt to load properties from the view when it is visible.
         /// </summary>
-        /// <param name="visible"></param>
         public void VisibilityChanged(bool visible)
         {
             _visible = visible;
@@ -117,7 +114,7 @@ namespace anime_downloader.ViewModels
             if (_visible)
                 LoadPage();
         }
-        
+
         private void Refresh()
         {
             if (_airing != null)
