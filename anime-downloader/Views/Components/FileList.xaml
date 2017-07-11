@@ -114,6 +114,8 @@
                          IsTextSearchCaseSensitive="False"
                          IsTextSearchEnabled="True"
                          TextSearch.TextPath="StrippedFilename"
+                         FocusVisualStyle="{x:Null}"
+                         Focusable="False"
                          Style="{StaticResource Episodes}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="SelectionChanged">
