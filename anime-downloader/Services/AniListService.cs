@@ -46,6 +46,8 @@ namespace anime_downloader.Services
         
         public async Task<List<AiringAnime>> New(AnimeSeason animeSeason)
         {
+            await CheckAuthentication();
+
             return await _data.New(
                 AnimeSeason.Current, 
                 async () => await GetBrowse(BuildBrowseUrl(_credentials, animeSeason)));
@@ -53,6 +55,8 @@ namespace anime_downloader.Services
 
         public async Task<List<AiringAnime>> Leftover(AnimeSeason animeSeason)
         {
+            await CheckAuthentication();
+
             return await _data.Leftovers(
                 AnimeSeason.Current,
                 async () =>
