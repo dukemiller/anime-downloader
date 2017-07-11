@@ -14,26 +14,42 @@
              mc:Ignorable="d">
     <UserControl.Resources>
         <Style TargetType="{x:Type Label}">
-            <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="FontSize" Value="18.667" />
+            <Setter Property="FontSize" Value="20" />
             <Setter Property="FontFamily" Value="{StaticResource MainFont}" />
         </Style>
     </UserControl.Resources>
-    <UniformGrid Columns="1" Rows="10">
-        <Label Content="The home tab."  />
-        <Label Content="Add and edit anime details."  />
-        <Label Content="Change and modify profile settings."  />
-        <Label Content="Download anime from the anime list with a few options."  />
-        <Label Content="Manage and track episode files."  />
-        <Label Content="Create a basic playlist."  />
-        <Label Content="Some helpful internet links and buttons." />
-        <Label Content="Other options and features."  />
-        <Separator Visibility="Hidden" />
-        <DockPanel LastChildFill="False">
-            <materialDesign:Card Padding="4">
-                <DockPanel VerticalAlignment="Center" DockPanel.Dock="Left">
-                    <TextBlock VerticalAlignment="Center" FontSize="16">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="7*" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+
+        <!--A grid for display purposes-->
+        <Grid Grid.Row="0" Grid.RowSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20*" />
+                <RowDefinition Height="1*" />
+            </Grid.RowDefinitions>
+            <DockPanel>
+                <UniformGrid Columns="1" Rows="9">
+                    <Label Content="The home view." />
+                    <Label Content="View your list and add or edit anime profiles." />
+                    <Label Content="Find all newly airing shows and add them to your list." />
+                    <Label Content="Download anime from your list, with a few options." />
+                    <Label Content="Manage and track watched and unwatched episode files." />
+                    <Label Content="Create a simple playlist quickly with varying preferences." />
+                    <Label Content="Remotely synchronize your anime list and view some helpful links." />
+                    <Label Content="Change download and profile settings." />
+                    <Label Content="Other options and features." />
+                </UniformGrid>
+            </DockPanel>
+        </Grid>
+
+        <DockPanel HorizontalAlignment="Right" LastChildFill="False" Grid.Row="1">
+            <materialDesign:Card Padding="4" VerticalAlignment="Center">
+                <DockPanel>
+                    <TextBlock>
                         <TextBlock>A new version is available. Click</TextBlock>
                         <TextBlock FontWeight="Bold" Foreground="Blue">
                             <TextBlock.InputBindings>
@@ -67,10 +83,12 @@
             </materialDesign:Card>
             <Label VerticalAlignment="Center"
                    Content="{Binding Version}"
-                   DockPanel.Dock="Right"
                    FontStyle="Italic"
                    Foreground="DarkSlateGray"
+                   Margin="12,0,0,0"
                    Opacity="0.6" />
         </DockPanel>
-    </UniformGrid>
+
+    </Grid>
+
 </UserControl>
