@@ -46,22 +46,18 @@ namespace anime_downloader.Services
         
         public async Task<List<AiringAnime>> New(AnimeSeason animeSeason)
         {
-            await CheckAuthentication();
-
             return await _data.New(
                 AnimeSeason.Current, 
-                async () => await GetBrowse(BuildBrowseUrl(_credentials, animeSeason)));
+                async () => await GetBrowse(await BuildBrowseUrl(animeSeason)));
         }
 
         public async Task<List<AiringAnime>> Leftover(AnimeSeason animeSeason)
         {
-            await CheckAuthentication();
-
             return await _data.Leftovers(
                 AnimeSeason.Current,
                 async () =>
                 {
-                    var data = await GetBrowse(BuildLeftoverUrl(_credentials, animeSeason));
+                    var data = await GetBrowse(await BuildLeftoverUrl(animeSeason));
                     return data
                         .Where(anime => anime.Type == "TV")
                         .Where(anime => anime.Airing.NextEpisode.HasValue &&
@@ -82,7 +78,7 @@ namespace anime_downloader.Services
             {
                 using (var client = new HttpClient())
                 {
-                    var request = await client.GetAsync(BuildAnimeUrl(_credentials, anime));
+                    var request = await client.GetAsync(await BuildAnimeUrl(anime));
                     var response = await request.Content.ReadAsStringAsync();
 
                     if (!response.Contains("\"error\""))
@@ -123,10 +119,8 @@ namespace anime_downloader.Services
         /// <summary>
         ///     GET on the /browse/{} endpoint returning AiringAnime
         /// </summary>
-        private async Task<List<AiringAnime>> GetBrowse(string url)
+        private static async Task<List<AiringAnime>> GetBrowse(string url)
         {
-            await CheckAuthentication();
-
             try
             {
                 using (var client = new HttpClient())
@@ -180,11 +174,13 @@ namespace anime_downloader.Services
         /// <summary>
         ///     Build the url for gathering general anime of this season
         /// </summary>
-        private static string BuildBrowseUrl(ClientCredentials credentials, AnimeSeason animeSeason)
+        private async Task<string> BuildBrowseUrl(AnimeSeason animeSeason)
         {
+            await CheckAuthentication();
+
             var builder = new UriBuilder(BrowseUrl);
             var query = HttpUtility.ParseQueryString(builder.Query);
-            query["access_token"] = credentials.AccessToken;
+            query["access_token"] = _credentials.AccessToken;
             query["year"] = animeSeason.Year.ToString();
             query["season"] = animeSeason.Season.Description();
             query["sort"] = "popularity-desc";
@@ -196,11 +192,13 @@ namespace anime_downloader.Services
         /// <summary>
         ///     Build the url for gathering anime that are leftover from the season previous to the current
         /// </summary>
-        private static string BuildLeftoverUrl(ClientCredentials credentials, AnimeSeason animeSeason)
+        private async Task<string> BuildLeftoverUrl(AnimeSeason animeSeason)
         {
+            await CheckAuthentication();
+
             var builder = new UriBuilder(BrowseUrl);
             var query = HttpUtility.ParseQueryString(builder.Query);
-            query["access_token"] = credentials.AccessToken;
+            query["access_token"] = _credentials.AccessToken;
             query["airing_data"] = "true";
             query["status"] = "Currently Airing";
             query["year"] = animeSeason.Previous().Year.ToString();
@@ -211,11 +209,13 @@ namespace anime_downloader.Services
             return builder.ToString();
         }
 
-        private static string BuildAnimeUrl(ClientCredentials credentials, AiringAnimeSmall anime)
+        private async Task<string> BuildAnimeUrl(AiringAnimeSmall anime)
         {
+            await CheckAuthentication();
+
             var builder = new UriBuilder(AnimeUrl(anime.Id));
             var query = HttpUtility.ParseQueryString(builder.Query);
-            query["access_token"] = credentials.AccessToken;
+            query["access_token"] = _credentials.AccessToken;
             builder.Query = query.ToString();
             return builder.ToString();
         }
