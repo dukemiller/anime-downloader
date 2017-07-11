@@ -40,7 +40,7 @@ namespace anime_downloader.Services
                               "&f=0");
 
             using (var client = new WebClient())
-            {
+            {                                                                                       
                 var html = await client.DownloadStringTaskAsync(url);
                 document.LoadXml(html);
             }

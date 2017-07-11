@@ -16,7 +16,7 @@
             <RowDefinition Height="10*" />
             <RowDefinition Height="2*" />
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0">
+        <StackPanel Grid.Row="0" Grid.RowSpan="2">
             <DockPanel>
                 <GroupBox Margin="0, 0, 5, 0"
                           HorizontalAlignment="Left"
@@ -85,7 +85,7 @@
                             <DataTemplate>
                                 <Label Margin="-4"
                                        Content="{Binding FileName}"
-                                       FontSize="12" />
+                                        />
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
