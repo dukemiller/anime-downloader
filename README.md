@@ -1,16 +1,17 @@
 # anime-downloader
 
-A program to download and manage a collection of currently airing anime shows.  
+A program to download and manage a collection of currently airing anime shows. Find the download link for the latest [here](https://github.com/dukemiller/anime-downloader/releases/latest).  
 
 ### Demo 
 
-![demo](http://i.imgur.com/PeZqICe.gif)  
+![demo](http://i.imgur.com/rdk9JwK.gif)  
 
 ---
 
 ## Features 
 
 - Manage and track basic information about downloaded shows (name, episode, status, rating, optional notes, etc).
+- Discover shows airing now and add them to your list without having to search through external sites.
 - Search for and download any newly found episodes, with a few custom options.
 - Download filtering, like selecting to download from specific subgroups and setting a whitelist subgroups to download from.
 - Set paths to where episodes and torrent files download to and where watched files move to.
@@ -44,8 +45,14 @@ The tray provides shortcuts to the user provided folders and commonly used funct
 
 ### Build & Run
 
-**Requirements:** [nuget.exe](https://dist.nuget.org/win-x86-commandline/latest/nuget.exe) on PATH, Visual Studio 2015 and/or C# 6.0 Roslyn Compiler  
-**Optional:** Devenv (Visual Studio 2015) on PATH  
+**APIs**  
+
+To build and run this with full functionality, you will have to modify [the api keys container](anime-downloader/Classes/ApiKeys.cs) with your own keys before compiling.  
+
+\- [AniList API](https://anilist.co/settings/developer/)  
+
+**Requirements:** [nuget.exe](https://dist.nuget.org/win-x86-commandline/latest/nuget.exe) on PATH, Visual Studio 2017 and/or C# 7.0 Roslyn Compiler  
+**Optional:** Devenv (Visual Studio 2017) on PATH  
 
 ```
 git clone https://github.com/dukemiller/anime-downloader.git
@@ -62,7 +69,7 @@ An "anime-downloader.exe" artifact will be created in the parent anime-downloade
 
 ### Notes
 + I started this off as my first application and went through a lot of changes (Delegating every event in the MainWindow.xaml.cs + using x:Name in xaml to alter in code behind, to some view binding and binding the datacontext to {View}.xaml.cs and making the "Settings" classes statically accessable from MainWindow.xaml.cs, to actually using ViewModels and some MVVM practices). What i'm saying is that there's probably some bugs here and there that need fixing and weird behaviors, so throw up a github issue and i'll fix it pretty quickly.
-+ Not tested on other platforms other than **Windows**, but the GUI is WPF based so that's pretty much the end of the line for Mac/Linux support at the moment. In the future, I could extend the project to have all the services and models be their own solution and use something like GTK# for cross platform support given the demand.
++ Not tested on other platforms other than **Windows**, but the GUI is vanilla WPF based so that's pretty much the end of the line for Mac/Linux support at the moment. In the future, I could extend the project to have all the services and models be their own solution and use something like GTK# for cross platform support given the demand.
 
 ### Small disclaimer
 
