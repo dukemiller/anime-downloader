@@ -74,6 +74,16 @@ namespace anime_downloader.Services
 
         public bool Synced => Animes.Any() && !NeedsUpdates.Any();
 
+
+        public bool WatchingAndAiringContains(string name)
+        {
+            return AiringAndWatching
+                .Select(a => new StringDistance<Anime>(a, name, a.Name))
+                .Where(ap => ap.Distance <= 10)
+                .OrderBy(ap => ap.Distance)
+                .Any();
+        }
+
         public Anime ClosestAnime(string name)
         {
             return Animes
@@ -82,9 +92,7 @@ namespace anime_downloader.Services
                 .OrderBy(ap => ap.Distance)
                 .FirstOrDefault()?.Item;
         }
-
-        public bool ListContainsName(string name) => ClosestAnime(name) != null;
-
+        
         public void Add(Anime anime)
         {
             _settings.Animes.Add(anime);
