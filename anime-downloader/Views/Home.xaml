@@ -28,7 +28,7 @@
         <!--A grid for display purposes-->
         <Grid Grid.Row="0" Grid.RowSpan="2">
             <Grid.RowDefinitions>
-                <RowDefinition Height="20*" />
+                <RowDefinition Height="25*" />
                 <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
             <DockPanel>
