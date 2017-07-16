@@ -92,6 +92,7 @@ namespace anime_downloader.Services
         private static string NyaaTerms(string name, int episode)
         {
             var terms = name
+                .Replace("2nd Season", "")
                 .Replace(" ", "+")
                 .Replace("'s", "")
                 .Replace(".", "+")
