@@ -156,10 +156,11 @@ namespace anime_downloader.Services.Abstract
         {
             // For any "average" torrent, these would be the stats
             var count = mediaSource.Count;
+            if (count == 0)
+                return -1;
             var seeders = mediaSource.Select(media => media.Health).Sum() / count;
-            var verified = mediaSource.Count(m => m.HasSubgroup()) / count;
             var downloads = mediaSource.Select(m => m.Downloads).Sum() / count;
-            return (seeders + downloads) * (verified / count);
+            return (seeders + downloads) * count;
         }
 
         /// <summary>
@@ -181,7 +182,16 @@ namespace anime_downloader.Services.Abstract
                     var english = (await FindAllMedia(anime, anime.MyAnimeList.English, episode)).ToList();
                     var romanji = (await FindAllMedia(anime, anime.MyAnimeList.Title, episode)).ToList();
 
-                    if (HealthScore(english) > HealthScore(romanji))
+                    var englishScore = HealthScore(english);
+                    var romanjiScore = HealthScore(romanji);
+
+                    // Set it to romanji, but don't save any titles
+                    if (englishScore == -1 && romanjiScore == -1)
+                    {
+                        media = romanji;
+                    }
+
+                    else if (englishScore > romanjiScore)
                     {
                         anime.MyAnimeList.PreferredSearchTitle = anime.MyAnimeList.English;
                         media = english;
