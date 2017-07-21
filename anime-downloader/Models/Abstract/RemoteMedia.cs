@@ -32,6 +32,11 @@ namespace anime_downloader.Models.Abstract
         public int Health { get; set; }
 
         /// <summary>
+        ///     A download/retrieval count for the selected media.
+        /// </summary>
+        public int Downloads { get; set; }
+
+        /// <summary>
         ///     Returns the subgroup from the name of the file.
         /// </summary>
         public string Subgroup()

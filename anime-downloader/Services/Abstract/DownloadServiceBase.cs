@@ -29,9 +29,9 @@ namespace anime_downloader.Services.Abstract
         /// <summary>
         ///     The max age (in days) a torrent can be for it to still be in this season
         /// </summary>
-        protected static int MaxAge => (DateTime.Now - DateTime.Parse($"{((int)CurrentSeason() - 1) * 3 + 1}/1")).Days;
+        protected static int MaxAge => (DateTime.Now - DateTime.Parse($"{((int) CurrentSeason() - 1) * 3 + 1}/1")).Days;
 
-        private static Season CurrentSeason() => (Season)Math.Ceiling(Convert.ToDouble(DateTime.Now.Month) / 3);
+        private static Season CurrentSeason() => (Season) Math.Ceiling(Convert.ToDouble(DateTime.Now.Month) / 3);
 
         private static string AriaDirectory => Path.Combine(PathConfiguration.ApplicationDirectory, "aria2");
 
@@ -60,7 +60,8 @@ namespace anime_downloader.Services.Abstract
             var info = new ProcessStartInfo
             {
                 FileName = AriaExecutable,
-                Arguments = $"--bt-metadata-only=true --bt-save-metadata=true --bt-tracker={string.Join(",", magnet.Trackers)} {magnet.Hash}",
+                Arguments =
+                    $"--bt-metadata-only=true --bt-save-metadata=true --bt-tracker={string.Join(",", magnet.Trackers)} {magnet.Hash}",
                 WorkingDirectory = SettingsService.PathConfig.Torrents,
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
@@ -79,11 +80,11 @@ namespace anime_downloader.Services.Abstract
             if (result.Contains("Maybe file already exists"))
             {
                 var torrent = result.Split('\n')
-                    .First(line => line.Contains(".torrent"))
-                    .Split('/')
-                    .Last()
-                    .Split('.')
-                    .First() + ".torrent";
+                                  .First(line => line.Contains(".torrent"))
+                                  .Split('/')
+                                  .Last()
+                                  .Split('.')
+                                  .First() + ".torrent";
 
                 file = Path.Combine(SettingsService.PathConfig.Torrents, torrent);
             }
@@ -147,13 +148,27 @@ namespace anime_downloader.Services.Abstract
         }
 
         /// <summary>
+        ///     The arbitrary "health score" of a list of resources for categorizing if
+        ///     trusting this selection of results is more capable of representing what
+        ///     people search for
+        /// </summary>
+        private static int HealthScore(IReadOnlyCollection<RemoteMedia> mediaSource)
+        {
+            // For any "average" torrent, these would be the stats
+            var count = mediaSource.Count;
+            var seeders = mediaSource.Select(media => media.Health).Sum() / count;
+            var verified = mediaSource.Count(m => m.HasSubgroup()) / count;
+            var downloads = mediaSource.Select(m => m.Downloads).Sum() / count;
+            return (seeders + downloads) * (verified / count);
+        }
+
+        /// <summary>
         ///     A one time but potentially expensive cost to find out the preferred name
         /// </summary>
-        /// <returns></returns>
         private async Task<IEnumerable<RemoteMedia>> GetMedia(Anime anime, int episode)
         {
             IEnumerable<RemoteMedia> media;
-            
+
             // If there is both an english and romanji title
             if (!string.IsNullOrEmpty(anime.MyAnimeList.Title) && !string.IsNullOrEmpty(anime.MyAnimeList.English))
             {
@@ -163,17 +178,19 @@ namespace anime_downloader.Services.Abstract
                 // If there is no preference toward either of them, time to set them
                 else
                 {
-                    media = (await FindAllMedia(anime, anime.MyAnimeList.Title, episode)).ToList();
+                    var english = (await FindAllMedia(anime, anime.MyAnimeList.English, episode)).ToList();
+                    var romanji = (await FindAllMedia(anime, anime.MyAnimeList.Title, episode)).ToList();
 
-                    if (media.Any())
-                        anime.MyAnimeList.PreferredSearchTitle = anime.MyAnimeList.Title;
+                    if (HealthScore(english) > HealthScore(romanji))
+                    {
+                        anime.MyAnimeList.PreferredSearchTitle = anime.MyAnimeList.English;
+                        media = english;
+                    }
 
                     else
                     {
-                        media = (await FindAllMedia(anime, anime.MyAnimeList.English, episode)).ToList();
-
-                        if (media.Any())
-                            anime.MyAnimeList.PreferredSearchTitle = anime.MyAnimeList.English;
+                        anime.MyAnimeList.PreferredSearchTitle = anime.MyAnimeList.Title;
+                        media = romanji;
                     }
 
                     SettingsService.Save();
@@ -196,7 +213,7 @@ namespace anime_downloader.Services.Abstract
 
             foreach (var anime in animes)
             {
-                var result = await GetMedia(anime, anime.NextEpisode); 
+                var result = await GetMedia(anime, anime.NextEpisode);
                 var download = await AttemptDownload(anime, result, output);
                 if (download)
                     downloaded++;

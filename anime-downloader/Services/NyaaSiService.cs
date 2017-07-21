@@ -65,13 +65,12 @@ namespace anime_downloader.Services
         
         private static RemoteMedia ToMedia(XmlNode item, XmlNamespaceManager manager)
         {
-            (var title, var link, var pubdate, var seeders) =
-                (item.SelectSingleNode("title")?.InnerText, 
-                item.SelectSingleNode("link")?.InnerText, 
-                DateTime.Parse(item.SelectSingleNode("pubDate")?.InnerText),
-                int.Parse(item.SelectSingleNode("nyaa:seeders", manager)?.InnerText ?? "0")
-            );
-            
+            var title = item.SelectSingleNode("title")?.InnerText;
+            var link = item.SelectSingleNode("link")?.InnerText;
+            var pubdate = DateTime.Parse(item.SelectSingleNode("pubDate")?.InnerText);
+            var seeders = int.Parse(item.SelectSingleNode("nyaa:seeders", manager)?.InnerText ?? "0");
+            var downloads = int.Parse(item.SelectSingleNode("nyaa:downloads", manager)?.InnerText ?? "0");
+
             if (link.Contains("magnet:?"))
             {
                 return new MagnetLink
@@ -79,6 +78,7 @@ namespace anime_downloader.Services
                     Name = title,
                     Remote = link,
                     Date = pubdate,
+                    Downloads = downloads,
                     DirectName = HttpUtility.UrlDecode(title.Split(new[] {"&dn="}, StringSplitOptions.None)
                         .Last()
                         .Split('&')
@@ -93,7 +93,14 @@ namespace anime_downloader.Services
             }
 
             else
-                return new Torrent {Name = title, Remote = link, Date = pubdate, Seeders = seeders };
+                return new Torrent
+                {
+                    Name = title,
+                    Remote = link,
+                    Date = pubdate,
+                    Seeders = seeders,
+                    Downloads = downloads,
+                };
         }
         
         private static string NyaaTerms(string name, int episode)
