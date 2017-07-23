@@ -238,6 +238,13 @@ namespace anime_downloader.ViewModels.Components
                         file.Path.Split(Path.DirectorySeparatorChar)
                             .Skip(StartPath.Split(Path.DirectorySeparatorChar).Length));
                     var newPath = Path.Combine(MovePath, relative);
+                    var fileDepth = relative.Split(Path.DirectorySeparatorChar);
+                    if (fileDepth.Length > 1)
+                    {
+                        var added = string.Join(Path.DirectorySeparatorChar.ToString(), 
+                                                fileDepth.Take(fileDepth.Length - 1));
+                        Directory.CreateDirectory(Path.Combine(MovePath, added));
+                    }
                     Directory.Move(file.Path, newPath);
                 }
         }
