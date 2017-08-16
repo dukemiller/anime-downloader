@@ -74,7 +74,8 @@ namespace anime_downloader.ViewModels.Components
                 Airing = true,
                 MyAnimeList = { NeedsUpdating = true }
             };
-            Image = null;
+
+            Image = "../../Resources/Images/default.png";
 
             ExitCommand = new RelayCommand(() => MessengerInstance.Send(ViewDisplay.Anime));
 
@@ -200,29 +201,39 @@ namespace anime_downloader.ViewModels.Components
                 if (Anime.MyAnimeList.Image.Contains("https://"))
                     DownloadImage();
                 else
-                    Image = Anime.MyAnimeList.Image;
+                    Image = "../../Resources/Images/default.png";
             }
 
             else
-            {
-                Image = null;
-            }
+                Image = "../../Resources/Images/default.png";
         }
 
         private async void DownloadImage()
         {
             var image = Anime.MyAnimeList.Image;
             var downloadPath = Path.Combine(XmlSettingsService.ImageDirectory, $"{Anime.MyAnimeList.Id}.png");
+
             try
             {
                 if (!File.Exists(downloadPath))
                     await Downloader.DownloadFileTaskAsync(image, downloadPath);
-                Anime.MyAnimeList.Image = downloadPath;
+
+                // The download failed; something bad happened, replace with default
+                if (new FileInfo(downloadPath).Length / 1024 <= 15)
+                {
+                    File.Delete(downloadPath);
+                    Anime.MyAnimeList.Image = "../../Resources/Images/default.png";
+                }
+
+                else
+                    Anime.MyAnimeList.Image = downloadPath;
+
                 Image = Anime.MyAnimeList.Image;
             }
+
             catch
             {
-                Image = null;
+                Image = "../../Resources/Images/default.png";
             }
         }
 

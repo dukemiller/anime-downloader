@@ -55,7 +55,8 @@
                                                    TabStripPlacement="Bottom">
             <controls:MetroTabItem Header="Profile">
                 <DockPanel>
-                    <Border Background="Gray" Width="226">
+                    <Border Width="226">
+                        
                         <Image Source="{Binding Image}" />
                     </Border>
 

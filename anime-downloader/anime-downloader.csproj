@@ -460,6 +460,9 @@
   <ItemGroup>
     <Resource Include="Resources\Images\find.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\default.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy $(TargetPath) $(SolutionDir)</PostBuildEvent>
