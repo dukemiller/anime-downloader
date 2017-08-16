@@ -414,6 +414,26 @@ namespace anime_downloader.Services.Abstract
             }
         }
 
+        /// <summary>
+        ///     Many sites have different ways their search works, but on the nyaa.* sites
+        ///     this will transform the title into a searchable query.
+        /// </summary>
+        /// <returns></returns>
+        protected static string TransformEpisodeSearch(string name, int episode)
+        {
+            var terms = name
+                .Replace("2nd Season", "")
+                .Replace(" ", "+")
+                .Replace("'s", "")
+                .Replace(".", "+")
+                .Replace(":", " ")
+                .Replace("/", " ")
+                .Replace("!", "%21")
+                .Replace("'", "%27")
+                .Replace("-", " ");
+            return $"{terms}+{episode:D2}";
+        }
+
         // Borders the line
 
         public async Task<IEnumerable<RemoteMedia>> GetNextEpisode(Anime anime)

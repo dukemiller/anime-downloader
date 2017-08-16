@@ -35,7 +35,7 @@ namespace anime_downloader.Services
             var document = new XmlDocument();
             
             var url = new Uri("https://nyaa.si/?page=rss" +
-                              $"&q={NyaaTerms(name, episode)}" +
+                              $"&q={TransformEpisodeSearch(name, episode)}" +
                               "&c=1_2" +
                               "&f=0");
 
@@ -101,21 +101,6 @@ namespace anime_downloader.Services
                     Seeders = seeders,
                     Downloads = downloads,
                 };
-        }
-        
-        private static string NyaaTerms(string name, int episode)
-        {
-            var terms = name
-                .Replace("2nd Season", "")
-                .Replace(" ", "+")
-                .Replace("'s", "")
-                .Replace(".", "+")
-                .Replace(":", " ")
-                .Replace("/", " ")
-                .Replace("!", "%21")
-                .Replace("'", "%27")
-                .Replace("-", "%2D");
-            return $"{terms}+{episode:D2}";
         }
     }
 }

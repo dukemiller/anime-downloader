@@ -46,7 +46,7 @@ namespace anime_downloader.Services
                               $"&sort={BySeeders}" +
                               "&order=desc" +
                               "&max=20" +
-                              $"&q={NyaaTerms(name, episode)}");
+                              $"&q={TransformEpisodeSearch(name, episode)}");
 
             using (var client = new WebClient())
             {
@@ -87,20 +87,6 @@ namespace anime_downloader.Services
             };
 
             return torrent;
-        }
-
-        private static string NyaaTerms(string name, int episode)
-        {
-            var terms = name
-                .Replace("2nd Season", "")
-                .Replace(" ", "+")
-                .Replace("'s", "")
-                .Replace(".", "+")
-                .Replace(":", " ")
-                .Replace("!", "%21")
-                .Replace("'", "%27")
-                .Replace("-", "%2D");
-            return $"{terms}+{episode:D2}";
         }
     }
 }
