@@ -27,9 +27,9 @@ namespace anime_downloader.Classes
 
         private string Name { get; }
 
-        public FindResult FindResult { get; private set; }
+        public FindResult FindResult { get; }
 
-        public double Distance { get; private set; }
+        public double Distance { get; }
 
         private string[] NameSplit { get; }
 

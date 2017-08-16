@@ -9,6 +9,17 @@ namespace anime_downloader.Classes
 {
     public static class Extensions
     {
+        public static IOrderedEnumerable<T> OrderByLevenshtein<T>(this IEnumerable<T> source, Func<T, string> keySelector, string compare)
+        {
+            return source.OrderBy(item => Methods.LevenshteinDistance(keySelector(item), compare));
+        }
+
+        public static IEnumerable<T> WhereLevenshteinLessThan<T>(this IEnumerable<T> source,
+            Func<T, string> keySelector, string compare, int tolerance)
+        {
+            return source.Where(item => Methods.LevenshteinDistance(keySelector(item), compare) < tolerance);
+        }
+        
         public static void AddSorted<T>(this IList<T> list, T item, IComparer<T> comparer = null)
         {
             if (comparer == null)

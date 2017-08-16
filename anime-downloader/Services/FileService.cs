@@ -39,10 +39,7 @@ namespace anime_downloader.Services
             var episodes = GetEpisodes(EpisodeStatus.All).ToList();
 
             var name = episodes
-                .Select(e => e.Name)
-                .Distinct()
-                .Select(e => new {Name = e, Distance = Methods.LevenshteinDistance(anime.Name, e)})
-                .OrderBy(e => e.Distance)
+                .OrderByLevenshtein(a => a.Name, anime.Name)
                 .First()
                 .Name;
 
@@ -128,10 +125,8 @@ namespace anime_downloader.Services
         public AnimeFile ClosestFile(IEnumerable<AnimeFile> files, string name)
         {
             return files
-                .Select(a => new {Anime = a, Distance = Methods.LevenshteinDistance(a.Name, name)})
-                .Where(ap => ap.Distance <= 10)
-                .OrderBy(ap => ap.Distance)
-                .FirstOrDefault()?.Anime;
+                .WhereLevenshteinLessThan(anime => anime.Name, name, 11)
+                .FirstOrDefault();
         }
 
         public Anime ClosestAnime(IEnumerable<Anime> animes, AnimeFile file)

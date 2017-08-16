@@ -74,7 +74,6 @@ namespace anime_downloader.Services
 
         public bool Synced => Animes.Any() && !NeedsUpdates.Any();
 
-
         public bool WatchingAndAiringContains(string name)
         {
             return AiringAndWatching
