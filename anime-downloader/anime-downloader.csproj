@@ -235,9 +235,6 @@
     <Compile Include="Views\Components\AiringAnime.xaml.cs">
       <DependentUpon>AiringAnime.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Components\AnimeDetails.xaml.cs">
-      <DependentUpon>AnimeDetails.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Components\AnimeDetailsMultiple.xaml.cs">
       <DependentUpon>AnimeDetailsMultiple.xaml</DependentUpon>
     </Compile>
@@ -346,10 +343,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\Components\AnimeDetails.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\Components\AnimeDetailsMultiple.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
