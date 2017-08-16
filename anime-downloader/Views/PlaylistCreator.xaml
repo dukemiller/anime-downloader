@@ -4,8 +4,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:models="clr-namespace:anime_downloader.Models"
-             xmlns:viewModels="clr-namespace:anime_downloader.ViewModels"
-             d:DataContext="{d:DesignInstance viewModels:PlaylistCreatorViewModel}"
              DataContext="{Binding Source={StaticResource Locator},
                               Path=Playlist}"
              d:DesignHeight="360"

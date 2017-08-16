@@ -34,12 +34,14 @@ namespace anime_downloader.Views
                 if (currentFlipView == null)
                     return;
 
-                await Dispatcher.BeginInvoke(DispatcherPriority.Input,
+                await Dispatcher.BeginInvoke(
+                    DispatcherPriority.Input,
                     new Action(() =>
                     {
                         currentFlipView.Focus(); // Set Logical Focus
                         Keyboard.Focus(currentFlipView); // Set Keyboard Focus
-                    }));
+                    })
+                );
             }
         }
     }

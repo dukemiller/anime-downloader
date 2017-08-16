@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -43,7 +44,7 @@ namespace anime_downloader.Services.Abstract
                 @"https://github.com/aria2/aria2/releases/download/release-1.31.0/aria2-1.31.0-win-32bit-build1.zip";
             var path = Path.Combine(PathConfiguration.ApplicationDirectory, "aria2.zip");
             await Downloader.DownloadFileTaskAsync(url, path);
-            System.IO.Compression.ZipFile.ExtractToDirectory(path, PathConfiguration.ApplicationDirectory);
+            ZipFile.ExtractToDirectory(path, PathConfiguration.ApplicationDirectory);
             File.Delete(path);
             Directory.Move(
                 Path.Combine(PathConfiguration.ApplicationDirectory, "aria2-1.31.0-win-32bit-build1"),

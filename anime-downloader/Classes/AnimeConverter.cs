@@ -38,8 +38,7 @@ namespace anime_downloader.Classes
             };
 
             // Date stuff
-            DateTime start;
-            if (DateTime.TryParse(profileAnimeResult.SeriesStart, out start))
+            if (DateTime.TryParse(profileAnimeResult.SeriesStart, out DateTime start))
             {
                 anime.MyAnimeList.Aired = new AnimeSeason
                 {
@@ -48,8 +47,7 @@ namespace anime_downloader.Classes
                 };
             }
 
-            DateTime end;
-            if (DateTime.TryParse(profileAnimeResult.SeriesEnd, out end))
+            if (DateTime.TryParse(profileAnimeResult.SeriesEnd, out DateTime end))
             {
                 anime.MyAnimeList.Ended = new AnimeSeason
                 {

@@ -5,8 +5,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:viewModels="clr-namespace:anime_downloader.ViewModels"
-    d:DataContext="{d:DesignInstance viewModels:WebViewModel}"
     DataContext="{Binding Source={StaticResource Locator},
                               Path=Web}"
     d:DesignHeight="360"

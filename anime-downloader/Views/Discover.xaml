@@ -3,12 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:viewModels="clr-namespace:anime_downloader.ViewModels"
              xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:aniList="clr-namespace:anime_downloader.Models.AniList"
              xmlns:components="clr-namespace:anime_downloader.Views.Components"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             d:DataContext="{d:DesignInstance viewModels:DiscoverViewModel}"
              DataContext="{Binding Source={StaticResource Locator},
                               Path=Discover}"
              IsVisibleChanged="VisibleChanged"

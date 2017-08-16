@@ -4,8 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
-             xmlns:aniList="clr-namespace:anime_downloader.Models.AniList"
-             xmlns:models="clr-namespace:anime_downloader.Models"
              xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:components="clr-namespace:anime_downloader.ViewModels.Components"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
