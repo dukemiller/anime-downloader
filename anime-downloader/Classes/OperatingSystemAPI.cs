@@ -9,6 +9,8 @@ namespace anime_downloader.Classes
     {
         private const int Restore = 9;
 
+#if WINDOWS
+        
         /// <summary>
         ///     Focus the opened downloader.
         /// </summary>
@@ -19,7 +21,6 @@ namespace anime_downloader.Classes
             SetForegroundWindow(hwnd);
         }
 
-#if WINDOWS
         [DllImport("user32.dll")]
         private static extern bool SetForegroundWindow(IntPtr hWnd);
 
@@ -31,6 +32,12 @@ namespace anime_downloader.Classes
 #endif
 
 #if LINUX
+
+        public static void FocusDownloader()
+        {
+            return;
+        }
+
         private static bool SetForegroundWindow(IntPtr hwnd) => false;
 
         private static bool ShowWindow(IntPtr hWnd, int nCmdShow) => false;

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -44,7 +45,7 @@ namespace anime_downloader.ViewModels.Components
         public RelayCommand<IList> SelectionChangedCommand { get; set; }
 
         // 
-
+        
         public FileListViewModel(IFileService fileService, IAnimeService animeService)
         {
             _fileService = fileService;
@@ -78,18 +79,14 @@ namespace anime_downloader.ViewModels.Components
         private ObservableCollection<AnimeFile> Files
         {
             get => _files;
-            set
-            {
-                Set(() => Files, ref _files, value);
-                RaisePropertyChanged(nameof(Label));
-            }
+            set => Set(() => Files, ref _files, value);
         }
 
         /// <summary>
         ///     A label simply showing the count of total files
         /// </summary>
-        public string Label => $"({Files?.Count ?? 0} files)";
-
+        public string Label => $"({FilteredFiles?.Count ?? 0} files)";
+        
         /// <summary>
         ///     A user flag to note if the file count should be hidden or not
         /// </summary>
@@ -105,7 +102,11 @@ namespace anime_downloader.ViewModels.Components
         public ObservableCollection<AnimeFile> FilteredFiles
         {
             get => _filteredFiles;
-            set => Set(() => FilteredFiles, ref _filteredFiles, value);
+            set
+            {
+                Set(() => FilteredFiles, ref _filteredFiles, value);
+                RaisePropertyChanged(nameof(Label));
+            }
         }
 
         /// <summary>
