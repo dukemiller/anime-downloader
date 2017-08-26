@@ -23,7 +23,11 @@ namespace anime_downloader.Models.Configurations
         public string Unwatched
         {
             get => _unwatched;
-            set => Set(() => Unwatched, ref _unwatched, value);
+            set
+            {
+                Set(() => Unwatched, ref _unwatched, value);
+                RaisePropertyChanged();
+            }
         }
 
         /// <summary>
@@ -33,7 +37,11 @@ namespace anime_downloader.Models.Configurations
         public string Watched
         {
             get => _watched;
-            set => Set(() => Watched, ref _watched, value);
+            set
+            {
+                Set(() => Watched, ref _watched, value);
+                RaisePropertyChanged();
+            }
         }
 
         /// <summary>

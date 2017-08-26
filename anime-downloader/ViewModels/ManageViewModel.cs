@@ -21,6 +21,7 @@ namespace anime_downloader.ViewModels
             _settings = settings;
             _fileService = fileService;
             _animeService = animeService;
+            _settings.PathConfig.PropertyChanged += (sender, args) => LoadFolders();
             LoadFolders();
         }
 
