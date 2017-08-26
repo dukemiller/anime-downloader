@@ -136,7 +136,12 @@ namespace anime_downloader.Models
         public string Rating
         {
             get => _rating;
-            set => Set(() => Rating, ref _rating, value);
+            set
+            {
+                Set(() => Rating, ref _rating, value);
+                if (MyAnimeList.HasId)
+                    MyAnimeList.NeedsUpdating = true;
+            }
         }
 
         [XmlElement("my_anime_list")]
