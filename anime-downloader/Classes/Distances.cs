@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using anime_downloader.Models;
 using anime_downloader.Models.MyAnimeList;
 
@@ -14,24 +13,24 @@ namespace anime_downloader.Classes
         /// </summary>
         private const double ArbitraryHighValue = 10000.00;
 
-        public FindResultDistance(string name, FindResult findResult)
+        public FindResultDistance(string name, FindResult result)
         {
             Name = name;
-            FindResult = findResult;
-            NameSplit = Name.Trim().ToLower().Split(' ');
-            var synonymDistances = findResult.Synonyms.Split(';').Select(StringRelevance);
+            Result = result;
+            Names = Name.Trim().ToLower().Split(' ');
+            var synonymDistances = result.Synonyms.Split(';').Select(StringRelevance);
             Distance =
-                new[] {StringRelevance(findResult.Title), StringRelevance(findResult.English)}.Union(synonymDistances)
+                new[] {StringRelevance(result.Title), StringRelevance(result.English)}.Union(synonymDistances)
                     .Min();
         }
 
         private string Name { get; }
 
-        public FindResult FindResult { get; }
+        public FindResult Result { get; }
 
         public double Distance { get; }
 
-        private string[] NameSplit { get; }
+        private string[] Names { get; }
 
         private double StringRelevance(string comparison)
         {
@@ -40,7 +39,7 @@ namespace anime_downloader.Classes
 
             var distance = Methods.LevenshteinDistance(comparison, Name);
             var array = comparison.ToLower().Trim().Split(' ').Distinct().ToArray();
-            var relevance = (double) array.Count(a => NameSplit.Contains(a)) / array.Length;
+            var relevance = (double) array.Count(a => Names.Contains(a)) / array.Length;
             return distance * (2 - relevance);
         }
     }
@@ -74,10 +73,14 @@ namespace anime_downloader.Classes
         {
             Group = grouping;
 
-            var namesplit = Scrub(anime.Name);
+            var name = string.IsNullOrEmpty(anime.MyAnimeList.PreferredSearchTitle)
+                ? anime.Name
+                : anime.MyAnimeList.PreferredSearchTitle;
+
+            var namesplit = Scrub(name);
             var groupsplit = Scrub(grouping.Key);
 
-            _distance = Methods.LevenshteinDistance(anime.Name, grouping.Key);
+            _distance = Methods.LevenshteinDistance(name, grouping.Key);
             _ratioToOriginal = (double) groupsplit.Count(a => namesplit.Contains(a)) / groupsplit.Length;
             _singleWordPenalty = namesplit.Length == 1 && _ratioToOriginal <= 0 ? 1 : 0;
             _noMatchPenalty = namesplit.Length > 1 && _ratioToOriginal <= 0 ? 8 : 0;
