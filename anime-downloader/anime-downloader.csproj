@@ -170,7 +170,12 @@
     <Compile Include="Classes\Methods.cs" />
     <Compile Include="Classes\OperatingSystemApi.cs" />
     <Compile Include="Classes\Tray.cs" />
+    <Compile Include="Models\MyAnimeList\Category.cs" />
+    <Compile Include="Models\MyAnimeList\Payload.cs" />
     <Compile Include="Models\MyAnimeList\FindResultRoot.cs" />
+    <Compile Include="Models\MyAnimeList\Item.cs" />
+    <Compile Include="Models\MyAnimeList\SearchResponse.cs" />
+    <Compile Include="Models\MyAnimeList\ShowRequest.cs" />
     <Compile Include="Models\MyAnimeList\ProfileResult.cs" />
     <Compile Include="Models\MyAnimeList\UpdateShow.cs" />
     <Compile Include="Models\MyAnimeList\FindResult.cs" />
@@ -199,6 +204,7 @@
     <Compile Include="Services\Interfaces\IMyAnimeListService.cs" />
     <Compile Include="Services\Interfaces\ISettingsService.cs" />
     <Compile Include="Services\Interfaces\IVersionService.cs" />
+    <Compile Include="Services\MyAnimeListInternalApi.cs" />
     <Compile Include="Services\NyaaPantsuService.cs" />
     <Compile Include="Services\NyaaSiService.cs" />
     <Compile Include="Services\VersionService.cs" />
