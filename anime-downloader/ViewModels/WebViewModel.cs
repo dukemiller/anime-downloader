@@ -6,9 +6,11 @@ using System.Web;
 using anime_downloader.Classes;
 using anime_downloader.Models.Configurations;
 using anime_downloader.Services.Interfaces;
+using anime_downloader.ViewModels.Components;
 using anime_downloader.Views.Dialogs;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using MaterialDesignThemes.Wpf;
 
@@ -54,13 +56,26 @@ namespace anime_downloader.ViewModels
 
             SetCommands();
             CheckSyncAndLog();
+
             MessengerInstance.Register<NotificationMessage>(this, _ =>
             {
                 if (_.Notification.Equals("tray_sync"))
                     SyncCommand.Execute(1);
             });
+
+            MessengerInstance.Register<string>(this, _ =>
+            {
+                switch (_)
+                {
+                    case "reset":
+                        CheckSyncAndLog();
+                        break;
+                    default:
+                        break;
+                }
+            });
         }
-        
+
         // 
 
         private DateTime LoginAttempt { get; set; } = DateTime.Now;
