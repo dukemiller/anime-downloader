@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using System.Xml.Serialization;
+using anime_downloader.Models;
 using anime_downloader.Models.MyAnimeList;
 using anime_downloader.Services.Interfaces;
 
@@ -22,9 +23,7 @@ namespace anime_downloader.Services
         private const string ApiAdd = "https://myanimelist.net/api/animelist/add/{0}.xml";
 
         private const string ApiUpdate = "https://myanimelist.net/api/animelist/update/{0}.xml";
-
-        private const string ApiDelete = "https://myanimelist.net/api/animelist/delete/{0}.xml";
-
+        
         private const string ApiVerify = "https://myanimelist.net/api/account/verify_credentials.xml";
 
         private const string ApiProfile = "https://myanimelist.net/malappinfo.php?u={0}&status=all&type=anime";

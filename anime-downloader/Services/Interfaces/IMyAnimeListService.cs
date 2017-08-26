@@ -13,14 +13,6 @@ namespace anime_downloader.Services.Interfaces
     public interface IMyAnimeListService
     {
         /// <summary>
-        ///     Retrieve the closest result on MyAnimeList to a given anime.
-        /// </summary>
-        /// <returns>
-        ///     A MyAnimeList serialized result object.
-        /// </returns>
-        FindResult ClosestResult(Anime anime, IEnumerable<FindResult> results);
-
-        /// <summary>
         ///     Send an update API request to replace the information about the anime
         ///     on the users MyAnimeList with the given anime.
         /// </summary>

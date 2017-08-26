@@ -65,10 +65,10 @@ namespace anime_downloader.Services
         public IEnumerable<AnimeFile> GetEpisodes(Anime anime, EpisodeStatus episodeStatus)
         {
             var collection = GetEpisodes(episodeStatus)
-                .GroupBy(e => e.Name)
-                .Select(e => new GroupFileDistance(e, anime))
-                .Where(e => e.Distance <= 25)
-                .OrderBy(e => e.Distance)
+                .GroupBy(episode => episode.Name)
+                .Select(episode => new GroupFileDistance(episode, anime))
+                .Where(episode => episode.Distance <= 25)
+                .OrderBy(episode => episode.Distance)
                 .FirstOrDefault()
                 ?.Group
                 ?.Select(e => e);
