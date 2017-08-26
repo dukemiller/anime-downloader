@@ -32,9 +32,16 @@ namespace anime_downloader.Services
 
         private static readonly XmlSerializer ProfileDeserializer = new XmlSerializer(typeof(ProfileResult));
 
+        private HttpClient _client;
+
         public MyAnimeListApi(ISettingsService settings)
         {
             _settings = settings;
+            _settings.MyAnimeListConfig.PropertyChanged += (sender, args) =>
+            {
+                _client = new HttpClient(new HttpClientHandler { Credentials = GetCredentials() });
+            };
+            _client = new HttpClient(new HttpClientHandler { Credentials = GetCredentials() });
         }
 
         // 
@@ -44,9 +51,7 @@ namespace anime_downloader.Services
         public async Task<bool> VerifyCredentialsAsync()
         {
             const string url = ApiVerify;
-            var handler = new HttpClientHandler { Credentials = GetCredentials() };
-            var client = new HttpClient(handler);
-            var response = await client.GetAsync(url);
+            var response = await _client.GetAsync(url);
             return response.StatusCode == HttpStatusCode.OK;
         }
 
@@ -64,8 +69,7 @@ namespace anime_downloader.Services
                 var result = (ProfileResult)ProfileDeserializer.Deserialize(response);
                 return result.Anime.Where(anime =>
                 {
-                    DateTime date;
-                    var withinLastThreeYears = DateTime.TryParse(anime?.SeriesStart, out date) && Math.Abs(DateTime.Now.Year - date.Year) <= 3;
+                    var withinLastThreeYears = DateTime.TryParse(anime?.SeriesStart, out DateTime date) && Math.Abs(DateTime.Now.Year - date.Year) <= 3;
                     var isShortOrSeries = anime?.SeriesType?.Equals("1") == true || anime?.SeriesType?.Equals("2") == true;
                     var definitelyNotAnOva = int.Parse(anime?.SeriesEpisodes ?? "0") > 4;
                     return withinLastThreeYears && isShortOrSeries && definitelyNotAnOva;
@@ -97,52 +101,51 @@ namespace anime_downloader.Services
             }
         }
 
-        public async Task<HttpContent> GetAsync(string url)
+        public async Task<HttpContent> AddAsync(Anime anime)
         {
-            var handler = new HttpClientHandler { Credentials = GetCredentials() };
-            var client = new HttpClient(handler);
-            var response = (await client.GetAsync(url)).Content;
+            var episode = anime.MyAnimeList.SeriesContinuationEpisode != null
+                ? int.Parse(anime.MyAnimeList.SeriesContinuationEpisode)
+                : anime.Episode;
+            var data = new UpdateShow(anime, episode).ToString();
+            var url = string.Format(ApiAdd, anime.MyAnimeList.Id);
+            var response = await PostAsync(url, data);
             return response;
         }
 
-        public async Task<HttpContent> PostAsync(string url, string data)
+        public async Task<HttpContent> UpdateAsync(Anime anime)
         {
-            await VerificationCheck();
-
-            var handler = new HttpClientHandler { Credentials = GetCredentials() };
-            var client = new HttpClient(handler);
-            var pairs = new Dictionary<string, string>
-            {
-                {"data", data}
-            };
-            var content = new FormUrlEncodedContent(pairs);
-            var response = (await client.PostAsync(url, content)).Content;
+            var episode = anime.MyAnimeList.SeriesContinuationEpisode != null
+                ? int.Parse(anime.MyAnimeList.SeriesContinuationEpisode)
+                : anime.Episode;
+            var data = new UpdateShow(anime, episode).ToString();
+            var url = string.Format(ApiUpdate, anime.MyAnimeList.Id);
+            var response = await PostAsync(url, data);
             return response;
         }
 
         // 
 
-        public async Task<HttpContent> AddAsync(string id, string data)
+        private async Task<HttpContent> GetAsync(string url)
         {
-            var url = string.Format(ApiAdd, id);
-            var response = await PostAsync(url, data);
+            await VerificationCheck();
+
+            var response = (await _client.GetAsync(url)).Content;
             return response;
         }
 
-        public async Task<HttpContent> UpdateAsync(string id, string data)
+        private async Task<HttpContent> PostAsync(string url, string data)
         {
-            var url = string.Format(ApiUpdate, id);
-            var response = await PostAsync(url, data);
+            await VerificationCheck();
+
+            var pairs = new Dictionary<string, string>
+            {
+                {"data", data}
+            };
+            var content = new FormUrlEncodedContent(pairs);
+            var response = (await _client.PostAsync(url, content)).Content;
             return response;
         }
-
-        public async Task<HttpContent> DeleteAsync(string id, string data)
-        {
-            var url = string.Format(ApiDelete, id);
-            var response = await PostAsync(url, data);
-            return response;
-        }
-
+        
         public bool IsVerified { get; set; }
 
         private async Task VerificationCheck()

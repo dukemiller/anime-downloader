@@ -27,71 +27,43 @@ namespace anime_downloader.Services
 
         // 
 
-        public FindResult ClosestResult(Anime anime, IEnumerable<FindResult> results)
+        public FindResult ClosestResult(Anime anime, string query, IEnumerable<FindResult> results)
         {
             var closestResults = results
                 .Where(result => !result.Type.Equals("OVA")) // I'm sure i'll regret this
-                .Where(result =>
-                {
-                    if (!anime.NameStrict)
-                        return true;
-                    return result.NameCollection.Any(r => r.ToLower().Replace(" (tv)", "").Equals(anime.Name.ToLower()));
-                })
-                //.Where(findResult =>
-                //{
-                //    if (findResult.TotalEpisodes != 0)
-                //        return findResult.TotalEpisodes > 2;
-                //    return true;
-                //})
-                .Select(result => new FindResultDistance(anime.Name, result))
-                .OrderBy(resultDistance => resultDistance.Distance);
+                .Where(result => !anime.NameStrict || result.NameCollection.Any(r => r.ToLower().Replace(" (tv)", "").Equals(query.ToLower())))
+                .Select(result => new FindResultDistance(query, result))
+                .OrderBy(result => result.Distance);
 
-            var closest = closestResults.FirstOrDefault();
-
-            // if any values have the same exact distance
-            if (closestResults.Any(c => closest?.Distance == c.Distance))
-                closest = closestResults.Where(c => c.Distance == closest?.Distance)
-                    .OrderByDescending(r => DateTime.Parse(r.FindResult.StartDate))
-                    .FirstOrDefault();
-
-            return closest?.FindResult;
+            return closestResults.FirstOrDefault()?.Result;
         }
 
         public async Task<IEnumerable<FindResult>> Find(string q) => await _api.FindAsync(q);
 
         public async Task Update(Anime anime)
         {
-            var myAnimeListNode = anime.MyAnimeList.SeriesContinuationEpisode != null
-                ? new UpdateShow(anime, anime.MyAnimeList.SeriesContinuationEpisode)
-                : new UpdateShow(anime);
-            await _api.UpdateAsync(anime.MyAnimeList.Id, myAnimeListNode.ToString());
+            await _api.UpdateAsync(anime);
             anime.MyAnimeList.NeedsUpdating = false;
         }
 
-        public async Task Add(Anime anime)
-        {
-            var myAnimeListNode = anime.MyAnimeList.SeriesContinuationEpisode != null
-                ? new UpdateShow(anime, anime.MyAnimeList.SeriesContinuationEpisode)
-                : new UpdateShow(anime);
-            await _api.AddAsync(anime.MyAnimeList.Id, myAnimeListNode.ToString());
-            anime.MyAnimeList.NeedsUpdating = false;
-        }
+        public async Task Add(Anime anime) => await _api.AddAsync(anime);
 
-        public async Task<IEnumerable<Anime>> GetProfileAnime()
-        {
-            return (await _api.GetProfile()).Select(AnimeConverter.ToAnime);
-        }
+        public async Task<IEnumerable<Anime>> GetProfileAnime() => (await _api.GetProfile()).Select(AnimeConverter.ToAnime);
 
         public async Task<bool> GetId(Anime anime)
         {
+            var query = string.IsNullOrEmpty(anime.MyAnimeList.PreferredSearchTitle)
+                ? anime.Title
+                : anime.MyAnimeList.PreferredSearchTitle;
+
             // get all results from searching the name
-            var animeResults = (await _api.FindAsync(anime.Title.Replace(":", " "))).ToList();
+            var animeResults = (await _api.FindAsync(query.Replace(":", " "))).ToList();
 
             // if there were absolutely no results from the query
             if (!animeResults.Any())
             {
                 // Continually segment words and attempt to get a result
-                var name = anime.Title.Split(' ');
+                var name = query.Split(' ');
                 var length = name.Length;
                 while (!animeResults.Any() && length-- > 1)
                 {
@@ -109,20 +81,20 @@ namespace anime_downloader.Services
             }
             
             // make an estimation as to what is the closest result related to the anime
-            var result = ClosestResult(anime, animeResults);
+            var result = ClosestResult(anime, query, animeResults);
 
             // if there was no good guess
             if (result == null)
             {
                 // try slapping a (TV) infront of it because the MAL api is weird sometimes
-                animeResults = (await _api.FindAsync(HttpUtility.UrlEncode(anime.Title + " (TV)"))).ToList();
-                result = ClosestResult(anime, animeResults);
+                animeResults = (await _api.FindAsync(HttpUtility.UrlEncode(query + " (TV)"))).ToList();
+                result = ClosestResult(anime, query, animeResults);
 
                 // if still no result
                 if (result == null)
                 {
                     // throw an error then skip
-                    Methods.Alert($"2. No partial matches found from matching names for {anime.Title}.");
+                    Methods.Alert($"2. No partial matches found from matching names for {query}.");
                     return false;
                 }
             }
@@ -136,7 +108,7 @@ namespace anime_downloader.Services
 
                     // remove current series from list of possible choices
                     animeResults.Remove(result);
-                    result = ClosestResult(anime, animeResults);
+                    result = ClosestResult(anime, query, animeResults);
                     total += result?.TotalEpisodes ?? 0;
 
                     // if the combination of both this season is still less than your current episode
@@ -146,7 +118,7 @@ namespace anime_downloader.Services
                     while (result != null && total < anime.Episode)
                     {
                         animeResults.Remove(result);
-                        result = ClosestResult(anime, animeResults);
+                        result = ClosestResult(anime, query, animeResults);
                         total += result?.TotalEpisodes ?? 0;
                     }
 
@@ -162,6 +134,14 @@ namespace anime_downloader.Services
                     anime.MyAnimeList.SeriesContinuationEpisode = (anime.Episode - total).ToString();
                     anime.MyAnimeList.OverallTotal = total;
                 }
+
+            AddDataToAnime(anime, result);
+
+            return true;
+        }
+
+        private static void AddDataToAnime(Anime anime, FindResult result)
+        {
 
             // add all the details available
             anime.MyAnimeList.Id = result.Id;
@@ -190,35 +170,40 @@ namespace anime_downloader.Services
                     anime.MyAnimeList.Aired = new AnimeSeason
                     {
                         Year = date.Year,
-                        Season = (Season) Math.Ceiling(Convert.ToDouble(date.Month) / 3)
+                        Season = (Season)Math.Ceiling(Convert.ToDouble(date.Month) / 3)
                     };
                 }
             }
-
-            if (DateTime.TryParse(result.EndDate, out DateTime end))
+            if (anime.MyAnimeList.Ended == null)
             {
-                anime.MyAnimeList.Ended = new AnimeSeason
+                if (DateTime.TryParse(result.EndDate, out DateTime end))
                 {
-                    Year = end.Year,
-                    Season = (Season)Math.Ceiling(Convert.ToDouble(end.Month) / 3)
-                };
+                    anime.MyAnimeList.Ended = new AnimeSeason
+                    {
+                        Year = end.Year,
+                        Season = (Season) Math.Ceiling(Convert.ToDouble(end.Month) / 3)
+                    };
+                }
             }
-
-            return true;
         }
 
         public async Task Synchronize()
         {
             // for every anime that needs updating
             foreach (var anime in _anime.NeedsUpdates)
+            {
+                // If it needs adding, add it
                 if (string.IsNullOrEmpty(anime.MyAnimeList.Id))
                 {
                     if (await GetId(anime))
                         await Add(anime);
+                    else
+                        continue;
                 }
-
-                else
-                    await Update(anime);
+                
+                // Then edit (if just added)
+                await Update(anime);
+            }
         }
 
         public async Task<bool> Refresh(Anime anime)
