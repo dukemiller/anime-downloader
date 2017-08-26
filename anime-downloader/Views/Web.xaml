@@ -38,7 +38,7 @@
                             <Button
                                 Margin="5"
                                 Background="LightGreen"
-                                IsEnabled="False"
+                                
                                 Command="{Binding SyncCommand}"
                                 Content="{Binding Synchronize}"
                                 Focusable="False" />
