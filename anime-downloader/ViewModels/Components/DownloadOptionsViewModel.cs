@@ -2,6 +2,7 @@
 using System.Linq;
 using anime_downloader.Enums;
 using anime_downloader.Models;
+using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -10,7 +11,7 @@ namespace anime_downloader.ViewModels.Components
 {
     public class DownloadOptionsViewModel : ViewModelBase
     {
-        private readonly ISettingsService _settings;
+        private readonly ISettingsRepository _settings;
 
         private static readonly RadioModel<DownloadOption> NextEpisode = new RadioModel<DownloadOption>
         {
@@ -38,7 +39,7 @@ namespace anime_downloader.ViewModels.Components
 
         // 
 
-        public DownloadOptionsViewModel(ISettingsService settings)
+        public DownloadOptionsViewModel(ISettingsRepository settings)
         {
             _settings = settings;
             _currentProvider = _settings.Provider;

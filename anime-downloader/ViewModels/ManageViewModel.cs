@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using anime_downloader.Enums;
+using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
 using anime_downloader.ViewModels.Components;
 using GalaSoft.MvvmLight;
@@ -8,7 +9,7 @@ namespace anime_downloader.ViewModels
 {
     public class ManageViewModel : ViewModelBase
     {
-        private readonly ISettingsService _settings;
+        private readonly ISettingsRepository _settings;
         private readonly IFileService _fileService;
         private readonly IAnimeService _animeService;
         private FileListViewModel _unwatched;
@@ -16,7 +17,7 @@ namespace anime_downloader.ViewModels
         
         // 
 
-        public ManageViewModel(ISettingsService settings, IFileService fileService, IAnimeService animeService)
+        public ManageViewModel(ISettingsRepository settings, IFileService fileService, IAnimeService animeService)
         {
             _settings = settings;
             _fileService = fileService;

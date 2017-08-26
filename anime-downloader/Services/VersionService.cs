@@ -9,13 +9,14 @@ using System.Timers;
 using System.Windows;
 using anime_downloader.Models;
 using anime_downloader.Patch.Services;
+using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
 
 namespace anime_downloader.Services
 {
     public class VersionService : IVersionService
     {
-        private readonly ISettingsService _settings;
+        private readonly ISettingsRepository _settings;
 
         private const string Server = @"http://52.42.210.220";
 
@@ -27,7 +28,7 @@ namespace anime_downloader.Services
 
         // 
 
-        public VersionService(ISettingsService settings)
+        public VersionService(ISettingsRepository settings)
         {
             _settings = settings;
             _client = new HttpClient();

@@ -73,9 +73,9 @@ namespace anime_downloader.Classes
         {
             Group = grouping;
 
-            var name = string.IsNullOrEmpty(anime.MyAnimeList.PreferredSearchTitle)
+            var name = string.IsNullOrEmpty(anime.Details.PreferredSearchTitle)
                 ? anime.Name
-                : anime.MyAnimeList.PreferredSearchTitle;
+                : anime.Details.PreferredSearchTitle;
 
             var namesplit = Scrub(name);
             var groupsplit = Scrub(grouping.Key);
@@ -127,6 +127,7 @@ namespace anime_downloader.Classes
             _relevance = (double) data.Item2.Count(a => data.Item1.Contains(a)) / data.Item2.Length;
             Item = item;
         }
+
 
         public double Distance => _distance * (2 - _relevance);
 

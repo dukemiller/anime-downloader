@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
+using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -16,16 +17,20 @@ namespace anime_downloader.ViewModels
     {
         private int _selectedIndex;
 
-        private readonly ISettingsService _settings;
+        private readonly ICredentialsRepository _credentialsRepository;
+        private readonly IAnimeRepository _animeRepository;
         private readonly IAnimeService _animeService;
         private readonly IMyAnimeListService _malSevice;
         private readonly IFileService _fileService;
         private bool _doingAction;
 
-        public MiscViewModel(ISettingsService settings, IAnimeService animeService, 
-                             IMyAnimeListService malSevice, IFileService fileService)
+        public MiscViewModel(ICredentialsRepository credentialsRepository, 
+            IAnimeRepository animeRepository,
+            IAnimeService animeService,
+            IMyAnimeListService malSevice, IFileService fileService)
         {
-            _settings = settings;
+            _credentialsRepository = credentialsRepository;
+            _animeRepository = animeRepository;
             _animeService = animeService;
             _malSevice = malSevice;
             _fileService = fileService;
@@ -52,7 +57,7 @@ namespace anime_downloader.ViewModels
             }
         }
 
-        public bool LoggedIntoMal => _settings.MyAnimeListConfig.LoggedIn;
+        public bool LoggedIntoMal => _credentialsRepository.MyAnimeListConfig.LoggedIn;
 
         // 
 
@@ -72,7 +77,7 @@ namespace anime_downloader.ViewModels
                     names.Add(anime.Title);
                 }
 
-                _settings.Save();
+                _animeRepository.Save();
                 var result = names.Count > 0 ? string.Join(", ", names) : "no shows";
                 Methods.Alert($"Marked {result} as finished. ");
             }
@@ -91,7 +96,7 @@ namespace anime_downloader.ViewModels
 
                 var needsUpdating = _animeService
                     .AiringAndWatching
-                    .Where(a => a.MyAnimeList.HasId && a.MyAnimeList.TotalEpisodes == 0)
+                    .Where(a => a.Details.HasId && a.Details.TotalEpisodes == 0)
                     .ToList();
 
                 try
@@ -99,10 +104,10 @@ namespace anime_downloader.ViewModels
                     foreach (var anime in needsUpdating)
                     {
                         var remoteAnime = await _malSevice.GetFindResult(anime);
-                        if (!anime.MyAnimeList.TotalEpisodes.Equals(remoteAnime.TotalEpisodes))
+                        if (!anime.Details.TotalEpisodes.Equals(remoteAnime.TotalEpisodes))
                         {
                             updated.Add(anime.Title);
-                            anime.MyAnimeList.TotalEpisodes = remoteAnime.TotalEpisodes;
+                            anime.Details.TotalEpisodes = remoteAnime.TotalEpisodes;
                         }
                     }
 
@@ -147,7 +152,7 @@ namespace anime_downloader.ViewModels
                 else
                     Methods.Alert("No re-indexes were needed.");
             }
-            
+
             MessengerInstance.Send(new WorkMessage {Working = false});
             DoingAction = false;
         }

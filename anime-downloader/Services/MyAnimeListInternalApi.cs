@@ -12,6 +12,7 @@ using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Models.Configurations;
 using anime_downloader.Models.MyAnimeList;
+using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
@@ -23,7 +24,7 @@ namespace anime_downloader.Services
     /// </summary>
     public class MyAnimeListInternalApi : IMyAnimeListApi
     {
-        private readonly ISettingsService _settings;
+        private readonly ICredentialsRepository _credentialsRepository;
 
         private const string ApiAdd = "https://myanimelist.net/ownlist/anime/add.json";
 
@@ -43,21 +44,21 @@ namespace anime_downloader.Services
 
         private readonly HttpClient _client;
 
-        private readonly MyAnimeListCredentials _credentials;
+        private readonly ApiCredentials _credentials;
 
         private bool _clientReady;
 
         // 
 
-        public MyAnimeListInternalApi(ISettingsService settings)
+        public MyAnimeListInternalApi(ICredentialsRepository credentialsRepository)
         {
-            _settings = settings;
+            _credentialsRepository = credentialsRepository;
             _client = new HttpClient(new HttpClientHandler
             {
                 UseCookies = false,
                 AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
             });
-            _credentials = MyAnimeListCredentials.Load();
+            _credentials = _credentialsRepository.MyAnimeListConfig.Credentials;
         }
 
         // 
@@ -73,7 +74,7 @@ namespace anime_downloader.Services
 
         public async Task<IEnumerable<ProfileAnimeResult>> GetProfile()
         {
-            var url = string.Format(ApiProfile, _settings.MyAnimeListConfig.Username);
+            var url = string.Format(ApiProfile, _credentialsRepository.MyAnimeListConfig.Username);
             using (var client = new HttpClient())
             {
                 var request = (await client.GetAsync(url)).Content;
@@ -124,7 +125,7 @@ namespace anime_downloader.Services
             if (anime.Notes?.Length > 0)
             {
                 var pairs = new FormUrlEncodedContent(ToUpdatePairs(anime, _credentials.CsrfToken));
-                var url = string.Format(ApiUpdateDetailed, anime.MyAnimeList.Id);
+                var url = string.Format(ApiUpdateDetailed, anime.Details.Id);
                 var response = (await _client.PostAsync(url, pairs)).Content;
                 return response;
             }
@@ -140,7 +141,7 @@ namespace anime_downloader.Services
 
         // 
 
-        private NetworkCredential GetCredentials() => new NetworkCredential(_settings.MyAnimeListConfig.Username, _settings.MyAnimeListConfig.Password);
+        private NetworkCredential GetCredentials() => new NetworkCredential(_credentialsRepository.MyAnimeListConfig.Username, _credentialsRepository.MyAnimeListConfig.Password);
         
         private async Task SetupRequest()
         {
@@ -190,8 +191,8 @@ namespace anime_downloader.Services
 
                 var pairs = new Dictionary<string, string>
                 {
-                    {"user_name", _settings.MyAnimeListConfig.Username},
-                    {"password", _settings.MyAnimeListConfig.Password},
+                    {"user_name", _credentialsRepository.MyAnimeListConfig.Username},
+                    {"password", _credentialsRepository.MyAnimeListConfig.Password},
                     {"cookie", "1"},
                     {"sublogin", "Login"},
                     {"submit", "1"},
@@ -211,7 +212,7 @@ namespace anime_downloader.Services
                 _credentials.CsrfTokenLastRetrieved = DateTime.Now;
                 _credentials.Cookies = cookies;
 
-                await _credentials.Save();
+                _credentialsRepository.Save();
             }
         }
 
@@ -237,7 +238,7 @@ namespace anime_downloader.Services
                 _credentials.CsrfToken = csrf;
                 _credentials.CsrfTokenLastRetrieved = DateTime.Now;
 
-                await _credentials.Save();
+                _credentialsRepository.Save();
             }
         }
 
@@ -282,8 +283,8 @@ namespace anime_downloader.Services
 
         private static string ToShowRequestJson(Anime anime, string csrf)
         {
-            var episode = anime.MyAnimeList.SeriesContinuationEpisode != null
-                ? int.Parse(anime.MyAnimeList.SeriesContinuationEpisode)
+            var episode = anime.Details.SeriesContinuationEpisode != null
+                ? int.Parse(anime.Details.SeriesContinuationEpisode)
                 : anime.Episode;
 
             var rating = !string.IsNullOrEmpty(anime.Rating)
@@ -316,7 +317,7 @@ namespace anime_downloader.Services
 
             var request = new ShowRequest
             {
-                Id = int.Parse(anime.MyAnimeList.Id),
+                Id = int.Parse(anime.Details.Id),
                 Episodes = episode,
                 Score = rating,
                 Status = status,
@@ -328,7 +329,7 @@ namespace anime_downloader.Services
 
         private static Dictionary<string, string> ToUpdatePairs(Anime anime, string csrf)
         {
-            var episode = anime.MyAnimeList.SeriesContinuationEpisode ?? anime.Episode.ToString();
+            var episode = anime.Details.SeriesContinuationEpisode ?? anime.Episode.ToString();
             episode = episode.Replace("-", "");
 
             var rating = !string.IsNullOrEmpty(anime.Rating)
@@ -367,8 +368,8 @@ namespace anime_downloader.Services
 
             return new Dictionary<string, string>
             {
-                {"anime_id", anime.MyAnimeList.Id},
-                {"aeps", anime.MyAnimeList.TotalEpisodes.ToString()},
+                {"anime_id", anime.Details.Id},
+                {"aeps", anime.Details.TotalEpisodes.ToString()},
                 {"astatus", status},
                 {"add_anime[status]", status},
                 {"add_anime[num_watched_episodes]", episode},
@@ -394,37 +395,5 @@ namespace anime_downloader.Services
         }
     }
     
-    [Serializable]
-    public class MyAnimeListCredentials
-    {
-        [JsonIgnore] private static readonly string SettingsPath =
-            Path.Combine(PathConfiguration.ApplicationDirectory, "myanimelist.json");
-
-        [JsonProperty("cookies")]
-        public string Cookies { get; set; } = "";
-
-        [JsonProperty("csrf_token")]
-        public string CsrfToken { get; set; } = "";
-
-        [JsonProperty("csrf_token_last_retrieved")]
-        public DateTime CsrfTokenLastRetrieved { get; set; } = DateTime.MinValue;
-
-        [JsonIgnore]
-        public bool NeedNewToken => (DateTime.Now - CsrfTokenLastRetrieved).TotalMinutes > 120;
-
-        public static MyAnimeListCredentials Load()
-        {
-            if (File.Exists(SettingsPath))
-                using (var stream = new StreamReader(SettingsPath))
-                    return JsonConvert.DeserializeObject<MyAnimeListCredentials>(stream.ReadToEnd());
-
-            return new MyAnimeListCredentials();
-        }
-
-        public async Task Save()
-        {
-            using (var stream = new StreamWriter(SettingsPath))
-                await stream.WriteAsync(JsonConvert.SerializeObject(this, Formatting.Indented));
-        }
-    }
+    
 }

@@ -1,23 +1,23 @@
 ﻿using System;
-using System.Xml.Serialization;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
+using Newtonsoft.Json;
 
 namespace anime_downloader.Models
 {
     [Serializable]
     public class AnimeSeason
     {
-        [XmlAttribute("Year")]
+        [JsonProperty("year")]
         public int Year { get; set; }
 
-        [XmlAttribute("Season")]
+        [JsonProperty("season")]
         public Season Season { get; set; }
 
-        [XmlIgnore]
+        [JsonIgnore]
         public int Sort => (Year * 10) + (int) Season;
 
-        [XmlIgnore]
+        [JsonIgnore]
         public string Title => $"{Season.Description()} {Year}";
 
         public AnimeSeason Next()

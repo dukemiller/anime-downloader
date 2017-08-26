@@ -3,33 +3,34 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using anime_downloader.Enums;
 using GalaSoft.MvvmLight;
+using Newtonsoft.Json;
 
 namespace anime_downloader.Models
 {
     [Serializable]
-    public sealed class MyAnimeListDetails : ObservableObject
+    public sealed class AnimeDetails : ObservableObject
     {
         private static int CurrentYear() => DateTime.Now.Year;
 
         private static Season CurrentSeason() => (Season) Math.Ceiling(Convert.ToDouble(DateTime.Now.Month) / 3);
 
-        private string _english;
+        private string _english = "";
 
-        private string _id;
+        private string _id = "";
 
         private bool _needsUpdating;
 
         private int _overallTotal;
 
-        private string _synonyms;
+        private string _synonyms = "";
 
-        private string _synopsis;
+        private string _synopsis = "";
 
-        private string _title;
+        private string _title = "";
 
         private int _totalEpisodes;
 
-        [XmlAttribute("id")]
+        [JsonProperty("id")]
         public string Id
         {
             get => _id;
@@ -40,17 +41,17 @@ namespace anime_downloader.Models
             }
         }
 
-        [XmlAttribute("synopsis")]
+        [JsonProperty("synopsis")]
         public string Synopsis
         {
             get => _synopsis;
             set => Set(() => Synopsis, ref _synopsis, value);
         }
 
-        [XmlAttribute("image")]
+        [JsonProperty("image")]
         public string Image { get; set; }
 
-        [XmlAttribute("title")]
+        [JsonProperty("title")]
         public string Title
         {
             get => _title;
@@ -61,7 +62,7 @@ namespace anime_downloader.Models
             }
         }
 
-        [XmlAttribute("english")]
+        [JsonProperty("english")]
         public string English
         {
             get => _english;
@@ -72,7 +73,7 @@ namespace anime_downloader.Models
             }
         }
 
-        [XmlAttribute("synonyms")]
+        [JsonProperty("synonyms")]
         public string Synonyms
         {
             get => _synonyms;
@@ -83,14 +84,14 @@ namespace anime_downloader.Models
             }
         }
 
-        [XmlAttribute("needs_updates")]
+        [JsonProperty("needs_updates")]
         public bool NeedsUpdating
         {
             get => _needsUpdating;
             set => Set(() => NeedsUpdating, ref _needsUpdating, value);
         }
 
-        [XmlAttribute("total_episodes")]
+        [JsonProperty("total_episodes")]
         public int TotalEpisodes
         {
             get => _totalEpisodes;
@@ -101,7 +102,7 @@ namespace anime_downloader.Models
             }
         }
 
-        [XmlAttribute("overall_total")]
+        [JsonProperty("overall_total")]
         public int OverallTotal
         {
             get => _overallTotal;
@@ -112,20 +113,21 @@ namespace anime_downloader.Models
             }
         }
 
-        [XmlAttribute("series_continuation_episode")]
+        [JsonProperty("series_continuation_episode")]
         public string SeriesContinuationEpisode { get; set; }
         
-        [XmlElement("aired")]
+        [JsonProperty("aired")]
         public AnimeSeason Aired { get; set; }
 
-        [XmlElement("ended")]
+        [JsonProperty("ended")]
         public AnimeSeason Ended { get; set; }
 
-        [XmlElement("preferred_search_title")]
+        [JsonProperty("preferred_search_title")]
         public string PreferredSearchTitle { get; set; }
 
         // 
 
+        [JsonIgnore]
         public bool AiringNow
         {
             /*
@@ -151,16 +153,16 @@ namespace anime_downloader.Models
             }
         }
 
-        [XmlIgnore]
+        [JsonIgnore]
         public int Total => OverallTotal > 0 ? OverallTotal : TotalEpisodes;
 
-        [XmlIgnore]
+        [JsonIgnore]
         public bool HasId => !string.IsNullOrEmpty(Id);
 
-        [XmlIgnore]
+        [JsonIgnore]
         public IEnumerable<string> TitleAndEnglish => new[] {Title, English};
 
-        [XmlIgnore]
+        [JsonIgnore]
         public IEnumerable<string> SynonymsSplit => Synonyms.Split(';');
     }
 }

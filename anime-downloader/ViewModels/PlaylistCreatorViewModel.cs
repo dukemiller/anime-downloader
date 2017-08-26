@@ -6,6 +6,7 @@ using anime_downloader.Classes;
 using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Models.Configurations;
+using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -44,7 +45,7 @@ namespace anime_downloader.ViewModels
 
         private readonly IFileService _fileService;
 
-        private readonly ISettingsService _settings;
+        private readonly ISettingsRepository _settings;
 
         private bool _additionalEpisodesFirst;
         
@@ -60,7 +61,7 @@ namespace anime_downloader.ViewModels
 
         // 
 
-        public PlaylistCreatorViewModel(ISettingsService settings, IFileService fileService)
+        public PlaylistCreatorViewModel(ISettingsRepository settings, IFileService fileService)
         {
             _settings = settings;
             _fileService = fileService;

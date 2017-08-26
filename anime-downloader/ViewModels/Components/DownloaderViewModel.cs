@@ -7,6 +7,7 @@ using System.Windows;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
 using anime_downloader.Models;
+using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 
@@ -16,7 +17,7 @@ namespace anime_downloader.ViewModels.Components
     {
         private string _text;
 
-        private readonly ISettingsService _settings;
+        private readonly ISettingsRepository _settings;
 
         private readonly IFileService _fileService;
 
@@ -24,7 +25,7 @@ namespace anime_downloader.ViewModels.Components
 
         private readonly IDownloadService _downloadService;
 
-        public DownloaderViewModel(ISettingsService settings, IFileService fileService,
+        public DownloaderViewModel(ISettingsRepository settings, IFileService fileService,
             IAnimeService animeService, IDownloadService downloadService)
         {
             _settings = settings;

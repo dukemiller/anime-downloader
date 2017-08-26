@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
+using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -10,11 +11,13 @@ namespace anime_downloader.ViewModels
     public class SettingsViewModel : ViewModelBase
     {
         private bool _changeMade;
-        private ISettingsService _settings;
+        private ISettingsRepository _settings;
+        private ICredentialsRepository _credentials;
         private string _subgroups;
 
-        public SettingsViewModel(ISettingsService settings)
+        public SettingsViewModel(ISettingsRepository settings, ICredentialsRepository credentials)
         {
+            _credentials = credentials;
             Settings = settings;
             Subgroups = string.Join(", ", Settings.Subgroups);
 
@@ -26,15 +29,22 @@ namespace anime_downloader.ViewModels
                 ChangeMade = false;
             });
 
-            Settings.MyAnimeListConfig.PropertyChanged += Model_PropertyChanged;
+            Credentials.MyAnimeListConfig.PropertyChanged += Model_PropertyChanged;
+            Credentials.AniListConfiguration.PropertyChanged += Model_PropertyChanged;
             Settings.FlagConfig.PropertyChanged += Model_PropertyChanged;
             Settings.PathConfig.PropertyChanged += Model_PropertyChanged;
         }
         
-        public ISettingsService Settings
+        public ISettingsRepository Settings
         {
             get => _settings;
             set => Set(() => Settings, ref _settings, value);
+        }
+
+        public ICredentialsRepository Credentials
+        {
+            get => _credentials;
+            set => Set(() => Credentials, ref _credentials, value);
         }
 
         public string Subgroups

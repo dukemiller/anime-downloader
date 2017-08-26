@@ -43,7 +43,7 @@ namespace anime_downloader.Services
         public async Task Update(Anime anime)
         {
             await _api.UpdateAsync(anime);
-            anime.MyAnimeList.NeedsUpdating = false;
+            anime.Details.NeedsUpdating = false;
         }
 
         public async Task Add(Anime anime) => await _api.AddAsync(anime);
@@ -52,9 +52,9 @@ namespace anime_downloader.Services
 
         public async Task<bool> GetId(Anime anime)
         {
-            var query = string.IsNullOrEmpty(anime.MyAnimeList.PreferredSearchTitle)
+            var query = string.IsNullOrEmpty(anime.Details.PreferredSearchTitle)
                 ? anime.Title
-                : anime.MyAnimeList.PreferredSearchTitle;
+                : anime.Details.PreferredSearchTitle;
 
             // get all results from searching the name
             var animeResults = (await _api.FindAsync(query.Replace(":", " "))).ToList();
@@ -131,8 +131,8 @@ namespace anime_downloader.Services
                     }
 
                     // keep track of episodes to update instead in this variable
-                    anime.MyAnimeList.SeriesContinuationEpisode = (anime.Episode - total).ToString();
-                    anime.MyAnimeList.OverallTotal = total;
+                    anime.Details.SeriesContinuationEpisode = (anime.Episode - total).ToString();
+                    anime.Details.OverallTotal = total;
                 }
 
             AddDataToAnime(anime, result);
@@ -144,41 +144,41 @@ namespace anime_downloader.Services
         {
 
             // add all the details available
-            anime.MyAnimeList.Id = result.Id;
+            anime.Details.Id = result.Id;
 
-            if (anime.MyAnimeList.TotalEpisodes <= 0)
-                anime.MyAnimeList.TotalEpisodes = result.TotalEpisodes;
+            if (anime.Details.TotalEpisodes <= 0)
+                anime.Details.TotalEpisodes = result.TotalEpisodes;
 
-            if (string.IsNullOrEmpty(anime.MyAnimeList.Synopsis) || result.Synopsis.Length > anime.MyAnimeList.Synopsis?.Length)
-                anime.MyAnimeList.Synopsis = result.Synopsis;
+            if (string.IsNullOrEmpty(anime.Details.Synopsis) || result.Synopsis.Length > anime.Details.Synopsis?.Length)
+                anime.Details.Synopsis = result.Synopsis;
 
-            if (string.IsNullOrEmpty(anime.MyAnimeList.Image))
-                anime.MyAnimeList.Image = result.Image;
+            if (string.IsNullOrEmpty(anime.Details.Image))
+                anime.Details.Image = result.Image;
 
-            if (string.IsNullOrEmpty(anime.MyAnimeList.Title))
-                anime.MyAnimeList.Title = result.Title;
+            if (string.IsNullOrEmpty(anime.Details.Title))
+                anime.Details.Title = result.Title;
 
-            if (string.IsNullOrEmpty(anime.MyAnimeList.English))
-                anime.MyAnimeList.English = result.English;
+            if (string.IsNullOrEmpty(anime.Details.English))
+                anime.Details.English = result.English;
 
-            anime.MyAnimeList.Synonyms = result.Synonyms;
+            anime.Details.Synonyms = result.Synonyms;
 
-            if (anime.MyAnimeList.Aired == null)
+            if (anime.Details.Aired == null)
             {
                 if (DateTime.TryParse(result.StartDate, out DateTime date))
                 {
-                    anime.MyAnimeList.Aired = new AnimeSeason
+                    anime.Details.Aired = new AnimeSeason
                     {
                         Year = date.Year,
                         Season = (Season)Math.Ceiling(Convert.ToDouble(date.Month) / 3)
                     };
                 }
             }
-            if (anime.MyAnimeList.Ended == null)
+            if (anime.Details.Ended == null)
             {
                 if (DateTime.TryParse(result.EndDate, out DateTime end))
                 {
-                    anime.MyAnimeList.Ended = new AnimeSeason
+                    anime.Details.Ended = new AnimeSeason
                     {
                         Year = end.Year,
                         Season = (Season) Math.Ceiling(Convert.ToDouble(end.Month) / 3)
@@ -193,7 +193,7 @@ namespace anime_downloader.Services
             foreach (var anime in _anime.NeedsUpdates)
             {
                 // If it needs adding, add it
-                if (string.IsNullOrEmpty(anime.MyAnimeList.Id))
+                if (string.IsNullOrEmpty(anime.Details.Id))
                 {
                     if (await GetId(anime))
                         await Add(anime);
@@ -208,25 +208,25 @@ namespace anime_downloader.Services
 
         public async Task<bool> Refresh(Anime anime)
         {
-            if (!anime.MyAnimeList.HasId)
+            if (!anime.Details.HasId)
                 return false;
 
-            var animeResults = await Find(HttpUtility.UrlEncode(anime.MyAnimeList.Title));
-            var result = animeResults.FirstOrDefault(r => r.Id.Equals(anime.MyAnimeList.Id));
+            var animeResults = await Find(HttpUtility.UrlEncode(anime.Details.Title));
+            var result = animeResults.FirstOrDefault(r => r.Id.Equals(anime.Details.Id));
 
             if (result == null)
                 return false;
 
-            anime.MyAnimeList.Synopsis = result.Synopsis;
-            anime.MyAnimeList.Image = result.Image;
-            anime.MyAnimeList.Title = result.Title;
-            anime.MyAnimeList.English = result.English;
-            anime.MyAnimeList.Synopsis = result.Synopsis;
-            anime.MyAnimeList.TotalEpisodes = result.TotalEpisodes;
+            anime.Details.Synopsis = result.Synopsis;
+            anime.Details.Image = result.Image;
+            anime.Details.Title = result.Title;
+            anime.Details.English = result.English;
+            anime.Details.Synopsis = result.Synopsis;
+            anime.Details.TotalEpisodes = result.TotalEpisodes;
 
             if (DateTime.TryParse(result.StartDate, out DateTime start))
             {
-                anime.MyAnimeList.Aired = new AnimeSeason
+                anime.Details.Aired = new AnimeSeason
                 {
                     Year = start.Year,
                     Season = (Season)Math.Ceiling(Convert.ToDouble(start.Month) / 3)
@@ -235,7 +235,7 @@ namespace anime_downloader.Services
 
             if (DateTime.TryParse(result.EndDate, out DateTime end))
             {
-                anime.MyAnimeList.Ended = new AnimeSeason
+                anime.Details.Ended = new AnimeSeason
                 {
                     Year = end.Year,
                     Season = (Season)Math.Ceiling(Convert.ToDouble(end.Month) / 3)
@@ -273,8 +273,8 @@ namespace anime_downloader.Services
 
         public async Task<FindResult> GetFindResult(Anime anime)
         {
-            var animeResults = await Find(HttpUtility.UrlEncode(anime.MyAnimeList.Title));
-            var result = animeResults.FirstOrDefault(r => r.Id.Equals(anime.MyAnimeList.Id));
+            var animeResults = await Find(HttpUtility.UrlEncode(anime.Details.Title));
+            var result = animeResults.FirstOrDefault(r => r.Id.Equals(anime.Details.Id));
             return result;
         }
     }

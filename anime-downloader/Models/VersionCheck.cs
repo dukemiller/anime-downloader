@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Xml.Serialization;
 using GalaSoft.MvvmLight;
+using Newtonsoft.Json;
 
 namespace anime_downloader.Models
 {
@@ -13,14 +14,14 @@ namespace anime_downloader.Models
 
         // 
 
-        [XmlAttribute("needs_update")]
+        [JsonProperty("needs_update")]
         public bool NeedsUpdate
         {
             get => _needsUpdate;
             set => Set(() => NeedsUpdate, ref _needsUpdate, value);
         }
 
-        [XmlAttribute("last_checked")]
+        [JsonProperty("last_checked")]
         public DateTime LastChecked
         {
             get => _lastChecked;

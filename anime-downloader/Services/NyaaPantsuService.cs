@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using anime_downloader.Models;
 using anime_downloader.Models.Abstract;
+using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Abstract;
 using anime_downloader.Services.Interfaces;
 
@@ -21,15 +22,18 @@ namespace anime_downloader.Services
 
         private const string BySeeders = "5";
 
-        protected override ISettingsService SettingsService { get; }
+        protected override ISettingsRepository SettingsRepository { get; }
+
+        protected override IAnimeRepository AnimeRepository { get; }
 
         protected override IAnimeService AnimeService { get; }
 
         protected override WebClient Downloader { get; }
 
-        public NyaaPantsuService(ISettingsService settingsService, IAnimeService animeService)
+        public NyaaPantsuService(ISettingsRepository settingsRepository, IAnimeRepository animeRepository, IAnimeService animeService)
         {
-            SettingsService = settingsService;
+            SettingsRepository = settingsRepository;
+            AnimeRepository = animeRepository;
             AnimeService = animeService;
             Downloader = new WebClient();
         }
@@ -48,11 +52,16 @@ namespace anime_downloader.Services
                               "&max=20" +
                               $"&q={TransformEpisodeSearch(name, episode)}");
 
+            // https://nyaa.pantsu.cat/feed
+            // ?c=3_5&limit=50&order=false&q=new+game%21%21&s=0&sort=5&userID=0
+
             using (var client = new WebClient())
             {
                 var html = await client.DownloadStringTaskAsync(url);
                 document.LoadXml(html);
             }
+
+            Console.WriteLine(document);
             
             var result = document.SelectNodes("//item")
                 ?.Cast<XmlNode>()

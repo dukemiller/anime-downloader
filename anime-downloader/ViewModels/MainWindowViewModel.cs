@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
+using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
 using anime_downloader.ViewModels.Dialogs;
 using GalaSoft.MvvmLight;
@@ -193,7 +194,9 @@ namespace anime_downloader.ViewModels
 
         private void CreateTray()
         {
-            _tray = new Tray(SimpleIoc.Default.GetInstance<ISettingsService>());
+            _tray = new Tray(
+                SimpleIoc.Default.GetInstance<ISettingsRepository>(),
+                SimpleIoc.Default.GetInstance<ICredentialsRepository>());
         }
     }
 }

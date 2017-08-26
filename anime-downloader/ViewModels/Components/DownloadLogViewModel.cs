@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 
@@ -10,9 +11,9 @@ namespace anime_downloader.ViewModels.Components
     {
         private string _text;
 
-        private readonly ISettingsService _settings;
+        private readonly ISettingsRepository _settings;
 
-        public DownloadLogViewModel(ISettingsService settings)
+        public DownloadLogViewModel(ISettingsRepository settings)
         {
             _settings = settings;
         }

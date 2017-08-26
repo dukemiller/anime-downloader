@@ -7,6 +7,7 @@ using anime_downloader.Classes;
 using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Models.Configurations;
+using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
 
 namespace anime_downloader.Services
@@ -19,12 +20,12 @@ namespace anime_downloader.Services
             ".mkv", ".mp4", ".avi"
         };
 
-        public FileService(ISettingsService settings)
+        public FileService(ISettingsRepository settings)
         {
             _settings = settings;
         }
 
-        private readonly ISettingsService _settings;
+        private readonly ISettingsRepository _settings;
 
         /* Easy debug functions */
         

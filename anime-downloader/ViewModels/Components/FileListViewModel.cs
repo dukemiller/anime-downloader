@@ -309,8 +309,8 @@ namespace anime_downloader.ViewModels.Components
             if (SelectedFile == null)
                 return;
             var anime = _fileService.ClosestAnime(_animeService.Animes, SelectedFile);
-            if (anime != null && anime.MyAnimeList.HasId)
-                    Process.Start($"http://myanimelist.net/anime/{anime.MyAnimeList.Id}");
+            if (anime != null && anime.Details.HasId)
+                    Process.Start($"http://myanimelist.net/anime/{anime.Details.Id}");
         }
 
         private void CreateMethodLogic(object sender, FileSystemEventArgs args)

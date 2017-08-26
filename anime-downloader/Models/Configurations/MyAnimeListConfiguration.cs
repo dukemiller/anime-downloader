@@ -1,37 +1,47 @@
 ﻿using System;
-using System.Xml.Serialization;
+using anime_downloader.Models.MyAnimeList;
 using GalaSoft.MvvmLight;
+using Newtonsoft.Json;
 
 namespace anime_downloader.Models.Configurations
 {
     [Serializable]
     public class MyAnimeListConfiguration : ObservableObject
     {
-        private string _password;
+        private string _password = "";
 
-        private string _username;
+        private string _username = "";
 
         private bool _loggedIn;
 
-        [XmlAttribute("username")]
+        private ApiCredentials _credentials = new ApiCredentials();
+
+        [JsonProperty("username")]
         public string Username
         {
             get => _username;
             set => Set(() => Username, ref _username, value);
         }
 
-        [XmlAttribute("password")]
+        [JsonProperty("password")]
         public string Password
         {
             get => _password;
             set => Set(() => Password, ref _password, value);
         }
 
-        [XmlAttribute("logged_in")]
+        [JsonProperty("logged_in")]
         public bool LoggedIn
         {
             get => _loggedIn;
             set => Set(() => LoggedIn, ref _loggedIn, value);
+        }
+
+        [JsonProperty("api")]
+        public ApiCredentials Credentials
+        {
+            get => _credentials;
+            set => Set(() => Credentials, ref _credentials, value);
         }
     }
 }

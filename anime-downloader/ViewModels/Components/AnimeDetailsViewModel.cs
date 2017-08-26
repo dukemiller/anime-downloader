@@ -7,6 +7,8 @@ using System.Windows;
 using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Models.AniList;
+using anime_downloader.Repositories;
+using anime_downloader.Repositories.Interface;
 using anime_downloader.Services;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
@@ -18,8 +20,9 @@ namespace anime_downloader.ViewModels.Components
     public class AnimeDetailsViewModel : ViewModelBase
     {
         private static readonly WebClient Downloader = new WebClient();
+        private ISettingsRepository _settingsRepository;
         private readonly IAnimeService _animeService;
-        private ISettingsService _settings;
+        private IAnimeRepository _animeRepository;
         private Anime _anime;
         private RelayCommand _command;
         private MyAnimeListBarViewModel _myAnimeListBar;
@@ -28,9 +31,10 @@ namespace anime_downloader.ViewModels.Components
 
         // 
 
-        public AnimeDetailsViewModel(ISettingsService settings, IAnimeService animeService)
+        public AnimeDetailsViewModel(IAnimeRepository animeRepository, ISettingsRepository settingsRepository, IAnimeService animeService)
         {
-            Settings = settings;
+            AnimeRepository = animeRepository;
+            SettingsRepository = settingsRepository;
             _animeService = animeService;
 
             // Behaviors that are the same no matter what condition
@@ -46,7 +50,7 @@ namespace anime_downloader.ViewModels.Components
 
             ExitCommand = new RelayCommand(() =>
             {
-                Settings.Save();
+                AnimeRepository.Save();
                 MessengerInstance.Send(ViewDisplay.Anime);
             });
 
@@ -72,7 +76,7 @@ namespace anime_downloader.ViewModels.Components
                 Status = Status.Watching,
                 Resolution = "720",
                 Airing = true,
-                MyAnimeList = { NeedsUpdating = true }
+                Details = { NeedsUpdating = true }
             };
 
             Image = "../../Resources/Images/default.png";
@@ -101,7 +105,7 @@ namespace anime_downloader.ViewModels.Components
                 Status = Status.Watching,
                 Resolution = "720",
                 Airing = true,
-                MyAnimeList =
+                Details =
                 {
                     NeedsUpdating = true,
                     Image = airing.ImagePath,
@@ -129,16 +133,22 @@ namespace anime_downloader.ViewModels.Components
 
         // 
 
-        public Visibility HasIdOrTotal => Anime.MyAnimeList.HasId || Anime.MyAnimeList.TotalEpisodes > 0
+        public Visibility HasIdOrTotal => Anime.Details.HasId || Anime.Details.TotalEpisodes > 0
             ? Visibility.Visible
             : Visibility.Collapsed;
 
         public static IEnumerable<Status> Statuses => Enum.GetValues(typeof(Status)).Cast<Status>();
 
-        public ISettingsService Settings
+        public IAnimeRepository AnimeRepository
         {
-            get => _settings;
-            set => Set(() => Settings, ref _settings, value);
+            get => _animeRepository;
+            set => Set(() => AnimeRepository, ref _animeRepository, value);
+        }
+
+        public ISettingsRepository SettingsRepository
+        {
+            get => _settingsRepository;
+            set { Set(() => SettingsRepository, ref _settingsRepository, value); }
         }
 
         public string Text
@@ -193,12 +203,12 @@ namespace anime_downloader.ViewModels.Components
 
         private void SetupImage()
         {
-            if (File.Exists(Anime.MyAnimeList.Image))
-                Image = Anime.MyAnimeList.Image;
+            if (File.Exists(Anime.Details.Image))
+                Image = Anime.Details.Image;
 
-            else if (Anime.MyAnimeList.HasId)
+            else if (Anime.Details.HasId)
             {
-                if (Anime.MyAnimeList.Image.Contains("https://"))
+                if (Anime.Details.Image.Contains("https://"))
                     DownloadImage();
                 else
                     Image = "../../Resources/Images/default.png";
@@ -210,8 +220,8 @@ namespace anime_downloader.ViewModels.Components
 
         private async void DownloadImage()
         {
-            var image = Anime.MyAnimeList.Image;
-            var downloadPath = Path.Combine(XmlSettingsService.ImageDirectory, $"{Anime.MyAnimeList.Id}.png");
+            var image = Anime.Details.Image;
+            var downloadPath = Path.Combine(Repositories.SettingsRepository.ImageDirectory, $"{Anime.Details.Id}.png");
 
             try
             {
@@ -222,13 +232,13 @@ namespace anime_downloader.ViewModels.Components
                 if (new FileInfo(downloadPath).Length / 1024 <= 15)
                 {
                     File.Delete(downloadPath);
-                    Anime.MyAnimeList.Image = "../../Resources/Images/default.png";
+                    Anime.Details.Image = "../../Resources/Images/default.png";
                 }
 
                 else
-                    Anime.MyAnimeList.Image = downloadPath;
+                    Anime.Details.Image = downloadPath;
 
-                Image = Anime.MyAnimeList.Image;
+                Image = Anime.Details.Image;
             }
 
             catch
@@ -239,7 +249,7 @@ namespace anime_downloader.ViewModels.Components
 
         private void Edit()
         {
-            Settings.Save();
+            AnimeRepository.Save();
             MessengerInstance.Send(ViewDisplay.Anime);
         }
 
@@ -258,7 +268,7 @@ namespace anime_downloader.ViewModels.Components
 
         private void Next()
         {
-            Settings.Save();
+            AnimeRepository.Save();
             var animes = _animeService.FilteredAndSorted().ToList();
             var anime = animes.First(an => an.Name.Equals(Anime.Name));
             var position = (animes.IndexOf(anime) + 1) % animes.Count;
@@ -267,7 +277,7 @@ namespace anime_downloader.ViewModels.Components
 
         private void Previous()
         {
-            Settings.Save();
+            AnimeRepository.Save();
             var animes = _animeService.FilteredAndSorted().ToList();
             var anime = animes.First(an => an.Name.Equals(Anime.Name));
             var position = animes.IndexOf(anime) - 1 >= 0 ? animes.IndexOf(anime) - 1 : animes.Count - 1;

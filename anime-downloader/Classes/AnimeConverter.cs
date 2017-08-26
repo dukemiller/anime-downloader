@@ -24,7 +24,7 @@ namespace anime_downloader.Classes
                 Status = status,
                 Airing = airing,
                 Resolution = "720",
-                MyAnimeList = new MyAnimeListDetails
+                Details = new AnimeDetails
                 {
                     Id = profileAnimeResult.SeriesAnimedbId,
                     Synonyms = profileAnimeResult.SeriesSynonyms,
@@ -40,7 +40,7 @@ namespace anime_downloader.Classes
             // Date stuff
             if (DateTime.TryParse(profileAnimeResult.SeriesStart, out DateTime start))
             {
-                anime.MyAnimeList.Aired = new AnimeSeason
+                anime.Details.Aired = new AnimeSeason
                 {
                     Year = start.Year,
                     Season = (Season)Math.Ceiling(Convert.ToDouble(start.Month) / 3)
@@ -49,7 +49,7 @@ namespace anime_downloader.Classes
 
             if (DateTime.TryParse(profileAnimeResult.SeriesEnd, out DateTime end))
             {
-                anime.MyAnimeList.Ended = new AnimeSeason
+                anime.Details.Ended = new AnimeSeason
                 {
                     Year = end.Year,
                     Season = (Season)Math.Ceiling(Convert.ToDouble(end.Month) / 3)

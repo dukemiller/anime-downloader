@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Models.Abstract;
+using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Abstract;
 using anime_downloader.Services.Interfaces;
 using HtmlAgilityPack;
@@ -23,9 +24,10 @@ namespace anime_downloader.Services
 
         // 
 
-        public NyaaService(ISettingsService settingsService, IAnimeService animeService)
+        public NyaaService(ISettingsRepository settingsRepository, IAnimeRepository animeRepository, IAnimeService animeService)
         {
-            SettingsService = settingsService;
+            SettingsRepository = settingsRepository;
+            AnimeRepository = animeRepository;
             AnimeService = animeService;
             Downloader = new WebClient();
         }
@@ -34,7 +36,9 @@ namespace anime_downloader.Services
 
         public override string ServiceUrl => "https://www.nyaa.se/";
 
-        protected override ISettingsService SettingsService { get; }
+        protected override ISettingsRepository SettingsRepository { get; }
+
+        protected override IAnimeRepository AnimeRepository { get; }
 
         protected override IAnimeService AnimeService { get; }
 

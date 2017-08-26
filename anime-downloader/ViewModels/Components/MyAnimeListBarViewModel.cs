@@ -2,6 +2,7 @@
 using System.Windows;
 using anime_downloader.Classes;
 using anime_downloader.Models;
+using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -12,8 +13,8 @@ namespace anime_downloader.ViewModels.Components
     {
         private Anime _anime;
 
-        private readonly ISettingsService _settings;
-
+        private readonly ICredentialsRepository _credentialsRepository;
+        private readonly IAnimeRepository _animeRepository;
         private readonly IMyAnimeListService _malService;
         private bool _loggedIntoMal;
         private bool _hasId;
@@ -21,20 +22,23 @@ namespace anime_downloader.ViewModels.Components
 
         // 
 
-        public MyAnimeListBarViewModel(ISettingsService settings, IMyAnimeListService malService)
+        public MyAnimeListBarViewModel(ICredentialsRepository credentialsRepository,
+            IAnimeRepository animeRepository,
+            IMyAnimeListService malService)
         {
-            _settings = settings;
+            _credentialsRepository = credentialsRepository;
+            _animeRepository = animeRepository;
             _malService = malService;
 
-            FindCommand = new RelayCommand(Find, () => _settings.MyAnimeListConfig.LoggedIn);
+            FindCommand = new RelayCommand(Find, () => _credentialsRepository.MyAnimeListConfig.LoggedIn);
             ClearCommand = new RelayCommand(Clear);
             ProfileCommand = new RelayCommand(Profile);
             RefreshCommand = new RelayCommand(Refresh);
 
-            _settings.MyAnimeListConfig.PropertyChanged += (sender, args) =>
+            _credentialsRepository.MyAnimeListConfig.PropertyChanged += (sender, args) =>
             {
                 if (args.PropertyName.Equals("LoggedIn"))
-                    LoggedIntoMal = _settings.MyAnimeListConfig.LoggedIn;
+                    LoggedIntoMal = _credentialsRepository.MyAnimeListConfig.LoggedIn;
             };
         }
 
@@ -42,15 +46,15 @@ namespace anime_downloader.ViewModels.Components
         {
             _anime = anime;
 
-            LoggedIntoMal = _settings.MyAnimeListConfig.LoggedIn;
-            HasId = _anime.MyAnimeList.HasId;
+            LoggedIntoMal = _credentialsRepository.MyAnimeListConfig.LoggedIn;
+            HasId = _anime.Details.HasId;
             HasIdVisibility = HasId ? Visibility.Visible : Visibility.Collapsed;
 
-            _anime.MyAnimeList.PropertyChanged += (sender, args) =>
+            _anime.Details.PropertyChanged += (sender, args) =>
             {
                 if (args.PropertyName.Equals("Id"))
                 {
-                    HasId = _anime.MyAnimeList.HasId;
+                    HasId = _anime.Details.HasId;
                     HasIdVisibility = HasId ? Visibility.Visible : Visibility.Collapsed;
                 }
             };
@@ -93,7 +97,7 @@ namespace anime_downloader.ViewModels.Components
             MessengerInstance.Send(new WorkMessage {Working = true});
             var id = await _malService.GetId(_anime);
             RaisePropertyChanged(nameof(HasIdVisibility));
-            _settings.Save();
+            _animeRepository.Save();
             if (!id)
                 Methods.Alert($"No ID found for {_anime.Name}.");
             MessengerInstance.Send(new WorkMessage {Working = false});
@@ -106,13 +110,13 @@ namespace anime_downloader.ViewModels.Components
                 MessageBoxButton.YesNo);
             if (response == MessageBoxResult.Yes)
             {
-                _anime.MyAnimeList = new MyAnimeListDetails {Id = null, NeedsUpdating = true};
+                _anime.Details = new AnimeDetails {Id = null, NeedsUpdating = true};
                 RaisePropertyChanged(nameof(HasIdVisibility));
-                _settings.Save();
+                _animeRepository.Save();
             }
         }
 
-        private void Profile() => Process.Start($"http://myanimelist.net/anime/{_anime.MyAnimeList.Id}");
+        private void Profile() => Process.Start($"http://myanimelist.net/anime/{_anime.Details.Id}");
 
         private async void Refresh()
         {

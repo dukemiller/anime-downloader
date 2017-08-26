@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Web;
 using anime_downloader.Classes;
 using anime_downloader.Models.Configurations;
+using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
 using anime_downloader.ViewModels.Components;
 using anime_downloader.Views.Dialogs;
@@ -24,7 +25,7 @@ namespace anime_downloader.ViewModels
 
         private bool _loggedIn;
 
-        private readonly ISettingsService _settingsService;
+        private readonly ICredentialsRepository _credentialsRepository;
 
         private readonly IAnimeService _animeService;
 
@@ -40,14 +41,14 @@ namespace anime_downloader.ViewModels
 
         private RelayCommand _logCommand;
 
-        public WebViewModel(ISettingsService settingsService,
+        public WebViewModel(ICredentialsRepository credentialsRepository,
             IAnimeService animeService,
             IMyAnimeListService malService,
             IMyAnimeListApi api,
             IDownloadService downloadService)
         {
             DownloadService = downloadService;
-            _settingsService = settingsService;
+            _credentialsRepository = credentialsRepository;
             _animeService = animeService;
             _malService = malService;
             _api = api;
@@ -158,18 +159,18 @@ namespace anime_downloader.ViewModels
             // MyAnimeList
 
             ProfileCommand = new RelayCommand(
-                () => Process.Start($"http://myanimelist.net/profile/{_settingsService.MyAnimeListConfig.Username}"),
-                () => _settingsService.MyAnimeListConfig.LoggedIn
+                () => Process.Start($"http://myanimelist.net/profile/{_credentialsRepository.MyAnimeListConfig.Username}"),
+                () => _credentialsRepository.MyAnimeListConfig.LoggedIn
             );
 
             ImportCommand = new RelayCommand(
                 Import, 
-                () => _settingsService.MyAnimeListConfig.LoggedIn
+                () => _credentialsRepository.MyAnimeListConfig.LoggedIn
             );
 
             SyncCommand = new RelayCommand(
                 Sync, 
-                () => _settingsService.MyAnimeListConfig.LoggedIn && !Synced
+                () => _credentialsRepository.MyAnimeListConfig.LoggedIn && !Synced
             );
         }
 
@@ -182,7 +183,7 @@ namespace anime_downloader.ViewModels
 
         private void CheckSyncAndLog()
         {
-            LoggedIn = _settingsService.MyAnimeListConfig.LoggedIn;
+            LoggedIn = _credentialsRepository.MyAnimeListConfig.LoggedIn;
 
             if (LoggedIn)
             {
@@ -233,9 +234,9 @@ namespace anime_downloader.ViewModels
                 return;
 
             MessengerInstance.Send(new WorkMessage {Working = true});
-            _settingsService.MyAnimeListConfig = result;
-            _settingsService.MyAnimeListConfig.LoggedIn = await _api.VerifyCredentialsAsync();
-            _settingsService.Save();
+            _credentialsRepository.MyAnimeListConfig = result;
+            _credentialsRepository.MyAnimeListConfig.LoggedIn = await _api.VerifyCredentialsAsync();
+            _credentialsRepository.Save();
             MessengerInstance.Send(new WorkMessage {Working = false});
 
             LoginAttempt = DateTime.Now.AddSeconds(5);
@@ -244,8 +245,8 @@ namespace anime_downloader.ViewModels
 
         private void Logout()
         {
-            _settingsService.MyAnimeListConfig = new MyAnimeListConfiguration();
-            _settingsService.Save();
+            _credentialsRepository.MyAnimeListConfig = new MyAnimeListConfiguration();
+            _credentialsRepository.Save();
             CheckSyncAndLog();
         }
 
@@ -254,7 +255,7 @@ namespace anime_downloader.ViewModels
             MessengerInstance.Send(new WorkMessage { Working = true });
             var animes = await Task.Run(async () => await _malService.GetProfileAnime());
             foreach (var anime in animes)
-                if (!_animeService.Animes.Any(a => a.MyAnimeList.Id.Equals(anime.MyAnimeList.Id)))
+                if (!_animeService.Animes.Any(a => a.Details.Id.Equals(anime.Details.Id)))
                     _animeService.Add(anime);
             MessengerInstance.Send(new WorkMessage { Working = false });
         }

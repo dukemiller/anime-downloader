@@ -9,6 +9,7 @@ using System.Web;
 using System.Xml.Serialization;
 using anime_downloader.Models;
 using anime_downloader.Models.MyAnimeList;
+using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
 
 namespace anime_downloader.Services
@@ -16,7 +17,7 @@ namespace anime_downloader.Services
     // http://myanimelist.net/modules.php?go=api
     public class MyAnimeListApi: IMyAnimeListApi
     {
-        private readonly ISettingsService _settings;
+        private readonly ICredentialsRepository _credentialRepository;
 
         private const string ApiSearch = "https://myanimelist.net/api/anime/search.xml?q={0}";
 
@@ -34,10 +35,10 @@ namespace anime_downloader.Services
 
         private HttpClient _client;
 
-        public MyAnimeListApi(ISettingsService settings)
+        public MyAnimeListApi(ICredentialsRepository credentialRepository)
         {
-            _settings = settings;
-            _settings.MyAnimeListConfig.PropertyChanged += (sender, args) =>
+            _credentialRepository = credentialRepository;
+            _credentialRepository.MyAnimeListConfig.PropertyChanged += (sender, args) =>
             {
                 _client = new HttpClient(new HttpClientHandler { Credentials = GetCredentials() });
             };
@@ -46,7 +47,7 @@ namespace anime_downloader.Services
 
         // 
 
-        private NetworkCredential GetCredentials() => new NetworkCredential(_settings.MyAnimeListConfig.Username, _settings.MyAnimeListConfig.Password);
+        private NetworkCredential GetCredentials() => new NetworkCredential(_credentialRepository.MyAnimeListConfig.Username, _credentialRepository.MyAnimeListConfig.Password);
 
         public async Task<bool> VerifyCredentialsAsync()
         {
@@ -59,7 +60,7 @@ namespace anime_downloader.Services
         {
             await VerificationCheck();
 
-            var url = string.Format(ApiProfile, _settings.MyAnimeListConfig.Username);
+            var url = string.Format(ApiProfile, _credentialRepository.MyAnimeListConfig.Username);
             var request = await GetAsync(url);
             var data = await request.ReadAsStreamAsync();
             if (data == null || data.Length <= 0)
@@ -103,22 +104,22 @@ namespace anime_downloader.Services
 
         public async Task<HttpContent> AddAsync(Anime anime)
         {
-            var episode = anime.MyAnimeList.SeriesContinuationEpisode != null
-                ? int.Parse(anime.MyAnimeList.SeriesContinuationEpisode)
+            var episode = anime.Details.SeriesContinuationEpisode != null
+                ? int.Parse(anime.Details.SeriesContinuationEpisode)
                 : anime.Episode;
             var data = new UpdateShow(anime, episode).ToString();
-            var url = string.Format(ApiAdd, anime.MyAnimeList.Id);
+            var url = string.Format(ApiAdd, anime.Details.Id);
             var response = await PostAsync(url, data);
             return response;
         }
 
         public async Task<HttpContent> UpdateAsync(Anime anime)
         {
-            var episode = anime.MyAnimeList.SeriesContinuationEpisode != null
-                ? int.Parse(anime.MyAnimeList.SeriesContinuationEpisode)
+            var episode = anime.Details.SeriesContinuationEpisode != null
+                ? int.Parse(anime.Details.SeriesContinuationEpisode)
                 : anime.Episode;
             var data = new UpdateShow(anime, episode).ToString();
-            var url = string.Format(ApiUpdate, anime.MyAnimeList.Id);
+            var url = string.Format(ApiUpdate, anime.Details.Id);
             var response = await PostAsync(url, data);
             return response;
         }

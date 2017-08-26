@@ -119,7 +119,7 @@ namespace anime_downloader.ViewModels.Components
                         Episode = int.Parse(Details.Episode),
                         Status = Details.Status,
                         Resolution = Details.Resolution,
-                        MyAnimeList = new MyAnimeListDetails
+                        Details = new AnimeDetails
                         {
                             NeedsUpdating = true
                         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using anime_downloader.Classes;
+using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -9,7 +10,7 @@ namespace anime_downloader.ViewModels
 {
     public class HomeViewModel : ViewModelBase
     {
-        private readonly ISettingsService _settingsService;
+        private readonly ISettingsRepository _settingsService;
 
         private readonly IVersionService _versionService;
 
@@ -21,7 +22,7 @@ namespace anime_downloader.ViewModels
 
         // 
 
-        public HomeViewModel(ISettingsService settingsService, IVersionService versionService)
+        public HomeViewModel(ISettingsRepository settingsService, IVersionService versionService)
         {
             _settingsService = settingsService;
             _versionService = versionService;

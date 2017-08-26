@@ -87,7 +87,7 @@
                                     SortMemberPath="SortedRating" />
                 <DataGridTextColumn Width="114"
                                     CellStyle="{StaticResource Centered}"
-                                    Binding="{Binding MyAnimeList.Aired.Title}"
+                                    Binding="{Binding Details.Aired.Title}"
                                     Header="Aired in"
                                     SortMemberPath="SeasonSort" />
             </DataGrid.Columns>

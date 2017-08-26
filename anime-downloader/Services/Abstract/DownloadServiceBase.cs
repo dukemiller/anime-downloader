@@ -12,6 +12,7 @@ using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Models.Abstract;
 using anime_downloader.Models.Configurations;
+using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
 using MagnetLink = anime_downloader.Models.MagnetLink;
 
@@ -64,7 +65,7 @@ namespace anime_downloader.Services.Abstract
                 FileName = AriaExecutable,
                 Arguments =
                     $"--bt-metadata-only=true --bt-save-metadata=true --bt-tracker={string.Join(",", magnet.Trackers)} {magnet.Hash}",
-                WorkingDirectory = SettingsService.PathConfig.Torrents,
+                WorkingDirectory = SettingsRepository.PathConfig.Torrents,
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 CreateNoWindow = true
@@ -88,7 +89,7 @@ namespace anime_downloader.Services.Abstract
                                   .Split('.')
                                   .First() + ".torrent";
 
-                file = Path.Combine(SettingsService.PathConfig.Torrents, torrent);
+                file = Path.Combine(SettingsRepository.PathConfig.Torrents, torrent);
             }
 
             else
@@ -109,7 +110,7 @@ namespace anime_downloader.Services.Abstract
             var torrentName = await torrent.GetTorrentNameAsync();
             if (torrentName == null)
                 return (false, null);
-            var filePath = Path.Combine(SettingsService.PathConfig.Torrents, torrentName);
+            var filePath = Path.Combine(SettingsRepository.PathConfig.Torrents, torrentName);
 
             // Download file 
             if (!File.Exists(filePath))
@@ -135,7 +136,7 @@ namespace anime_downloader.Services.Abstract
         {
             var info = new ProcessStartInfo
             {
-                FileName = SettingsService.PathConfig.TorrentDownloader,
+                FileName = SettingsRepository.PathConfig.TorrentDownloader,
                 Arguments = command,
                 UseShellExecute = false,
                 RedirectStandardOutput = true
@@ -173,16 +174,16 @@ namespace anime_downloader.Services.Abstract
             IEnumerable<RemoteMedia> media;
 
             // If there is both an english and romanji title
-            if (!string.IsNullOrEmpty(anime.MyAnimeList.Title) && !string.IsNullOrEmpty(anime.MyAnimeList.English))
+            if (!string.IsNullOrEmpty(anime.Details.Title) && !string.IsNullOrEmpty(anime.Details.English))
             {
-                if (!string.IsNullOrEmpty(anime.MyAnimeList.PreferredSearchTitle))
-                    media = await FindAllMedia(anime, anime.MyAnimeList.PreferredSearchTitle, episode);
+                if (!string.IsNullOrEmpty(anime.Details.PreferredSearchTitle))
+                    media = await FindAllMedia(anime, anime.Details.PreferredSearchTitle, episode);
 
                 // If there is no preference toward either of them, time to set them
                 else
                 {
-                    var english = (await FindAllMedia(anime, anime.MyAnimeList.English, episode)).ToList();
-                    var romanji = (await FindAllMedia(anime, anime.MyAnimeList.Title, episode)).ToList();
+                    var english = (await FindAllMedia(anime, anime.Details.English, episode)).ToList();
+                    var romanji = (await FindAllMedia(anime, anime.Details.Title, episode)).ToList();
 
                     var englishScore = HealthScore(english);
                     var romanjiScore = HealthScore(romanji);
@@ -195,17 +196,17 @@ namespace anime_downloader.Services.Abstract
 
                     else if (englishScore > romanjiScore)
                     {
-                        anime.MyAnimeList.PreferredSearchTitle = anime.MyAnimeList.English;
+                        anime.Details.PreferredSearchTitle = anime.Details.English;
                         media = english;
                     }
 
                     else
                     {
-                        anime.MyAnimeList.PreferredSearchTitle = anime.MyAnimeList.Title;
+                        anime.Details.PreferredSearchTitle = anime.Details.Title;
                         media = romanji;
                     }
 
-                    SettingsService.Save();
+                    AnimeRepository.Save();
                 }
             }
 
@@ -232,7 +233,7 @@ namespace anime_downloader.Services.Abstract
             }
 
             if (downloaded > 0)
-                SettingsService.Save();
+                AnimeRepository.Save();
 
             return downloaded;
         }
@@ -270,7 +271,7 @@ namespace anime_downloader.Services.Abstract
             }
 
             if (downloaded > 0)
-                SettingsService.Save();
+                AnimeRepository.Save();
 
             return downloaded;
         }
@@ -290,14 +291,14 @@ namespace anime_downloader.Services.Abstract
                     && !media.Subgroup().Contains(anime.PreferredSubgroup))
                     return false;
 
-            if (SettingsService.FlagConfig.OnlyWhitelisted)
+            if (SettingsRepository.FlagConfig.OnlyWhitelisted)
             {
                 // Torrent listing with no subgroup in the title
                 if (!media.HasSubgroup())
                     return false;
 
                 // Torrent listing with wrong subgroup
-                if (!SettingsService.Subgroups.Select(s => s.ToLower()).Contains(media.Subgroup().ToLower()))
+                if (!SettingsRepository.Subgroups.Select(s => s.ToLower()).Contains(media.Subgroup().ToLower()))
                     return false;
             }
 
@@ -342,8 +343,8 @@ namespace anime_downloader.Services.Abstract
             var path = "";
             bool successful;
 
-            var fileDirectory = SettingsService.PathConfig.Unwatched;
-            if (SettingsService.FlagConfig.IndividualShowFolders)
+            var fileDirectory = SettingsRepository.PathConfig.Unwatched;
+            if (SettingsRepository.FlagConfig.IndividualShowFolders)
                 fileDirectory = Path.Combine(fileDirectory, anime.Title);
 
             // Create directory
@@ -409,7 +410,7 @@ namespace anime_downloader.Services.Abstract
         {
             var timestamp = $"{DateTime.Now:[M/d/yyyy @ hh:mm:ss tt]}";
             var message = $"Downloaded '{anime.Title}' episode {anime.NextEpisode}.";
-            using (var streamWriter = new StreamWriter(SettingsService.PathConfig.Logging, true))
+            using (var streamWriter = new StreamWriter(SettingsRepository.PathConfig.Logging, true))
             {
                 await streamWriter.WriteLineAsync($"{timestamp} - {message}");
                 streamWriter.Close();
@@ -454,7 +455,9 @@ namespace anime_downloader.Services.Abstract
 
         // Abstract inheritors
 
-        protected abstract ISettingsService SettingsService { get; }
+        protected abstract ISettingsRepository SettingsRepository { get; }
+
+        protected abstract IAnimeRepository AnimeRepository { get; }
 
         protected abstract IAnimeService AnimeService { get; }
 

@@ -4,13 +4,13 @@ using Newtonsoft.Json;
 namespace anime_downloader.Models.AniList
 {
     [Serializable]
-    public class ClientCredentials
+    public class ApiCredentials
     {
         [JsonProperty("access_token")]
-        public string AccessToken { get; set; }
+        public string AccessToken { get; set; } = "";
 
         [JsonProperty("token_type")]
-        public string TokenType { get; set; }
+        public string TokenType { get; set; } = "";
 
         [JsonProperty("expires")]
         public int Expires { get; set; }

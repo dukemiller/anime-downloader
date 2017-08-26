@@ -1,5 +1,7 @@
 ﻿using System;
 using anime_downloader.Enums;
+using anime_downloader.Repositories;
+using anime_downloader.Repositories.Interface;
 using anime_downloader.Services;
 using anime_downloader.Services.Interfaces;
 using anime_downloader.ViewModels;
@@ -15,8 +17,12 @@ namespace anime_downloader
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
+            // Repositories
+            SimpleIoc.Default.Register<ISettingsRepository>(SettingsRepository.Load);
+            SimpleIoc.Default.Register<ICredentialsRepository>(CredentialsRepository.Load);
+            SimpleIoc.Default.Register<IAnimeRepository>(AnimeRepository.Load);
+
             // Services (order is important)
-            SimpleIoc.Default.Register<ISettingsService>(new XmlSettingsService().Load);
             SimpleIoc.Default.Register<IAnimeService, AnimeService>();
             RegisterIDownloadService();
             SimpleIoc.Default.Register<IFileService, FileService>();
@@ -51,7 +57,7 @@ namespace anime_downloader
         {
             SimpleIoc.Default.Unregister<IDownloadService>();
 
-            switch (ServiceLocator.Current.GetInstance<ISettingsService>().Provider)
+            switch (ServiceLocator.Current.GetInstance<ISettingsRepository>().Provider)
             {
                 case DownloadProvider.NyaaPantsu:
                     SimpleIoc.Default.Register<IDownloadService, NyaaPantsuService>();

@@ -108,7 +108,7 @@
                                      VerticalContentAlignment="Center"
                                      VerticalAlignment="Center"
                                      Style="{DynamicResource NumberBoxStyle}"
-                                     Text="{Binding Anime.MyAnimeList.Total,
+                                     Text="{Binding Anime.Details.Total,
                                                             Mode=OneWay,
                                                             Converter={StaticResource EpisodeConverter},
                                                             StringFormat={}/{0}}"
@@ -157,11 +157,10 @@
                                   Grid.Column="1"
                                   IsChecked="{Binding Anime.Airing}" />
 
-
                         <Label Content="Notes: "
                                Grid.Row="5"
                                Grid.Column="0"
-                               ToolTip="Notes, tags or comments to give the show to remember it (This is usually loosely used as a way to summarize feelings about the show)" />
+                               ToolTip="Notes, tags or comments to give the show to remember it" />
                         <TextBox
                             Grid.Row="5"
                             Grid.Column="1"
@@ -185,7 +184,7 @@
                 <DockPanel>
                     <TextBlock HorizontalAlignment="Center"
                                Style="{StaticResource MaterialDesignTitleTextBlock}"
-                               Text="{Binding Anime.MyAnimeList.TitleAndEnglish,
+                               Text="{Binding Anime.Details.TitleAndEnglish,
                                                  Converter={StaticResource StringJoinConverter}}"
                                DockPanel.Dock="Top" />
                     <ContentPresenter
@@ -197,7 +196,7 @@
                         <TextBlock HorizontalAlignment="Stretch"
                                    Style="{StaticResource MaterialDesignBody1TextBlock}"
                                    FontSize="16"
-                                   Text="{Binding Anime.MyAnimeList.Synopsis,
+                                   Text="{Binding Anime.Details.Synopsis,
                                                       Converter={StaticResource SynposisSnipConverter}}"
                                    TextWrapping="WrapWithOverflow" />
                     </ScrollViewer>
@@ -261,7 +260,7 @@
                               VerticalAlignment="Center"
                               HorizontalAlignment="Left"
                               materialDesign:ComboBoxAssist.ClassicMode="True"
-                              ItemsSource="{Binding Settings.Subgroups}"
+                              ItemsSource="{Binding SettingsRepository.Subgroups}"
                               SelectedItem="{Binding Anime.PreferredSubgroup,
                                                              UpdateSourceTrigger=PropertyChanged}">
                         <ComboBox.InputBindings>
@@ -270,7 +269,7 @@
                         <ComboBox.Style>
                             <Style BasedOn="{StaticResource MaterialDesignComboBox}" TargetType="ComboBox">
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Settings.Subgroups.Count}" Value="0">
+                                    <DataTrigger Binding="{Binding SettingsRepository.Subgroups.Count}" Value="0">
                                         <Setter Property="ComboBox.IsEnabled" Value="false" />
                                     </DataTrigger>
                                 </Style.Triggers>

@@ -11,6 +11,7 @@ using System.Windows;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
 using anime_downloader.Models;
+using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -26,11 +27,11 @@ namespace anime_downloader.ViewModels.Components
         private string _filterText;
         private FindViewModel _find;
         private Anime _selectedAnime;
-        private ISettingsService _settings;
+        private ISettingsRepository _settings;
 
         // 
 
-        public AnimeListViewModel(ISettingsService settings, IAnimeService animeService)
+        public AnimeListViewModel(ISettingsRepository settings, IAnimeService animeService)
         {
             _animeService = animeService;
             Settings = settings;
@@ -123,7 +124,7 @@ namespace anime_downloader.ViewModels.Components
 
         private List<Anime> SelectedAnimes { get; set; } = new List<Anime>();
 
-        public ISettingsService Settings
+        public ISettingsRepository Settings
         {
             get => _settings;
             set => Set(() => Settings, ref _settings, value);
@@ -159,17 +160,11 @@ namespace anime_downloader.ViewModels.Components
         private void Delete()
         {
             foreach (var anime in new List<Anime>(SelectedAnimes))
-                if (anime.Status != Status.Dropped && (anime.MyAnimeList.HasId || anime.Episode > 0 || anime.HasRating))
-                {
-                    anime.Status = Status.Dropped;
-                    anime.Airing = false;
-                }
+            {
+                _animeService.Remove(anime);
+                Animes.Remove(anime);
+            }
 
-                else
-                {
-                    _animeService.Remove(anime);
-                    Animes.Remove(anime);
-                }
             RaisePropertyChanged(nameof(Stats));
             MessengerInstance.Send("refresh");
             _find.Close();
@@ -179,8 +174,8 @@ namespace anime_downloader.ViewModels.Components
         {
             if (SelectedAnime == null)
                 return;
-            if (SelectedAnime.MyAnimeList.HasId)
-                Process.Start($"http://myanimelist.net/anime/{SelectedAnime.MyAnimeList.Id}");
+            if (SelectedAnime.Details.HasId)
+                Process.Start($"http://myanimelist.net/anime/{SelectedAnime.Details.Id}");
             else
             {
                 MessengerInstance.Send(new WorkMessage {Working = true});

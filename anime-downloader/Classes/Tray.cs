@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Models.Configurations;
+using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
 using anime_downloader.Views;
 using GalaSoft.MvvmLight;
@@ -20,7 +21,8 @@ namespace anime_downloader.Classes
 {
     public class Tray : ViewModelBase
     {
-        private readonly ISettingsService _settings;
+        private readonly ISettingsRepository _settings;
+        private readonly ICredentialsRepository _credentials;
 
         /// <summary>
         ///     The menu for the system tray.
@@ -34,9 +36,10 @@ namespace anime_downloader.Classes
 
         // Constructors
 
-        public Tray(ISettingsService settings)
+        public Tray(ISettingsRepository settings, ICredentialsRepository credentials)
         {
             _settings = settings;
+            _credentials = credentials;
             InitTray();
             InitContextMenu();
 
@@ -167,7 +170,7 @@ namespace anime_downloader.Classes
                 new MenuItem("&Sync MyAnimeList...", (sender, args) =>
                 {
                     BringWindowToFocus();
-                    if (_settings.MyAnimeListConfig.LoggedIn)
+                    if (_credentials.MyAnimeListConfig.LoggedIn)
                     {
                         MessengerInstance.Send(ViewDisplay.Web);
                         MessengerInstance.Send(new NotificationMessage("tray_sync"));

@@ -8,6 +8,7 @@ using System.Web;
 using System.Xml;
 using anime_downloader.Models;
 using anime_downloader.Models.Abstract;
+using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Abstract;
 using anime_downloader.Services.Interfaces;
 
@@ -15,7 +16,9 @@ namespace anime_downloader.Services
 {
     public class NyaaSiService : DownloadServiceBase
     {
-        protected override ISettingsService SettingsService { get; }
+        protected override ISettingsRepository SettingsRepository { get; }
+
+        protected override IAnimeRepository AnimeRepository { get; }
 
         protected override IAnimeService AnimeService { get; }
 
@@ -23,9 +26,10 @@ namespace anime_downloader.Services
 
         public override string ServiceUrl => @"https://nyaa.si/";
 
-        public NyaaSiService(ISettingsService settingsService, IAnimeService animeService)
+        public NyaaSiService(ISettingsRepository settingsRepository, IAnimeRepository animeRepository, IAnimeService animeService)
         {
-            SettingsService = settingsService;
+            SettingsRepository = settingsRepository;
+            AnimeRepository = animeRepository;
             AnimeService = animeService;
             Downloader = new WebClient();
         }

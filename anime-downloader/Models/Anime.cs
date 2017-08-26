@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Xml.Serialization;
 using anime_downloader.Enums;
 using GalaSoft.MvvmLight;
+using Newtonsoft.Json;
 
 namespace anime_downloader.Models
 {
@@ -14,30 +14,32 @@ namespace anime_downloader.Models
         /// <summary>
         ///     A variable used sort of like a bit flag for sorting in the data grid.
         /// </summary>
+        [JsonIgnore]
         public static int SortedRateFlag;
 
         /// <summary>
         ///     Another variable used sort of like a bit flag for sorting in the data grid.
         /// </summary>
+        [JsonIgnore]
         public static int SortedAiredFlag;
 
         private bool _airing;
 
         private int _episode;
 
-        private MyAnimeListDetails _myAnimeList;
+        private AnimeDetails _details;
 
-        private string _name;
+        private string _name = "";
 
         private bool _nameStrict;
 
-        private string _notes;
+        private string _notes = "";
 
         private string _preferredSubgroup;
 
-        private string _rating;
+        private string _rating = "";
 
-        private string _resolution;
+        private string _resolution = "";
 
         private bool _secondSeason;
 
@@ -45,14 +47,14 @@ namespace anime_downloader.Models
 
         // 
 
-        public Anime() => MyAnimeList = new MyAnimeListDetails();
+        public Anime() => Details = new AnimeDetails();
 
         // 
 
         /// <summary>
         ///     Main referenced title.
         /// </summary>
-        [XmlAttribute("name")]
+        [JsonProperty("name")]
         public string Name
         {
             get => _name;
@@ -62,37 +64,37 @@ namespace anime_downloader.Models
         /// <summary>
         ///     User's current watched episode.
         /// </summary>
-        [XmlAttribute("episode")]
+        [JsonProperty("episode")]
         public int Episode
         {
             get => _episode;
             set
             {
                 Set(() => Episode, ref _episode, value);
-                if (MyAnimeList.HasId)
-                    MyAnimeList.NeedsUpdating = true;
+                if (Details.HasId)
+                    Details.NeedsUpdating = true;
             }
         }
 
         /// <summary>
         ///     User's status on watching the anime.
         /// </summary>
-        [XmlAttribute("status")]
+        [JsonProperty("status")]
         public Status Status
         {
             get => _status;
             set
             {
                 Set(() => Status, ref _status, value);
-                if (MyAnimeList.HasId)
-                    MyAnimeList.NeedsUpdating = true;
+                if (Details.HasId)
+                    Details.NeedsUpdating = true;
             }
         }
 
         /// <summary>
         ///     The quality to be downloaded.
         /// </summary>
-        [XmlAttribute("resolution")]
+        [JsonProperty("resolution")]
         public string Resolution
         {
             get => _resolution;
@@ -102,7 +104,7 @@ namespace anime_downloader.Models
         /// <summary>
         ///     If the anime is ongoing and currently airing.
         /// </summary>
-        [XmlAttribute("airing")]
+        [JsonProperty("airing")]
         public bool Airing
         {
             get => _airing;
@@ -112,7 +114,7 @@ namespace anime_downloader.Models
         /// <summary>
         ///     if searching for the anime should contain exclusively it's own name with no fragments.
         /// </summary>
-        [XmlAttribute("name_strict")]
+        [JsonProperty("name_strict")]
         public bool NameStrict
         {
             get => _nameStrict;
@@ -122,7 +124,7 @@ namespace anime_downloader.Models
         /// <summary>
         ///     If searching for the anime should only download from a specific subgroup if chosen
         /// </summary>
-        [XmlAttribute("preferred_subgroup")]
+        [JsonProperty("preferred_subgroup")]
         public string PreferredSubgroup
         {
             get => _preferredSubgroup;
@@ -132,38 +134,38 @@ namespace anime_downloader.Models
         /// <summary>
         ///     The personal rating given for the series.
         /// </summary>
-        [XmlAttribute("rating")]
+        [JsonProperty("rating")]
         public string Rating
         {
             get => _rating;
             set
             {
                 Set(() => Rating, ref _rating, value);
-                if (MyAnimeList.HasId)
-                    MyAnimeList.NeedsUpdating = true;
+                if (Details.HasId)
+                    Details.NeedsUpdating = true;
             }
         }
 
-        [XmlElement("my_anime_list")]
-        public MyAnimeListDetails MyAnimeList
+        [JsonProperty("details")]
+        public AnimeDetails Details
         {
-            get => _myAnimeList;
-            set => Set(() => MyAnimeList, ref _myAnimeList, value);
+            get => _details;
+            set => Set(() => Details, ref _details, value);
         }
 
-        [XmlAttribute("notes")]
+        [JsonProperty("notes")]
         public string Notes
         {
             get => _notes;
             set
             {
                 Set(() => Notes, ref _notes, value);
-                if (MyAnimeList.HasId)
-                    MyAnimeList.NeedsUpdating = true;
+                if (Details.HasId)
+                    Details.NeedsUpdating = true;
             }
         }
 
-        [XmlAttribute("is_second_season")]
+        [JsonProperty("is_second_season")]
         public bool SecondSeason
         {
             get => _secondSeason;
@@ -179,38 +181,38 @@ namespace anime_downloader.Models
         ///     Proper title name of anime.
         /// </summary>
         /// <returns>A title</returns>
-        [XmlIgnore]
+        [JsonIgnore]
         public string Title => new CultureInfo("en-US", false).TextInfo.ToTitleCase(Name);
 
         /// <summary>
         ///     A zero padded string of the number of the next episode.
         /// </summary>
         /// <returns>A padded string representation of the next episode in sequence.</returns>
-        [XmlIgnore]
+        [JsonIgnore]
         public int NextEpisode => Episode + 1;
 
-        [XmlIgnore]
+        [JsonIgnore]
         public string AiringSymbol => Airing ? "✓" : "";
 
-        [XmlIgnore]
-        public bool HasRating => Rating != null;
+        [JsonIgnore]
+        public bool HasRating => !string.IsNullOrEmpty(Rating);
 
-        [XmlIgnore]
+        [JsonIgnore]
         public string EpisodeTotal
         {
             get
             {
                 // If there's data about the episode number, retrieve it
-                if (MyAnimeList.TotalEpisodes > 0 || MyAnimeList.HasId)
+                if (Details.TotalEpisodes > 0 || Details.HasId)
                 {
                     // If it has an overall total, this was a mislabeled show and this
                     // needs to be preferred first
-                    if (MyAnimeList.OverallTotal > 0)
-                        return $"{Episode}/{MyAnimeList.OverallTotal}";
+                    if (Details.OverallTotal > 0)
+                        return $"{Episode}/{Details.OverallTotal}";
 
                     // Else just the actual season total if there is one
-                    if (MyAnimeList.TotalEpisodes > 0)
-                        return $"{Episode}/{MyAnimeList.TotalEpisodes}";
+                    if (Details.TotalEpisodes > 0)
+                        return $"{Episode}/{Details.TotalEpisodes}";
                 }
 
                 return Episode.ToString();
@@ -220,22 +222,22 @@ namespace anime_downloader.Models
         /// <summary>
         ///     A property used for sorting the rating in the datagrid
         /// </summary>
-        [XmlIgnore]
+        [JsonIgnore]
         public int SortedRating => string.IsNullOrEmpty(Rating) ? 13 * SortedRateFlag - 2 : int.Parse(Rating);
 
-        [XmlIgnore]
-        public int SeasonSort => MyAnimeList.Aired?.Sort ?? (DateTime.Now.Year + 3) * SortedAiredFlag - 2;
+        [JsonIgnore]
+        public int SeasonSort => Details.Aired?.Sort ?? (DateTime.Now.Year + 3) * SortedAiredFlag - 2;
 
-        [XmlIgnore]
+        [JsonIgnore]
         public IEnumerable<string> NameCollection
         {
             get
             {
                 IEnumerable<string> names;
 
-                if (MyAnimeList.HasId)
-                    names = new[] {MyAnimeList.English, MyAnimeList.Title}
-                        .Union(MyAnimeList.SynonymsSplit)
+                if (Details.HasId)
+                    names = new[] {Details.English, Details.Title}
+                        .Union(Details.SynonymsSplit)
                         .SelectMany(c => c.Split())
                         .Distinct();
                 else

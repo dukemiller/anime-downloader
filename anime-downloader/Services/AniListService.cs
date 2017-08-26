@@ -10,6 +10,8 @@ using anime_downloader.Classes;
 using anime_downloader.Models;
 using anime_downloader.Models.AniList;
 using anime_downloader.Models.Configurations;
+using anime_downloader.Repositories;
+using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
 using Newtonsoft.Json;
 using static anime_downloader.Classes.ApiKeys;
@@ -19,7 +21,9 @@ namespace anime_downloader.Services
     // http://anilist-api.readthedocs.io/en/latest/anime.html#browse
     public class AniListService : IFindSeasonAnimeService
     {
-        private readonly ISettingsService _settings;
+        private readonly ICredentialsRepository _credentialsRepository;
+
+        private ApiCredentials _credentials;
 
         private const string Prefix = "https://anilist.co/api";
 
@@ -28,17 +32,15 @@ namespace anime_downloader.Services
         private static string AuthUrl => $"{Prefix}/auth/access_token";
 
         private static string BrowseUrl => $"{Prefix}/browse/anime";
-
-        private ClientCredentials _credentials;
-
+        
         private readonly AniListData _data;
 
         // 
 
-        public AniListService(ISettingsService settings)
+        public AniListService(ICredentialsRepository credentialsRepository)
         {
-            _settings = settings;
-            _credentials = settings.AniListConfiguration.Credentials;
+            _credentialsRepository = credentialsRepository;
+            _credentials = _credentialsRepository.AniListConfiguration.Credentials;
             _data = AniListData.Load();
         }
 
@@ -60,7 +62,7 @@ namespace anime_downloader.Services
                     var data = await GetBrowse(await BuildLeftoverUrl(animeSeason));
                     return data
                         .Where(anime => anime.Type == "TV")
-                        .Where(anime => anime.Airing.NextEpisode.HasValue &&
+                        .Where(anime => anime.Airing?.NextEpisode.HasValue == true &&
                                         Methods.InRange(anime.Airing.NextEpisode.Value, 10, 24))
                         .Where(anime => anime.TotalEpisodes > 12)
                         .ToList();
@@ -152,7 +154,7 @@ namespace anime_downloader.Services
 
         private async Task CheckAuthentication()
         {
-            ClientCredentials credentials = null;
+            ApiCredentials credentials = null;
 
             // never retrieved: retrieve
             if (_credentials == null)
@@ -166,8 +168,8 @@ namespace anime_downloader.Services
             if (credentials != null)
             {
                 _credentials = credentials;
-                _settings.AniListConfiguration.Credentials = credentials;
-                _settings.Save();
+                _credentialsRepository.AniListConfiguration.Credentials = credentials;
+                _credentialsRepository.Save();
             }
         }
 
@@ -223,7 +225,7 @@ namespace anime_downloader.Services
         /// <summary>
         ///     Authenticate to the API server
         /// </summary>
-        private static async Task<ClientCredentials> GetCredentials()
+        private static async Task<ApiCredentials> GetCredentials()
         {
             using (var client = new HttpClient())
             {
@@ -236,7 +238,7 @@ namespace anime_downloader.Services
                 var content = new FormUrlEncodedContent(pairs);
                 var request = await client.PostAsync(AuthUrl, content);
                 var response = await request.Content.ReadAsStringAsync();
-                var credentials = JsonConvert.DeserializeObject<ClientCredentials>(response);
+                var credentials = JsonConvert.DeserializeObject<ApiCredentials>(response);
                 return credentials;
             }
         }
@@ -256,7 +258,7 @@ namespace anime_downloader.Services
         private AniListData() { }
 
         [JsonIgnore]
-        private static readonly string SettingsPath = Path.Combine(PathConfiguration.ApplicationDirectory, "anilist.json");
+        private static readonly string SettingsPath = Path.Combine(PathConfiguration.ApplicationDirectory, "airing_shows.json");
         
         [JsonProperty("data")]
         public Dictionary<string, AniListSeasonData> Data { get; set; } = new Dictionary<string, AniListSeasonData>();
@@ -317,7 +319,7 @@ namespace anime_downloader.Services
         private static async Task DownloadImage(AiringAnimeSmall anime)
         {
             var image = anime.ImageUrlLge;
-            var downloadPath = Path.Combine(XmlSettingsService.ImageDirectory, $"{anime.Id}.png");
+            var downloadPath = Path.Combine(SettingsRepository.ImageDirectory, $"{anime.Id}.png");
             if (!File.Exists(downloadPath))
                 await Downloader.DownloadFileTaskAsync(image, downloadPath);
             anime.ImagePath = downloadPath;
@@ -325,8 +327,8 @@ namespace anime_downloader.Services
 
         public static AniListData Load()
         {
-            if (!Directory.Exists(XmlSettingsService.ImageDirectory))
-                Directory.CreateDirectory(XmlSettingsService.ImageDirectory);
+            if (!Directory.Exists(SettingsRepository.ImageDirectory))
+                Directory.CreateDirectory(SettingsRepository.ImageDirectory);
 
             if (File.Exists(SettingsPath))
                 using (var stream = new StreamReader(SettingsPath))
