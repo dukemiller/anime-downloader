@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
@@ -419,7 +420,6 @@ namespace anime_downloader.Services.Abstract
         ///     Many sites have different ways their search works, but on the nyaa.* sites
         ///     this will transform the title into a searchable query.
         /// </summary>
-        /// <returns></returns>
         protected static string TransformEpisodeSearch(string name, int episode)
         {
             var terms = name
@@ -432,6 +432,7 @@ namespace anime_downloader.Services.Abstract
                 .Replace("!", "%21")
                 .Replace("'", "%27")
                 .Replace("-", " ");
+            terms = Regex.Replace(terms, @"\+\d{1}$", "");
             return $"{terms}+{episode:D2}";
         }
 
