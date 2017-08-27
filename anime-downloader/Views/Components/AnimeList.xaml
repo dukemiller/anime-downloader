@@ -119,8 +119,8 @@
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsMouseOver}" Value="False" />
                                 <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsSelected}" Value="False" />
-                                <Condition Binding="{Binding MyAnimeList.HasId}" Value="True" />
-                                <Condition Binding="{Binding MyAnimeList.NeedsUpdating}" Value="True" />
+                                <Condition Binding="{Binding Details.HasId}" Value="True" />
+                                <Condition Binding="{Binding Details.NeedsUpdating}" Value="True" />
                             </MultiDataTrigger.Conditions>
                             <Setter Property="Background">
                                 <Setter.Value>

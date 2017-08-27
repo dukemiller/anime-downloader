@@ -26,6 +26,7 @@ namespace anime_downloader.ViewModels
         private bool _loggedIn;
 
         private readonly ICredentialsRepository _credentialsRepository;
+        private readonly IAnimeRepository _animeRepository;
 
         private readonly IAnimeService _animeService;
 
@@ -42,6 +43,7 @@ namespace anime_downloader.ViewModels
         private RelayCommand _logCommand;
 
         public WebViewModel(ICredentialsRepository credentialsRepository,
+            IAnimeRepository animeRepository,
             IAnimeService animeService,
             IMyAnimeListService malService,
             IMyAnimeListApi api,
@@ -49,6 +51,7 @@ namespace anime_downloader.ViewModels
         {
             DownloadService = downloadService;
             _credentialsRepository = credentialsRepository;
+            _animeRepository = animeRepository;
             _animeService = animeService;
             _malService = malService;
             _api = api;
@@ -284,8 +287,9 @@ namespace anime_downloader.ViewModels
             MessengerInstance.Send(new WorkMessage {Working = true});
             Synchronize = "Synchronizing";
             await _malService.Synchronize();
+            _animeRepository.Save();
+            MessengerInstance.Send("update");
             MessengerInstance.Send(new WorkMessage {Working = false});
-
             RaiseCommandExecutions();
             CheckSyncAndLog();
         }

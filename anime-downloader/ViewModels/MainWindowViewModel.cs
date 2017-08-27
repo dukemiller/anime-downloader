@@ -26,6 +26,8 @@ namespace anime_downloader.ViewModels
 
         private bool _isShowing;
 
+        public static bool Loaded = false;
+
         // 
 
         public MainWindowViewModel()
@@ -132,6 +134,7 @@ namespace anime_downloader.ViewModels
             {
                 CloseCommand = new RelayCommand(Application.Current.MainWindow.Close);
                 CreateTray();
+                Loaded = true;
             });
 
             Home     = new RelayCommand(() => SelectedIndex = 0, () => !Busy);
