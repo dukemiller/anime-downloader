@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
 using anime_downloader.Repositories.Interface;
@@ -147,10 +145,11 @@ namespace anime_downloader.ViewModels
                     }
                 });
 
-                if (changed.Count > 0)
-                    Methods.Alert($"Updated episodes for: {string.Join(", ", changed)}");
-                else
-                    Methods.Alert("No re-indexes were needed.");
+                Methods.Alert(changed.Count > 0
+                    ? $"Updated episodes for: {string.Join(", ", changed)}"
+                    : "No re-indexes were needed.");
+
+                _animeRepository.Save();
             }
 
             MessengerInstance.Send(new WorkMessage {Working = false});

@@ -63,13 +63,21 @@ namespace anime_downloader.Classes
                 .ToList();
             text = new[] {".mkv", ".mp4", ".avi"}.Union(phrases).Aggregate(text, (current, s) => current.Replace(s, ""));
 
+            // Replace any "Episode 08" with just "08"
+            var episode = Regex.Match(text, @"-[\s_.]?(episode[\s_.]?(\d{1,3}))", RegexOptions.IgnoreCase);
+            if (episode.Success)
+                text = text.Replace(episode.Groups[1].Value, episode.Groups[2].Value);
+
+            // Remove entirely anything saying the language sub
+            text = Regex.Replace(text, @"-?[\s_.]?eng(?:lish|s)?[\s_.]?sub(?:bed|s)?", "", RegexOptions.IgnoreCase);
+
             // _ and . can be used for spaces for some subgroups, replace with spaces instead
             text = new[] {"_", "."}.Aggregate(text, (current, s) => current.Replace(s, " "));
 
             if (removeEpisode)
             {
                 var regularEpisodePattern = Regex.Matches(text, @"\-\s[0-9]{1,}"); // Name {- #}
-                var namedEpisodePattern = Regex.Matches(text, @"[e|E]pisode\s[0-9]{1,}"); // Name {Episode #}
+                var namedEpisodePattern = Regex.Matches(text, @"episode\s[0-9]{1,}", RegexOptions.IgnoreCase); // Name {Episode #}
 
                 if (regularEpisodePattern.Count > 0)
                 {

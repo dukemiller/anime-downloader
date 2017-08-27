@@ -15,9 +15,8 @@ namespace anime_downloader.Models
         /// <summary>
         ///     The anime name gathered from the filename, e.g. "{Show} - 01.mp4"
         /// </summary>
-        public string Name => string.Join("-",
-                StrippedFilename.Split('-')
-                    .Take(StrippedFilename.Count(x => x == '-')))
+        public string Name => string.Join(
+                "-", StrippedFilename.Split('-').Take(StrippedFilename.Count(x => x == '-')))
             .Trim();
 
         /// <summary>
