@@ -12,21 +12,15 @@ namespace anime_downloader.Models
     /// </remarks>
     public class SemanticVersion
     {
-        private readonly int _major;
-
-        private readonly int _minor;
-
-        private readonly int _patch;
-
         // 
 
         public SemanticVersion() { }
 
         private SemanticVersion(int major, int minor, int patch)
         {
-            _major = major;
-            _minor = minor;
-            _patch = patch;
+            Major = major;
+            Minor = minor;
+            Patch = patch;
         }
 
         private SemanticVersion(Tuple<int, int, int> version) 
@@ -36,23 +30,29 @@ namespace anime_downloader.Models
 
         public SemanticVersion(Version version) : this(version.ToString()) { }
 
+        public int Major { get; }
+
+        public int Minor { get; }
+
+        public int Patch { get; }
+
         // 
 
         public static bool operator <(SemanticVersion left, SemanticVersion right)
         {
-            return left._major < right._major 
-                || left._major == right._major && left._minor < right._minor 
-                || left._major == right._major && left._minor == right._minor && left._patch < right._patch;
+            return left.Major < right.Major 
+                || left.Major == right.Major && left.Minor < right.Minor 
+                || left.Major == right.Major && left.Minor == right.Minor && left.Patch < right.Patch;
         }
 
         public static bool operator >(SemanticVersion left, SemanticVersion right)
         {
-            return left._major > right._major
-                || left._major == right._major && left._minor > right._minor
-                || left._major == right._major && left._minor == right._minor && left._patch > right._patch;
+            return left.Major > right.Major
+                || left.Major == right.Major && left.Minor > right.Minor
+                || left.Major == right.Major && left.Minor == right.Minor && left.Patch > right.Patch;
         }
 
-        public override string ToString() => $"{_major}.{_minor}.{_patch}";
+        public override string ToString() => $"{Major}.{Minor}.{Patch}";
 
         // 
 

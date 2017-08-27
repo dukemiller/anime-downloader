@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using anime_downloader.Models;
+using anime_downloader.Patch.Services;
 using anime_downloader.Services.Interfaces;
 
 namespace anime_downloader.Services
@@ -77,6 +78,8 @@ namespace anime_downloader.Services
             // Set the version as up to date
             _settings.Version.NeedsUpdate = false;
             _settings.Save();
+            
+            new PatchService().Patch(new Version(LocalVersion.ToString()), new Version(OnlineVersion.ToString()));
 
             // Close and start the application again
             Application.Current.Shutdown();
