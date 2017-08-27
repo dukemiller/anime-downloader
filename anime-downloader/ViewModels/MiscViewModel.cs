@@ -150,6 +150,9 @@ namespace anime_downloader.ViewModels
                     : "No re-indexes were needed.");
 
                 _animeRepository.Save();
+
+                // Update animelist
+                MessengerInstance.Send("update");
             }
 
             MessengerInstance.Send(new WorkMessage {Working = false});

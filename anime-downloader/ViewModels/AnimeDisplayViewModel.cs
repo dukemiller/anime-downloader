@@ -40,6 +40,11 @@ namespace anime_downloader.ViewModels
                             Display = SimpleIoc.Default.GetUniqueInstance<AnimeListViewModel>();
                         break;
 
+                    case "update":
+                        if (Display.GetType() == typeof(AnimeListViewModel))
+                            Display = SimpleIoc.Default.GetUniqueInstance<AnimeListViewModel>();
+                        break;
+
                     default:
                         break;
                 }
