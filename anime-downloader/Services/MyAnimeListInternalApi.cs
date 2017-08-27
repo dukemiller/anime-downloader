@@ -10,7 +10,6 @@ using System.Web;
 using System.Xml.Serialization;
 using anime_downloader.Enums;
 using anime_downloader.Models;
-using anime_downloader.Models.Configurations;
 using anime_downloader.Models.MyAnimeList;
 using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
@@ -283,8 +282,8 @@ namespace anime_downloader.Services
 
         private static string ToShowRequestJson(Anime anime, string csrf)
         {
-            var episode = anime.Details.SeriesContinuationEpisode != null
-                ? int.Parse(anime.Details.SeriesContinuationEpisode)
+            var episode = !string.IsNullOrEmpty(anime.Details.SeriesContinuationEpisode)
+                ? Math.Abs(int.Parse(anime.Details.SeriesContinuationEpisode))
                 : anime.Episode;
 
             var rating = !string.IsNullOrEmpty(anime.Rating)
@@ -329,7 +328,9 @@ namespace anime_downloader.Services
 
         private static Dictionary<string, string> ToUpdatePairs(Anime anime, string csrf)
         {
-            var episode = anime.Details.SeriesContinuationEpisode ?? anime.Episode.ToString();
+            var episode = !string.IsNullOrEmpty(anime.Details.SeriesContinuationEpisode)
+                ? anime.Details.SeriesContinuationEpisode
+                : anime.Episode.ToString();
             episode = episode.Replace("-", "");
 
             var rating = !string.IsNullOrEmpty(anime.Rating)
