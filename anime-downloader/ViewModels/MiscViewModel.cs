@@ -19,18 +19,22 @@ namespace anime_downloader.ViewModels
         private readonly IAnimeRepository _animeRepository;
         private readonly IAnimeService _animeService;
         private readonly IMyAnimeListService _malSevice;
+        private readonly IDetailProviderService _detailService;
         private readonly IFileService _fileService;
         private bool _doingAction;
 
         public MiscViewModel(ICredentialsRepository credentialsRepository, 
             IAnimeRepository animeRepository,
             IAnimeService animeService,
-            IMyAnimeListService malSevice, IFileService fileService)
+            IMyAnimeListService malSevice, 
+            IDetailProviderService detailService,
+            IFileService fileService)
         {
             _credentialsRepository = credentialsRepository;
             _animeRepository = animeRepository;
             _animeService = animeService;
             _malSevice = malSevice;
+            _detailService = detailService;
             _fileService = fileService;
             SelectedIndex = 0;
             SubmitCommand = new RelayCommand(DoAction, () => !DoingAction);
@@ -94,23 +98,21 @@ namespace anime_downloader.ViewModels
 
                 var needsUpdating = _animeService
                     .AiringAndWatching
-                    .Where(a => a.Details.HasId && a.Details.TotalEpisodes == 0)
+                    .Where(a => a.Details.TotalEpisodes == 0)
                     .ToList();
 
                 try
                 {
                     foreach (var anime in needsUpdating)
                     {
-                        var remoteAnime = await _malSevice.GetFindResult(anime);
-                        if (!anime.Details.TotalEpisodes.Equals(remoteAnime.TotalEpisodes))
-                        {
+                        var (successful, changeMade) = await _detailService.FillInDetails(anime);
+                        if (changeMade)
                             updated.Add(anime.Title);
-                            anime.Details.TotalEpisodes = remoteAnime.TotalEpisodes;
-                        }
                     }
 
                     if (updated.Count > 0)
                     {
+                        _animeRepository.Save();
                         var updateResult = string.Join(", ", updated);
                         Methods.Alert($"Updated total episodes for {updateResult}.");
                     }
