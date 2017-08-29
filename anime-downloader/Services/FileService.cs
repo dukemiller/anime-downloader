@@ -133,7 +133,7 @@ namespace anime_downloader.Services
         public Anime ClosestAnime(IEnumerable<Anime> animes, AnimeFile file)
         {
             return animes
-                .Select(anime => new StringDistance<Anime>(anime, file.Name, anime.Name))
+                .Select(anime => new StringDistance<Anime>(anime, file.Name, string.IsNullOrEmpty(anime.Details.PreferredSearchTitle) ? anime.Name : anime.Details.PreferredSearchTitle))
                 .Where(pair => pair.Distance <= 10)
                 .OrderBy(pair => pair.Distance)
                 .FirstOrDefault()?.Item;
@@ -142,7 +142,7 @@ namespace anime_downloader.Services
         public Anime ClosestAnime(IEnumerable<Anime> animes, string name)
         {
             return animes
-                .Select(anime => new StringDistance<Anime>(anime, name, anime.Name))
+                .Select(anime => new StringDistance<Anime>(anime, name, string.IsNullOrEmpty(anime.Details.PreferredSearchTitle) ? anime.Name : anime.Details.PreferredSearchTitle))
                 .Where(pair => pair.Distance <= 10)
                 .OrderBy(pair => pair.Distance)
                 .FirstOrDefault()?.Item;
