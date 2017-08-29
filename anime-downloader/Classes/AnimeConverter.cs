@@ -11,14 +11,11 @@ namespace anime_downloader.Classes
         {
             var airing = ProfileAnimeAiring(profileAnimeResult);
             var status = ProfileAnimeStatus(profileAnimeResult);
-
-            int episode;
-            int seriesEpisodes;
-
+            
             var anime = new Anime
             {
                 Name = profileAnimeResult.SeriesTitle,
-                Episode = int.TryParse(profileAnimeResult.MyWatchedEpisodes, out episode) ? episode : 0,
+                Episode = int.TryParse(profileAnimeResult.MyWatchedEpisodes, out int episode) ? episode : 0,
                 Rating = profileAnimeResult.MyScore,
                 Notes = profileAnimeResult.MyTags,
                 Status = status,
@@ -30,7 +27,7 @@ namespace anime_downloader.Classes
                     Synonyms = profileAnimeResult.SeriesSynonyms,
                     Image = profileAnimeResult.SeriesImage,
                     Title = profileAnimeResult.SeriesTitle,
-                    TotalEpisodes = int.TryParse(profileAnimeResult.SeriesEpisodes, out seriesEpisodes) ? seriesEpisodes : 0,
+                    TotalEpisodes = int.TryParse(profileAnimeResult.SeriesEpisodes, out int seriesEpisodes) ? seriesEpisodes : 0,
                     NeedsUpdating = false,
                     English = "",
                     Synopsis = ""

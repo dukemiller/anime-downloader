@@ -33,19 +33,21 @@
                             <Button
                                 Margin="5"
                                 Command="{Binding ProfileCommand}"
-                                Content="Open Profile Page"
+                                Content="Open User Profile Page"
+                                ToolTip="Go to your user profile page on the site"
                                 Focusable="False" />
                             <Button
                                 Margin="5"
                                 Background="LightGreen"
-                                
                                 Command="{Binding SyncCommand}"
                                 Content="{Binding Synchronize}"
+                                ToolTip="Synchronize state between application and myanimelist"
                                 Focusable="False" />
                             <Button
                                 Margin="5"
                                 Command="{Binding ImportCommand}"
                                 Content="Import from profile"
+                                ToolTip="Import all shows from the last two years into the downloader from your profile"
                                 Focusable="False" />
                         </UniformGrid>
                     </DockPanel>

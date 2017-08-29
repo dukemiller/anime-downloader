@@ -55,6 +55,7 @@
             <Button Grid.Row="1"
                     HorizontalAlignment="Left"
                     Command="{Binding LogCommand}"
+                    ToolTip="View the log showing date and name of shows downloaded"
                     Content="Log" />
         </Grid>
     </Grid>

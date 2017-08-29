@@ -105,8 +105,8 @@
                                      IsHitTestVisible="False"
                                      IsReadOnly="True"
                                      Opacity="0.6"
+                                     IsTabStop="False"
                                      VerticalContentAlignment="Center"
-                                     VerticalAlignment="Center"
                                      Style="{DynamicResource NumberBoxStyle}"
                                      Text="{Binding Anime.Details.Total,
                                                             Mode=OneWay,
