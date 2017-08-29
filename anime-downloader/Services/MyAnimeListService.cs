@@ -42,8 +42,9 @@ namespace anime_downloader.Services
 
         public async Task Update(Anime anime)
         {
-            await _api.UpdateAsync(anime);
-            anime.Details.NeedsUpdating = false;
+            var (successful, content) = await _api.UpdateAsync(anime);
+            if (successful)
+                anime.Details.NeedsUpdating = false;
         }
 
         public async Task Add(Anime anime) => await _api.AddAsync(anime);

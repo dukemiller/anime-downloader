@@ -119,39 +119,58 @@ namespace anime_downloader.Services
             return response.Categories.FirstOrDefault()?.Items.Select(ToFindResult) ?? new List<FindResult>();
         }
 
-        public async Task<HttpContent> AddAsync(Anime anime)
+        public async Task<(bool successful, string content)> AddAsync(Anime anime)
         {
             await SetupRequest();
 
-            var content = new StringContent(ToShowRequestJson(anime, _credentials.CsrfToken), Encoding.UTF8,
+            HttpContent GetData() => new StringContent(ToShowRequestJson(anime, _credentials.CsrfToken), Encoding.UTF8,
                 "application/json");
-            var response = (await _client.PostAsync(ApiAdd, content)).Content;
-            return response;
+            var response = await Post(ApiAdd, GetData);
+            var content = await response.Content.ReadAsStringAsync();
+            return (response.IsSuccessStatusCode, content);
         }
 
-        public async Task<HttpContent> UpdateAsync(Anime anime)
+        public async Task<(bool successful, string content)> UpdateAsync(Anime anime)
         {
             await SetupRequest();
 
             // Adding tags requires a whole different endpoint
             if (anime.Notes?.Length > 0)
             {
-                var pairs = new FormUrlEncodedContent(ToUpdatePairs(anime, _credentials.CsrfToken));
+                HttpContent GetData() => new FormUrlEncodedContent(ToUpdatePairs(anime, _credentials.CsrfToken));
                 var url = string.Format(ApiUpdateDetailed, anime.Details.Id);
-                var response = (await _client.PostAsync(url, pairs)).Content;
-                return response;
+                var response = await Post(url, GetData);
+                var content = await response.Content.ReadAsStringAsync();
+                return (response.IsSuccessStatusCode, content);
             }
 
             else
             {
-                var content = new StringContent(ToShowRequestJson(anime, _credentials.CsrfToken), Encoding.UTF8,
+                HttpContent GetData() => new StringContent(ToShowRequestJson(anime, _credentials.CsrfToken), Encoding.UTF8,
                     "application/json");
-                var response = (await _client.PostAsync(ApiUpdate, content)).Content;
-                return response;
+                var response = await Post(ApiUpdate, GetData);
+                var content = await response.Content.ReadAsStringAsync();
+                return (response.IsSuccessStatusCode, content);
             }
         }
 
         // 
+
+        private async Task<HttpResponseMessage> Post(string url, Func<HttpContent> getData)
+        {
+            var response = await _client.PostAsync(url, getData());
+
+            // Error 400 usually in this context means that the session/cookies/csrf are invalid,
+            // probably because you logged on the site on your own at some point. In the future,
+            // get a more concrete idea on why this happens
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                await Login();
+                response = await _client.PostAsync(url, getData());
+            }
+
+            return response;
+        }
 
         private NetworkCredential GetCredentials() => new NetworkCredential(_credentialsRepository.MyAnimeListConfig.Username, _credentialsRepository.MyAnimeListConfig.Password);
         

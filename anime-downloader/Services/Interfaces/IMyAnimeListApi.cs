@@ -17,8 +17,8 @@ namespace anime_downloader.Services.Interfaces
 
         Task<IEnumerable<FindResult>> FindAsync(string q);
 
-        Task<HttpContent> AddAsync(Anime anime);
+        Task<(bool successful, string content)> AddAsync(Anime anime);
 
-        Task<HttpContent> UpdateAsync(Anime anime);
+        Task<(bool successful, string content)> UpdateAsync(Anime anime);
     }
 }
