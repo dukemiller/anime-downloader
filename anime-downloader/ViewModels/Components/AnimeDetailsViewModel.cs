@@ -7,9 +7,7 @@ using System.Windows;
 using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Models.AniList;
-using anime_downloader.Repositories;
 using anime_downloader.Repositories.Interface;
-using anime_downloader.Services;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -28,6 +26,7 @@ namespace anime_downloader.ViewModels.Components
         private MyAnimeListBarViewModel _myAnimeListBar;
         private string _text;
         private string _image;
+        private bool _changeMade;
 
         // 
 
@@ -64,6 +63,8 @@ namespace anime_downloader.ViewModels.Components
                 Edit,
                 () => Anime?.Name?.Length > 0
             );
+
+            anime.PropertyChanged += (sender, args) => _changeMade = true;
 
             return this;
         }
@@ -268,7 +269,11 @@ namespace anime_downloader.ViewModels.Components
 
         private void Next()
         {
-            AnimeRepository.Save();
+            if (_changeMade)
+            {
+                AnimeRepository.Save();
+                _changeMade = false;
+            }
             var animes = _animeService.FilteredAndSorted().ToList();
             var anime = animes.First(an => an.Name.Equals(Anime.Name));
             var position = (animes.IndexOf(anime) + 1) % animes.Count;
@@ -277,7 +282,11 @@ namespace anime_downloader.ViewModels.Components
 
         private void Previous()
         {
-            AnimeRepository.Save();
+            if (_changeMade)
+            {
+                AnimeRepository.Save();
+                _changeMade = false;
+            }
             var animes = _animeService.FilteredAndSorted().ToList();
             var anime = animes.First(an => an.Name.Equals(Anime.Name));
             var position = animes.IndexOf(anime) - 1 >= 0 ? animes.IndexOf(anime) - 1 : animes.Count - 1;
