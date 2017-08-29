@@ -7,5 +7,6 @@
     {
         public static readonly string AniListId = "";
         public static readonly string AniListSecret = "";
+        public static readonly string AniListUserAgent = "";
     }
 }

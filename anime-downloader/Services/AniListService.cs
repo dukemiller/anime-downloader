@@ -252,7 +252,7 @@ namespace anime_downloader.Services
 
         static AniListData()
         {
-            Downloader.Headers["User-Agent"] = "anime-downloader";
+            Downloader.Headers["User-Agent"] = ApiKeys.AniListUserAgent;
         }
 
         private AniListData() { }
