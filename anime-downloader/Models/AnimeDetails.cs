@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Xml.Serialization;
 using anime_downloader.Enums;
 using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
@@ -17,6 +16,8 @@ namespace anime_downloader.Models
         private string _english = "";
 
         private string _id = "";
+
+        private int _annId = 0;
 
         private bool _needsUpdating;
 
@@ -39,6 +40,13 @@ namespace anime_downloader.Models
                 Set(() => Id, ref _id, value);
                 RaisePropertyChanged(nameof(HasId));
             }
+        }
+
+        [JsonProperty("ann_id")]
+        public int AnnId
+        {
+            get => _annId;
+            set => Set(() => AnnId, ref _annId, value);
         }
 
         [JsonProperty("synopsis")]
