@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
 using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Models.Configurations;
 using anime_downloader.Repositories.Interface;
+using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
 
 namespace anime_downloader.Repositories
 {
     [Serializable]
-    public class SettingsRepository: ISettingsRepository
+    public class SettingsRepository: ObservableObject, ISettingsRepository
     {
         [JsonIgnore]
         public static string SettingsPath => Path.Combine(PathConfiguration.ApplicationDirectory, "settings.json");

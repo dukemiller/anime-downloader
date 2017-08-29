@@ -52,11 +52,24 @@ namespace anime_downloader.Services
         public MyAnimeListInternalApi(ICredentialsRepository credentialsRepository)
         {
             _credentialsRepository = credentialsRepository;
+
+            // Remove any api details on any changes to login credentials
+            _credentialsRepository.MyAnimeListConfig.PropertyChanged += (sender, args) =>
+            {
+                if (args.PropertyName == "Username" || args.PropertyName == "Password")
+                {
+                    _credentialsRepository.MyAnimeListConfig.Credentials = new ApiCredentials();
+                    _credentialsRepository.Save();
+                    _clientReady = false;
+                }
+            };
+
             _client = new HttpClient(new HttpClientHandler
             {
                 UseCookies = false,
                 AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
             });
+
             _credentials = _credentialsRepository.MyAnimeListConfig.Credentials;
         }
 

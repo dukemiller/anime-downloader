@@ -5,12 +5,13 @@ using System.Threading.Tasks;
 using anime_downloader.Models;
 using anime_downloader.Models.Configurations;
 using anime_downloader.Repositories.Interface;
+using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
 
 namespace anime_downloader.Repositories
 {
     [Serializable]
-    public class AnimeRepository: IAnimeRepository
+    public class AnimeRepository: ObservableObject, IAnimeRepository
     {
         [JsonIgnore]
         private static string SavePath => Path.Combine(PathConfiguration.ApplicationDirectory, "anime.json");

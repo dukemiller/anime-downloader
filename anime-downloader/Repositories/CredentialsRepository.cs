@@ -2,12 +2,13 @@
 using System.IO;
 using anime_downloader.Models.Configurations;
 using anime_downloader.Repositories.Interface;
+using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
 
 namespace anime_downloader.Repositories
 {
     [Serializable]
-    public class CredentialsRepository: ICredentialsRepository
+    public class CredentialsRepository: ObservableObject, ICredentialsRepository
     {
         [JsonIgnore]
         private static string SavePath => Path.Combine(PathConfiguration.ApplicationDirectory, "credentials.json");

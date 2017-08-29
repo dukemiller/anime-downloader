@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Models.Configurations;
 
 namespace anime_downloader.Repositories.Interface
 {
-    public interface ISettingsRepository
+    public interface ISettingsRepository: INotifyPropertyChanged
     {
         PathConfiguration PathConfig { get; set; }
         FlagConfiguration FlagConfig { get; set; }
