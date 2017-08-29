@@ -217,7 +217,6 @@
     <Compile Include="Services\NyaaPantsuService.cs" />
     <Compile Include="Services\NyaaSiService.cs" />
     <Compile Include="Services\VersionService.cs" />
-    <Compile Include="Services\MyAnimeListApi.cs" />
     <Compile Include="Services\MyAnimeListService.cs" />
     <Compile Include="Services\NyaaService.cs" />
     <Compile Include="ViewModelLocator.cs" />
