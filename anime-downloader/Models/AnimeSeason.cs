@@ -55,5 +55,29 @@ namespace anime_downloader.Models
             Year = DateTime.Now.Year,
             Season = (Season) Math.Ceiling(Convert.ToDouble(DateTime.Now.Month) / 3)
         };
+
+        // 
+
+        public static bool operator ==(AnimeSeason left, AnimeSeason right) => left?.Year == right?.Year &&
+                                                                               left?.Season == right?.Season;
+
+        public static bool operator !=(AnimeSeason left, AnimeSeason right) => !(left == right);
+
+        protected bool Equals(AnimeSeason other) => Year == other.Year && Season == other.Season;
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj.GetType() == GetType() && Equals((AnimeSeason)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (Year * 397) ^ (int) Season;
+            }
+        }
     }
 }

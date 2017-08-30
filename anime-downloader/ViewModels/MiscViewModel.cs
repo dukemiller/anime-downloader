@@ -107,7 +107,7 @@ namespace anime_downloader.ViewModels
                     {
                         var (successful, changeMade) = await _detailService.FillInDetails(anime);
                         if (changeMade)
-                            updated.Add(anime.Title);
+                            updated.Add("-- " + anime.Title);
                     }
 
                     if (updated.Count > 0)
@@ -142,13 +142,13 @@ namespace anime_downloader.ViewModels
                         if (lastEpisode != null && anime.Episode != lastEpisode.Episode)
                         {
                             anime.Episode = lastEpisode.Episode;
-                            changed.Add(anime.Title);
+                            changed.Add("-- " + anime.Title);
                         }
                     }
                 });
 
                 Methods.Alert(changed.Count > 0
-                    ? $"Updated episodes for: {string.Join(", ", changed)}"
+                    ? $"Updated episodes for:\n{string.Join("\n", changed)}"
                     : "No re-indexes were needed.");
 
                 if (changed.Count > 0)
