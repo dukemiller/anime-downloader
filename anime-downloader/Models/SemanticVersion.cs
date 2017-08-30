@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace anime_downloader.Models
@@ -12,23 +12,31 @@ namespace anime_downloader.Models
     /// </remarks>
     public class SemanticVersion
     {
-        // 
+        
+        /// <summary>
+        ///     The semantic version of the currently executing assembly
+        /// </summary>
+        public static SemanticVersion Application => new SemanticVersion(Assembly.GetExecutingAssembly().GetName().Version);
+
+        // Constructors
 
         public SemanticVersion() { }
 
-        private SemanticVersion(int major, int minor, int patch)
+        public SemanticVersion(int major, int minor, int patch)
         {
             Major = major;
             Minor = minor;
             Patch = patch;
         }
 
-        private SemanticVersion(Tuple<int, int, int> version) 
-            : this(version.Item1, version.Item2, version.Item3) { }
+        public SemanticVersion((int major, int minor, int patch) version) 
+            : this(version.major, version.minor, version.patch) { }
 
-        public SemanticVersion(string version): this(ParseString(version)) { }
+        public SemanticVersion(string version): this(ParseVersion(version)) { }
 
         public SemanticVersion(Version version) : this(version.ToString()) { }
+
+        // Properties
 
         public int Major { get; }
 
@@ -36,7 +44,7 @@ namespace anime_downloader.Models
 
         public int Patch { get; }
 
-        // 
+        // Operators
 
         public static bool operator <(SemanticVersion left, SemanticVersion right)
         {
@@ -52,24 +60,59 @@ namespace anime_downloader.Models
                 || left.Major == right.Major && left.Minor == right.Minor && left.Patch > right.Patch;
         }
 
+        public static bool operator ==(SemanticVersion left, SemanticVersion right)
+        {
+            return left?.Major == right?.Major && left?.Minor == right?.Minor && left?.Patch == right?.Patch;
+        }
+
+        public static bool operator !=(SemanticVersion left, SemanticVersion right)
+        {
+            return !(left == right);
+        }
+
+        protected bool Equals(SemanticVersion other)
+        {
+            return Major == other.Major && Minor == other.Minor && Patch == other.Patch;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((SemanticVersion)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = Major;
+                hashCode = (hashCode * 397) ^ Minor;
+                hashCode = (hashCode * 397) ^ Patch;
+                return hashCode;
+            }
+        }
+
+        // Explicit conversions
+
+        public Version ToVersion() => new Version(ToString());
+
         public override string ToString() => $"{Major}.{Minor}.{Patch}";
 
         // 
 
-        private static Tuple<int, int, int> ParseString(string text)
+        private static (int, int, int) ParseVersion(string text)
         {
             int major = 0, minor = 0, patch = 0;
-            var split = Regex.Split(text, @"\.");
-
-            if (split.Length < 3)
-                return Tuple.Create(major, minor, patch);
-
-            int.TryParse(split[0], out major);
-            int.TryParse(split[1], out minor);
-            if (split[2].All(char.IsNumber))
-                int.TryParse(split[2], out patch);
-
-            return Tuple.Create(major, minor, patch);
+            var match = Regex.Match(text, @"((\d+)\.(\d+).(\d+))");
+            if (match.Success)
+            {
+                int.TryParse(match.Groups[2].Value, out major);
+                int.TryParse(match.Groups[3].Value, out minor);
+                int.TryParse(match.Groups[4].Value, out patch);
+            }
+            return (major, minor, patch);
         }
     }
 }

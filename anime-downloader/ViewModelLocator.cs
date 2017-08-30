@@ -87,34 +87,36 @@ namespace anime_downloader
         /// </summary>
         private static void PatchCheck()
         {
-            Version previous;
-            var current = Assembly.GetExecutingAssembly().GetName().Version;
             var path = Path.Combine(PathConfiguration.ApplicationDirectory, "version");
-
-            // Lowest version before new update
-            if (!File.Exists(path))
-                previous = new Version(0, 34, 3);
-
-            else
-            {
-                try
-                {
-                    previous = new Version(File.ReadAllText(path));
-                }
-
-                catch
-                {
-                    previous = new Version(0, 34, 3);
-                }
-            }
+            var current = SemanticVersion.Application;
+            var previous = GetLoadedVersion(path);
 
             if (previous != current)
             {
-                var (updated, failed) = new PatchService().Patch(previous, current);
-                if (updated && !failed)
+                var (updated, failed) = new PatchService().Patch(previous.ToVersion(), current.ToVersion());
+                if (!failed)
                     File.WriteAllText(path, current.ToString());
             }
         }
+
+        private static SemanticVersion GetLoadedVersion(string path)
+        {
+            // Lowest version before new update
+            if (!File.Exists(path))
+                return new SemanticVersion(0, 34, 3);
+
+            try
+            {
+                return new SemanticVersion(File.ReadAllText(path));
+            }
+
+            catch
+            {
+                return new SemanticVersion(0, 34, 3);
+            }
+        }
+
+        // 
 
         public static MainWindowViewModel Main => ServiceLocator.Current.GetInstance<MainWindowViewModel>();
 
