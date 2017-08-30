@@ -113,8 +113,8 @@ namespace anime_downloader.ViewModels
                     if (updated.Count > 0)
                     {
                         _animeRepository.Save();
-                        var updateResult = string.Join(", ", updated);
-                        Methods.Alert($"Updated total episodes for {updateResult}.");
+                        var updateResult = string.Join("\n", updated);
+                        Methods.Alert($"Updated information for:\n{updateResult}.");
                     }
 
                     else
@@ -151,7 +151,8 @@ namespace anime_downloader.ViewModels
                     ? $"Updated episodes for: {string.Join(", ", changed)}"
                     : "No re-indexes were needed.");
 
-                _animeRepository.Save();
+                if (changed.Count > 0)
+                    _animeRepository.Save();
 
                 // Update animelist
                 MessengerInstance.Send("update");
