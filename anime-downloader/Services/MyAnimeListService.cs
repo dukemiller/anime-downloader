@@ -193,17 +193,26 @@ namespace anime_downloader.Services
             // for every anime that needs updating
             foreach (var anime in _anime.NeedsUpdates)
             {
-                // If it needs adding, add it
-                if (string.IsNullOrEmpty(anime.Details.Id))
+                try
                 {
-                    if (await GetId(anime))
-                        await Add(anime);
-                    else
-                        continue;
+                    // If it needs adding, add it
+                    if (string.IsNullOrEmpty(anime.Details.Id))
+                    {
+                        if (await GetId(anime))
+                            await Add(anime);
+                        else
+                            continue;
+                    }
+
+                    // Then edit (if just added)
+                    await Update(anime);
                 }
-                
-                // Then edit (if just added)
-                await Update(anime);
+
+                catch (ServerProblemsException)
+                {
+                    Methods.Alert("There's a problem with the server at the moment,\ntry syncing again in a little bit.");
+                    return;
+                }
             }
         }
 

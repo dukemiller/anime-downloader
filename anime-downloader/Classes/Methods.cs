@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
 using System.Windows.Input;
-using anime_downloader.Enums;
 using anime_downloader.ViewModels.Dialogs;
-using GalaSoft.MvvmLight.Messaging;
 using MaterialDesignThemes.Wpf;
-using Dialog = anime_downloader.Views.Dialogs.Dialog;
 
 namespace anime_downloader.Classes
 {

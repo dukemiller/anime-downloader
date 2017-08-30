@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Xml.Serialization;
+using anime_downloader.Classes;
 using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Models.MyAnimeList;
@@ -156,6 +157,12 @@ namespace anime_downloader.Services
 
         // 
 
+        private readonly HttpStatusCode[] _serverErrors = 
+        {
+            HttpStatusCode.InternalServerError, HttpStatusCode.GatewayTimeout,
+            HttpStatusCode.ServiceUnavailable, HttpStatusCode.BadGateway
+        };
+
         private async Task<HttpResponseMessage> Post(string url, Func<HttpContent> getData)
         {
             var response = await _client.PostAsync(url, getData());
@@ -168,6 +175,9 @@ namespace anime_downloader.Services
                 await Login();
                 response = await _client.PostAsync(url, getData());
             }
+            
+            else if (_serverErrors.Any(error => response.StatusCode == error))
+                throw new ServerProblemsException();
 
             return response;
         }
@@ -427,6 +437,5 @@ namespace anime_downloader.Services
             };
         }
     }
-    
-    
+
 }

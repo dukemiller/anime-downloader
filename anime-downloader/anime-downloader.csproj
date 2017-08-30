@@ -132,6 +132,7 @@
     <Compile Include="Classes\ApiKeysLocal.cs" />
     <Compile Include="Classes\Attributes.cs" />
     <Compile Include="Classes\Distances.cs" />
+    <Compile Include="Classes\Exceptions.cs" />
     <Compile Include="Classes\Messages.cs" />
     <Compile Include="Classes\Sorts.cs" />
     <Compile Include="Classes\Xaml\AttachedProperties.cs" />
