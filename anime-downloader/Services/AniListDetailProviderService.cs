@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using anime_downloader.Classes;
+using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Services.Interfaces;
 
@@ -77,12 +79,6 @@ namespace anime_downloader.Services
                     changesMade = true;
                 }
 
-                if (anime.Details.Aired != updated.AnimeSeason)
-                {
-                    anime.Details.Aired = updated.AnimeSeason;
-                    changesMade = true;
-                }
-
                 if (updated.TotalEpisodes != 0 && anime.Details.TotalEpisodes != updated.TotalEpisodes)
                 {
                     anime.Details.TotalEpisodes = updated.TotalEpisodes;
@@ -94,6 +90,23 @@ namespace anime_downloader.Services
                 {
                     anime.Details.Image = updated.ImagePath;
                     changesMade = true;
+                }
+
+                // Date details
+
+                anime.Details.Aired = new AnimeSeason
+                {
+                    Year = updated.StartDate.Year,
+                    Season = (Season)Math.Ceiling(Convert.ToDouble(updated.StartDate.Month) / 3)
+                };
+
+                if (updated.EndDate is DateTime end)
+                {
+                    anime.Details.Ended = new AnimeSeason
+                    {
+                        Year = end.Year,
+                        Season = (Season)Math.Ceiling(Convert.ToDouble(end.Month) / 3)
+                    };
                 }
 
                 return (true, changesMade);
