@@ -29,7 +29,7 @@ namespace anime_downloader.Patch.Services
 
         public Action<string> Output { get; set; } = Console.WriteLine;
 
-        public void Patch(Version previous, Version current)
+        public (bool updated, bool failed) Patch(Version previous, Version current)
         {
             Previous = previous;
             Current = current;
@@ -37,7 +37,11 @@ namespace anime_downloader.Patch.Services
             if (Previous.Major == 0 && Current.Major == 1)
             {
                 if (File.Exists(Path.Combine(ApplicationDirectory, "settings.json")))
+                {
+
                     Output("Settings.json already found, stopping.");
+                    return (false, false);
+                }
 
                 else
                 {
@@ -51,15 +55,22 @@ namespace anime_downloader.Patch.Services
                         var restored = RestoreBackup();
                         if (!restored)
                             Output("Backup corrupted?");
+                        return (false, false);
                     }
 
                     else
+                    {
                         Output("Update complete.");
+                        return (true, false);
+                    }
                 }
             }
 
             else
+            {
                 Output("Up to date.");
+                return (false, false);
+            }
         }
 
         // General

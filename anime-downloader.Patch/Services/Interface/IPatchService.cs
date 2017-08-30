@@ -15,6 +15,6 @@ namespace anime_downloader.Patch.Services.Interface
         /// <summary>
         ///     Make any necessary changes to successfuly go from previous -> current.
         /// </summary>
-        void Patch(Version previous, Version current);
+        (bool updated, bool failed) Patch(Version previous, Version current);
     }
 }

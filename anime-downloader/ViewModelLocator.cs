@@ -110,8 +110,9 @@ namespace anime_downloader
 
             if (previous != current)
             {
-                new PatchService().Patch(previous, current);
-                File.WriteAllText(path, current.ToString());
+                var (updated, failed) = new PatchService().Patch(previous, current);
+                if (updated && !failed)
+                    File.WriteAllText(path, current.ToString());
             }
         }
 
