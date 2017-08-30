@@ -22,9 +22,9 @@ namespace anime_downloader.Services
 
         // 
 
-        public int GetId(Anime anime) => anime.Details.AnnId;
+        public int GetId(Anime anime) => anime.Details.AniId;
 
-        public void SetId(Anime anime, int id) => anime.Details.AnnId = id;
+        public void SetId(Anime anime, int id) => anime.Details.AniId = id;
 
         public async Task<(bool successful, int id)> FindId(Anime anime)
         {

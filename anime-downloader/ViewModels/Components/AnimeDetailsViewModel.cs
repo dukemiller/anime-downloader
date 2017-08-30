@@ -112,7 +112,7 @@ namespace anime_downloader.ViewModels.Components
                 Airing = true,
                 Details =
                 {
-                    AnnId = airing.Id,
+                    AniId = airing.Id,
                     NeedsUpdating = true,
                     Image = airing.ImagePath,
                     Synopsis = airing.Description,

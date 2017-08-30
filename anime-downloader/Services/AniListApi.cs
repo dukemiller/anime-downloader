@@ -175,7 +175,7 @@ namespace anime_downloader.Services
         
         private async Task<string> BuildAnimeUrl(AiringAnimeSmall anime) => await BuildAnimeUrl(anime.Id);
         
-        private async Task<string> BuildAnimeUrl(Anime anime) => await BuildAnimeUrl(anime.Details.AnnId);
+        private async Task<string> BuildAnimeUrl(Anime anime) => await BuildAnimeUrl(anime.Details.AniId);
 
         private async Task<string> BuildSearchUrl(string q)
         {

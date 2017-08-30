@@ -17,7 +17,7 @@ namespace anime_downloader.Models
 
         private string _id = "";
 
-        private int _annId = 0;
+        private int _aniId = 0;
 
         private bool _needsUpdating;
 
@@ -42,11 +42,11 @@ namespace anime_downloader.Models
             }
         }
 
-        [JsonProperty("ann_id")]
-        public int AnnId
+        [JsonProperty("ani_id")]
+        public int AniId
         {
-            get => _annId;
-            set => Set(() => AnnId, ref _annId, value);
+            get => _aniId;
+            set => Set(() => AniId, ref _aniId, value);
         }
 
         [JsonProperty("synopsis")]
