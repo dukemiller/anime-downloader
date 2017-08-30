@@ -23,10 +23,11 @@ namespace anime_downloader.ViewModels.Components
         private IAnimeRepository _animeRepository;
         private Anime _anime;
         private RelayCommand _command;
-        private MyAnimeListBarViewModel _myAnimeListBar;
+        private DetailsBarViewModel _detailsBar;
         private string _text;
         private string _image;
         private bool _changeMade;
+        private bool _editing;
 
         // 
 
@@ -44,6 +45,7 @@ namespace anime_downloader.ViewModels.Components
 
         public AnimeDetailsViewModel EditExisting(Anime anime)
         {
+            Editing = true;
             Anime = anime;
             SetupImage();
 
@@ -53,7 +55,7 @@ namespace anime_downloader.ViewModels.Components
                 MessengerInstance.Send(ViewDisplay.Anime);
             });
 
-            MyAnimeListBar = SimpleIoc.Default.GetInstance<MyAnimeListBarViewModel>().Load(Anime);
+            DetailsBar = SimpleIoc.Default.GetInstance<DetailsBarViewModel>().Load(Anime);
             NextCommand = new RelayCommand(Next);
             PreviousCommand = new RelayCommand(Previous);
 
@@ -71,6 +73,7 @@ namespace anime_downloader.ViewModels.Components
         
         public AnimeDetailsViewModel CreateNew()
         {
+            Editing = false;
             Anime = new Anime
             {
                 Episode = 0,
@@ -99,6 +102,7 @@ namespace anime_downloader.ViewModels.Components
 
         public AnimeDetailsViewModel CreateNewFromAiring(AiringAnime airing)
         {
+            Editing = false;
             Anime = new Anime
             {
                 Name = airing.TitleEnglish,
@@ -150,7 +154,7 @@ namespace anime_downloader.ViewModels.Components
         public ISettingsRepository SettingsRepository
         {
             get => _settingsRepository;
-            set { Set(() => SettingsRepository, ref _settingsRepository, value); }
+            set => Set(() => SettingsRepository, ref _settingsRepository, value);
         }
 
         public string Text
@@ -163,6 +167,12 @@ namespace anime_downloader.ViewModels.Components
         {
             get => _image;
             set => Set(() => Image, ref _image, value);
+        }
+
+        public bool Editing
+        {
+            get => _editing;
+            set => Set(() => Editing, ref _editing, value);
         }
 
         // 
@@ -181,10 +191,10 @@ namespace anime_downloader.ViewModels.Components
 
         public RelayCommand ClearSubgroupCommand { get; set; }
 
-        public MyAnimeListBarViewModel MyAnimeListBar
+        public DetailsBarViewModel DetailsBar
         {
-            get => _myAnimeListBar;
-            set => Set(() => MyAnimeListBar, ref _myAnimeListBar, value);
+            get => _detailsBar;
+            set => Set(() => DetailsBar, ref _detailsBar, value);
         }
 
         public Anime Anime

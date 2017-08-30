@@ -49,6 +49,7 @@
         <controls:MetroAnimatedSingleRowTabControl controls:TabControlHelper.Underlined="TabPanel"
                                                    Grid.RowSpan="2"
                                                    Grid.ColumnSpan="2"
+                                                   IsSynchronizedWithCurrentItem="True"
                                                    TabStripMargin="5"
                                                    TabStripPlacement="Bottom">
             <controls:MetroTabItem Header="Profile">
@@ -180,7 +181,7 @@
 
                 </DockPanel>
             </controls:MetroTabItem>
-            <controls:MetroTabItem Header="Details">
+            <controls:MetroTabItem Header="Details" IsHitTestVisible="{Binding Editing}">
                 <DockPanel>
                     <TextBlock HorizontalAlignment="Center"
                                Style="{StaticResource MaterialDesignTitleTextBlock}"
@@ -191,8 +192,8 @@
                         HorizontalAlignment="Center"
                         DockPanel.Dock="Bottom"
                         Margin="5"
-                        Content="{Binding MyAnimeListBar}" />
-                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        Content="{Binding DetailsBar}" />
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" IsTabStop="False">
                         <TextBlock HorizontalAlignment="Stretch"
                                    Style="{StaticResource MaterialDesignBody1TextBlock}"
                                    FontSize="16"
@@ -293,7 +294,6 @@
 
                 </Grid>
             </controls:MetroTabItem>
-
         </controls:MetroAnimatedSingleRowTabControl>
         <Button Margin="5"
                 Grid.Row="1"

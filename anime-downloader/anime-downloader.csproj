@@ -234,7 +234,7 @@
     <Compile Include="ViewModels\Components\DownloadOptionsViewModel.cs" />
     <Compile Include="ViewModels\Components\FileListViewModel.cs" />
     <Compile Include="ViewModels\Components\FindViewModel.cs" />
-    <Compile Include="ViewModels\Components\MyAnimeListBarViewModel.cs" />
+    <Compile Include="ViewModels\Components\DetailsBarViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\LoadingViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\MyAnimeListLoginDialogViewModel.cs" />
     <Compile Include="ViewModels\DiscoverViewModel.cs" />
@@ -279,8 +279,8 @@
     <Compile Include="Views\Components\Find.xaml.cs">
       <DependentUpon>Find.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Components\MyAnimeListBar.xaml.cs">
-      <DependentUpon>MyAnimeListBar.xaml</DependentUpon>
+    <Compile Include="Views\Components\DetailsBar.xaml.cs">
+      <DependentUpon>DetailsBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Dialogs\Loading.xaml.cs">
       <DependentUpon>Loading.xaml</DependentUpon>
@@ -332,7 +332,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Components\MyAnimeListBar.xaml">
+    <Page Include="Views\Components\DetailsBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

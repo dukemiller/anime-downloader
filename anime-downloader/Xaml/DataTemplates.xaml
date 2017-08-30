@@ -80,8 +80,8 @@
         <components:Find DataContext="{Binding}" />
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type viewModelComponents:MyAnimeListBarViewModel}">
-        <components:MyAnimeListBar DataContext="{Binding}" />
+    <DataTemplate DataType="{x:Type viewModelComponents:DetailsBarViewModel}">
+        <components:DetailsBar DataContext="{Binding}" />
     </DataTemplate>
 
     <!--  Dialogs  -->

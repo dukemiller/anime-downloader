@@ -52,7 +52,7 @@ namespace anime_downloader
             SimpleIoc.Default.Register<DownloaderViewModel>();
             SimpleIoc.Default.Register<DownloadLogViewModel>();
             SimpleIoc.Default.Register<DownloadOptionsViewModel>();
-            SimpleIoc.Default.Register<MyAnimeListBarViewModel>();
+            SimpleIoc.Default.Register<DetailsBarViewModel>();
         }
 
         public static void RegisterIDownloadService()
