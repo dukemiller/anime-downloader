@@ -94,19 +94,31 @@ namespace anime_downloader.Services
 
                 // Date details
 
-                anime.Details.Aired = new AnimeSeason
+                var aired = new AnimeSeason
                 {
                     Year = updated.StartDate.Year,
                     Season = (Season)Math.Ceiling(Convert.ToDouble(updated.StartDate.Month) / 3)
                 };
 
+                if (anime.Details.Aired != aired)
+                {
+                    anime.Details.Aired = aired;
+                    changesMade = true;
+                }
+
                 if (updated.EndDate is DateTime end)
                 {
-                    anime.Details.Ended = new AnimeSeason
+                    var ended = new AnimeSeason
                     {
                         Year = end.Year,
                         Season = (Season)Math.Ceiling(Convert.ToDouble(end.Month) / 3)
                     };
+
+                    if (anime.Details.Ended != ended)
+                    {
+                        anime.Details.Ended = ended;
+                        changesMade = true;
+                    }
                 }
 
                 return (true, changesMade);
