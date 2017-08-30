@@ -80,8 +80,6 @@ namespace anime_downloader.Services
             _settings.Version.NeedsUpdate = false;
             _settings.Save();
             
-            new PatchService().Patch(new Version(LocalVersion.ToString()), new Version(OnlineVersion.ToString()));
-
             // Close and start the application again
             Application.Current.Shutdown();
             Process.Start(path);

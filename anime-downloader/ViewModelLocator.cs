@@ -1,5 +1,10 @@
 ﻿using System;
+using System.IO;
+using System.Reflection;
 using anime_downloader.Enums;
+using anime_downloader.Models;
+using anime_downloader.Models.Configurations;
+using anime_downloader.Patch.Services;
 using anime_downloader.Repositories;
 using anime_downloader.Repositories.Interface;
 using anime_downloader.Services;
@@ -16,6 +21,8 @@ namespace anime_downloader
         static ViewModelLocator()
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
+
+            PatchCheck();
 
             // Repositories
             SimpleIoc.Default.Register<ISettingsRepository>(SettingsRepository.Load);
@@ -72,6 +79,39 @@ namespace anime_downloader
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        /// <summary>
+        ///     The patch process needs to happen before dependencies are loaded
+        /// </summary>
+        private static void PatchCheck()
+        {
+            Version previous;
+            var current = Assembly.GetExecutingAssembly().GetName().Version;
+            var path = Path.Combine(PathConfiguration.ApplicationDirectory, "version");
+
+            // Lowest version before new update
+            if (!File.Exists(path))
+                previous = new Version(0, 34, 3);
+
+            else
+            {
+                try
+                {
+                    previous = new Version(File.ReadAllText(path));
+                }
+
+                catch
+                {
+                    previous = new Version(0, 34, 3);
+                }
+            }
+
+            if (previous != current)
+            {
+                new PatchService().Patch(previous, current);
+                File.WriteAllText(path, current.ToString());
             }
         }
 

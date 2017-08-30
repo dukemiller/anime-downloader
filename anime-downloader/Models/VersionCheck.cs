@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Xml.Serialization;
 using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
 
