@@ -38,7 +38,6 @@ namespace anime_downloader.Patch.Services
             {
                 if (File.Exists(Path.Combine(ApplicationDirectory, "settings.json")))
                 {
-
                     Output("Settings.json already found, stopping.");
                     return (false, false);
                 }
@@ -205,6 +204,9 @@ namespace anime_downloader.Patch.Services
                 Output("-- Removing old files.");
                 foreach (var file in OldFiles)
                     File.Delete(file);
+
+                if (File.Exists(settings))
+                    File.Delete(settings);
 
                 return (true, false);
             }

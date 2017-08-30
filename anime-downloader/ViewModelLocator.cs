@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Reflection;
 using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Models.Configurations;
