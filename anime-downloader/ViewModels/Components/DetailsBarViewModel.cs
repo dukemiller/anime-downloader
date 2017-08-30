@@ -14,12 +14,14 @@ namespace anime_downloader.ViewModels.Components
     {
         private Anime _anime;
         private readonly IDetailProviderService _detailService;
+        private readonly IAnimeRepository _animeRepository;
 
         // 
 
-        public DetailsBarViewModel(IDetailProviderService detailService)
+        public DetailsBarViewModel(IDetailProviderService detailService, IAnimeRepository animeRepository)
         {
             _detailService = detailService;
+            _animeRepository = animeRepository;
             ProfileCommand = new RelayCommand(Profile);
             RefreshCommand = new RelayCommand(Refresh);
         }
@@ -49,9 +51,15 @@ namespace anime_downloader.ViewModels.Components
         private async void Refresh()
         {
             MessengerInstance.Send(new WorkMessage {Working = true});
+
             var (successful, changesMade) = await _detailService.FillInDetails(_anime);
+
+            if (changesMade)
+                _animeRepository.Save();
+
             if (!successful)
                 Methods.Alert("Had trouble finding details about this show.");
+
             MessengerInstance.Send(new WorkMessage {Working = false});
         }
     }
