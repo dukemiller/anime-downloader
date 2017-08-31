@@ -80,8 +80,7 @@ namespace anime_downloader.Classes.Xaml
                 fe.Focus();
                 // Determine if it is a text box like element.
                 var tb = fe as TextBoxBase;
-                if (tb != null)
-                    tb.SelectAll();
+                tb?.SelectAll();
             }
         }
 

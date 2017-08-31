@@ -28,14 +28,17 @@ namespace anime_downloader.Classes.Xaml
                 return;
 
             // avoid recursive updating by ignoring the box's changed event
-            box.PasswordChanged -= HandlePasswordChanged;
+            if (box != null)
+            {
+                box.PasswordChanged -= HandlePasswordChanged;
 
-            var newPassword = (string) e.NewValue;
+                var newPassword = (string) e.NewValue;
 
-            if (!GetUpdatingPassword(box))
-                box.Password = newPassword;
+                if (!GetUpdatingPassword(box))
+                    box.Password = newPassword;
 
-            box.PasswordChanged += HandlePasswordChanged;
+                box.PasswordChanged += HandlePasswordChanged;
+            }
         }
 
         private static void OnBindPasswordChanged(DependencyObject dp, DependencyPropertyChangedEventArgs e)
@@ -65,7 +68,7 @@ namespace anime_downloader.Classes.Xaml
             // set a flag to indicate that we're updating the password
             SetUpdatingPassword(box, true);
             // push the new password into the BoundPassword property
-            SetBoundPassword(box, box.Password);
+            SetBoundPassword(box, box?.Password);
             SetUpdatingPassword(box, false);
         }
 

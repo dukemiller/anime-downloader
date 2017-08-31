@@ -55,7 +55,7 @@ namespace anime_downloader.Services.Abstract
 
         private async Task<(bool successful, string path)> RetrieveFromAria(MagnetLink magnet)
         {
-            var file = "";
+            string file;
 
             if (!Directory.Exists(AriaDirectory))
                 await DownloadAria();

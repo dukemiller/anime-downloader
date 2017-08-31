@@ -11,9 +11,6 @@
     d:DesignWidth="680"
     mc:Ignorable="d">
     <UserControl.Resources>
-        <Style x:Key="FontStyle">
-            <Setter Property="RadioButton.FontFamily" Value="{StaticResource MainFont}" />
-        </Style>
         <Style TargetType="Label">
             <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="VerticalAlignment" Value="Center" />

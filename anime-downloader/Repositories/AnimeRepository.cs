@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
 using anime_downloader.Models;
 using anime_downloader.Models.Configurations;
 using anime_downloader.Repositories.Interface;

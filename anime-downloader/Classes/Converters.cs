@@ -199,7 +199,7 @@ namespace anime_downloader.Classes
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (Visibility) value == Visibility.Visible;
+            return value != null && (Visibility) value == Visibility.Visible;
         }
     }
 
@@ -212,7 +212,7 @@ namespace anime_downloader.Classes
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (Visibility) value == Visibility.Visible;
+            return value != null && (Visibility) value == Visibility.Visible;
         }
     }
 
@@ -226,7 +226,7 @@ namespace anime_downloader.Classes
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (Visibility) value == Visibility.Collapsed;
+            return value != null && (Visibility) value == Visibility.Collapsed;
         }
     }
 
@@ -308,7 +308,7 @@ namespace anime_downloader.Classes
         // CurrentlyChecked
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (Visibility) value == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+            return value != null && (Visibility) value == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

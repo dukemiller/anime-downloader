@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Models.Abstract;
 using anime_downloader.Repositories.Interface;

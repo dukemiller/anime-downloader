@@ -75,7 +75,7 @@ namespace anime_downloader.Services
             var seeders = int.Parse(item.SelectSingleNode("nyaa:seeders", manager)?.InnerText ?? "0");
             var downloads = int.Parse(item.SelectSingleNode("nyaa:downloads", manager)?.InnerText ?? "0");
 
-            if (link.Contains("magnet:?"))
+            if (link != null && link.Contains("magnet:?"))
             {
                 return new MagnetLink
                 {
@@ -83,7 +83,7 @@ namespace anime_downloader.Services
                     Remote = link,
                     Date = pubdate,
                     Downloads = downloads,
-                    DirectName = HttpUtility.UrlDecode(title.Split(new[] {"&dn="}, StringSplitOptions.None)
+                    DirectName = HttpUtility.UrlDecode(title?.Split(new[] {"&dn="}, StringSplitOptions.None)
                         .Last()
                         .Split('&')
                         .FirstOrDefault()),

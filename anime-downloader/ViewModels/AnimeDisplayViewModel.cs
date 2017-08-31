@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Windows.Forms;
 using anime_downloader.Classes;
 using anime_downloader.Models;
 using anime_downloader.Models.AniList;

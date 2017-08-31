@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Windows;
 using anime_downloader.Classes;
 using anime_downloader.Models;
@@ -13,7 +12,9 @@ namespace anime_downloader.ViewModels.Components
     public class DetailsBarViewModel : ViewModelBase
     {
         private Anime _anime;
+
         private readonly IDetailProviderService _detailService;
+
         private readonly IAnimeRepository _animeRepository;
 
         // 

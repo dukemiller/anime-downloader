@@ -3,7 +3,6 @@ using System.Linq;
 using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Repositories.Interface;
-using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 

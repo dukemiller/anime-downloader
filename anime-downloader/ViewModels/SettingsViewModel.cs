@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using anime_downloader.Repositories.Interface;
-using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 

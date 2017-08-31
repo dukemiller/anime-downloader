@@ -19,8 +19,8 @@ namespace anime_downloader.Classes.Xaml
 
         public IList SelectedItems
         {
-            get { return (IList) GetValue(SelectedItemsProperty); }
-            set { SetValue(SelectedItemsProperty, value); }
+            get => (IList) GetValue(SelectedItemsProperty);
+            set => SetValue(SelectedItemsProperty, value);
         }
 
         protected override void OnAttached()

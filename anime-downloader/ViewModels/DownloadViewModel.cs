@@ -1,5 +1,4 @@
-﻿using System.Web.Configuration;
-using anime_downloader.Classes;
+﻿using anime_downloader.Classes;
 using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.ViewModels.Components;

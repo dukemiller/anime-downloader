@@ -1,13 +1,10 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using System.Windows;
 using System.Windows.Input;
 using anime_downloader.ViewModels;
 using MahApps.Metro.Controls;
-using static anime_downloader.Classes.OperatingSystemApi;
-using MessageBox = System.Windows.Forms.MessageBox;
+using static anime_downloader.Classes.NativeMethods;
 
 namespace anime_downloader.Views
 {

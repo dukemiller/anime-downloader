@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using anime_downloader.Models;
-using anime_downloader.Patch.Services;
 using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
 
@@ -71,28 +70,31 @@ namespace anime_downloader.Services
 
             // Rename the current exe to filename + .bak (legal)
             var path = Assembly.GetEntryAssembly().Location;
-            File.Move(path, path + ".bak");
-
-            // Download the new file to the original name
-            _downloader.DownloadFile(new Uri(release), path);
-
-            // Set the version as up to date
-            _settings.Version.NeedsUpdate = false;
-            _settings.Save();
-            
-            // Close and start the application again
-            Application.Current.Shutdown();
-            Process.Start(path);
-
-            // Delete the previous file
-            var info = new ProcessStartInfo
+            if (path != null)
             {
-                Arguments = "/C choice /C Y /N /D Y /T 1 & Del " + path + ".bak",
-                WindowStyle = ProcessWindowStyle.Hidden,
-                CreateNoWindow = true,
-                FileName = "cmd.exe"
-            };
-            Process.Start(info);
+                File.Move(path, path + ".bak");
+
+                // Download the new file to the original name
+                _downloader.DownloadFile(new Uri(release), path);
+
+                // Set the version as up to date
+                _settings.Version.NeedsUpdate = false;
+                _settings.Save();
+            
+                // Close and start the application again
+                Application.Current.Shutdown();
+                Process.Start(path);
+
+                // Delete the previous file
+                var info = new ProcessStartInfo
+                {
+                    Arguments = "/C choice /C Y /N /D Y /T 1 & Del " + path + ".bak",
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    CreateNoWindow = true,
+                    FileName = "cmd.exe"
+                };
+                Process.Start(info);
+            }
         }
 
         private async Task<SemanticVersion> RetrieveOnlineVersion()

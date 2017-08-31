@@ -10,11 +10,10 @@ using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Models.Configurations;
 using anime_downloader.Repositories.Interface;
-using anime_downloader.Services.Interfaces;
 using anime_downloader.Views;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
-using static anime_downloader.Classes.OperatingSystemApi;
+using static anime_downloader.Classes.NativeMethods;
 using Application = System.Windows.Application;
 
 namespace anime_downloader.Classes
@@ -22,6 +21,7 @@ namespace anime_downloader.Classes
     public class Tray : ViewModelBase
     {
         private readonly ISettingsRepository _settings;
+
         private readonly ICredentialsRepository _credentials;
 
         /// <summary>

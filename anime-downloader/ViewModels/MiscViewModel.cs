@@ -18,7 +18,6 @@ namespace anime_downloader.ViewModels
         private readonly ICredentialsRepository _credentialsRepository;
         private readonly IAnimeRepository _animeRepository;
         private readonly IAnimeService _animeService;
-        private readonly IMyAnimeListService _malSevice;
         private readonly IDetailProviderService _detailService;
         private readonly IFileService _fileService;
         private bool _doingAction;
@@ -26,14 +25,12 @@ namespace anime_downloader.ViewModels
         public MiscViewModel(ICredentialsRepository credentialsRepository, 
             IAnimeRepository animeRepository,
             IAnimeService animeService,
-            IMyAnimeListService malSevice, 
             IDetailProviderService detailService,
             IFileService fileService)
         {
             _credentialsRepository = credentialsRepository;
             _animeRepository = animeRepository;
             _animeService = animeService;
-            _malSevice = malSevice;
             _detailService = detailService;
             _fileService = fileService;
             SelectedIndex = 0;

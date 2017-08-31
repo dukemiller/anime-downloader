@@ -173,7 +173,7 @@
     <Compile Include="Models\Configurations\MyAnimeListConfiguration.cs" />
     <Compile Include="Enums\EpisodeStatus.cs" />
     <Compile Include="Classes\Methods.cs" />
-    <Compile Include="Classes\OperatingSystemApi.cs" />
+    <Compile Include="Classes\NativeMethods.cs" />
     <Compile Include="Classes\Tray.cs" />
     <Compile Include="Models\MyAnimeList\ApiCredentials.cs" />
     <Compile Include="Models\MyAnimeList\Category.cs" />

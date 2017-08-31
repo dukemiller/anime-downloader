@@ -22,7 +22,7 @@ namespace anime_downloader.Models
         /// </summary>
         public int Seeders
         {
-            get { return _seeders; }
+            get => _seeders;
             set
             {
                 _seeders = value;

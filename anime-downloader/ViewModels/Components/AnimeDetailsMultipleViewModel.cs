@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
@@ -14,10 +13,15 @@ namespace anime_downloader.ViewModels.Components
     public class AnimeDetailsMultipleViewModel : ViewModelBase
     {
         private MultipleAnimeDetails _details;
+
         private string _header;
+
         private string _input;
+
         private RelayCommand _submitActionCommand;
+
         private readonly IAnimeService _animeService;
+
         private bool _editing;
 
         // 
@@ -124,7 +128,7 @@ namespace anime_downloader.ViewModels.Components
                             NeedsUpdating = true
                         }
                     });
-                MessengerInstance.Send(Enums.ViewDisplay.Anime);
+                MessengerInstance.Send(ViewDisplay.Anime);
             }
         }
 
@@ -140,7 +144,7 @@ namespace anime_downloader.ViewModels.Components
                 anime.Airing = Details.Airing;
                 anime.Resolution = Details.Resolution;
             }
-            MessengerInstance.Send(Enums.ViewDisplay.Anime);
+            MessengerInstance.Send(ViewDisplay.Anime);
         }
     }
 }

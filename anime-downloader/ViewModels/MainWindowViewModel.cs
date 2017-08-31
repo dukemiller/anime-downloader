@@ -4,7 +4,6 @@ using System.Windows;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
 using anime_downloader.Repositories.Interface;
-using anime_downloader.Services.Interfaces;
 using anime_downloader.ViewModels.Dialogs;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
@@ -26,7 +25,7 @@ namespace anime_downloader.ViewModels
 
         private bool _isShowing;
 
-        public static bool Loaded = false;
+        public static bool Loaded;
 
         // 
 

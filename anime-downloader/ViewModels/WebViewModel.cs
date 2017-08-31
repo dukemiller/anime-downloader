@@ -7,11 +7,9 @@ using anime_downloader.Classes;
 using anime_downloader.Models.Configurations;
 using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
-using anime_downloader.ViewModels.Components;
 using anime_downloader.Views.Dialogs;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using MaterialDesignThemes.Wpf;
 

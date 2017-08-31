@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Xml.Serialization;
 using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
 
@@ -16,6 +15,8 @@ namespace anime_downloader.Models.Configurations
         private string _unwatched;
 
         private string _watched;
+
+        // 
 
         /// <summary>
         ///     The path to the directory that files will initially download to.

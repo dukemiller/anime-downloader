@@ -12,8 +12,8 @@ namespace anime_downloader.Classes.Xaml
         [TypeConverter(typeof(ExtendedMouseGestureConverter))]
         public override InputGesture Gesture
         {
-            get { return base.Gesture; }
-            set { base.Gesture = value; }
+            get => base.Gesture;
+            set => base.Gesture = value;
         }
     }
 
@@ -21,7 +21,7 @@ namespace anime_downloader.Classes.Xaml
     {
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object source)
         {
-            switch (source.ToString())
+            switch (source?.ToString())
             {
                 case "XButton1":
                     return new ExtendedMouseGesture(MouseButton.XButton1);

@@ -47,10 +47,10 @@ namespace anime_downloader.Classes.Xaml
                         //  Haven't tested this branch -- good luck!
                         if (null != e3.OldItems)
                             foreach (var item in e3.OldItems)
-                                lb.SelectedItems.Remove(item);
+                                lb?.SelectedItems.Remove(item);
                         if (null != e3.NewItems)
                             foreach (var item in e3.NewItems)
-                                lb.SelectedItems.Add(item);
+                                lb?.SelectedItems.Add(item);
                     };
 
             if (null != coll)
@@ -64,20 +64,21 @@ namespace anime_downloader.Classes.Xaml
                     //  isn't populated yet, so adding these items to lb.SelectedItems 
                     //  always fails. 
                     //  Haven't tested this otherwise -- good luck!
-                    lb.SelectedItems.Clear();
+                    lb?.SelectedItems.Clear();
                     foreach (var item in coll)
-                        lb.SelectedItems.Add(item);
+                        lb?.SelectedItems.Add(item);
                 }
 
-                lb.SelectionChanged += (s, e2) =>
-                {
-                    if (null != e2.RemovedItems)
-                        foreach (var item in e2.RemovedItems)
-                            coll.Remove(item);
-                    if (null != e2.AddedItems)
-                        foreach (var item in e2.AddedItems)
-                            coll.Add(item);
-                };
+                if (lb != null)
+                    lb.SelectionChanged += (s, e2) =>
+                    {
+                        if (null != e2.RemovedItems)
+                            foreach (var item in e2.RemovedItems)
+                                coll.Remove(item);
+                        if (null != e2.AddedItems)
+                            foreach (var item in e2.AddedItems)
+                                coll.Add(item);
+                    };
             }
         }
 

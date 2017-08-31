@@ -17,7 +17,7 @@ namespace anime_downloader.Models
 
         private string _id = "";
 
-        private int _aniId = 0;
+        private int _aniId;
 
         private bool _needsUpdating;
 

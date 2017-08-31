@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace anime_downloader.Classes
 {
-    public static class OperatingSystemApi
+    public static class NativeMethods
     {
         private const int Restore = 9;
 
@@ -27,7 +27,7 @@ namespace anime_downloader.Classes
         [DllImport("user32.dll")]
         private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         private static extern IntPtr FindWindow(string sClassName, string sAppName);
 #endif
 

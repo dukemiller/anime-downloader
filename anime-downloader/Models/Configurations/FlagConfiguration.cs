@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Xml.Serialization;
 using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
 
@@ -9,10 +8,16 @@ namespace anime_downloader.Models.Configurations
     public class FlagConfiguration : ObservableObject
     {
         private bool _alwaysShowTray;
+
         private bool _exitOnClose;
+
         private bool _individualShowFolders;
+
         private bool _onlyWhitelisted;
+
         private bool _sortByReversed;
+
+        // 
 
         [JsonProperty("sort_by_reversed")]
         public bool SortByReversed
