@@ -317,10 +317,14 @@ namespace anime_downloader.ViewModels.Components
         {
             Application.Current.Dispatcher.InvokeAsync(() =>
             {
-                var file = new AnimeFile(args.FullPath);
-                Files.AddSorted(file);
-                FilteredFiles = new ObservableCollection<AnimeFile>(Files.Where(af => Methods.Strip(af.Name).ToLower().Contains(Methods.Strip(Filter).ToLower())));
-                RaisePropertyChanged(nameof(Label));
+                if (args != null)
+                {
+                    var file = new AnimeFile(args.FullPath);
+                    Files.AddSorted(file);
+                    FilteredFiles = new ObservableCollection<AnimeFile>(Files.Where(af => Methods.Strip(af.Name)
+                        .ToLower().Contains(Methods.Strip(Filter).ToLower())));
+                    RaisePropertyChanged(nameof(Label));
+                }
             });
         }
 
