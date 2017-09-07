@@ -207,9 +207,12 @@ namespace anime_downloader.Services
                     await Update(anime);
                 }
 
-                catch (ServerProblemsException)
+                catch (ServerProblemException spx)
                 {
-                    Methods.Alert("There's a problem with the server at the moment,\ntry syncing again in a little bit.");
+                    Methods.Alert(spx.StatusCode == HttpStatusCode.BadRequest
+                        ? "Syncing failed, reopen the program and try again\n" +
+                          "and it'll probably work. There should be a fix to this in the near future."
+                        : "There's a problem with the server at the moment,\ntry syncing again in a little bit.");
                     return;
                 }
             }
