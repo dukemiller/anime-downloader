@@ -42,8 +42,6 @@ namespace anime_downloader.Models
 
         private string _resolution = "";
 
-        private bool _secondSeason;
-
         private Status _status;
 
         // 
@@ -154,6 +152,9 @@ namespace anime_downloader.Models
             set => Set(() => Details, ref _details, value);
         }
 
+        /// <summary>
+        ///     User written notes about the show.
+        /// </summary>
         [JsonProperty("notes")]
         public string Notes
         {
@@ -165,39 +166,30 @@ namespace anime_downloader.Models
                     Details.NeedsUpdating = true;
             }
         }
-
-        [JsonProperty("is_second_season")]
-        public bool SecondSeason
-        {
-            get => _secondSeason;
-            set => Set(() => SecondSeason, ref _secondSeason, value);
-        }
-
-        //////////////////////////////////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////////////////////////////////
-        /* Getters */
+        
+        // 
 
         /// <summary>
         ///     Proper title name of anime.
         /// </summary>
-        /// <returns>A title</returns>
         [JsonIgnore]
         public string Title => new CultureInfo("en-US", false).TextInfo.ToTitleCase(Name);
 
         /// <summary>
         ///     A zero padded string of the number of the next episode.
         /// </summary>
-        /// <returns>A padded string representation of the next episode in sequence.</returns>
         [JsonIgnore]
         public int NextEpisode => Episode + 1;
 
+        /// <summary>
+        ///     The difference between the overall total and the current episode
+        /// </summary>
         [JsonIgnore]
-        public string AiringSymbol => Airing ? "✓" : "";
-
-        [JsonIgnore]
-        public bool HasRating => !string.IsNullOrEmpty(Rating);
-
+        public int SeriesContinuationEpisode => Details.TotalEpisodes - (Details.OverallTotal - Episode);
+        
+        /// <summary>
+        ///     A string representation display of the episode total, e.g. {current}/{total}
+        /// </summary>
         [JsonIgnore]
         public string EpisodeTotal
         {

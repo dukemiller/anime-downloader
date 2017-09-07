@@ -324,8 +324,8 @@ namespace anime_downloader.Services
 
         private static string ToShowRequestJson(Anime anime, string csrf)
         {
-            var episode = !string.IsNullOrEmpty(anime.Details.SeriesContinuationEpisode)
-                ? Math.Abs(int.Parse(anime.Details.SeriesContinuationEpisode))
+            var episode = anime.SeriesContinuationEpisode != 0
+                ? Math.Abs(anime.SeriesContinuationEpisode)
                 : anime.Episode;
 
             var rating = !string.IsNullOrEmpty(anime.Rating)
@@ -370,8 +370,8 @@ namespace anime_downloader.Services
 
         private static Dictionary<string, string> ToUpdatePairs(Anime anime, string csrf)
         {
-            var episode = !string.IsNullOrEmpty(anime.Details.SeriesContinuationEpisode)
-                ? anime.Details.SeriesContinuationEpisode
+            var episode = anime.SeriesContinuationEpisode != 0
+                ? anime.SeriesContinuationEpisode.ToString()
                 : anime.Episode.ToString();
             episode = episode.Replace("-", "");
 

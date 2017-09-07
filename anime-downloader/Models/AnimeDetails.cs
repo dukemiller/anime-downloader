@@ -31,6 +31,11 @@ namespace anime_downloader.Models
 
         private int _totalEpisodes;
 
+        // 
+
+        /// <summary>
+        ///     The MyAnimeList id number.
+        /// </summary>
         [JsonProperty("id")]
         public string Id
         {
@@ -42,6 +47,9 @@ namespace anime_downloader.Models
             }
         }
 
+        /// <summary>
+        ///     The AniList id number.
+        /// </summary>
         [JsonProperty("ani_id")]
         public int AniId
         {
@@ -49,6 +57,9 @@ namespace anime_downloader.Models
             set => Set(() => AniId, ref _aniId, value);
         }
 
+        /// <summary>
+        ///     The provided synopsis of the plot.
+        /// </summary>
         [JsonProperty("synopsis")]
         public string Synopsis
         {
@@ -56,9 +67,15 @@ namespace anime_downloader.Models
             set => Set(() => Synopsis, ref _synopsis, value);
         }
 
+        /// <summary>
+        ///     The path to the thumbnail image.
+        /// </summary>
         [JsonProperty("image")]
         public string Image { get; set; }
 
+        /// <summary>
+        ///     The official title (usually the japanese version).
+        /// </summary>
         [JsonProperty("title")]
         public string Title
         {
@@ -70,6 +87,9 @@ namespace anime_downloader.Models
             }
         }
 
+        /// <summary>
+        ///     The specifically english version of the title.
+        /// </summary>
         [JsonProperty("english")]
         public string English
         {
@@ -81,6 +101,9 @@ namespace anime_downloader.Models
             }
         }
 
+        /// <summary>
+        ///     All various nicknames and abbreviations used to represent the show.
+        /// </summary>
         [JsonProperty("synonyms")]
         public string Synonyms
         {
@@ -92,6 +115,9 @@ namespace anime_downloader.Models
             }
         }
 
+        /// <summary>
+        ///     True if any change was made that would be pushed to a synchronization service.
+        /// </summary>
         [JsonProperty("needs_updates")]
         public bool NeedsUpdating
         {
@@ -99,6 +125,9 @@ namespace anime_downloader.Models
             set => Set(() => NeedsUpdating, ref _needsUpdating, value);
         }
 
+        /// <summary>
+        ///     The total episode count for the series.
+        /// </summary>
         [JsonProperty("total_episodes")]
         public int TotalEpisodes
         {
@@ -110,6 +139,9 @@ namespace anime_downloader.Models
             }
         }
 
+        /// <summary>
+        ///     The total episodes for the entire series (a sum of prequel series totals to get current episode).
+        /// </summary>
         [JsonProperty("overall_total")]
         public int OverallTotal
         {
@@ -120,21 +152,30 @@ namespace anime_downloader.Models
                 RaisePropertyChanged(nameof(Total));
             }
         }
-
-        [JsonProperty("series_continuation_episode")]
-        public string SeriesContinuationEpisode { get; set; }
         
+        /// <summary>
+        ///     The season that the anime aired on.
+        /// </summary>
         [JsonProperty("aired")]
         public AnimeSeason Aired { get; set; }
 
+        /// <summary>
+        ///     The season that the anime ended on.
+        /// </summary>
         [JsonProperty("ended")]
         public AnimeSeason Ended { get; set; }
 
+        /// <summary>
+        ///     The common, publicly used title for the series.
+        /// </summary>
         [JsonProperty("preferred_search_title")]
         public string PreferredSearchTitle { get; set; }
 
         // 
 
+        /// <summary>
+        ///     True if the series is still considered airing relative to the current season.
+        /// </summary>
         [JsonIgnore]
         public bool AiringNow
         {
@@ -161,9 +202,15 @@ namespace anime_downloader.Models
             }
         }
 
+        /// <summary>
+        ///     The calculated total from choosing either the overalltotal or totalepisodes.
+        /// </summary>
         [JsonIgnore]
         public int Total => OverallTotal > 0 ? OverallTotal : TotalEpisodes;
 
+        /// <summary>
+        ///     True if the series has a myanimelist id.
+        /// </summary>
         [JsonIgnore]
         public bool HasId => !string.IsNullOrEmpty(Id);
 
