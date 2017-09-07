@@ -82,7 +82,7 @@
                 </GroupBox>
             </StackPanel>
             <StackPanel Grid.Column="1">
-                <GroupBox Header="MyAnimeList"
+                <GroupBox Header="Third party"
                             IsHitTestVisible="{Binding LoggedIntoMal}"
                             Opacity="{Binding LoggedIntoMal,
                                             Converter={StaticResource BooleanOpacityConverter}}">
