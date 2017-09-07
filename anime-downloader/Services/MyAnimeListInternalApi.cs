@@ -27,6 +27,8 @@ namespace anime_downloader.Services
     {
         private readonly ICredentialsRepository _credentialsRepository;
 
+        private readonly IDetailProviderService _detailProvider;
+
         private const string ApiAdd = "https://myanimelist.net/ownlist/anime/add.json";
 
         private const string ApiUpdate = "https://myanimelist.net/ownlist/anime/edit.json";
@@ -51,9 +53,10 @@ namespace anime_downloader.Services
 
         // 
 
-        public MyAnimeListInternalApi(ICredentialsRepository credentialsRepository)
+        public MyAnimeListInternalApi(ICredentialsRepository credentialsRepository, IDetailProviderService detailProvider)
         {
             _credentialsRepository = credentialsRepository;
+            _detailProvider = detailProvider;
 
             // Remove any api details on any changes to login credentials
             _credentialsRepository.MyAnimeListConfig.PropertyChanged += (sender, args) =>
@@ -282,6 +285,11 @@ namespace anime_downloader.Services
 
         private async Task<HttpContent> GetPayload(Anime anime)
         {
+            // Correct the episode count at this point, it can't be posted
+            // as an illegal value
+            if (anime.Details.TotalEpisodes != 0 && anime.Episode > anime.Details.Total)
+                await _detailProvider.CheckSeriesContinuation(anime);
+
             return anime.Notes?.Length > 0
                 ? new FormUrlEncodedContent(ToUpdatePairs(anime, _credentials.CsrfToken))
                 : new StringContent(ToShowRequestJson(anime, _credentials.CsrfToken), Encoding.UTF8, "application/json") as HttpContent;

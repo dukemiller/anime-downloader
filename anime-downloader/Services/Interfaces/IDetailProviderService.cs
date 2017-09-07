@@ -24,5 +24,10 @@ namespace anime_downloader.Services.Interfaces
         ///     Missing details to that anime
         /// </summary>
         Task<(bool successful, bool changesMade)> FillInDetails(Anime anime);
+
+        /// <summary>
+        ///     Check and fill in information about series continuation episode counts.
+        /// </summary>
+        Task<bool> CheckSeriesContinuation(Anime anime);
     }
 }

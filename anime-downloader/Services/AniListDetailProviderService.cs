@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
 using anime_downloader.Models;
+using anime_downloader.Models.AniList;
 using anime_downloader.Services.Interfaces;
 
 namespace anime_downloader.Services
@@ -120,12 +121,44 @@ namespace anime_downloader.Services
                     }
                 }
 
+                var continuationChanged = await CheckSeriesContinuation(anime);
+
+                if (continuationChanged)
+                    changesMade = true;
+
                 return (true, changesMade);
             }
 
             return (false, false);
         }
-        
+
+        public async Task<bool> CheckSeriesContinuation(Anime anime)
+        {
+            // If there is a total episode and the current episode is greater than the total
+            if (anime.Details.TotalEpisodes != 0 && anime.Episode > anime.Details.Total)
+            {
+                // Increase the overall total by checking for previous series and summing them
+                if (anime.Details.OverallTotal < anime.Details.TotalEpisodes)
+                    anime.Details.OverallTotal = anime.Details.TotalEpisodes;
+
+                // Loop through every prequel series, summing up the total episode counts
+                Relation relation;
+                var current = await _api.GetAnime(GetId(anime), fullProfile: true);
+
+                do
+                {
+                    relation = current.Relations.FirstOrDefault(r => r.RelationType == "prequel");
+                    if (relation == null)
+                        continue;
+                    anime.Details.OverallTotal += relation.TotalEpisodes ?? 0;
+                    current = await _api.GetAnime(relation.Id, fullProfile: true);
+                } while (relation != null);
+
+                return true;
+
+            }
+            return false;
+        }
 
         // 
     }
