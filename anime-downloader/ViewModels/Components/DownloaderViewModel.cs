@@ -153,7 +153,7 @@ namespace anime_downloader.ViewModels.Components
         private async Task GetMissingEpisodesAsync()
         {
             Text = ">> Finding all missing episodes ...\n";
-
+            
             var all = (await _fileService.GetEpisodesAsync(EpisodeStatus.All)).ToList();
             var first = await Task.Run(() => _fileService.FirstEpisodes(all).OrderBy(a => a.Name));
             var last = await Task.Run(() => _fileService.LastEpisodes(all).OrderBy(a => a.Name));

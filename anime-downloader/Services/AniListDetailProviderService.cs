@@ -138,8 +138,7 @@ namespace anime_downloader.Services
             if (anime.Details.TotalEpisodes != 0 && anime.Episode > anime.Details.Total)
             {
                 // Increase the overall total by checking for previous series and summing them
-                if (anime.Details.OverallTotal < anime.Details.TotalEpisodes)
-                    anime.Details.OverallTotal = anime.Details.TotalEpisodes;
+                anime.Details.OverallTotal = anime.Details.TotalEpisodes;
 
                 // Loop through every prequel series, summing up the total episode counts
                 Relation relation;
@@ -152,7 +151,16 @@ namespace anime_downloader.Services
                         continue;
                     anime.Details.OverallTotal += relation.TotalEpisodes ?? 0;
                     current = await _api.GetAnime(relation.Id, fullProfile: true);
-                } while (relation != null);
+                } while (relation != null && anime.Episode > anime.Details.Total);
+
+                // If after all attempts to change the episode is still greater,
+                if (anime.Episode > anime.Details.Total)
+                {
+                    Methods.Alert($"The episode count for {anime.Name} might be an error.\n\n" +
+                                  $"The episode will be set from {anime.Episode} to {anime.Details.OverallTotal}, " +
+                                  $"if this is incorrect then remove this series and attempt to re-add it.");
+                    anime.Episode = anime.Details.OverallTotal;
+                }
 
                 return true;
 
