@@ -180,14 +180,13 @@ namespace anime_downloader.Services
         private static IEnumerable<string> GetDirectoryFiles(string root, string pattern, SearchOption search)
         {
             var found = new List<string>();
-
             if (search == SearchOption.AllDirectories)
             {
                 try
                 {
                     var sub = Directory.EnumerateDirectories(root);
                     found = sub.Aggregate(found,
-                        (current, dir) => current.Concat(GetDirectoryFiles(dir, pattern, search)).ToList());
+                        (current, dir) => current.Concat(GetDirectoryFiles(dir, pattern, SearchOption.TopDirectoryOnly)).ToList());
                 }
                 catch (UnauthorizedAccessException)
                 {}
