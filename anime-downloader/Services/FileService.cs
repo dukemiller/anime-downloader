@@ -12,7 +12,6 @@ using anime_downloader.Services.Interfaces;
 
 namespace anime_downloader.Services
 {
-
     public class FileService : IFileService
     {
         private static readonly string[] FileExtensions =
@@ -28,7 +27,7 @@ namespace anime_downloader.Services
         private readonly ISettingsRepository _settings;
 
         /* Easy debug functions */
-        
+
         public IEnumerable<AnimeFile> AllEpisodes => GetEpisodes(EpisodeStatus.All);
 
         public IEnumerable<AnimeFile> UnwatchedEpisodes => GetEpisodes(EpisodeStatus.Unwatched);
@@ -133,7 +132,10 @@ namespace anime_downloader.Services
         public Anime ClosestAnime(IEnumerable<Anime> animes, AnimeFile file)
         {
             return animes
-                .Select(anime => new StringDistance<Anime>(anime, file.Name, string.IsNullOrEmpty(anime.Details.PreferredSearchTitle) ? anime.Name : anime.Details.PreferredSearchTitle))
+                .Select(anime => new StringDistance<Anime>(anime, file.Name,
+                    string.IsNullOrEmpty(anime.Details.PreferredSearchTitle)
+                        ? anime.Name
+                        : anime.Details.PreferredSearchTitle))
                 .Where(pair => pair.Distance <= 10)
                 .OrderBy(pair => pair.Distance)
                 .FirstOrDefault()?.Item;
@@ -142,7 +144,10 @@ namespace anime_downloader.Services
         public Anime ClosestAnime(IEnumerable<Anime> animes, string name)
         {
             return animes
-                .Select(anime => new StringDistance<Anime>(anime, name, string.IsNullOrEmpty(anime.Details.PreferredSearchTitle) ? anime.Name : anime.Details.PreferredSearchTitle))
+                .Select(anime => new StringDistance<Anime>(anime, name,
+                    string.IsNullOrEmpty(anime.Details.PreferredSearchTitle)
+                        ? anime.Name
+                        : anime.Details.PreferredSearchTitle))
                 .Where(pair => pair.Distance <= 10)
                 .OrderBy(pair => pair.Distance)
                 .FirstOrDefault()?.Item;
@@ -171,17 +176,48 @@ namespace anime_downloader.Services
 
         /* */
 
+        // https://stackoverflow.com/questions/5098011/directory-enumeratefiles-unauthorizedaccessexception
+        private static IEnumerable<string> GetDirectoryFiles(string root, string pattern, SearchOption search)
+        {
+            var found = new List<string>();
+
+            if (search == SearchOption.AllDirectories)
+            {
+                try
+                {
+                    var sub = Directory.EnumerateDirectories(root);
+                    found = sub.Aggregate(found,
+                        (current, dir) => current.Concat(GetDirectoryFiles(dir, pattern, search)).ToList());
+                }
+                catch (UnauthorizedAccessException)
+                {}
+                catch (PathTooLongException)
+                {}
+            }
+
+            try
+            {
+                found = found
+                    .Concat(Directory.EnumerateFiles(root, pattern))
+                    .ToList(); // Add files from the current directory
+            }
+            catch (UnauthorizedAccessException)
+            {}
+
+            return found;
+        }
+
         private IEnumerable<string> GetFilesFromStatus(EpisodeStatus episodeStatus)
         {
             IEnumerable<string> files;
 
             if (episodeStatus == EpisodeStatus.Unwatched)
-                files = Directory.GetFiles(_settings.PathConfig.Unwatched, "*", SearchOption.AllDirectories);
+                files = GetDirectoryFiles(_settings.PathConfig.Unwatched, "*", SearchOption.AllDirectories);
             else if (episodeStatus == EpisodeStatus.Watched)
-                files = Directory.GetFiles(_settings.PathConfig.Watched, "*", SearchOption.AllDirectories);
+                files = GetDirectoryFiles(_settings.PathConfig.Watched, "*", SearchOption.AllDirectories);
             else // (EpisodeStatus == Episode.All)
-                files = Directory.GetFiles(_settings.PathConfig.Watched, "*", SearchOption.AllDirectories)
-                    .Union(Directory.GetFiles(_settings.PathConfig.Unwatched, "*", SearchOption.AllDirectories));
+                files = GetDirectoryFiles(_settings.PathConfig.Watched, "*", SearchOption.AllDirectories)
+                    .Union(GetDirectoryFiles(_settings.PathConfig.Unwatched, "*", SearchOption.AllDirectories));
 
             return files;
         }
