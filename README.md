@@ -1,6 +1,8 @@
 # anime-downloader
 
-A program to download and manage a collection of currently airing anime shows. Find the download link for the latest [here](https://github.com/dukemiller/anime-downloader/releases/latest).  
+A program to download and manage a collection of currently airing anime shows. 
+
+**\* [Find the download link for the latest version here.](https://github.com/dukemiller/anime-downloader/releases/latest)**  
 
 ### Demo 
 
