@@ -97,7 +97,13 @@ namespace anime_downloader.ViewModels.Components
             {
                 Text = ">> Searching for currently airing anime episodes ...\n";
                 var downloaded = await _downloadService.DownloadAll(animes, AddToText);
-                Text += downloaded > 0 ? $">> Found {downloaded} anime downloads." : ">> No new anime found.";
+
+                if (downloaded > 0)
+                    MessengerInstance.Send("update");
+
+                Text += downloaded > 0 
+                    ? $">> Found {downloaded} anime downloads." 
+                    : ">> No new anime found.";
             }
 
             else
