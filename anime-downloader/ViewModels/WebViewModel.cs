@@ -115,13 +115,9 @@ namespace anime_downloader.ViewModels
 
         // 
 
+        public RelayCommand<string> OpenUrlCommand { get; set; }
+
         public RelayCommand ProfileCommand { get; set; }
-
-        public RelayCommand MyAnimeListCommand { get; set; }
-
-        public RelayCommand AnichartCommand { get; set; }
-
-        public RelayCommand ServiceProviderCommand { get; set; }
 
         public RelayCommand SyncCommand { get; set; }
 
@@ -144,10 +140,7 @@ namespace anime_downloader.ViewModels
         private void SetCommands()
         {
             // Open website
-
-            MyAnimeListCommand = new RelayCommand(() => Process.Start("http://myanimelist.net/"));
-            AnichartCommand = new RelayCommand(() => Process.Start("http://anichart.net/"));
-            ServiceProviderCommand = new RelayCommand(() => Process.Start(DownloadService.ServiceUrl));
+            OpenUrlCommand = new RelayCommand<string>(OpenUrl);
 
             // Just text
 
@@ -206,6 +199,27 @@ namespace anime_downloader.ViewModels
         }
 
         // 
+
+        private void OpenUrl(string token)
+        {
+            switch (token)
+            {
+                case "myanimelist":
+                    Process.Start("http://myanimelist.net/");
+                    break;
+                case "anilist":
+                    Process.Start("https://anilist.co/");
+                    break;
+                case "anichart":
+                    Process.Start("http://anichart.net/");
+                    break;
+                case "provider":
+                    Process.Start(DownloadService.ServiceUrl);
+                    break;
+                default:
+                    break;
+            }
+        }
 
         private static void UsageNotes()
         {

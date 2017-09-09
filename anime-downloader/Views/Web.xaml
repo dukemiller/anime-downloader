@@ -84,17 +84,26 @@
                     <Button
                         Margin="5"
                         HorizontalAlignment="Stretch"
-                        Command="{Binding MyAnimeListCommand}"
+                        Command="{Binding OpenUrlCommand}"
+                        CommandParameter="myanimelist"
                         Content="MyAnimeList" />
                     <Button
                         Margin="5"
                         HorizontalAlignment="Stretch"
-                        Command="{Binding AnichartCommand}"
+                        Command="{Binding OpenUrlCommand}"
+                        CommandParameter="anichart"
                         Content="Anichart" />
                     <Button
                         Margin="5"
                         HorizontalAlignment="Stretch"
-                        Command="{Binding ServiceProviderCommand}"
+                        Command="{Binding OpenUrlCommand}"
+                        CommandParameter="anilist"
+                        Content="AniList" />
+                    <Button
+                        Margin="5"
+                        HorizontalAlignment="Stretch"
+                        Command="{Binding OpenUrlCommand}"
+                        CommandParameter="provider"
                         Content="{Binding DownloadService.ServiceName}" />
                 </StackPanel>
             </GroupBox>
