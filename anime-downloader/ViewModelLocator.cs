@@ -86,6 +86,9 @@ namespace anime_downloader
         /// </summary>
         private static void PatchCheck()
         {
+            if (!Directory.Exists(PathConfiguration.ApplicationDirectory))
+                Directory.CreateDirectory(PathConfiguration.ApplicationDirectory);
+
             var path = Path.Combine(PathConfiguration.ApplicationDirectory, "version");
             var current = SemanticVersion.Application;
             var previous = GetLoadedVersion(path);
