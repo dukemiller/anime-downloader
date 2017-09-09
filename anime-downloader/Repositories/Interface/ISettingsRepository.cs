@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Models.Configurations;
@@ -17,7 +18,7 @@ namespace anime_downloader.Repositories.Interface
         string FilterBy { get; set; }
         List<string> Subgroups { get; set; }
 
-        bool CrucialDirectoriesExist();
+        Task<bool> CrucialDirectoriesExist();
 
         void Save();
     }

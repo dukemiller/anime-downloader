@@ -44,7 +44,7 @@ namespace anime_downloader.ViewModels.Components
         {
             Text = "";
 
-            if (!_settings.CrucialDirectoriesExist())
+            if (!await _settings.CrucialDirectoriesExist())
             {
                 Text = ">> Not all paths have been correctly configured.";
                 return;

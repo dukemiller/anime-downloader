@@ -183,7 +183,7 @@ namespace anime_downloader.ViewModels
 
         private async void Create()
         {
-            if (!_settings.CrucialDirectoriesExist())
+            if (!await _settings.CrucialDirectoriesExist())
                 return;
 
             Playlist.Source = new ObservableCollection<AnimeFile>(await _fileService.GetEpisodesAsync(EpisodeStatus.Unwatched));

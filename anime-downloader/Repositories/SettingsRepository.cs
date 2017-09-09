@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using anime_downloader.Classes;
 using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Models.Configurations;
@@ -66,29 +69,79 @@ namespace anime_downloader.Repositories
                 stream.WriteAsync(JsonConvert.SerializeObject(this, Formatting.Indented));
         }
 
-        public bool CrucialDirectoriesExist()
+        public async Task<bool> CrucialDirectoriesExist()
         {
-            var error = string.Empty;
+            return new[]
+            {
+                await CheckDirectory(PathConfig.Unwatched, "episode"),
+                await CheckDirectory(PathConfig.Watched, "watched"),
+                await CheckDirectory(PathConfig.Torrents, "torrent files"),
+                CheckFile(PathConfig.TorrentDownloader, "torrent client")
+            }.All(b => b);
 
-            if (!Directory.Exists(PathConfig.Unwatched))
-                error += "Your episode folder doesn't seem to exist.\n";
 
-            if (!Directory.Exists(PathConfig.Watched))
-                error += "Your watched folder doesn't seem to exist.\n";
 
-            if (!Directory.Exists(PathConfig.Torrents))
-                error += "Your torrent files folder doesn't seem to exist.\n";
 
-            if (!File.Exists(PathConfig.TorrentDownloader) || !PathConfig.TorrentDownloader.ToLower().EndsWith(".exe"))
-                error += "Your uTorrent.exe path seems to be wrong.";
 
-            // if (error.Length > 0)
-            //     Methods.Alert(error);
 
-            return error.Length == 0;
         }
 
         // 
+
+        private static bool ValidPossiblePath(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path) || path.Length <= 2)
+                return false;
+
+            FileInfo fi = null;
+
+            try
+            {
+                fi = new FileInfo(path);
+            }
+
+            catch (ArgumentException) { }
+            catch (PathTooLongException) { }
+            catch (NotSupportedException) { }
+
+            return !ReferenceEquals(fi, null);
+        }
+
+        private static async Task<bool> CheckDirectory(string path, string title)
+        {
+            if (Directory.Exists(path))
+                return true;
+
+            if (ValidPossiblePath(path))
+            {
+                var create = await Methods.QuestionYesNo($"Your {title} folder doesn't seem to exist.\n" +
+                                                         "Would you like to create it at the given path:\n\n" +
+                                                         $"{path}");
+                if (create)
+                    Directory.CreateDirectory(path);
+                else
+                    return false;
+            }
+
+            else
+            {
+                Methods.Alert($"Your path for the {title} folder is invalid, try and enter it again.");
+                return false;
+            }
+
+            return true;
+        }
+
+        private static bool CheckFile(string path, string title)
+        {
+            var exists = File.Exists(path) && path.ToLower().EndsWith(".exe");
+            if (!exists)
+            {
+                Methods.Alert($"Your path for the {title} is invalid, try and enter it again.");
+                return false;
+            }
+            return true;
+        }
 
         private void DefaultValues()
         {
@@ -110,6 +163,5 @@ namespace anime_downloader.Repositories
 
             Version = new VersionCheck { LastChecked = DateTime.Now, NeedsUpdate = false };
         }
-        
     }
 }

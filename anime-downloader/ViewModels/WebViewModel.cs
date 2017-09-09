@@ -24,6 +24,7 @@ namespace anime_downloader.ViewModels
         private bool _loggedIn;
 
         private readonly ICredentialsRepository _credentialsRepository;
+
         private readonly IAnimeRepository _animeRepository;
 
         private readonly IAnimeService _animeService;
