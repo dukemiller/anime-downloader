@@ -79,11 +79,24 @@ namespace anime_downloader.Repositories
                 CheckFile(PathConfig.TorrentDownloader, "torrent client")
             }.All(b => b);
 
+        }
+
+        public string TorrentDownloaderCommand(string torrent, string destination)
+        {
+            var downloader = PathConfig.TorrentDownloader.ToLower();
+
+            if (downloader.Contains("utorrent"))
+                return $"/DIRECTORY \"{destination}\" \"{torrent}\"";
+
+            // In the future on the latest qbittorent release, commandline path support will be enabled
+            // and for now, all I can add is torrent files
+            // https://github.com/qbittorrent/qBittorrent/issues/6979
+            if (downloader.Contains("qbittorrent"))
+                return $"{torrent}";
+                // return $"--save-path=\"{destination}\" --add-paused=false --skip-dialog=true {torrent}";
 
 
-
-
-
+            return $"{torrent}";
         }
 
         // 

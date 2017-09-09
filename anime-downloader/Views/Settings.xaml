@@ -85,8 +85,8 @@
                         <DockPanel>
                             <UniformGrid>
                                 <Label VerticalAlignment="Center"
-                                       Content="uTorrent exe: "
-                                       ToolTip="Path to uTorrent.exe." />
+                                       Content="Torrent client exe: "
+                                       ToolTip="Path to your torrent client." />
                             </UniformGrid>
                             <UniformGrid>
                                 <TextBox VerticalAlignment="Center"

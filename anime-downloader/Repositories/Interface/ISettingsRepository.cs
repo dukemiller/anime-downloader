@@ -19,6 +19,7 @@ namespace anime_downloader.Repositories.Interface
         List<string> Subgroups { get; set; }
 
         Task<bool> CrucialDirectoriesExist();
+        string TorrentDownloaderCommand(string torrent, string destination);
 
         void Save();
     }

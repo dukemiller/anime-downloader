@@ -343,13 +343,14 @@ namespace anime_downloader.Services.Abstract
             var path = "";
             bool successful;
 
-            var fileDirectory = SettingsRepository.PathConfig.Unwatched;
+            var destination = SettingsRepository.PathConfig.Unwatched;
+
             if (SettingsRepository.FlagConfig.IndividualShowFolders)
-                fileDirectory = Path.Combine(fileDirectory, anime.Title);
+                destination = Path.Combine(destination, anime.Title);
 
             // Create directory
-            if (!Directory.Exists(fileDirectory))
-                Directory.CreateDirectory(fileDirectory);
+            if (!Directory.Exists(destination))
+                Directory.CreateDirectory(destination);
 
             switch (media)
             {
@@ -370,7 +371,7 @@ namespace anime_downloader.Services.Abstract
                 }
             }
 
-            var command = $"/DIRECTORY \"{fileDirectory}\" \"{path}\"";
+            var command = SettingsRepository.TorrentDownloaderCommand(path, destination);
 
             return (true, command);
         }
