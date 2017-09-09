@@ -98,4 +98,8 @@
         <dialogs:MyAnimeListLoginDialog DataContext="{Binding}" />
     </DataTemplate>
 
+    <DataTemplate DataType="{x:Type viewModelDialogs:QuestionViewModel}">
+        <dialogs:Question DataContext="{Binding}" />
+    </DataTemplate>
+
 </ResourceDictionary>

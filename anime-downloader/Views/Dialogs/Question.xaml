@@ -1,0 +1,41 @@
+﻿<UserControl x:Class="anime_downloader.Views.Dialogs.Question"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:dialogs="clr-namespace:anime_downloader.ViewModels.Dialogs"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance dialogs:QuestionViewModel}"
+             Background="{StaticResource MaterialDesignBackground}"
+             TextElement.FontSize="16"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             d:DesignHeight="200" d:DesignWidth="400">
+    <UserControl.Resources>
+        <system:Boolean x:Key="False">False</system:Boolean>
+        <system:Boolean x:Key="True">True</system:Boolean>
+    </UserControl.Resources>
+    <DockPanel Margin="16">
+        <DockPanel DockPanel.Dock="Bottom">
+            <Button Content="No"
+                    Background="LightCoral"
+                    HorizontalAlignment="Left"
+                    Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                    CommandParameter="{StaticResource False}"
+                    FocusVisualStyle="{x:Null}"
+                    IsCancel="True" />
+            <Button Content="Yes"
+                    Background="LightGreen"
+                    HorizontalAlignment="Right"
+                    Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                    CommandParameter="{StaticResource True}"
+                    FocusVisualStyle="{x:Null}"
+                    IsDefault="True" />
+        </DockPanel>
+        <TextBlock HorizontalAlignment="Center"
+                   Margin="0, 20"
+                   Text="{Binding Message}"
+                   TextWrapping="WrapWithOverflow" />
+    </DockPanel>
+</UserControl>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
 using anime_downloader.ViewModels.Dialogs;
@@ -98,6 +99,16 @@ namespace anime_downloader.Classes
         public static async void Alert(string msg = "")
         {
             await DialogHost.Show(new DialogViewModel {Message = msg});
+        }
+
+        public static async Task<bool> QuestionYesNo(string question)
+        {
+            var result = true;
+            await DialogHost.Show(new QuestionViewModel {Message = question}, (sender, args) =>
+            {
+                result = (bool) args.Parameter;
+            });
+            return result;
         }
 
         public static void AnimeRatingRules(TextBox textbox, TextCompositionEventArgs e)
