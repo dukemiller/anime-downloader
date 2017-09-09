@@ -286,10 +286,11 @@ namespace anime_downloader.Services.Abstract
                 return false;
 
             // Not the right subgroup
-            if (anime.PreferredSubgroup != null && media.Subgroup() != null)
-                if (!string.IsNullOrEmpty(anime.PreferredSubgroup)
-                    && !media.Subgroup().Contains(anime.PreferredSubgroup))
+            if (!string.IsNullOrEmpty(anime.PreferredSubgroup) && !string.IsNullOrEmpty(media.Subgroup()))
+            {
+                if (!media.Subgroup().ToLower().Contains(anime.PreferredSubgroup.ToLower()))
                     return false;
+            }
 
             if (SettingsRepository.FlagConfig.OnlyWhitelisted)
             {
