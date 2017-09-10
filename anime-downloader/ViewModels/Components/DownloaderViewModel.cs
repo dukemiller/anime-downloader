@@ -117,16 +117,11 @@ namespace anime_downloader.ViewModels.Components
         /// </summary>
         private async Task GetUpToDateAsync()
         {
-            var response =
-                MessageBox.Show(
-                    "You could potentially download an entire wrong series if the intended series isn't " +
-                    "found by your anime name and settings. Be sure everything on your list retrieves the " +
-                    "show you intend. \n\n" +
-                    "Are you sure you want to continue?",
-                    "Confirmation",
-                    MessageBoxButton.YesNo);
-
-            if (response == MessageBoxResult.Yes)
+            if (await Methods.QuestionYesNo("You could potentially download an entire wrong series if\n" +
+                                            "the intended series isn't found by your anime name and \n" +
+                                            "settings. Be sure everything on your list retrieves the\n" +
+                                            "show you intend.\n\n" +
+                                            "Are you sure you want to continue?"))
             {
                 var total = 0;
                 Text = ">> Attempting to catch up on airing anime episodes ...\n";
@@ -141,11 +136,10 @@ namespace anime_downloader.ViewModels.Components
                             total++;
                     } while (downloaded);
                 }
-
                 Text += total > 0 ? $">> Found {total} anime downloads." : ">> No new anime found.";
             }
 
-            else if (response == MessageBoxResult.No)
+            else 
                 MessengerInstance.Send(ViewDisplay.Download);
         }
 

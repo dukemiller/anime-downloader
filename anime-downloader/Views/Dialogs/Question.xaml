@@ -16,25 +16,27 @@
         <system:Boolean x:Key="False">False</system:Boolean>
         <system:Boolean x:Key="True">True</system:Boolean>
     </UserControl.Resources>
-    <DockPanel Margin="16">
-        <DockPanel DockPanel.Dock="Bottom">
-            <Button Content="No"
-                    Background="LightCoral"
-                    HorizontalAlignment="Left"
-                    Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
-                    CommandParameter="{StaticResource False}"
-                    FocusVisualStyle="{x:Null}"
-                    IsCancel="True" />
-            <Button Content="Yes"
-                    Background="LightGreen"
-                    HorizontalAlignment="Right"
-                    Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
-                    CommandParameter="{StaticResource True}"
-                    FocusVisualStyle="{x:Null}"
-                    IsDefault="True" />
+    <DockPanel>
+        <DockPanel DockPanel.Dock="Top">
+            <Label Opacity="0.4" FontSize="14">Confirmation</Label>
+        </DockPanel>
+        <DockPanel DockPanel.Dock="Bottom" LastChildFill="False" HorizontalAlignment="Stretch" Background="#F6F6F6">
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" Margin="8">
+                <Button Content="Yes"
+                        CommandParameter="{StaticResource True}"
+                        Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                        FocusVisualStyle="{x:Null}"
+                        IsDefault="True" />
+                <Button Content="No"
+                        CommandParameter="{StaticResource False}"
+                        Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                        FocusVisualStyle="{x:Null}"
+                        Margin="10, 0"
+                        IsCancel="True" />
+            </StackPanel>
         </DockPanel>
         <TextBlock HorizontalAlignment="Center"
-                   Margin="0, 20"
+                   Margin="20"
                    Text="{Binding Message}"
                    TextWrapping="WrapWithOverflow" />
     </DockPanel>
