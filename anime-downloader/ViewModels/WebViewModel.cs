@@ -29,7 +29,7 @@ namespace anime_downloader.ViewModels
 
         private readonly IAnimeService _animeService;
 
-        private readonly IMyAnimeListService _malService;
+        private readonly ISyncProviderService _malService;
 
         private readonly IMyAnimeListApi _api;
 
@@ -44,7 +44,7 @@ namespace anime_downloader.ViewModels
         public WebViewModel(ICredentialsRepository credentialsRepository,
             IAnimeRepository animeRepository,
             IAnimeService animeService,
-            IMyAnimeListService malService,
+            ISyncProviderService malService,
             IMyAnimeListApi api,
             IDownloadService downloadService)
         {
@@ -269,7 +269,7 @@ namespace anime_downloader.ViewModels
         private async void Import()
         {
             MessengerInstance.Send(new WorkMessage { Working = true });
-            var animes = await Task.Run(async () => await _malService.GetProfileAnime());
+            var animes = await Task.Run(async () => await _malService.LoadProfile());
             foreach (var anime in animes)
                 if (!_animeService.Animes.Any(a => a.Details.Id.Equals(anime.Details.Id)))
                     _animeService.Add(anime);

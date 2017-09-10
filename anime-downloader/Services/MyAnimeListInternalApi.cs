@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -124,16 +123,16 @@ namespace anime_downloader.Services
             return response.Categories.FirstOrDefault()?.Items.Select(ToFindResult) ?? new List<FindResult>();
         }
 
-        public async Task<(bool successful, string content)> AddAsync(Anime anime)
+        public async Task<(bool successful, string content)> AddAsync(Anime anime, int id)
         {
             await SetupRequest();
 
-            var response = await Post(ApiAdd, anime);
+            var response = await Post(ApiAdd, anime, id);
             var content = await response.Content.ReadAsStringAsync();
             return (response.IsSuccessStatusCode, content);
         }
 
-        public async Task<(bool successful, string content)> UpdateAsync(Anime anime)
+        public async Task<(bool successful, string content)> UpdateAsync(Anime anime, int id)
         {
             await SetupRequest();
 
@@ -141,7 +140,7 @@ namespace anime_downloader.Services
             var url = anime.Notes?.Length > 0
                 ? string.Format(ApiUpdateDetailed, anime.Details.Id)
                 : ApiUpdate;
-            var response = await Post(url, anime);
+            var response = await Post(url, anime, id);
             var content = await response.Content.ReadAsStringAsync();
             return (response.IsSuccessStatusCode, content);
         }
@@ -155,9 +154,9 @@ namespace anime_downloader.Services
             HttpStatusCode.BadRequest
         };
 
-        private async Task<HttpResponseMessage> Post(string url, Anime anime)
+        private async Task<HttpResponseMessage> Post(string url, Anime anime, int id)
         {
-            var response = await _client.PostAsync(url, await GetPayload(anime));
+            var response = await _client.PostAsync(url, await GetPayload(anime, id));
 
             // Error 400 usually in this context means that the session/cookies/csrf are invalid,
             // probably because you logged on the site on your own at some point. In the future,
@@ -166,7 +165,7 @@ namespace anime_downloader.Services
             {
                 await Login();
                 await SetupClient();
-                response = await _client.PostAsync(url, await GetPayload(anime));
+                response = await _client.PostAsync(url, await GetPayload(anime, id));
             }
 
             // If I still get some sort of error, throw it and stop doing any further requests
@@ -283,7 +282,7 @@ namespace anime_downloader.Services
             }
         }
 
-        private async Task<HttpContent> GetPayload(Anime anime)
+        private async Task<HttpContent> GetPayload(Anime anime, int id)
         {
             // Correct the episode count at this point, it can't be posted
             // as an illegal value
@@ -291,8 +290,8 @@ namespace anime_downloader.Services
                 await _detailProvider.CheckSeriesContinuation(anime);
 
             return anime.Notes?.Length > 0
-                ? new FormUrlEncodedContent(ToUpdatePairs(anime, _credentials.CsrfToken))
-                : new StringContent(ToShowRequestJson(anime, _credentials.CsrfToken), Encoding.UTF8, "application/json") as HttpContent;
+                ? new FormUrlEncodedContent(ToUpdatePairs(anime, id, _credentials.CsrfToken))
+                : new StringContent(ToShowRequestJson(anime, id, _credentials.CsrfToken), Encoding.UTF8, "application/json") as HttpContent;
         }
 
         // 
@@ -336,7 +335,7 @@ namespace anime_downloader.Services
             return result;
         }
 
-        private static string ToShowRequestJson(Anime anime, string csrf)
+        private static string ToShowRequestJson(Anime anime, int id, string csrf)
         {
             var episode = anime.SeriesContinuationEpisode != 0
                 ? Math.Abs(anime.SeriesContinuationEpisode)
@@ -372,7 +371,7 @@ namespace anime_downloader.Services
 
             var request = new ShowRequest
             {
-                Id = int.Parse(anime.Details.Id),
+                Id = id,
                 Episodes = episode,
                 Score = rating,
                 Status = status,
@@ -382,7 +381,7 @@ namespace anime_downloader.Services
             return JsonConvert.SerializeObject(request);
         }
 
-        private static Dictionary<string, string> ToUpdatePairs(Anime anime, string csrf)
+        private static Dictionary<string, string> ToUpdatePairs(Anime anime, int id, string csrf)
         {
             var episode = anime.SeriesContinuationEpisode != 0
                 ? anime.SeriesContinuationEpisode.ToString()
@@ -425,7 +424,7 @@ namespace anime_downloader.Services
 
             return new Dictionary<string, string>
             {
-                {"anime_id", anime.Details.Id},
+                {"anime_id", id.ToString()},
                 {"aeps", anime.Details.TotalEpisodes.ToString()},
                 {"astatus", status},
                 {"add_anime[status]", status},

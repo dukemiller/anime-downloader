@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading.Tasks;
 using anime_downloader.Models;
 using anime_downloader.Models.MyAnimeList;
@@ -17,8 +16,8 @@ namespace anime_downloader.Services.Interfaces
 
         Task<IEnumerable<FindResult>> FindAsync(string q);
 
-        Task<(bool successful, string content)> AddAsync(Anime anime);
+        Task<(bool successful, string content)> AddAsync(Anime anime, int id);
 
-        Task<(bool successful, string content)> UpdateAsync(Anime anime);
+        Task<(bool successful, string content)> UpdateAsync(Anime anime, int id);
     }
 }
