@@ -63,6 +63,11 @@ namespace anime_downloader.ViewModels.Components
             DeleteCommand = new RelayCommand(Delete);
             ProfileCommand = new RelayCommand(Profile);
             OpenCommand = new RelayCommand(Open);
+            CopyCommand = new RelayCommand(() =>
+            {
+                Clipboard.Clear();
+                Clipboard.SetText(string.Join(", ", SelectedFiles.Select(c => c.StrippedFilename)));
+            });
             ClearFilterCommand = new RelayCommand(() => Filter = "");
             FolderCommand = new RelayCommand(() => Process.Start(StartPath));
             MalCommand = new RelayCommand(MyAnimeListProfile);
@@ -221,6 +226,8 @@ namespace anime_downloader.ViewModels.Components
         public RelayCommand OpenCommand { get; set; }
 
         public RelayCommand DeleteCommand { get; set; }
+
+        public RelayCommand CopyCommand { get; set; }
 
         public RelayCommand ClearFilterCommand { get; set; }
 

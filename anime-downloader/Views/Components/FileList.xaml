@@ -129,6 +129,7 @@
                     <ListBox.InputBindings>
                         <KeyBinding Key="Return" Command="{Binding OpenCommand}" />
                         <KeyBinding Key="Delete" Command="{Binding DeleteCommand}" />
+                        <KeyBinding Key="C" Modifiers="Control" Command="{Binding CopyCommand}"/>
                     </ListBox.InputBindings>
                     <ListBox.ItemTemplate>
                         <DataTemplate>
