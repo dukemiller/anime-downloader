@@ -29,7 +29,7 @@ namespace anime_downloader.ViewModels
 
         private readonly IAnimeService _animeService;
 
-        private readonly ISyncProviderService _malService;
+        private readonly ISyncProviderService _syncService;
 
         private readonly IMyAnimeListApi _api;
 
@@ -44,7 +44,7 @@ namespace anime_downloader.ViewModels
         public WebViewModel(ICredentialsRepository credentialsRepository,
             IAnimeRepository animeRepository,
             IAnimeService animeService,
-            ISyncProviderService malService,
+            ISyncProviderService syncService,
             IMyAnimeListApi api,
             IDownloadService downloadService)
         {
@@ -52,7 +52,7 @@ namespace anime_downloader.ViewModels
             _credentialsRepository = credentialsRepository;
             _animeRepository = animeRepository;
             _animeService = animeService;
-            _malService = malService;
+            _syncService = syncService;
             _api = api;
 
             // 
@@ -269,7 +269,7 @@ namespace anime_downloader.ViewModels
         private async void Import()
         {
             MessengerInstance.Send(new WorkMessage { Working = true });
-            var animes = await Task.Run(async () => await _malService.LoadProfile());
+            var animes = await Task.Run(async () => await _syncService.LoadProfile());
             foreach (var anime in animes)
                 if (!_animeService.Animes.Any(a => a.Details.Id.Equals(anime.Details.Id)))
                     _animeService.Add(anime);
@@ -299,7 +299,7 @@ namespace anime_downloader.ViewModels
         {
             MessengerInstance.Send(new WorkMessage {Working = true});
             Synchronize = "Synchronizing";
-            await _malService.Synchronize();
+            await _syncService.Synchronize();
             _animeRepository.Save();
             MessengerInstance.Send("update");
             MessengerInstance.Send(new WorkMessage {Working = false});
@@ -309,7 +309,7 @@ namespace anime_downloader.ViewModels
 
         private async Task SearchAndOpen(string text)
         {
-            var result = await _malService.FindProfilePage(text);
+            var result = await _syncService.FindProfilePage(text);
             if (result != null)
                 Process.Start(result);
             else
