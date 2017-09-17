@@ -104,7 +104,7 @@ namespace anime_downloader.Models
         private static (int, int, int) ParseVersion(string text)
         {
             int major = 0, minor = 0, patch = 0;
-            var match = Regex.Match(text, @"((\d+)\.(\d+).(\d+))");
+            var match = Regex.Match(text, @"((\d+)\.(\d+)\.(\d+))");
             if (match.Success)
             {
                 int.TryParse(match.Groups[2].Value, out major);
