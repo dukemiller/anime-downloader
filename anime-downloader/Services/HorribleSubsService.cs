@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
 using anime_downloader.Models;
@@ -48,8 +49,12 @@ namespace anime_downloader.Services
                                 && !item.StrippedName.Contains(episode.ToString() + ".5"))
                 .Where(item => // Name contains everything
                 {
-                    var title = item.StrippedWithNoEpisode.ToLower();
-                    var words = name.ToLower().Split(' ').ToList();
+                    var title = Regex.Replace(item.StrippedWithNoEpisode.ToLower(), @"-|:|'", " ");
+                    var filtered = Regex.Replace(
+                        Regex.Replace(name, @"\s?(\d|\dnd season)$", "", RegexOptions.IgnoreCase),
+                        @"-|:|'",
+                        " ");
+                    var words = filtered.ToLower().Split(' ').ToList();
                     return words.Count(word => title.Contains(word)) > (words.Count / 2);
                 })
                 .OrderByDescending(n => n.Name.Contains(anime.Resolution));
