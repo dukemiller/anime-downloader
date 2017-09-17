@@ -323,14 +323,14 @@ namespace anime_downloader.ViewModels.Components
         {
             Application.Current.Dispatcher.InvokeAsync(() =>
             {
-                if (args != null)
-                {
-                    var file = new AnimeFile(args.FullPath);
-                    Files.AddSorted(file);
-                    FilteredFiles = new ObservableCollection<AnimeFile>(Files.Where(af => Methods.Strip(af.Name)
-                        .ToLower().Contains(Methods.Strip(Filter).ToLower())));
-                    RaisePropertyChanged(nameof(Label));
-                }
+                if (args == null)
+                    return;
+
+                var file = new AnimeFile(args.FullPath);
+                Files.AddSorted(file);
+                FilteredFiles = new ObservableCollection<AnimeFile>(Files.Where(af => Methods.Strip(af.Name)
+                    .ToLower().Contains(Methods.Strip(Filter).ToLower())));
+                RaisePropertyChanged(nameof(Label));
             });
         }
 
@@ -338,6 +338,9 @@ namespace anime_downloader.ViewModels.Components
         {
             Application.Current.Dispatcher.InvokeAsync(() =>
             {
+                if (args == null)
+                    return;
+
                 var file = Files.First(f => f.Path.Equals(args.FullPath));
                 Files.Remove(file);
                 if (FilteredFiles.Contains(file))
@@ -350,6 +353,9 @@ namespace anime_downloader.ViewModels.Components
         {
             Application.Current.Dispatcher.InvokeAsync(() =>
             {
+                if (args == null)
+                    return;
+
                 MessageBox.Show($"{args.OldFullPath} {args.FullPath}");
                 var file = Files.First(f => f.Path.Equals(args.FullPath));
                 Files.Remove(file);
