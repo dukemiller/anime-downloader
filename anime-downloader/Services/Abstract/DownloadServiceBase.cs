@@ -286,8 +286,11 @@ namespace anime_downloader.Services.Abstract
                 return false;
 
             // Not the right subgroup
-            if (!string.IsNullOrEmpty(anime.PreferredSubgroup) && !string.IsNullOrEmpty(media.Subgroup()))
+            if (!string.IsNullOrEmpty(anime.PreferredSubgroup))
             {
+                if (!media.HasSubgroup())
+                    return false;
+
                 if (!media.Subgroup().ToLower().Contains(anime.PreferredSubgroup.ToLower()))
                     return false;
             }

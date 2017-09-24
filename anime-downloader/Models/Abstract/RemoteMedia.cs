@@ -41,8 +41,13 @@ namespace anime_downloader.Models.Abstract
         /// </summary>
         public string Subgroup()
         {
-            return (from Match match in Regex.Matches(Name, @"\[([A-Za-z0-9_µ\s\-]+)\]+")
-                select match.Groups[1].Value).FirstOrDefault(result => result.All(c => !char.IsNumber(c)));
+            foreach (Match match in Regex.Matches(Name, @"\[([A-Za-z0-9_µ\s\-]+)\]+"))
+            {
+                var result = match.Groups[1].Value;
+                if (result.All(c => !char.IsNumber(c)))
+                    return result;
+            }
+            return null;
         }
 
         /// <summary>
