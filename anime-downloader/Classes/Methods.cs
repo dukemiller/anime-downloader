@@ -61,7 +61,7 @@ namespace anime_downloader.Classes
             text = new[] {".mkv", ".mp4", ".avi"}.Union(phrases).Aggregate(text, (current, s) => current.Replace(s, ""));
 
             // Replace any "Episode 08" with just "08"
-            var episode = Regex.Match(text, @"-[\s_.]?(episode[\s_.]?(\d{1,3}))", RegexOptions.IgnoreCase);
+            var episode = Regex.Match(text, @"[\-\s[\s_.]?(episode[\s_.]?(\d{1,3}))", RegexOptions.IgnoreCase);
             if (episode.Success)
                 text = text.Replace(episode.Groups[1].Value, episode.Groups[2].Value);
 

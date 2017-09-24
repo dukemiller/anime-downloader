@@ -15,9 +15,15 @@ namespace anime_downloader.Models
         /// <summary>
         ///     The anime name gathered from the filename, e.g. "{Show} - 01.mp4"
         /// </summary>
-        public string Name => string.Join(
-                "-", StrippedFilename.Split('-').Take(StrippedFilename.Count(x => x == '-')))
-            .Trim();
+        public string Name
+        {
+            get
+            {
+                var delimiter = StrippedFilename.Count(c => c == '-') > 0 ? '-' : ' ';
+                var count = StrippedFilename.Count(c => c == delimiter);
+                return string.Join(delimiter.ToString(), StrippedFilename.Split(delimiter).Take(count)).Trim();
+            }
+        }
 
         /// <summary>
         ///     The episode gathered from the filename, e.g. "Show - {01}.mp4".
@@ -28,17 +34,31 @@ namespace anime_downloader.Models
             {
                 var episode = 0;
 
-                if (StrippedFilename.Any(char.IsDigit) && StrippedFilename.Contains("-"))
+                if (StrippedFilename.Any(char.IsDigit))
                 {
-                    var _ = string.Join("",
+                    if (StrippedFilename.Contains("-"))
+                    {
+                        var _ = string.Join("",
                             StrippedFilename.Replace(" ", "")
-                            .Split('-')
-                            .Last(stripped => stripped.Any(char.IsNumber))
-                            .TakeWhile(char.IsNumber)
-                    );
+                                .Split('-')
+                                .Last(stripped => stripped.Any(char.IsNumber))
+                                .TakeWhile(char.IsNumber)
+                        );
 
-                    var result = int.TryParse(_, out int number);
-                    episode = result ? number : 0;
+                        var result = int.TryParse(_, out int number);
+                        episode = result ? number : 0;
+                    }
+
+                    else
+                    {
+                        // Work backwords from the last phrase, taking any token that is only numbers
+                        var _ = StrippedFilename.Split(' ')
+                            .Reverse()
+                            .SkipWhile(chunk => !chunk.All(char.IsDigit))
+                            .FirstOrDefault();
+                        var result = int.TryParse(_, out int number);
+                        episode = result ? number : 0;
+                    }
                 }
 
                 return episode;
