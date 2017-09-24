@@ -170,8 +170,7 @@
                             Style="{x:Null}"
                             HorizontalContentAlignment="Left"
                             VerticalContentAlignment="Top"
-
-                            MaxLength="170"
+                            MaxLength="180"
                             Text="{Binding Anime.Notes}"
                             VerticalScrollBarVisibility="Disabled" />
 
