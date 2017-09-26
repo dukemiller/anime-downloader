@@ -84,11 +84,12 @@ namespace anime_downloader.Services
 
         public bool WatchingAndAiringContains(string name)
         {
-            return AiringAndWatching
+            return Animes
+                .Where(a => a.Details.AiringNow || a.Details.Aired == AnimeSeason.Current || a.Details.Ended == AnimeSeason.Current)
                 .Select(a =>
                 {
                     var container = new List<double> {new StringDistance<Anime>(a, name, a.Name).Distance};
-
+                    
                     if (a.Details.TitleAndEnglish.Any())
                         container.Add(a.Details
                             .TitleAndEnglish
