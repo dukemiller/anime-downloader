@@ -395,7 +395,7 @@ namespace anime_downloader.Services.Abstract
         protected async Task Log(Anime anime, int episode)
         {
             var timestamp = $"{DateTime.Now:[M/d/yyyy @ hh:mm:ss tt]}";
-            var message = $"Downloaded '{anime.Title}' episode {anime.NextEpisode}.";
+            var message = $"Downloaded '{anime.Title}' episode {episode}.";
             using (var streamWriter = new StreamWriter(SettingsRepository.PathConfig.Logging, true))
             {
                 await streamWriter.WriteLineAsync($"{timestamp} - {message}");

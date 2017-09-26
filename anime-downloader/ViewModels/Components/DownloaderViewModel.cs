@@ -140,7 +140,8 @@ namespace anime_downloader.ViewModels.Components
                         }
                     } while (downloaded);
                 }
-                Text += total > 0 ? $">> Found {total} anime downloads." : ">> No new anime found.";
+                var plural = total > 1 ? "downloads" : "download";
+                Text += total > 0 ? $">> Found {total} anime {plural}." : ">> No new anime found.";
             }
 
             else 
@@ -158,7 +159,7 @@ namespace anime_downloader.ViewModels.Components
         {
             Text = ">> Finding all missing episodes ...\n";
 
-            var all = new Dictionary<Anime, List<int>>();
+            var animes = new Dictionary<Anime, List<int>>();
 
             foreach (var anime in _animeService.AiringAndWatchingAndNotCompleted())
             {
@@ -172,13 +173,13 @@ namespace anime_downloader.ViewModels.Components
                 for (var episode = first.Value; episode <= last.Value; episode++)
                     if (files.All(file => file.Episode != episode))
                     {
-                        if (!all.ContainsKey(anime))
-                            all[anime] = new List<int>();
-                        all[anime].Add(episode);
+                        if (!animes.ContainsKey(anime))
+                            animes[anime] = new List<int>();
+                        animes[anime].Add(episode);
                     }
             }
 
-            var total = await _downloadService.DownloadSpecificEpisodes(all, AddToText);
+            var total = await _downloadService.DownloadSpecificEpisodes(animes, AddToText);
             Text += total > 0 ? $">> Found {total} anime downloads." : ">> No new anime found.";
         }
 
