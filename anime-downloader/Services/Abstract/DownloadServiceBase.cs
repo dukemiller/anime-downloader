@@ -7,7 +7,6 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using anime_downloader.Classes;
 using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Models.Abstract;
@@ -227,9 +226,12 @@ namespace anime_downloader.Services.Abstract
             foreach (var anime in animes)
             {
                 var result = await GetMedia(anime, anime.NextEpisode);
-                var download = await AttemptDownload(anime, result, output);
+                var download = await AttemptDownload(anime, anime.NextEpisode, result, output);
                 if (download)
+                {
                     downloaded++;
+                    anime.Episode++;
+                }
             }
 
             if (downloaded > 0)
@@ -238,36 +240,16 @@ namespace anime_downloader.Services.Abstract
             return downloaded;
         }
 
-        [NeedsUpdating]
-        public async Task<int> DownloadAll(IEnumerable<Anime> animes, IEnumerable<AnimeFileRange> ranges,
-            IEnumerable<AnimeFile> files, Action<string> output)
+        public async Task<int> DownloadSpecificEpisodes(Dictionary<Anime, List<int>> animes, Action<string> output)
         {
             var downloaded = 0;
 
-            foreach (var file in ranges)
+            foreach (var anime in animes.Keys)
+            foreach (var episode in animes[anime])
             {
-                var closest = AnimeService.ClosestAnime(file.Name);
-                foreach (var episode in file.EpisodeRange)
-                {
-                    if (await Task.Run(() => files.Any(a => a.Name.Equals(file.Name) && a.Episode == episode)))
-                        continue;
-
-                    // TODO: make a copy constructor?
-                    var anime = new Anime
-                    {
-                        Name = file.Name,
-                        Episode = episode - 1,
-                        Airing = closest.Airing,
-                        Resolution = closest.Resolution,
-                        PreferredSubgroup = closest.PreferredSubgroup,
-                        NameStrict = closest.NameStrict
-                    };
-
-                    var download = await AttemptDownload(anime, await GetNextEpisode(anime), output);
-
-                    if (download)
-                        downloaded++;
-                }
+                var download = await AttemptDownload(anime, episode, await GetMedia(anime, episode), output);
+                if (download)
+                    downloaded++;
             }
 
             if (downloaded > 0)
@@ -309,29 +291,28 @@ namespace anime_downloader.Services.Abstract
             return true;
         }
 
-        public async Task<bool> AttemptDownload(Anime anime, IEnumerable<RemoteMedia> medias, Action<string> output)
+        public async Task<bool> AttemptDownload(Anime anime, int episode, IEnumerable<RemoteMedia> medias, Action<string> output)
         {
             if (medias == null || anime == null)
                 return false;
 
             foreach (var media in medias.Where(m => CanDownload(m, anime)))
-                if (await DownloadEpisode(anime, media, output))
+                if (await DownloadEpisode(anime, episode, media, output))
                     return true;
 
             return false;
         }
 
-        public async Task<bool> DownloadEpisode(Anime anime, RemoteMedia media, Action<string> output)
+        public async Task<bool> DownloadEpisode(Anime anime, int episode, RemoteMedia media, Action<string> output)
         {
-            output($"Downloading '{anime.Title}' episode '{anime.NextEpisode}'.");
+            output($"Downloading '{anime.Title}' episode '{episode}'.");
 
             var download = await DownloadMedia(anime, media);
 
             if (download.successful)
             {
                 StartMedia(media, download.command);
-                anime.Episode++;
-                await Log(anime);
+                await Log(anime, episode);
             }
 
             else
@@ -411,7 +392,7 @@ namespace anime_downloader.Services.Abstract
             }
         }
 
-        protected async Task Log(Anime anime)
+        protected async Task Log(Anime anime, int episode)
         {
             var timestamp = $"{DateTime.Now:[M/d/yyyy @ hh:mm:ss tt]}";
             var message = $"Downloaded '{anime.Title}' episode {anime.NextEpisode}.";
@@ -443,15 +424,6 @@ namespace anime_downloader.Services.Abstract
         }
 
         // Borders the line
-
-        public async Task<IEnumerable<RemoteMedia>> GetNextEpisode(Anime anime)
-        {
-            var result = await FindAllMedia(anime, anime.NextEpisode);
-            return result?
-                .Select(torrent => new StringDistance<RemoteMedia>(torrent, torrent.StrippedWithNoEpisode, anime.Name))
-                .Where(ctd => ctd.Distance <= 25)
-                .Select(ctd => ctd.Item);
-        }
 
         public async Task<IEnumerable<RemoteMedia>> FindAllMedia(Anime anime, int episode)
         {

@@ -11,13 +11,39 @@ namespace anime_downloader.Services.Interfaces
     /// </summary>
     public interface IFileService
     {
+        /// <summary>
+        ///     Retrieve all episodes found belonging to {anime}
+        /// </summary>
         IEnumerable<AnimeFile> GetEpisodes(Anime anime);
-        IEnumerable<AnimeFile> GetEpisodes(EpisodeStatus episodeStatus);
-        IEnumerable<AnimeFile> GetEpisodes(Anime anime, EpisodeStatus episodeStatus);
-        Task<IEnumerable<AnimeFile>> GetEpisodesAsync(EpisodeStatus episodeStatus);
-        Task<IEnumerable<AnimeFile>> GetEpisodesFromAsync(Anime anime, EpisodeStatus episodeStatus);
 
+        /// <summary>
+        ///     Retrieve all episodes that match the episode status description
+        /// </summary>
+        IEnumerable<AnimeFile> GetEpisodes(EpisodeStatus episodeStatus);
+
+        /// <summary>
+        ///     Retrieve all episodes that match the episode status description that belong to {anime}
+        /// </summary>
+        IEnumerable<AnimeFile> GetEpisodes(Anime anime, EpisodeStatus episodeStatus);
+
+        /// <summary>
+        ///     Retrieve all episodes that match the episode status description
+        /// </summary>
+        Task<IEnumerable<AnimeFile>> GetEpisodesAsync(EpisodeStatus episodeStatus);
+
+        /// <summary>
+        ///     Retrieve all episodes that match the episode status description that belong to {anime}
+        /// </summary>
+        Task<IEnumerable<AnimeFile>> GetEpisodesAsync(Anime anime, EpisodeStatus episodeStatus);
+
+        /// <summary>
+        ///     Retrieve the file with the lowest episode number found belonging to {anime}
+        /// </summary>
         AnimeFile FirstEpisode(Anime anime);
+
+        /// <summary>
+        ///     Retrieve the file with the highest episode number found belonging to {anime}
+        /// </summary>
         AnimeFile LastEpisode(Anime anime);
 
         /* First or last of everything in sequence */

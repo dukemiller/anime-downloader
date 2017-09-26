@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -131,9 +132,12 @@ namespace anime_downloader.ViewModels.Components
                     do
                     {
                         var links = await _downloadService.FindAllMedia(anime, anime.NextEpisode);
-                        downloaded = await _downloadService.AttemptDownload(anime, links, AddToText);
+                        downloaded = await _downloadService.AttemptDownload(anime, anime.NextEpisode, links, AddToText);
                         if (downloaded)
+                        {
                             total++;
+                            anime.Episode++;
+                        }
                     } while (downloaded);
                 }
                 Text += total > 0 ? $">> Found {total} anime downloads." : ">> No new anime found.";
@@ -153,12 +157,28 @@ namespace anime_downloader.ViewModels.Components
         private async Task GetMissingEpisodesAsync()
         {
             Text = ">> Finding all missing episodes ...\n";
-            
-            var all = (await _fileService.GetEpisodesAsync(EpisodeStatus.All)).ToList();
-            var first = await Task.Run(() => _fileService.FirstEpisodes(all).OrderBy(a => a.Name));
-            var last = await Task.Run(() => _fileService.LastEpisodes(all).OrderBy(a => a.Name));
-            var ranges = await Task.Run(() => first.Zip(last, (a, b) => new AnimeFileRange(a, b)));
-            var total = await _downloadService.DownloadAll(_animeService.AiringAndWatching, ranges, all, AddToText);
+
+            var all = new Dictionary<Anime, List<int>>();
+
+            foreach (var anime in _animeService.AiringAndWatchingAndNotCompleted())
+            {
+                var files = (await _fileService.GetEpisodesAsync(anime, EpisodeStatus.All)).ToList();
+                var (first, last) = (files.FirstOrDefault()?.Episode, files.LastOrDefault()?.Episode);
+
+                // No range check needed or something weird happened
+                if (!first.HasValue || !last.HasValue || first == last)
+                    continue;
+
+                for (var episode = first.Value; episode <= last.Value; episode++)
+                    if (files.All(file => file.Episode != episode))
+                    {
+                        if (!all.ContainsKey(anime))
+                            all[anime] = new List<int>();
+                        all[anime].Add(episode);
+                    }
+            }
+
+            var total = await _downloadService.DownloadSpecificEpisodes(all, AddToText);
             Text += total > 0 ? $">> Found {total} anime downloads." : ">> No new anime found.";
         }
 

@@ -35,9 +35,9 @@ namespace anime_downloader.Services.Interfaces
         Task<int> DownloadAll(IEnumerable<Anime> animes, Action<string> output);
 
         /// <summary>
-        ///     Download the latest episode of every series in {animes} between the file ranges in {ranges}
+        ///     Download specific given episodes numbers of every series in {animes} outputting result in {output}
         /// </summary>
-        Task<int> DownloadAll(IEnumerable<Anime> animes, IEnumerable<AnimeFileRange> ranges, IEnumerable<AnimeFile> files, Action<string> output);
+        Task<int> DownloadSpecificEpisodes(Dictionary<Anime, List<int>> animes, Action<string> output);
 
         /// <summary>
         ///     Gathers every episode (unfiltered by settings) for {anime}
@@ -48,16 +48,11 @@ namespace anime_downloader.Services.Interfaces
         ///     Gathers every episode (unfiltered by settings) for {anime}, automatically determining the appropriate name.
         /// </summary>
         Task<IEnumerable<RemoteMedia>> FindAllMedia(Anime anime, int episode);
-
-        /// <summary>
-        ///     Get the a list of media for the next episode in succession for the show.
-        /// </summary>
-        Task<IEnumerable<RemoteMedia>> GetNextEpisode(Anime anime);
-
+        
         /// <summary>
         ///     Attempt to start a single piece of media from the list of media.
         /// </summary>
-        Task<bool> AttemptDownload(Anime anime, IEnumerable<RemoteMedia> medias, Action<string> output);
+        Task<bool> AttemptDownload(Anime anime, int episode, IEnumerable<RemoteMedia> medias, Action<string> output);
 
         /// <summary>
         ///     Downloads the media for the given anime episode.
@@ -72,7 +67,7 @@ namespace anime_downloader.Services.Interfaces
         /// <summary>
         ///     Attempts to download the episode and returns the result of doing so.
         /// </summary>
-        Task<bool> DownloadEpisode(Anime anime, RemoteMedia media, Action<string> output);
+        Task<bool> DownloadEpisode(Anime anime, int episode, RemoteMedia media, Action<string> output);
 
         /// <summary>
         ///     Check if able to download the media based on setting rules and anime matching checks.

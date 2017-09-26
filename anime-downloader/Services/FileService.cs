@@ -92,7 +92,7 @@ namespace anime_downloader.Services
             return await Task.Run(() => GetEpisodes(episodeStatus));
         }
 
-        public async Task<IEnumerable<AnimeFile>> GetEpisodesFromAsync(Anime anime, EpisodeStatus episodeStatus)
+        public async Task<IEnumerable<AnimeFile>> GetEpisodesAsync(Anime anime, EpisodeStatus episodeStatus)
         {
             return await Task.Run(() => GetEpisodes(anime, episodeStatus));
         }
