@@ -68,17 +68,17 @@ namespace anime_downloader.ViewModels
             // Mark fully watched as completed
             if (SelectedIndex == 1)
             {
-                var names = new List<string>();
+                var updated = new List<string>();
                 foreach (var anime in _animeService.FullyWatched())
                 {
                     anime.Status = Status.Finished;
                     anime.Airing = false;
-                    names.Add(anime.Title);
+                    updated.Add("-- " + anime.Title);
                 }
 
                 _animeRepository.Save();
-                var result = names.Count > 0 ? string.Join(", ", names) : "no shows";
-                Methods.Alert($"Marked {result} as finished. ");
+                var result = updated.Count > 0 ? string.Join("\n", updated) : "no shows";
+                Methods.Alert(updated.Count > 0 ? $"Shows marked as finished:\n{result}" : "No shows were updated.");
             }
 
             // Move duplicates to My Videos
