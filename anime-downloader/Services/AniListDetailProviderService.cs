@@ -149,7 +149,8 @@ namespace anime_downloader.Services
                     relation = current.Relations.FirstOrDefault(r => r.RelationType == "prequel");
                     if (relation == null)
                         continue;
-                    anime.Details.OverallTotal += relation.TotalEpisodes ?? 0;
+                    if (relation.Type == "TV")
+                        anime.Details.OverallTotal += relation.TotalEpisodes ?? 0;
                     current = await _api.GetAnime(relation.Id, fullProfile: true);
                 } while (relation != null && anime.Episode > anime.Details.Total);
 
