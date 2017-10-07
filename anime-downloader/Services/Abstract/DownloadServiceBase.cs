@@ -411,6 +411,7 @@ namespace anime_downloader.Services.Abstract
         {
             var terms = name
                 .Replace("2nd Season", "")
+                .Replace("The Animation", "")
                 .Replace(" ", "+")
                 .Replace("'s", "")
                 .Replace(".", "+")
