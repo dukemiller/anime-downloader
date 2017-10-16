@@ -40,22 +40,37 @@ namespace anime_downloader.Services
                 : anime.Details.PreferredSearchTitle;
 
             // get all results from searching the name
-            var animeResults = (await _api.FindAsync(query.Replace(":", " "))).ToList();
+            var results = await _api.FindAsync(query.Replace(":", " "));
+
+            // if we have an airing date, only accept results that are from the same season
+            // this will be repeated every time
+            if (anime.Details.Aired != null)
+                results = results.Where(r => FilterResults(r, anime)).ToList();
+
+            // if the japanese title hasn't been tried yet, do that first before going crazy
+            if (!results.Any() && anime.Details.Title != null && query != anime.Details.Title)
+            {
+                results = await _api.FindAsync(anime.Details.Title.Replace(":", " "));
+                if (anime.Details.Aired != null)
+                    results = results.Where(r => FilterResults(r, anime)).ToList();
+            }
 
             // if there were absolutely no results from the query
-            if (!animeResults.Any())
+            if (!results.Any())
             {
                 // Continually segment words and attempt to get a result
                 var name = query.Split(' ');
                 var length = name.Length;
-                while (!animeResults.Any() && length-- > 1)
+                while (!results.Any() && length-- > 1)
                 {
                     var newName = string.Join(" ", name.Take(length));
-                    animeResults = (await _api.FindAsync(HttpUtility.UrlEncode(newName))).ToList();
+                    results = await _api.FindAsync(HttpUtility.UrlEncode(newName));
+                    if (anime.Details.Aired != null)
+                        results = results.Where(r => FilterResults(r, anime)).ToList();
                 }
 
                 // if after the previous operation there are still no results
-                if (!animeResults.Any())
+                if (!results.Any())
                 {
                     // throw an error then skip
                     Methods.Alert($"1. Absolutely no matching names found for {anime.Title}.");
@@ -64,14 +79,16 @@ namespace anime_downloader.Services
             }
 
             // make an estimation as to what is the closest result related to the anime
-            var result = ClosestResult(anime, query, animeResults);
+            var result = ClosestResult(anime, query, results);
 
             // if there was no good guess
             if (result == null)
             {
                 // try slapping a (TV) infront of it because the MAL api is weird sometimes
-                animeResults = (await _api.FindAsync(HttpUtility.UrlEncode(query + " (TV)"))).ToList();
-                result = ClosestResult(anime, query, animeResults);
+                results = await _api.FindAsync(HttpUtility.UrlEncode(query + " (TV)"));
+                if (anime.Details.Aired != null)
+                    results = results.Where(r => FilterResults(r, anime)).ToList();
+                result = ClosestResult(anime, query, results);
 
                 // if still no result
                 if (result == null)
@@ -90,8 +107,8 @@ namespace anime_downloader.Services
                     var total = result.TotalEpisodes;
 
                     // remove current series from list of possible choices
-                    animeResults.Remove(result);
-                    result = ClosestResult(anime, query, animeResults);
+                    results.Remove(result);
+                    result = ClosestResult(anime, query, results);
                     total += result?.TotalEpisodes ?? 0;
 
                     // if the combination of both this season is still less than your current episode
@@ -100,8 +117,8 @@ namespace anime_downloader.Services
                     // hopefully i can reach a point that it isnt
                     while (result != null && total < anime.Episode)
                     {
-                        animeResults.Remove(result);
-                        result = ClosestResult(anime, query, animeResults);
+                        results.Remove(result);
+                        result = ClosestResult(anime, query, results);
                         total += result?.TotalEpisodes ?? 0;
                     }
 
@@ -248,5 +265,15 @@ namespace anime_downloader.Services
             }
         }
 
+        private static bool FilterResults(FindResult result, Anime anime)
+        {
+            if (DateTime.TryParse(result.StartDate, out var date))
+            {
+                var (year, month) = (anime.Details.Aired.Year, anime.Details.Aired.Season.ToFirstMonthAired());
+                var comparedDate = new DateTime(year, month, 1);
+                return date >= comparedDate;
+            }
+            return false;
+        }
     }
 }

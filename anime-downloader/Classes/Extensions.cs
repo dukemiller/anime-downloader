@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using anime_downloader.Enums;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 
@@ -62,6 +63,15 @@ namespace anime_downloader.Classes
         public static IEnumerable<T> GetValues<T>()
         {
             return Enum.GetValues(typeof(T)).Cast<T>();
+        }
+
+        /// <summary>
+        ///     Get the number of the month that this season would first air in, 
+        ///     e.g. winter = 1 (jan/feb/march), spring = 4 (april/may/june) etc
+        /// </summary>
+        public static int ToFirstMonthAired(this Season season)
+        {
+            return (int) season * 3 - 2;
         }
     }
 }

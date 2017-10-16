@@ -14,7 +14,7 @@ namespace anime_downloader.Services.Interfaces
 
         Task<IEnumerable<ProfileAnimeResult>> GetProfile();
 
-        Task<IEnumerable<FindResult>> FindAsync(string q);
+        Task<List<FindResult>> FindAsync(string q);
 
         Task<(bool successful, string content)> AddAsync(Anime anime, int id);
 

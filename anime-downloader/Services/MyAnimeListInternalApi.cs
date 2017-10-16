@@ -113,14 +113,14 @@ namespace anime_downloader.Services
             }
         }
 
-        public async Task<IEnumerable<FindResult>> FindAsync(string q)
+        public async Task<List<FindResult>> FindAsync(string q)
         {
             q = HttpUtility.UrlEncode(q)?.Replace("%20", "%25");
             var url = string.Format(ApiSearch, q);
             var data = (await _client.GetAsync(url)).Content;
             var json = await data.ReadAsStringAsync();
             var response = JsonConvert.DeserializeObject<SearchResponse>(json);
-            return response.Categories.FirstOrDefault()?.Items.Select(ToFindResult) ?? new List<FindResult>();
+            return response.Categories.FirstOrDefault()?.Items.Select(ToFindResult).ToList() ?? new List<FindResult>();
         }
 
         public async Task<(bool successful, string content)> AddAsync(Anime anime, int id)
