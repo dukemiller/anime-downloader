@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using anime_downloader.Enums;
@@ -409,19 +410,37 @@ namespace anime_downloader.Services.Abstract
         /// </summary>
         protected static string TransformEpisodeSearch(string name, int episode)
         {
-            var terms = name
-                .Replace("2nd Season", "")
-                .Replace("The Animation", "")
-                .Replace(" ", "+")
+            // The kino no tabi regex
+            name = Regex.Replace(name, @"(:\s(\w+\s){3,}\-\s(\w+\s){2,}(\w+\s?))", "");
+
+            // Remove first three words after a colon, usually a title (e.g. shokugeki: san no sara)
+            name = Regex.Replace(name, @"(:\s(\w+\s){2,}\w+$)", "");
+
+            // Remove last number of title (usually season number, e.g. Rin-ne 3)
+            name = Regex.Replace(name, @"\s\d{1}$", "");
+            
+            // Remove literal season declarations from the title
+            name = Regex.Replace(name, @"(2nd season|the (?:animation|animated series))", "", RegexOptions.IgnoreCase);
+
+            // Troublesome characters for the search
+            name = Regex.Replace(name, @":|/|-|\.", " ");
+
+            // Shorten length of titles that have more than 5 words
+            if (name.Split(' ').Length > 5)
+                name = string.Join(" ", name.Split(' ').Take(5));
+
+            // Remove duplicate spaces
+            name = Regex.Replace(name, @"\s+", " ").Trim();
+
+            // Convert rest
+            name = name
                 .Replace("'s", "")
-                .Replace(".", "+")
-                .Replace(":", " ")
-                .Replace("/", " ")
+                .Replace(" ", "+")
                 .Replace("!", "%21")
-                .Replace("'", "%27")
-                .Replace("-", " ");
-            terms = Regex.Replace(terms, @"\+\d{1}$", "");
-            return $"{terms}+{episode:D2}";
+                .Replace("Souma", "Souma|Soma")       // ugly hack
+                .Replace("'", "%27");
+
+            return $"{name}+{episode:D2}";
         }
 
         // Borders the line
