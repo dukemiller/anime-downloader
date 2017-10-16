@@ -119,7 +119,7 @@ namespace anime_downloader.Services
 
             AddDataToAnime(anime, result);
 
-            return (false, int.Parse(result.Id));
+            return (true, int.Parse(result.Id));
         }
 
         // ISyncProviderService
