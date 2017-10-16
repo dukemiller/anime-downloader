@@ -387,11 +387,7 @@ namespace anime_downloader.Services
                 ? anime.SeriesContinuationEpisode.ToString()
                 : anime.Episode.ToString();
             episode = episode.Replace("-", "");
-
-            var rating = !string.IsNullOrEmpty(anime.Rating)
-                ? int.Parse(anime.Rating)
-                : 0;
-
+            
             string status;
 
             switch (anime.Status)
@@ -429,7 +425,7 @@ namespace anime_downloader.Services
                 {"astatus", status},
                 {"add_anime[status]", status},
                 {"add_anime[num_watched_episodes]", episode},
-                {"add_anime[score]", rating.ToString()},
+                {"add_anime[score]", anime.Rating},
                 {"add_anime[start_date][month]", ""},
                 {"add_anime[start_date][day]", ""},
                 {"add_anime[start_date][year]", ""},

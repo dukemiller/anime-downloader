@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -29,53 +30,48 @@ namespace anime_downloader.Views.Components
             }
         }
 
+        private static readonly Regex NumberPattern = new Regex(@"^(?:10|[1-9])$");
+
         private void Rating_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            var textbox = (TextBox)sender;
+            var textbox = (TextBox) sender;
+            var currentRating = textbox.Text;
 
-            if (textbox.Text.Any(c => !char.IsDigit(c)) || e.Text.Any(c => !char.IsDigit(c)) ||
-                e.Text.Length == 0 || e.Text.Trim().Equals(" ") || string.IsNullOrEmpty(e.Text))
+            e.Handled = true;
+
+            if (currentRating.Length == 1)
             {
-                e.Handled = true;
-                return;
-            }
-
-            if (textbox.Text.Length == 0)
-                return;
-
-            var current = int.Parse(textbox.Text);
-            var adder = int.Parse(e.Text);
-
-            if (current == 10)
-            {
-                if (textbox.SelectionStart == 2)
+                if (NumberPattern.IsMatch(currentRating + e.Text))
                 {
-                    e.Handled = true;
-                    textbox.Text = $"{adder}";
+                    textbox.Text = currentRating + e.Text;
+                    textbox.SelectionStart = 2;
+                }
+
+                else if (NumberPattern.IsMatch(e.Text))
+                {
+                    textbox.Text = e.Text;
                     textbox.SelectionStart = 1;
                 }
 
-                else if (textbox.SelectedText.Length != textbox.Text.Length)
-                {
-                    e.Handled = true;
-                }
             }
 
             else
             {
-                if (adder == 0)
+                if (NumberPattern.IsMatch(e.Text))
                 {
-                    if (current == 1)
-                    {
-                        textbox.Text = "10";
-                        textbox.SelectionStart = 2;
-                        e.Handled = true;
-                        return;
-                    }
+                    textbox.Text = e.Text;
+                    textbox.SelectionStart = 1;
                 }
-                e.Handled = true;
-                textbox.Text = $"{adder}";
-                textbox.SelectionStart = 1;
+            }
+        }
+
+        private void Rating_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var textbox = (TextBox) sender;
+            if (!NumberPattern.IsMatch(textbox.Text))
+            {
+                textbox.Text = "";
+                textbox.SelectionStart = 0;
             }
         }
 
@@ -90,5 +86,6 @@ namespace anime_downloader.Views.Components
             Keyboard.ClearFocus();
             Focus();
         }
+
     }
 }

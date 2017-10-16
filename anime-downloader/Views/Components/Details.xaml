@@ -127,6 +127,7 @@
                                  Width="15"
                                  MaxLength="2"
                                  PreviewTextInput="Rating_PreviewTextInput"
+                                 TextChanged="Rating_TextChanged"
                                  Style="{DynamicResource NumberBoxStyle}"
                                  Text="{Binding Anime.Rating}" />
 
