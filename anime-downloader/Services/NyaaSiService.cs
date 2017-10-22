@@ -55,6 +55,7 @@ namespace anime_downloader.Services
             var result = document.SelectNodes("//item")?
                 .Cast<XmlNode>()
                 .Select(node => ToMedia(node, manager))
+                .Where(item => !item.Name.Contains("OAD"))      // Shokugeki specific rule (bad...)
                 .Where(item => // Episode is this season
                 {
                     if (item.Date.HasValue)
