@@ -59,6 +59,7 @@
                              IsHitTestVisible="{Binding Editing}"
                              IsTabStop="{Binding Editing}"
                              Opacity="{Binding LoadOpacity}"
+                             TextChanged="Rating_TextChanged"
                              PreviewTextInput="Rating_PreviewTextInput"
                              Text="{Binding Details.Rating}" />
 
