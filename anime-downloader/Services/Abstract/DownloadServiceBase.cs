@@ -28,15 +28,6 @@ namespace anime_downloader.Services.Abstract
     /// </remarks>
     public abstract class DownloadServiceBase : IDownloadService
     {
-        // 
-
-        /// <summary>
-        ///     The max age (in days) a torrent can be for it to still be in this season
-        /// </summary>
-        protected static int MaxAge => (DateTime.Now - DateTime.Parse($"{((int) CurrentSeason() - 1) * 3 + 1}/1")).Days;
-
-        private static Season CurrentSeason() => (Season) Math.Ceiling(Convert.ToDouble(DateTime.Now.Month) / 3);
-
         private async Task<(bool successful, string path)> DownloadTorrent(Torrent torrent)
         {
             var torrentName = await torrent.GetTorrentNameAsync();

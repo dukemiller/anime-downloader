@@ -226,7 +226,6 @@
     <Compile Include="Services\NyaaSiService.cs" />
     <Compile Include="Services\VersionService.cs" />
     <Compile Include="Services\MyAnimeListService.cs" />
-    <Compile Include="Services\NyaaService.cs" />
     <Compile Include="ViewModelLocator.cs" />
     <Compile Include="ViewModels\AnimeDisplayViewModel.cs" />
     <Compile Include="ViewModels\Components\AnimeDetailsMultipleViewModel.cs" />

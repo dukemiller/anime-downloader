@@ -69,7 +69,7 @@ namespace anime_downloader.Services
                 .Where(item => // Episode is this season
                 {
                     if (item.Date.HasValue)
-                        return (item.Date.Value - DateTime.Now).Days <= MaxAge;
+                        return (item.Date.Value - DateTime.Now).Days <= AnimeSeason.MaxAgeFor(anime, episode);
                     return true;
                 })
                 .Where(item => Regex

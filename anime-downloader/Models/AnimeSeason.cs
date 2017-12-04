@@ -15,7 +15,7 @@ namespace anime_downloader.Models
         public Season Season { get; set; }
 
         [JsonIgnore]
-        public int Sort => (Year * 10) + (int) Season;
+        public int Sort => Year * 10 + (int) Season;
 
         [JsonIgnore]
         public string Title => $"{Season.Description()} {Year}";
@@ -49,6 +49,30 @@ namespace anime_downloader.Models
         public AnimeSeason Next(int amount) => Applier(animeSeason => animeSeason.Next(), amount);
 
         public AnimeSeason Previous(int amount) => Applier(animeSeason => animeSeason.Previous(), amount);
+
+        /// <summary>
+        ///     The max age (in days) a torrent can be for it to still be in season
+        /// </summary>
+        public static int MaxAgeFor(Anime anime, int episode)
+        {
+            var (current, aired) = (Current, anime.Details.Aired);
+
+            // If anime was last season and trying to get last season episodes, extend the age
+            if (current.Previous() == aired)
+                if (anime.Details.Total > 20 && episode <= 13)
+                    return (DateTime.Now - aired.StartDate()).Days;
+                else
+                    return (DateTime.Now - current.StartDate()).Days;
+            
+            // else, only retrieve this season 
+            return (DateTime.Now - current.StartDate()).Days;
+        }
+
+        public DateTime StartDate()
+        {
+            var month = ((int) Season - 1) * 3 + 1;
+            return DateTime.Parse($"{month}/1/{Year}");
+        }
 
         public static AnimeSeason Current => new AnimeSeason
         {
