@@ -21,7 +21,7 @@ namespace anime_downloader.ViewModels.Components
 
         private ObservableCollection<AnimeFile> _files;
 
-        private string _filter;
+        private string _filter = "";
 
         private ObservableCollection<AnimeFile> _filteredFiles;
 
@@ -328,8 +328,9 @@ namespace anime_downloader.ViewModels.Components
 
                 var file = new AnimeFile(args.FullPath);
                 Files.AddSorted(file);
-                FilteredFiles = new ObservableCollection<AnimeFile>(Files.Where(af => Methods.Strip(af.Name)
-                    .ToLower().Contains(Methods.Strip(Filter).ToLower())));
+                FilteredFiles = new ObservableCollection<AnimeFile>(
+                    Files.Where(af => Methods.Strip(af.Name).ToLower().Contains(Methods.Strip(Filter).ToLower()))
+                );
                 RaisePropertyChanged(nameof(Label));
             });
         }
