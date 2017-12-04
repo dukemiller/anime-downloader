@@ -8,6 +8,7 @@ using System.Net;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using anime_downloader.Classes;
 using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Models.Abstract;
@@ -35,75 +36,6 @@ namespace anime_downloader.Services.Abstract
         protected static int MaxAge => (DateTime.Now - DateTime.Parse($"{((int) CurrentSeason() - 1) * 3 + 1}/1")).Days;
 
         private static Season CurrentSeason() => (Season) Math.Ceiling(Convert.ToDouble(DateTime.Now.Month) / 3);
-
-        private static string AriaDirectory => Path.Combine(PathConfiguration.ApplicationDirectory, "aria2");
-
-        private static string AriaExecutable => Path.Combine(AriaDirectory, "aria2c.exe");
-
-        private async Task DownloadAria()
-        {
-            const string url =
-                @"https://github.com/aria2/aria2/releases/download/release-1.31.0/aria2-1.31.0-win-32bit-build1.zip";
-            var path = Path.Combine(PathConfiguration.ApplicationDirectory, "aria2.zip");
-            await Downloader.DownloadFileTaskAsync(url, path);
-            ZipFile.ExtractToDirectory(path, PathConfiguration.ApplicationDirectory);
-            File.Delete(path);
-            Directory.Move(
-                Path.Combine(PathConfiguration.ApplicationDirectory, "aria2-1.31.0-win-32bit-build1"),
-                Path.Combine(AriaDirectory));
-        }
-
-        private async Task<(bool successful, string path)> RetrieveFromAria(MagnetLink magnet)
-        {
-            string file;
-
-            if (!Directory.Exists(AriaDirectory))
-                await DownloadAria();
-
-            var info = new ProcessStartInfo
-            {
-                FileName = AriaExecutable,
-                Arguments =
-                    $"--bt-metadata-only=true --bt-save-metadata=true --bt-tracker={string.Join(",", magnet.Trackers)} {magnet.Hash}",
-                WorkingDirectory = SettingsRepository.PathConfig.Torrents,
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                CreateNoWindow = true
-            };
-
-            var process = new Process
-            {
-                StartInfo = info
-            };
-
-            process.Start();
-
-            var result = await process.StandardOutput.ReadToEndAsync();
-
-            if (result.Contains("Maybe file already exists"))
-            {
-                var torrent = result.Split('\n')
-                                  .First(line => line.Contains(".torrent"))
-                                  .Split('/')
-                                  .Last()
-                                  .Split('.')
-                                  .First() + ".torrent";
-
-                file = Path.Combine(SettingsRepository.PathConfig.Torrents, torrent);
-            }
-
-            else
-            {
-                file =
-                    result.Split('\n')
-                        .First(line => line.Contains("Saved metadata as"))
-                        .Split(new[] {"Saved metadata as"}, StringSplitOptions.None)[1]
-                        .TrimEnd('.')
-                        .TrimStart(' ');
-            }
-
-            return (true, file);
-        }
 
         private async Task<(bool successful, string path)> DownloadTorrent(Torrent torrent)
         {
@@ -350,7 +282,7 @@ namespace anime_downloader.Services.Abstract
 
                 case MagnetLink magnet:
                 {
-                    (successful, path) = await RetrieveFromAria(magnet);
+                    (successful, path) = await Aria.Retrieve(magnet);
                     if (!successful)
                         return (false, null);
                     break;
@@ -442,9 +374,7 @@ namespace anime_downloader.Services.Abstract
 
             return $"{name}+{episode:D2}";
         }
-
-        // Borders the line
-
+        
         public async Task<IEnumerable<RemoteMedia>> FindAllMedia(Anime anime, int episode)
         {
             return await GetMedia(anime, episode);

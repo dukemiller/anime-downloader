@@ -131,6 +131,7 @@
     <Compile Include="Classes\AnimeConverter.cs" />
     <Compile Include="Classes\ApiKeys.cs" />
     <Compile Include="Classes\ApiKeysLocal.cs" />
+    <Compile Include="Classes\Aria.cs" />
     <Compile Include="Classes\Attributes.cs" />
     <Compile Include="Classes\Distances.cs" />
     <Compile Include="Classes\Exceptions.cs" />
