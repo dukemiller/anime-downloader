@@ -145,6 +145,8 @@
     <Compile Include="Enums\DownloadOption.cs" />
     <Compile Include="Enums\DownloadProvider.cs" />
     <Compile Include="Enums\Season.cs" />
+    <Compile Include="Enums\ViewAction.cs" />
+    <Compile Include="Enums\ViewComponent.cs" />
     <Compile Include="Enums\ViewDisplay.cs" />
     <Compile Include="Enums\Status.cs" />
     <Compile Include="Models\Abstract\RemoteMedia.cs" />
@@ -227,11 +229,11 @@
     <Compile Include="Services\VersionService.cs" />
     <Compile Include="Services\MyAnimeListService.cs" />
     <Compile Include="ViewModelLocator.cs" />
-    <Compile Include="ViewModels\AnimeDisplayViewModel.cs" />
+    <Compile Include="ViewModels\Displays\AnimeDisplayViewModel.cs" />
     <Compile Include="ViewModels\Components\AnimeDetailsMultipleViewModel.cs" />
     <Compile Include="ViewModels\Components\AnimeDetailsViewModel.cs" />
     <Compile Include="ViewModels\Components\AnimeListViewModel.cs" />
-    <Compile Include="ViewModels\Dialogs\DialogViewModel.cs" />
+    <Compile Include="ViewModels\Dialogs\MessageViewModel.cs" />
     <Compile Include="ViewModels\Components\DownloaderViewModel.cs" />
     <Compile Include="ViewModels\Components\DownloadLogViewModel.cs" />
     <Compile Include="ViewModels\Components\DownloadOptionsViewModel.cs" />
@@ -239,18 +241,18 @@
     <Compile Include="ViewModels\Components\FindViewModel.cs" />
     <Compile Include="ViewModels\Components\DetailsBarViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\LoadingViewModel.cs" />
-    <Compile Include="ViewModels\Dialogs\MyAnimeListLoginDialogViewModel.cs" />
+    <Compile Include="ViewModels\Dialogs\MyAnimeList\LoginDialogViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\QuestionViewModel.cs" />
-    <Compile Include="ViewModels\DiscoverViewModel.cs" />
-    <Compile Include="ViewModels\DownloadViewModel.cs" />
-    <Compile Include="ViewModels\HomeViewModel.cs" />
+    <Compile Include="ViewModels\Displays\DiscoverViewModel.cs" />
+    <Compile Include="ViewModels\Displays\DownloadViewModel.cs" />
+    <Compile Include="ViewModels\Displays\HomeViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
-    <Compile Include="ViewModels\ManageViewModel.cs" />
-    <Compile Include="ViewModels\MiscViewModel.cs" />
-    <Compile Include="ViewModels\PlaylistCreatorViewModel.cs" />
-    <Compile Include="ViewModels\SettingsViewModel.cs" />
-    <Compile Include="ViewModels\WebViewModel.cs" />
-    <Compile Include="Views\AnimeDisplay.xaml.cs">
+    <Compile Include="ViewModels\Displays\ManageViewModel.cs" />
+    <Compile Include="ViewModels\Displays\MiscViewModel.cs" />
+    <Compile Include="ViewModels\Displays\PlaylistCreatorViewModel.cs" />
+    <Compile Include="ViewModels\Displays\SettingsViewModel.cs" />
+    <Compile Include="ViewModels\Displays\WebViewModel.cs" />
+    <Compile Include="Views\Displays\AnimeDisplay.xaml.cs">
       <DependentUpon>AnimeDisplay.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Components\AiringAnime.xaml.cs">
@@ -265,8 +267,8 @@
     <Compile Include="Views\Components\Details.xaml.cs">
       <DependentUpon>Details.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Dialogs\Dialog.xaml.cs">
-      <DependentUpon>Dialog.xaml</DependentUpon>
+    <Compile Include="Views\Dialogs\Message.xaml.cs">
+      <DependentUpon>Message.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Components\DownloadLog.xaml.cs">
       <DependentUpon>DownloadLog.xaml</DependentUpon>
@@ -289,37 +291,37 @@
     <Compile Include="Views\Dialogs\Loading.xaml.cs">
       <DependentUpon>Loading.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Dialogs\MyAnimeListLoginDialog.xaml.cs">
-      <DependentUpon>MyAnimeListLoginDialog.xaml</DependentUpon>
+    <Compile Include="Views\Dialogs\MyAnimeList\LoginDialog.xaml.cs">
+      <DependentUpon>LoginDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Dialogs\Question.xaml.cs">
       <DependentUpon>Question.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Discover.xaml.cs">
+    <Compile Include="Views\Displays\Discover.xaml.cs">
       <DependentUpon>Discover.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Download.xaml.cs">
+    <Compile Include="Views\Displays\Download.xaml.cs">
       <DependentUpon>Download.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Home.xaml.cs">
+    <Compile Include="Views\Displays\Home.xaml.cs">
       <DependentUpon>Home.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Manage.xaml.cs">
+    <Compile Include="Views\Displays\Manage.xaml.cs">
       <DependentUpon>Manage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Misc.xaml.cs">
+    <Compile Include="Views\Displays\Misc.xaml.cs">
       <DependentUpon>Misc.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PlaylistCreator.xaml.cs">
-      <DependentUpon>PlaylistCreator.xaml</DependentUpon>
+    <Compile Include="Views\Displays\Playlist.xaml.cs">
+      <DependentUpon>Playlist.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings.xaml.cs">
+    <Compile Include="Views\Displays\Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Web.xaml.cs">
+    <Compile Include="Views\Displays\Web.xaml.cs">
       <DependentUpon>Web.xaml</DependentUpon>
     </Compile>
-    <Page Include="Views\AnimeDisplay.xaml">
+    <Page Include="Views\Displays\AnimeDisplay.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -331,7 +333,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Dialogs\Dialog.xaml">
+    <Page Include="Views\Dialogs\Message.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -347,7 +349,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Dialogs\MyAnimeListLoginDialog.xaml">
+    <Page Include="Views\Dialogs\MyAnimeList\LoginDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -355,7 +357,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Discover.xaml">
+    <Page Include="Views\Displays\Discover.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -395,31 +397,31 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Download.xaml">
+    <Page Include="Views\Displays\Download.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Home.xaml">
+    <Page Include="Views\Displays\Home.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Manage.xaml">
+    <Page Include="Views\Displays\Manage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Misc.xaml">
+    <Page Include="Views\Displays\Misc.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PlaylistCreator.xaml">
+    <Page Include="Views\Displays\Playlist.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Settings.xaml">
+    <Page Include="Views\Displays\Settings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Web.xaml">
+    <Page Include="Views\Displays\Web.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

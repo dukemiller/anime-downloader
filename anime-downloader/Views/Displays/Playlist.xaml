@@ -1,0 +1,103 @@
+﻿<UserControl x:Class="anime_downloader.Views.Displays.Playlist"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:models="clr-namespace:anime_downloader.Models"
+             DataContext="{Binding Source={StaticResource Locator},
+                              Path=Playlist}"
+             d:DesignHeight="360"
+             d:DesignWidth="680"
+             mc:Ignorable="d">
+    <Grid Background="White">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10*" />
+            <RowDefinition Height="2*" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Grid.RowSpan="2">
+            <DockPanel>
+                <GroupBox Margin="0, 0, 5, 0"
+                          HorizontalAlignment="Left"
+                          VerticalAlignment="Top"
+                          Header="Sort by">
+                    <StackPanel>
+                        <ListBox BorderThickness="0"
+                                 ItemsSource="{Binding Options}"
+                                 SelectedItem="{Binding SelectedRadio}">
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="{x:Type ListBoxItem}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                                <RadioButton Margin="5"
+                                                             VerticalAlignment="Center"
+                                                             VerticalContentAlignment="Center"
+                                                             d:DataContext="{d:DesignInstance d:Type=models:RadioModel}"
+                                                             Content="{Binding Header}"
+                                                             FocusVisualStyle="{x:Null}"
+                                                             IsChecked="{Binding RelativeSource={RelativeSource TemplatedParent},
+                                                                                 Path=IsSelected}"
+                                                             Style="{StaticResource {x:Type RadioButton}}"
+                                                             ToolTip="{Binding ToolTip}" />
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                        </ListBox>
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox MaxWidth="280"
+                          Margin="0, 0, 5, 0"
+                          HorizontalAlignment="Left"
+                          VerticalAlignment="Top"
+                          Header="Options">
+                    <StackPanel>
+                        <CheckBox Margin="5"
+                                  Content="Separate show order"
+                                  FocusVisualStyle="{x:Null}"
+                                  IsChecked="{Binding SeparateShowOrder}"
+                                  ToolTip="Distribute the show order so that you don't watch the same show twice in a row." />
+                        <CheckBox Margin="5"
+                                  FocusVisualStyle="{x:Null}"
+                                  IsChecked="{Binding AdditionalEpisodesFirst}">
+                            <CheckBox.ToolTip>
+                                <TextBlock>
+                                    For shows that have more than one episode, organize so that those shows with additional episodes will play first.
+                                    <LineBreak />
+                                    This would have no effect if you only have one episode to watch for every series.
+                                </TextBlock>
+                            </CheckBox.ToolTip>
+                            <TextBlock Text="Play all episodes that have more than one episode first" TextWrapping="Wrap" />
+                        </CheckBox>
+                        <CheckBox Margin="5"
+                                  Content="Reverse order"
+                                  FocusVisualStyle="{x:Null}"
+                                  IsChecked="{Binding ReverseOrder}"
+                                  ToolTip="Reverse the order." />
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox Margin="0, 0, 5, 0" Header="Example of output">
+                    <ItemsControl ItemsSource="{Binding DemoPlaylist.Source}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Label Margin="-4"
+                                       Content="{Binding FileName}"
+                                        />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </GroupBox>
+            </DockPanel>
+        </StackPanel>
+        <DockPanel Grid.Row="1" LastChildFill="False">
+            <Button Command="{Binding OpenCommand}"
+                    Content="Open"
+                    DockPanel.Dock="Left" />
+            <Button Command="{Binding CreateCommand}"
+                    Content="Create"
+                    DockPanel.Dock="Right"
+                    IsDefault="True" />
+        </DockPanel>
+    </Grid>
+</UserControl>

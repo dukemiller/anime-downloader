@@ -99,7 +99,7 @@ namespace anime_downloader.Classes
         /// </summary>
         public static async void Alert(string msg = "")
         {
-            await DialogHost.Show(new DialogViewModel {Message = msg});
+            await DialogHost.Show(new MessageViewModel {Text = msg});
         }
 
         public static async Task<bool> QuestionYesNo(string question)

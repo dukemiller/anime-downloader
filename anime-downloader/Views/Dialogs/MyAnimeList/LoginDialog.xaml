@@ -1,0 +1,58 @@
+﻿<UserControl
+    x:Class="anime_downloader.Views.Dialogs.MyAnimeList.LoginDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:configurations="clr-namespace:anime_downloader.Models.Configurations"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:dialogs="clr-namespace:anime_downloader.ViewModels.Dialogs"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
+    xmlns:myAnimeList="clr-namespace:anime_downloader.ViewModels.Dialogs.MyAnimeList"
+    Width="400"
+    d:DataContext="{d:DesignInstance myAnimeList:LoginDialogViewModel}"
+    Background="{StaticResource MaterialDesignBackground}"
+    TextElement.FontSize="16"
+    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <configurations:MyAnimeListConfiguration x:Key="Mal" />
+    </UserControl.Resources>
+    <DockPanel Margin="16" LastChildFill="False">
+        <Label
+            Margin="0,16"
+            HorizontalAlignment="Center"
+            Content="Enter your MyAnimeList login details:"
+            DockPanel.Dock="Top" />
+        <TextBox
+            Margin="0,8"
+            materialDesign:HintAssist.Hint="Username"
+            DockPanel.Dock="Top"
+            Text="{Binding Source={StaticResource Mal}, Path=Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <PasswordBox
+            Margin="0,8"
+            materialDesign:HintAssist.Hint="Password"
+            xaml:PasswordBoxAssistant.BindPassword="True"
+            xaml:PasswordBoxAssistant.BoundPassword="{Binding Source={StaticResource Mal}, Path=Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            DockPanel.Dock="Top" />
+        <DockPanel
+            Margin="0,8"
+            DockPanel.Dock="Top"
+            LastChildFill="False">
+            <Button
+                Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                CommandParameter="{StaticResource Mal}"
+                Content="Ok"
+                DockPanel.Dock="Right"
+                FocusVisualStyle="{x:Null}"
+                Background="LightGreen"
+                IsDefault="True" />
+            <Button
+                Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                Content="Cancel"
+                FocusVisualStyle="{x:Null}"
+                IsCancel="True" />
+        </DockPanel>
+
+    </DockPanel>
+</UserControl>

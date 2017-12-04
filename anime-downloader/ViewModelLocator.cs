@@ -10,6 +10,7 @@ using anime_downloader.Services;
 using anime_downloader.Services.Interfaces;
 using anime_downloader.ViewModels;
 using anime_downloader.ViewModels.Components;
+using anime_downloader.ViewModels.Displays;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
 

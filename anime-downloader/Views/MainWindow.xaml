@@ -7,6 +7,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:views="clr-namespace:anime_downloader.Views"
         xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:displays="clr-namespace:anime_downloader.Views.Displays"
         Title="Anime Downloader"
         Width="920"
         Height="400"
@@ -99,31 +100,31 @@
                 </Style>
             </controls:MetroAnimatedSingleRowTabControl.ItemContainerStyle>
             <controls:MetroTabItem Header="Home">
-                <views:Home />
+                <displays:Home />
             </controls:MetroTabItem>
             <controls:MetroTabItem Header="Anime" PreviewMouseDown="RefreshView">
-                <views:AnimeDisplay />
+                <displays:AnimeDisplay />
             </controls:MetroTabItem>
             <controls:MetroTabItem Header="Discover">
-                <views:Discover />
+                <displays:Discover />
             </controls:MetroTabItem>
             <controls:MetroTabItem FocusVisualStyle="{x:Null}" Header="Download" PreviewMouseDown="RefreshView">
-                <views:Download />
+                <displays:Download />
             </controls:MetroTabItem>
             <controls:MetroTabItem Header="Manage">
-                <views:Manage />
+                <displays:Manage />
             </controls:MetroTabItem>
             <controls:MetroTabItem Header="Playlist">
-                <views:PlaylistCreator />
+                <displays:Playlist />
             </controls:MetroTabItem>
             <controls:MetroTabItem Header="Web" PreviewMouseDown="RefreshView">
-                <views:Web />
+                <displays:Web />
             </controls:MetroTabItem>
             <controls:MetroTabItem Header="Settings">
-                <views:Settings />
+                <displays:Settings />
             </controls:MetroTabItem>
             <controls:MetroTabItem Header="Misc">
-                <views:Misc />
+                <displays:Misc />
             </controls:MetroTabItem>
         </controls:MetroAnimatedSingleRowTabControl>
     </materialDesign:DialogHost>
