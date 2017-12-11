@@ -155,6 +155,7 @@ namespace anime_downloader.Services.Abstract
                 {
                     downloaded++;
                     anime.Episode++;
+                    anime.Details.NeedsUpdating = true;
                 }
             }
 
@@ -173,7 +174,10 @@ namespace anime_downloader.Services.Abstract
             {
                 var download = await AttemptDownload(anime, episode, await GetMedia(anime, episode), output);
                 if (download)
+                {
                     downloaded++;
+                    anime.Details.NeedsUpdating = true;
+                }
             }
 
             if (downloaded > 0)

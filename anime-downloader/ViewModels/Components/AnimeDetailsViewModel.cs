@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -66,11 +67,12 @@ namespace anime_downloader.ViewModels.Components
                 () => Anime?.Name?.Length > 0
             );
 
-            anime.PropertyChanged += (sender, args) => _changeMade = true;
+            Anime.PropertyChanged -= AnimeOnPropertyChanged;
+            Anime.PropertyChanged += AnimeOnPropertyChanged;
 
             return this;
         }
-        
+
         public AnimeDetailsViewModel CreateNew()
         {
             Editing = false;
@@ -200,18 +202,30 @@ namespace anime_downloader.ViewModels.Components
         public Anime Anime
         {
             get => _anime;
-            set
-            {
-                Set(() => Anime, ref _anime, value);
-                Anime.PropertyChanged += (sender, args) =>
-                {
-                    if (args.PropertyName.Equals("Name"))
-                        Command.RaiseCanExecuteChanged();
-                };
-            }
+            set => Set(() => Anime, ref _anime, value);
         }
 
         // 
+
+        private void AnimeOnPropertyChanged(object sender, PropertyChangedEventArgs args)
+        {
+            switch (args.PropertyName)
+            {
+                case "Name":
+                    Command.RaiseCanExecuteChanged();
+                    break;
+                case "Episode":
+                case "Status":
+                case "Rating":
+                case "Notes":
+                    Anime.Details.NeedsUpdating = true;
+                    break;
+                default:
+                    break;
+            }
+
+            _changeMade = true;
+        }
 
         private void SetupImage()
         {

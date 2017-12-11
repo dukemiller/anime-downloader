@@ -19,7 +19,6 @@ namespace anime_downloader.Services
         {
             _settingsRepository = settingsRepository;
             _animeRepository = animeRepository;
-
         }
 
         public IEnumerable<Anime> Watching => Animes.Where(a => a.Status == Status.Watching);

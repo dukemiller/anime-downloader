@@ -137,6 +137,7 @@ namespace anime_downloader.ViewModels.Components
                         {
                             total++;
                             anime.Episode++;
+                            anime.Details.NeedsUpdating = true;
                         }
                     } while (downloaded);
                 }

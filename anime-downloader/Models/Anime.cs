@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using anime_downloader.Enums;
-using anime_downloader.ViewModels;
 using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
 
@@ -67,12 +66,7 @@ namespace anime_downloader.Models
         public int Episode
         {
             get => _episode;
-            set
-            {
-                Set(() => Episode, ref _episode, value);
-                if (MainWindowViewModel.Loaded && Details.HasId)
-                    Details.NeedsUpdating = true;
-            }
+            set => Set(() => Episode, ref _episode, value);
         }
 
         /// <summary>
@@ -82,12 +76,7 @@ namespace anime_downloader.Models
         public Status Status
         {
             get => _status;
-            set
-            {
-                Set(() => Status, ref _status, value);
-                if (MainWindowViewModel.Loaded && Details.HasId)
-                    Details.NeedsUpdating = true;
-            }
+            set => Set(() => Status, ref _status, value);
         }
 
         /// <summary>
@@ -137,12 +126,7 @@ namespace anime_downloader.Models
         public string Rating
         {
             get => _rating;
-            set
-            {
-                Set(() => Rating, ref _rating, value);
-                if (MainWindowViewModel.Loaded && Details.HasId)
-                    Details.NeedsUpdating = true;
-            }
+            set => Set(() => Rating, ref _rating, value);
         }
 
         [JsonProperty("details")]
@@ -159,12 +143,7 @@ namespace anime_downloader.Models
         public string Notes
         {
             get => _notes;
-            set
-            {
-                Set(() => Notes, ref _notes, value);
-                if (MainWindowViewModel.Loaded && Details.HasId)
-                    Details.NeedsUpdating = true;
-            }
+            set => Set(() => Notes, ref _notes, value);
         }
         
         // 
