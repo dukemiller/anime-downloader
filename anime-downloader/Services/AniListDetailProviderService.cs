@@ -61,6 +61,9 @@ namespace anime_downloader.Services
             {
                 var updated = await _api.GetAnime(GetId(anime), false);
 
+                if (anime.Details.OverallTotal < anime.Details.TotalEpisodes)
+                    anime.Details.OverallTotal = anime.Details.TotalEpisodes;
+
                 if (anime.Details.Synopsis != updated.Description)
                 {
                     anime.Details.Synopsis = updated.Description;

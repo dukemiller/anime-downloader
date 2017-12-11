@@ -418,11 +418,13 @@ namespace anime_downloader.Services
             // why I have to include what they consider the status of their show in the request
             // i wont ever know
 
+            var theirStatus = anime.Details.AiringNow ? "1" : "2";
+
             return new Dictionary<string, string>
             {
                 {"anime_id", id.ToString()},
                 {"aeps", anime.Details.TotalEpisodes.ToString()},
-                {"astatus", status},
+                {"astatus", theirStatus},
                 {"add_anime[status]", status},
                 {"add_anime[num_watched_episodes]", episode},
                 {"add_anime[score]", anime.Rating},
