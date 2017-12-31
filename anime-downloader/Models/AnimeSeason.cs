@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Controls;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
 using Newtonsoft.Json;
@@ -86,6 +87,14 @@ namespace anime_downloader.Models
                                                                                left?.Season == right?.Season;
 
         public static bool operator !=(AnimeSeason left, AnimeSeason right) => !(left == right);
+
+        public static bool operator <(AnimeSeason left, AnimeSeason right) => left?.Year < right?.Year || (left?.Year == right?.Year && left?.Season < right?.Season);
+
+        public static bool operator >(AnimeSeason left, AnimeSeason right) => left?.Year > right?.Year || (left?.Year == right?.Year && left?.Season > right?.Season);
+
+        public static bool operator >=(AnimeSeason left, AnimeSeason right) => left > right || left == right;
+
+        public static bool operator <=(AnimeSeason left, AnimeSeason right) => left < right || left == right;
 
         protected bool Equals(AnimeSeason other) => Year == other.Year && Season == other.Season;
 

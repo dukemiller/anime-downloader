@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using anime_downloader.Enums;
 using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
 
@@ -9,10 +8,6 @@ namespace anime_downloader.Models
     [Serializable]
     public sealed class AnimeDetails : ObservableObject
     {
-        private static int CurrentYear() => DateTime.Now.Year;
-
-        private static Season CurrentSeason() => (Season) Math.Ceiling(Convert.ToDouble(DateTime.Now.Month) / 3);
-
         private string _english = "";
 
         private string _id = "";
@@ -177,30 +172,9 @@ namespace anime_downloader.Models
         ///     True if the series is still considered airing relative to the current season.
         /// </summary>
         [JsonIgnore]
-        public bool AiringNow
-        {
-            /*
-             * Given that the airing is not null and that either the year is less than the current year
-             * or that the year is the same as the current year and the season is less than or equal to the current season,
-             * combined with the fact that there is either no end date or the end date is this season, then the show
-             * has to be airing
-             * 
-             * Starting airing in 2007,
-             *    No End Date
-             *    Current is 2016
-             *    = Still airing e.g. Naruto Shippuden
-             * Started airing in Summer 2016, 
-             *     Ended Airing in Fall 2017
-             *     Current is Fall 2017
-             *     = Still airing e.g. Twin Star Exorcists
-             * */
-            get
-            {
-                return Aired != null
-                       && (Aired.Year < CurrentYear() || (Aired.Year == CurrentYear() && (int) Aired.Season <= (int) CurrentSeason()))
-                       && (Ended == null || (Ended.Year == CurrentYear() && (int) Ended.Season == (int) CurrentSeason()));
-            }
-        }
+        public bool AiringNow => 
+            Aired != null && Aired <= AnimeSeason.Current && 
+            (Ended == null || Ended >= AnimeSeason.Current);
 
         /// <summary>
         ///     The calculated total from choosing either the overalltotal or totalepisodes.
