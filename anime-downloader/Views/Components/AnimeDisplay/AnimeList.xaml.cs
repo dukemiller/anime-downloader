@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel;
 using System.Windows.Controls;
 using anime_downloader.Models;
-using anime_downloader.ViewModels.Components;
+using anime_downloader.ViewModels.Components.AnimeDisplay;
 
-namespace anime_downloader.Views.Components
+namespace anime_downloader.Views.Components.AnimeDisplay
 {
     /// <summary>
     ///     Interaction logic for AnimeList.xaml

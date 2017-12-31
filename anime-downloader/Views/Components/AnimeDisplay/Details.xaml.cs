@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace anime_downloader.Views.Components
+namespace anime_downloader.Views.Components.AnimeDisplay
 {
     /// <summary>
     /// Interaction logic for Details.xaml

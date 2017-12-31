@@ -1,4 +1,4 @@
-﻿namespace anime_downloader.Views.Components
+﻿namespace anime_downloader.Views.Components.AnimeDisplay
 {
     /// <summary>
     ///     Interaction logic for DetailsBar.xaml

@@ -230,16 +230,16 @@
     <Compile Include="Services\MyAnimeListService.cs" />
     <Compile Include="ViewModelLocator.cs" />
     <Compile Include="ViewModels\Displays\AnimeDisplayViewModel.cs" />
-    <Compile Include="ViewModels\Components\AnimeDetailsMultipleViewModel.cs" />
-    <Compile Include="ViewModels\Components\AnimeDetailsViewModel.cs" />
-    <Compile Include="ViewModels\Components\AnimeListViewModel.cs" />
+    <Compile Include="ViewModels\Components\AnimeDisplay\DetailsMultipleViewModel.cs" />
+    <Compile Include="ViewModels\Components\AnimeDisplay\DetailsViewModel.cs" />
+    <Compile Include="ViewModels\Components\AnimeDisplay\AnimeListViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\MessageViewModel.cs" />
-    <Compile Include="ViewModels\Components\DownloaderViewModel.cs" />
-    <Compile Include="ViewModels\Components\DownloadLogViewModel.cs" />
-    <Compile Include="ViewModels\Components\DownloadOptionsViewModel.cs" />
+    <Compile Include="ViewModels\Components\Download\OutputViewModel.cs" />
+    <Compile Include="ViewModels\Components\Download\LogViewModel.cs" />
+    <Compile Include="ViewModels\Components\Download\OptionsViewModel.cs" />
     <Compile Include="ViewModels\Components\FileListViewModel.cs" />
-    <Compile Include="ViewModels\Components\FindViewModel.cs" />
-    <Compile Include="ViewModels\Components\DetailsBarViewModel.cs" />
+    <Compile Include="ViewModels\Components\AnimeDisplay\FindViewModel.cs" />
+    <Compile Include="ViewModels\Components\AnimeDisplay\DetailsBarViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\LoadingViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\MyAnimeList\LoginDialogViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\QuestionViewModel.cs" />
@@ -249,7 +249,7 @@
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\Displays\ManageViewModel.cs" />
     <Compile Include="ViewModels\Displays\MiscViewModel.cs" />
-    <Compile Include="ViewModels\Displays\PlaylistCreatorViewModel.cs" />
+    <Compile Include="ViewModels\Displays\PlaylistViewModel.cs" />
     <Compile Include="ViewModels\Displays\SettingsViewModel.cs" />
     <Compile Include="ViewModels\Displays\WebViewModel.cs" />
     <Compile Include="Views\Displays\AnimeDisplay.xaml.cs">
@@ -258,34 +258,34 @@
     <Compile Include="Views\Components\AiringAnime.xaml.cs">
       <DependentUpon>AiringAnime.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Components\AnimeDetailsMultiple.xaml.cs">
-      <DependentUpon>AnimeDetailsMultiple.xaml</DependentUpon>
+    <Compile Include="Views\Components\AnimeDisplay\DetailsMultiple.xaml.cs">
+      <DependentUpon>DetailsMultiple.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Components\AnimeList.xaml.cs">
+    <Compile Include="Views\Components\AnimeDisplay\AnimeList.xaml.cs">
       <DependentUpon>AnimeList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Components\Details.xaml.cs">
+    <Compile Include="Views\Components\AnimeDisplay\Details.xaml.cs">
       <DependentUpon>Details.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Dialogs\Message.xaml.cs">
       <DependentUpon>Message.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Components\DownloadLog.xaml.cs">
-      <DependentUpon>DownloadLog.xaml</DependentUpon>
+    <Compile Include="Views\Components\Download\Log.xaml.cs">
+      <DependentUpon>Log.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Components\DownloadOptions.xaml.cs">
-      <DependentUpon>DownloadOptions.xaml</DependentUpon>
+    <Compile Include="Views\Components\Download\Options.xaml.cs">
+      <DependentUpon>Options.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Components\Downloader.xaml.cs">
-      <DependentUpon>Downloader.xaml</DependentUpon>
+    <Compile Include="Views\Components\Download\Output.xaml.cs">
+      <DependentUpon>Output.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Components\FileList.xaml.cs">
       <DependentUpon>FileList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Components\Find.xaml.cs">
+    <Compile Include="Views\Components\AnimeDisplay\Find.xaml.cs">
       <DependentUpon>Find.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Components\DetailsBar.xaml.cs">
+    <Compile Include="Views\Components\AnimeDisplay\DetailsBar.xaml.cs">
       <DependentUpon>DetailsBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Dialogs\Loading.xaml.cs">
@@ -329,7 +329,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Components\Details.xaml">
+    <Page Include="Views\Components\AnimeDisplay\Details.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -337,11 +337,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Components\Find.xaml">
+    <Page Include="Views\Components\AnimeDisplay\Find.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Components\DetailsBar.xaml">
+    <Page Include="Views\Components\AnimeDisplay\DetailsBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -373,23 +373,23 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\Components\AnimeDetailsMultiple.xaml">
+    <Page Include="Views\Components\AnimeDisplay\DetailsMultiple.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Components\AnimeList.xaml">
+    <Page Include="Views\Components\AnimeDisplay\AnimeList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Components\DownloadLog.xaml">
+    <Page Include="Views\Components\Download\Log.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Components\DownloadOptions.xaml">
+    <Page Include="Views\Components\Download\Options.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Components\Downloader.xaml">
+    <Page Include="Views\Components\Download\Output.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="anime_downloader.Views.Components.AnimeList"
+﻿<UserControl x:Class="anime_downloader.Views.Components.AnimeDisplay.AnimeList"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:components="clr-namespace:anime_downloader.ViewModels.Components"
@@ -6,7 +6,8 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             d:DataContext="{d:DesignInstance {x:Type components:AnimeListViewModel}}"
+             xmlns:animeDisplay="clr-namespace:anime_downloader.ViewModels.Components.AnimeDisplay"
+             d:DataContext="{d:DesignInstance {x:Type animeDisplay:AnimeListViewModel}}"
              d:DesignHeight="360"
              d:DesignWidth="780"
              mc:Ignorable="d">
@@ -161,7 +162,7 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
                 <Rectangle.Fill>
-                    <ImageBrush ImageSource="../../Resources/Images/find.png" />
+                    <ImageBrush ImageSource="../../../Resources/Images/find.png" />
                 </Rectangle.Fill>
             </Rectangle>
             <ComboBox Grid.Column="1" materialDesign:ComboBoxAssist.ClassicMode="True">

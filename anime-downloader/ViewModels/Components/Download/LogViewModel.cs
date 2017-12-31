@@ -4,15 +4,15 @@ using System.Threading.Tasks;
 using anime_downloader.Repositories.Interface;
 using GalaSoft.MvvmLight;
 
-namespace anime_downloader.ViewModels.Components
+namespace anime_downloader.ViewModels.Components.Download
 {
-    public class DownloadLogViewModel : ViewModelBase
+    public class LogViewModel : ViewModelBase
     {
         private string _text;
 
         private readonly ISettingsRepository _settings;
 
-        public DownloadLogViewModel(ISettingsRepository settings)
+        public LogViewModel(ISettingsRepository settings)
         {
             _settings = settings;
         }

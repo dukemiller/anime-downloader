@@ -2,6 +2,7 @@
 using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.ViewModels.Components;
+using anime_downloader.ViewModels.Components.Download;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 
@@ -17,13 +18,13 @@ namespace anime_downloader.ViewModels.Displays
         {
             // Default display
 
-            CurrentDisplay = SimpleIoc.Default.GetInstance<DownloadOptionsViewModel>();
+            CurrentDisplay = SimpleIoc.Default.GetInstance<OptionsViewModel>();
 
             // Messages
 
             MessengerInstance.Register<RadioModel<DownloadOption>>(this, _ =>
             {
-                var downloader = SimpleIoc.Default.GetUniqueInstance<DownloaderViewModel>();
+                var downloader = SimpleIoc.Default.GetUniqueInstance<OutputViewModel>();
                 CurrentDisplay = downloader;
                 downloader.Download(_);
             });
@@ -33,12 +34,12 @@ namespace anime_downloader.ViewModels.Displays
                 switch (_)
                 {
                     case "download_log":
-                        var log = SimpleIoc.Default.GetUniqueInstance<DownloadLogViewModel>();
+                        var log = SimpleIoc.Default.GetUniqueInstance<LogViewModel>();
                         CurrentDisplay = log;
                         log.DisplayLogResults();
                         break;
                     case "reset":
-                        CurrentDisplay = SimpleIoc.Default.GetInstance<DownloadOptionsViewModel>();
+                        CurrentDisplay = SimpleIoc.Default.GetInstance<OptionsViewModel>();
                         break;
                 }
             });

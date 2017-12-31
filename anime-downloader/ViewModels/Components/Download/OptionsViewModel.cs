@@ -6,9 +6,9 @@ using anime_downloader.Repositories.Interface;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
-namespace anime_downloader.ViewModels.Components
+namespace anime_downloader.ViewModels.Components.Download
 {
-    public class DownloadOptionsViewModel : ViewModelBase
+    public class OptionsViewModel : ViewModelBase
     {
         private readonly ISettingsRepository _settings;
 
@@ -38,7 +38,7 @@ namespace anime_downloader.ViewModels.Components
 
         // 
 
-        public DownloadOptionsViewModel(ISettingsRepository settings)
+        public OptionsViewModel(ISettingsRepository settings)
         {
             _settings = settings;
             _currentProvider = _settings.Provider;

@@ -1,11 +1,11 @@
-﻿namespace anime_downloader.Views.Components
+﻿namespace anime_downloader.Views.Components.Download
 {
     /// <summary>
     ///     Interaction logic for DownloadLog.xaml
     /// </summary>
-    public partial class DownloadLog
+    public partial class Log
     {
-        public DownloadLog()
+        public Log()
         {
             InitializeComponent();
         }

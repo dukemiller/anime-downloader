@@ -8,7 +8,11 @@
     xmlns:viewModelDialogs="clr-namespace:anime_downloader.ViewModels.Dialogs"
     xmlns:dialogs="clr-namespace:anime_downloader.Views.Dialogs"
     xmlns:viewModelDialogsMal="clr-namespace:anime_downloader.ViewModels.Dialogs.MyAnimeList"
-    xmlns:myAnimeList="clr-namespace:anime_downloader.Views.Dialogs.MyAnimeList">
+    xmlns:myAnimeList="clr-namespace:anime_downloader.Views.Dialogs.MyAnimeList"
+    xmlns:animeDisplayVm="clr-namespace:anime_downloader.ViewModels.Components.AnimeDisplay"
+    xmlns:animeDisplay="clr-namespace:anime_downloader.Views.Components.AnimeDisplay"
+    xmlns:downloadVm="clr-namespace:anime_downloader.ViewModels.Components.Download"
+    xmlns:download="clr-namespace:anime_downloader.Views.Components.Download">
 
     <!--  Views  -->
 
@@ -36,7 +40,7 @@
         <displays:Misc DataContext="{Binding}" />
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type displaysViewModel:PlaylistCreatorViewModel}">
+    <DataTemplate DataType="{x:Type displaysViewModel:PlaylistViewModel}">
         <displays:Playlist DataContext="{Binding}" />
     </DataTemplate>
 
@@ -50,40 +54,40 @@
 
     <!--  Components  -->
 
-    <DataTemplate DataType="{x:Type viewModelComponents:AnimeDetailsViewModel}">
-        <components:Details DataContext="{Binding}" />
+    <DataTemplate DataType="{x:Type animeDisplayVm:DetailsViewModel}">
+        <animeDisplay:Details DataContext="{Binding}" />
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type viewModelComponents:AnimeDetailsMultipleViewModel}">
-        <components:AnimeDetailsMultiple DataContext="{Binding}" />
+    <DataTemplate DataType="{x:Type animeDisplayVm:DetailsMultipleViewModel}">
+        <animeDisplay:DetailsMultiple DataContext="{Binding}" />
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type viewModelComponents:AnimeListViewModel}">
-        <components:AnimeList DataContext="{Binding}" />
+    <DataTemplate DataType="{x:Type animeDisplayVm:AnimeListViewModel}">
+        <animeDisplay:AnimeList DataContext="{Binding}" />
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type viewModelComponents:DownloaderViewModel}">
-        <components:Downloader DataContext="{Binding}" />
+    <DataTemplate DataType="{x:Type downloadVm:OutputViewModel}">
+        <download:Output DataContext="{Binding}" />
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type viewModelComponents:DownloadOptionsViewModel}">
-        <components:DownloadOptions DataContext="{Binding}" />
+    <DataTemplate DataType="{x:Type downloadVm:OptionsViewModel}">
+        <download:Options DataContext="{Binding}" />
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type viewModelComponents:DownloadLogViewModel}">
-        <components:DownloadLog DataContext="{Binding}" />
+    <DataTemplate DataType="{x:Type downloadVm:LogViewModel}">
+        <download:Log DataContext="{Binding}" />
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type viewModelComponents:FileListViewModel}">
         <components:FileList DataContext="{Binding}" />
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type viewModelComponents:FindViewModel}">
-        <components:Find DataContext="{Binding}" />
+    <DataTemplate DataType="{x:Type animeDisplayVm:FindViewModel}">
+        <animeDisplay:Find DataContext="{Binding}" />
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type viewModelComponents:DetailsBarViewModel}">
-        <components:DetailsBar DataContext="{Binding}" />
+    <DataTemplate DataType="{x:Type animeDisplayVm:DetailsBarViewModel}">
+        <animeDisplay:DetailsBar DataContext="{Binding}" />
     </DataTemplate>
 
     <!--  Dialogs  -->

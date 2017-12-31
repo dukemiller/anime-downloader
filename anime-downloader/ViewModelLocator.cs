@@ -10,6 +10,8 @@ using anime_downloader.Services;
 using anime_downloader.Services.Interfaces;
 using anime_downloader.ViewModels;
 using anime_downloader.ViewModels.Components;
+using anime_downloader.ViewModels.Components.AnimeDisplay;
+using anime_downloader.ViewModels.Components.Download;
 using anime_downloader.ViewModels.Displays;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
@@ -48,17 +50,17 @@ namespace anime_downloader
             SimpleIoc.Default.Register<HomeViewModel>();
             SimpleIoc.Default.Register<ManageViewModel>();
             SimpleIoc.Default.Register<MiscViewModel>();
-            SimpleIoc.Default.Register<PlaylistCreatorViewModel>();
+            SimpleIoc.Default.Register<PlaylistViewModel>();
             SimpleIoc.Default.Register<SettingsViewModel>();
             SimpleIoc.Default.Register<WebViewModel>();
 
             // Components
-            SimpleIoc.Default.Register<AnimeDetailsMultipleViewModel>();
-            SimpleIoc.Default.Register<AnimeDetailsViewModel>();
+            SimpleIoc.Default.Register<DetailsMultipleViewModel>();
+            SimpleIoc.Default.Register<DetailsViewModel>();
             SimpleIoc.Default.Register<AnimeListViewModel>();
-            SimpleIoc.Default.Register<DownloaderViewModel>();
-            SimpleIoc.Default.Register<DownloadLogViewModel>();
-            SimpleIoc.Default.Register<DownloadOptionsViewModel>();
+            SimpleIoc.Default.Register<OutputViewModel>();
+            SimpleIoc.Default.Register<LogViewModel>();
+            SimpleIoc.Default.Register<OptionsViewModel>();
             SimpleIoc.Default.Register<DetailsBarViewModel>();
         }
 
@@ -137,7 +139,7 @@ namespace anime_downloader
 
         public static ManageViewModel Manage => ServiceLocator.Current.GetInstance<ManageViewModel>();
 
-        public static PlaylistCreatorViewModel Playlist => ServiceLocator.Current.GetInstance<PlaylistCreatorViewModel>();
+        public static PlaylistViewModel Playlist => ServiceLocator.Current.GetInstance<PlaylistViewModel>();
 
         public static WebViewModel Web => ServiceLocator.Current.GetInstance<WebViewModel>();
 

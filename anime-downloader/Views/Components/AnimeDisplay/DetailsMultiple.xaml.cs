@@ -1,13 +1,12 @@
 ﻿using System.Text.RegularExpressions;
 using System.Windows.Controls;
 using System.Windows.Input;
-using anime_downloader.Classes;
 
-namespace anime_downloader.Views.Components
+namespace anime_downloader.Views.Components.AnimeDisplay
 {
-    public partial class AnimeDetailsMultiple
+    public partial class DetailsMultiple
     {
-        public AnimeDetailsMultiple()
+        public DetailsMultiple()
         {
             InitializeComponent();
         }

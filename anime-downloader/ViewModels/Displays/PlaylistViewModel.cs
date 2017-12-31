@@ -13,7 +13,7 @@ using GalaSoft.MvvmLight.Command;
 
 namespace anime_downloader.ViewModels.Displays
 {
-    public class PlaylistCreatorViewModel : ViewModelBase
+    public class PlaylistViewModel : ViewModelBase
     {
         private static readonly RadioModel<PlaylistOrder> Default = new RadioModel<PlaylistOrder>
         {
@@ -61,7 +61,7 @@ namespace anime_downloader.ViewModels.Displays
 
         // 
 
-        public PlaylistCreatorViewModel(ISettingsRepository settings, IFileService fileService)
+        public PlaylistViewModel(ISettingsRepository settings, IFileService fileService)
         {
             _settings = settings;
             _fileService = fileService;

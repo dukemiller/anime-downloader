@@ -3,6 +3,7 @@ using anime_downloader.Classes;
 using anime_downloader.Models;
 using anime_downloader.Models.AniList;
 using anime_downloader.ViewModels.Components;
+using anime_downloader.ViewModels.Components.AnimeDisplay;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
@@ -20,15 +21,15 @@ namespace anime_downloader.ViewModels.Displays
 
             // Turn an airing anime into an anime model
             MessengerInstance.Register<AiringAnime>(this, 
-                anime => Display = SimpleIoc.Default.GetInstance<AnimeDetailsViewModel>().CreateNewFromAiring(anime));
+                anime => Display = SimpleIoc.Default.GetInstance<DetailsViewModel>().CreateNewFromAiring(anime));
 
             // Edit single details
             MessengerInstance.Register<Anime>(this, 
-                anime => Display = SimpleIoc.Default.GetInstance<AnimeDetailsViewModel>().EditExisting(anime));
+                anime => Display = SimpleIoc.Default.GetInstance<DetailsViewModel>().EditExisting(anime));
 
             // Edit multiple details
             MessengerInstance.Register<List<Anime>>(this, 
-                animes => Display = SimpleIoc.Default.GetInstance<AnimeDetailsMultipleViewModel>().EditExisting(animes));
+                animes => Display = SimpleIoc.Default.GetInstance<DetailsMultipleViewModel>().EditExisting(animes));
 
             MessengerInstance.Register<string>(this, _ =>
             {
@@ -58,11 +59,11 @@ namespace anime_downloader.ViewModels.Displays
                         break;
 
                     case "anime_new":
-                        Display = SimpleIoc.Default.GetInstance<AnimeDetailsViewModel>().CreateNew();
+                        Display = SimpleIoc.Default.GetInstance<DetailsViewModel>().CreateNew();
                         break;
 
                     case "anime_new_multiple":
-                        Display = SimpleIoc.Default.GetInstance<AnimeDetailsMultipleViewModel>().CreateNew();
+                        Display = SimpleIoc.Default.GetInstance<DetailsMultipleViewModel>().CreateNew();
                         break;
 
                     default:

@@ -7,7 +7,7 @@ using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
-namespace anime_downloader.ViewModels.Components
+namespace anime_downloader.ViewModels.Components.AnimeDisplay
 {
     public class DetailsBarViewModel : ViewModelBase
     {

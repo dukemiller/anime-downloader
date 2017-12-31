@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="anime_downloader.Views.Components.Details"
+﻿<UserControl x:Class="anime_downloader.Views.Components.AnimeDisplay.Details"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -7,13 +7,14 @@
              xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:components="clr-namespace:anime_downloader.ViewModels.Components"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:animeDisplay="clr-namespace:anime_downloader.ViewModels.Components.AnimeDisplay"
              d:DesignHeight="335"
              d:DesignWidth="625"
              xaml:FocusBehavior.IsFocused="True"
              FocusVisualStyle="{x:Null}"
              Focusable="True"
              MouseDown="OnMouseDown"
-             d:DataContext="{d:DesignInstance {x:Type components:AnimeDetailsViewModel}}"
+             d:DataContext="{d:DesignInstance {x:Type animeDisplay:DetailsViewModel}}"
              mc:Ignorable="d">
     <UserControl.InputBindings>
         <KeyBinding Key="Escape" Command="{Binding ExitCommand}" />

@@ -8,9 +8,9 @@ using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
-namespace anime_downloader.ViewModels.Components
+namespace anime_downloader.ViewModels.Components.AnimeDisplay
 {
-    public class AnimeDetailsMultipleViewModel : ViewModelBase
+    public class DetailsMultipleViewModel : ViewModelBase
     {
         private MultipleAnimeDetails _details;
 
@@ -26,11 +26,11 @@ namespace anime_downloader.ViewModels.Components
 
         // 
 
-        public AnimeDetailsMultipleViewModel(IAnimeService animeService) => _animeService = animeService;
+        public DetailsMultipleViewModel(IAnimeService animeService) => _animeService = animeService;
 
         // 
 
-        public AnimeDetailsMultipleViewModel EditExisting(List<Anime> animes)
+        public DetailsMultipleViewModel EditExisting(List<Anime> animes)
         {
             _animes = animes;
             Editing = true;
@@ -46,7 +46,7 @@ namespace anime_downloader.ViewModels.Components
             return this;
         }
 
-        public AnimeDetailsMultipleViewModel CreateNew()
+        public DetailsMultipleViewModel CreateNew()
         {
             Input = string.Empty;
             Editing = false;

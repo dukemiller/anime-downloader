@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Windows;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
 using anime_downloader.Models;
@@ -12,9 +11,9 @@ using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 
-namespace anime_downloader.ViewModels.Components
+namespace anime_downloader.ViewModels.Components.Download
 {
-    public class DownloaderViewModel : ViewModelBase
+    public class OutputViewModel : ViewModelBase
     {
         private string _text;
 
@@ -26,7 +25,7 @@ namespace anime_downloader.ViewModels.Components
 
         private readonly IDownloadService _downloadService;
 
-        public DownloaderViewModel(ISettingsRepository settings, IFileService fileService,
+        public OutputViewModel(ISettingsRepository settings, IFileService fileService,
             IAnimeService animeService, IDownloadService downloadService)
         {
             _settings = settings;

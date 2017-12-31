@@ -18,7 +18,7 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using HtmlAgilityPack;
 
-namespace anime_downloader.ViewModels.Components
+namespace anime_downloader.ViewModels.Components.AnimeDisplay
 {
     public class AnimeListViewModel : ViewModelBase
     {

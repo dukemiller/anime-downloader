@@ -14,9 +14,9 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Ioc;
 
-namespace anime_downloader.ViewModels.Components
+namespace anime_downloader.ViewModels.Components.AnimeDisplay
 {
-    public class AnimeDetailsViewModel : ViewModelBase
+    public class DetailsViewModel : ViewModelBase
     {
         private static readonly WebClient Downloader = new WebClient();
         private ISettingsRepository _settingsRepository;
@@ -32,7 +32,7 @@ namespace anime_downloader.ViewModels.Components
 
         // 
 
-        public AnimeDetailsViewModel(IAnimeRepository animeRepository, ISettingsRepository settingsRepository, IAnimeService animeService)
+        public DetailsViewModel(IAnimeRepository animeRepository, ISettingsRepository settingsRepository, IAnimeService animeService)
         {
             AnimeRepository = animeRepository;
             SettingsRepository = settingsRepository;
@@ -44,7 +44,7 @@ namespace anime_downloader.ViewModels.Components
 
         // 
 
-        public AnimeDetailsViewModel EditExisting(Anime anime)
+        public DetailsViewModel EditExisting(Anime anime)
         {
             Editing = true;
             Anime = anime;
@@ -73,7 +73,7 @@ namespace anime_downloader.ViewModels.Components
             return this;
         }
 
-        public AnimeDetailsViewModel CreateNew()
+        public DetailsViewModel CreateNew()
         {
             Editing = false;
             Anime = new Anime
@@ -102,7 +102,7 @@ namespace anime_downloader.ViewModels.Components
             return this;
         }
 
-        public AnimeDetailsViewModel CreateNewFromAiring(AiringAnime airing)
+        public DetailsViewModel CreateNewFromAiring(AiringAnime airing)
         {
             Editing = false;
             Anime = new Anime
