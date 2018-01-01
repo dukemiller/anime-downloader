@@ -35,7 +35,8 @@ namespace anime_downloader.Repositories
         public void Save()
         {
             using (var stream = new StreamWriter(SavePath))
-                stream.Write(JsonConvert.SerializeObject(this, Formatting.Indented));
+                stream.Write(JsonConvert.SerializeObject(this, Formatting.Indented,
+                    new JsonSerializerSettings {DefaultValueHandling = DefaultValueHandling.Ignore}));
         }
 
     }

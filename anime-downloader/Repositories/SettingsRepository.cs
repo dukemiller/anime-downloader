@@ -66,7 +66,8 @@ namespace anime_downloader.Repositories
         public void Save()
         {
             using (var stream = new StreamWriter(SettingsPath))
-                stream.WriteAsync(JsonConvert.SerializeObject(this, Formatting.Indented));
+                stream.WriteAsync(JsonConvert.SerializeObject(this, Formatting.Indented,
+                    new JsonSerializerSettings {DefaultValueHandling = DefaultValueHandling.Ignore}));
         }
 
         public async Task<bool> CrucialDirectoriesExist()
