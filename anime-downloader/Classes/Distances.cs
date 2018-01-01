@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Text.RegularExpressions;
 using anime_downloader.Models;
 using anime_downloader.Models.MyAnimeList;
 
@@ -103,7 +104,7 @@ namespace anime_downloader.Classes
         private static string[] Scrub(string str)
         {
             return
-                str.ToLower()
+                Regex.Replace(str.ToLower(), @"(:\s(\w+\s){3,}\-\s(\w+\s){2,}(\w+\s?))", "")
                     .Replace(":", "")
                     .Replace("-", "")
                     .OnlyLettersAndSpace()
