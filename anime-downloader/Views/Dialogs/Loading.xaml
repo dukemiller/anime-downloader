@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d" 
-             Width="350"
+             Width="320"
              Height="120"
              TextElement.FontSize="22"
              FocusVisualStyle="{x:Null}" Focusable="False" IsTabStop="False"

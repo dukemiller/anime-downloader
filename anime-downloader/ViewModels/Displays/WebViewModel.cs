@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using anime_downloader.Classes;
+using anime_downloader.Enums;
 using anime_downloader.Models.Configurations;
 using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
@@ -60,25 +61,10 @@ namespace anime_downloader.ViewModels.Displays
             SetCommands();
             CheckSyncAndLog();
 
-            MessengerInstance.Register<NotificationMessage>(this, _ =>
-            {
-                if (_.Notification.Equals("tray_sync"))
-                    SyncCommand.Execute(1);
-            });
-
-            MessengerInstance.Register<string>(this, _ =>
-            {
-                switch (_)
-                {
-                    case "reset":
-                        CheckSyncAndLog();
-                        break;
-                    default:
-                        break;
-                }
-            });
+            MessengerInstance.Register<Request>(this, HandleRequest);
+            MessengerInstance.Register<ViewRequest>(this, HandleViewAction);
         }
-
+        
         // 
 
         private DateTime LoginAttempt { get; set; } = DateTime.Now;
@@ -137,9 +123,26 @@ namespace anime_downloader.ViewModels.Displays
 
         // 
 
+        private void HandleRequest(Request request)
+        {
+            if (request == Request.TraySynchronize)
+                SyncCommand.Execute(1);
+        }
+
+        private void HandleViewAction(ViewRequest va)
+        {
+            switch (va)
+            {
+                case ViewRequest.Reset:
+                    CheckSyncAndLog();
+                    break;
+            }
+        }
+
         private void SetCommands()
         {
             // Open website
+
             OpenUrlCommand = new RelayCommand<string>(OpenUrl);
 
             // Just text
@@ -249,11 +252,11 @@ namespace anime_downloader.ViewModels.Displays
             if (result == null || result.Password?.Length < 1 || result.Username?.Length < 1 || DateTime.Now < LoginAttempt)
                 return;
 
-            MessengerInstance.Send(new WorkMessage {Working = true});
+            MessengerInstance.Send(ViewState.IsWorking);
             _credentialsRepository.MyAnimeListConfig = result;
             _credentialsRepository.MyAnimeListConfig.LoggedIn = await _api.VerifyCredentialsAsync();
             _credentialsRepository.Save();
-            MessengerInstance.Send(new WorkMessage {Working = false});
+            MessengerInstance.Send(ViewState.DoneWorking);
 
             LoginAttempt = DateTime.Now.AddSeconds(5);
             CheckSyncAndLog();
@@ -268,12 +271,12 @@ namespace anime_downloader.ViewModels.Displays
 
         private async void Import()
         {
-            MessengerInstance.Send(new WorkMessage { Working = true });
+            MessengerInstance.Send(ViewState.IsWorking);
             var animes = await Task.Run(async () => await _syncService.LoadProfile());
             foreach (var anime in animes)
                 if (!_animeService.Animes.Any(a => a.Details.Id.Equals(anime.Details.Id)))
                     _animeService.Add(anime);
-            MessengerInstance.Send(new WorkMessage { Working = false });
+            MessengerInstance.Send(ViewState.DoneWorking);
         }
 
         private async void SearchFirstResult()
@@ -281,9 +284,9 @@ namespace anime_downloader.ViewModels.Displays
             var text = Searchbox?.Trim();
             if (text?.Length > 0)
             {
-                MessengerInstance.Send(new WorkMessage {Working = true});
+                MessengerInstance.Send(ViewState.IsWorking);
                 await SearchAndOpen(text);
-                MessengerInstance.Send(new WorkMessage {Working = false});
+                MessengerInstance.Send(ViewState.DoneWorking);
             }
         }
 
@@ -297,12 +300,12 @@ namespace anime_downloader.ViewModels.Displays
 
         private async void Sync()
         {
-            MessengerInstance.Send(new WorkMessage {Working = true});
+            MessengerInstance.Send(ViewState.IsWorking);
             Synchronize = "Synchronizing";
             await _syncService.Synchronize();
             _animeRepository.Save();
-            MessengerInstance.Send("update");
-            MessengerInstance.Send(new WorkMessage {Working = false});
+            MessengerInstance.Send(ViewRequest.Update);
+            MessengerInstance.Send(ViewState.DoneWorking);
             RaiseCommandExecutions();
             CheckSyncAndLog();
         }

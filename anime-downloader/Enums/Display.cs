@@ -1,6 +1,6 @@
 ﻿namespace anime_downloader.Enums
 {
-    public enum ViewDisplay
+    public enum Display
     {
         Home,
         Anime,

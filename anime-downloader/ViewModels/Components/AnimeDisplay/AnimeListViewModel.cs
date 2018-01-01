@@ -166,7 +166,7 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
             }
 
             RaisePropertyChanged(nameof(Stats));
-            MessengerInstance.Send("refresh");
+            MessengerInstance.Send(ViewRequest.Refresh);
             _find.Close();
         }
 
@@ -178,15 +178,16 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
                 Process.Start($"http://myanimelist.net/anime/{SelectedAnime.Details.Id}");
             else
             {
-                MessengerInstance.Send(new WorkMessage {Working = true});
+
+                MessengerInstance.Send(ViewState.IsWorking);
                 await SearchAndOpenAsync(SelectedAnime.Name);
-                MessengerInstance.Send(new WorkMessage {Working = false});
+                MessengerInstance.Send(ViewState.DoneWorking);
             }
         }
 
-        private void Add() => MessengerInstance.Send(new NotificationMessage("anime_new"));
+        private void Add() => MessengerInstance.Send(Component.Details);
 
-        private void AddMultiple() => MessengerInstance.Send(new NotificationMessage("anime_new_multiple"));
+        private void AddMultiple() => MessengerInstance.Send(Component.DetailsMultiple);
 
         private static async Task SearchAndOpenAsync(string text)
         {

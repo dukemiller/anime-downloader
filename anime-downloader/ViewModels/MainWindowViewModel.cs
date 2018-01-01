@@ -43,20 +43,8 @@ namespace anime_downloader.ViewModels
 
             // Messages
 
-            MessengerInstance.Register<WorkMessage>(this, message => Busy = message.Working);
-            MessengerInstance.Register<ViewDisplay>(this, ChangeView);
-            MessengerInstance.Register<string>(this, async _ =>
-            {
-                switch (_)
-                {
-                    case "loading":
-                        if (IsShowing)
-                            IsShowing = false;
-                        else
-                            await DialogHost.Show(new LoadingViewModel());
-                        break;
-                }
-            });
+            MessengerInstance.Register<Display>(this, HandleViewDisplay);
+            MessengerInstance.Register<ViewState>(this, HandleViewState);
 
             // Etc
 
@@ -77,10 +65,7 @@ namespace anime_downloader.ViewModels
         /// <summary>
         ///     An unfortunate consequence of the default being to 'reset' some views
         /// </summary>
-        public void RefreshView()
-        {
-            MessengerInstance.Send("reset");
-        }
+        public void RefreshView() => MessengerInstance.Send(ViewRequest.Reset);
 
         public bool Busy
         {
@@ -149,43 +134,63 @@ namespace anime_downloader.ViewModels
             // 
         }
 
-        private void ChangeView(ViewDisplay view)
+        private async void HandleViewState(ViewState vs)
+        {
+            switch (vs)
+            {
+                case ViewState.IsLoading:
+                    await DialogHost.Show(new LoadingViewModel());
+                    break;
+                case ViewState.DoneLoading:
+                    if (IsShowing)
+                        IsShowing = false;
+                    break;
+                case ViewState.IsWorking:
+                    Busy = true;
+                    break;
+                case ViewState.DoneWorking:
+                    Busy = false;
+                    break;
+            }
+        }
+
+        private void HandleViewDisplay(Display view)
         {
             switch (view)
             {
-                case ViewDisplay.Home:
+                case Display.Home:
                     Home.Execute(1);
                     break;
 
-                case ViewDisplay.Anime:
+                case Display.Anime:
                     Anime.Execute(1);
                     break;
 
-                case ViewDisplay.Settings:
+                case Display.Settings:
                     Settings.Execute(1);
                     break;
 
-                case ViewDisplay.Download:
+                case Display.Download:
                     Download.Execute(1);
                     break;
 
-                case ViewDisplay.Manage:
+                case Display.Manage:
                     Manage.Execute(1);
                     break;
 
-                case ViewDisplay.Misc:
+                case Display.Misc:
                     Misc.Execute(1);
                     break;
 
-                case ViewDisplay.Playlist:
+                case Display.Playlist:
                     Playlist.Execute(1);
                     break;
 
-                case ViewDisplay.Web:
+                case Display.Web:
                     Web.Execute(1);
                     break;
 
-                case ViewDisplay.Discover:
+                case Display.Discover:
                     Discover.Execute(1);
                     break;
 

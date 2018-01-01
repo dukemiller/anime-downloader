@@ -62,7 +62,7 @@ namespace anime_downloader.ViewModels.Displays
 
         private async void DoAction()
         {
-            MessengerInstance.Send(new WorkMessage {Working = true});
+            MessengerInstance.Send(ViewState.IsWorking);
             DoingAction = true;
 
             // Mark fully watched as completed
@@ -152,10 +152,10 @@ namespace anime_downloader.ViewModels.Displays
                     _animeRepository.Save();
 
                 // Update animelist
-                MessengerInstance.Send("update");
+                MessengerInstance.Send(ViewRequest.Update);
             }
 
-            MessengerInstance.Send(new WorkMessage {Working = false});
+            MessengerInstance.Send(ViewState.DoneWorking);
             DoingAction = false;
         }
 

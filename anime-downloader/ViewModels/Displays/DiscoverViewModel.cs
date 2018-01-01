@@ -34,13 +34,9 @@ namespace anime_downloader.ViewModels.Displays
             _animeService = animeService;
             AddCommand = new RelayCommand(Add);
 
-            MessengerInstance.Register<string>(this, _ =>
-            {
-                if (_ == "refresh")
-                    Refresh();
-            });
+            MessengerInstance.Register<ViewRequest>(this, HandleViewAction);
         }
-
+        
         // 
 
         public AiringAnime SelectedAiring
@@ -114,6 +110,12 @@ namespace anime_downloader.ViewModels.Displays
                 LoadPage();
         }
 
+        private void HandleViewAction(ViewRequest va)
+        {
+            if (va == ViewRequest.Refresh)
+                Refresh();
+        }
+
         private void Refresh()
         {
             if (_airing != null)
@@ -156,13 +158,13 @@ namespace anime_downloader.ViewModels.Displays
                 case 0:
                     if (AiringShows == null)
                     {
-                        MessengerInstance.Send("loading");
+                        MessengerInstance.Send(ViewState.IsLoading);
                         _airing = await _findService.New(Season);
                         await Task.Run(() =>
                             AiringShows = new ObservableCollection<AiringAnime>(_airing
                                 .Where(anime =>    !_animeService.WatchingAndAiringContains(anime.TitleEnglish)
                                                 && !_animeService.WatchingAndAiringContains(anime.TitleRomaji))));
-                        MessengerInstance.Send("loading");
+                        MessengerInstance.Send(ViewState.DoneLoading);
                     }
                     break;
 
@@ -170,13 +172,13 @@ namespace anime_downloader.ViewModels.Displays
                 case 1:
                     if (LeftoverShows == null)
                     {
-                        MessengerInstance.Send("loading");
+                        MessengerInstance.Send(ViewState.IsLoading);
                         _leftover = await _findService.Leftover(Season);
                         await Task.Run(() =>
                             LeftoverShows = new ObservableCollection<AiringAnime>(_leftover
                                 .Where(anime =>    !_animeService.WatchingAndAiringContains(anime.TitleEnglish)
                                                 && !_animeService.WatchingAndAiringContains(anime.TitleRomaji))));
-                        MessengerInstance.Send("loading");
+                        MessengerInstance.Send(ViewState.DoneLoading);
                     }
                     break;
                 default:
@@ -189,9 +191,9 @@ namespace anime_downloader.ViewModels.Displays
             var anime = SelectedIndex == 0 ? SelectedAiring : SelectedLeftover;
             if (anime != null)
             {
-                MessengerInstance.Send("loading");
+                MessengerInstance.Send(ViewState.IsLoading);
                 await _findService.FillInDetails(Season, SelectedIndex == 0, anime);
-                MessengerInstance.Send("loading");
+                MessengerInstance.Send(ViewState.DoneLoading);
             }
         }
 
@@ -201,10 +203,11 @@ namespace anime_downloader.ViewModels.Displays
             if (anime != null)
             {
                 anime.AnimeSeason = Season;
-                MessengerInstance.Send(ViewDisplay.Anime);
+                MessengerInstance.Send(Display.Anime);
                 MessengerInstance.Send(anime);
                 _previousIndex = SelectedIndex == 0 ? AiringShows.IndexOf(anime) : LeftoverShows.IndexOf(anime);
             }
         }
+        
     }
 }

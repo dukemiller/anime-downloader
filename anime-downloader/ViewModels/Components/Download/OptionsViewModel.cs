@@ -45,7 +45,7 @@ namespace anime_downloader.ViewModels.Components.Download
             Options = new ObservableCollection<RadioModel<DownloadOption>> { NextEpisode, Continually, Missing };
             SelectedRadio = Options.First();
             SearchCommand = new RelayCommand(() => MessengerInstance.Send(SelectedRadio));
-            LogCommand = new RelayCommand(() => MessengerInstance.Send("download_log"));
+            LogCommand = new RelayCommand(() => MessengerInstance.Send(Component.Log));
         }
 
         // 

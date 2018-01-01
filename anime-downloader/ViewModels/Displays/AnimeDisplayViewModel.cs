@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using anime_downloader.Classes;
+using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Models.AniList;
-using anime_downloader.ViewModels.Components;
 using anime_downloader.ViewModels.Components.AnimeDisplay;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
-using GalaSoft.MvvmLight.Messaging;
 
 namespace anime_downloader.ViewModels.Displays
 {
@@ -31,45 +30,48 @@ namespace anime_downloader.ViewModels.Displays
             MessengerInstance.Register<List<Anime>>(this, 
                 animes => Display = SimpleIoc.Default.GetInstance<DetailsMultipleViewModel>().EditExisting(animes));
 
-            MessengerInstance.Register<string>(this, _ =>
+            MessengerInstance.Register<ViewRequest>(this, HandleViewRequest);
+            MessengerInstance.Register<Component>(this, HandleComponent);
+        }
+
+        private void HandleComponent(Component _)
+        {
+            switch (_)
             {
-                switch (_)
-                {
-                    case "reset":
-                        if (Display.GetType() != typeof(AnimeListViewModel))
-                            Display = SimpleIoc.Default.GetUniqueInstance<AnimeListViewModel>();
-                        break;
+                case Component.AnimeList:
+                    Display = SimpleIoc.Default.GetInstance<AnimeListViewModel>();
+                    break;
 
-                    case "update":
-                        if (Display.GetType() == typeof(AnimeListViewModel))
-                            Display = SimpleIoc.Default.GetUniqueInstance<AnimeListViewModel>();
-                        break;
+                case Component.Details:
+                    Display = SimpleIoc.Default.GetInstance<DetailsViewModel>().CreateNew();
+                    break;
 
-                    default:
-                        break;
-                }
-            });
+                case Component.DetailsMultiple:
+                    Display = SimpleIoc.Default.GetInstance<DetailsMultipleViewModel>().CreateNew();
+                    break;
 
-            MessengerInstance.Register<NotificationMessage>(this, _ =>
+                default:
+                    return;
+            }
+        }
+
+        private void HandleViewRequest(ViewRequest vr)
+        {
+            switch (vr)
             {
-                switch (_.Notification)
-                {
-                    case "anime_list":
-                        Display = SimpleIoc.Default.GetInstance<AnimeListViewModel>();
-                        break;
+                case ViewRequest.Reset:
+                    if (Display.GetType() != typeof(AnimeListViewModel))
+                        Display = SimpleIoc.Default.GetUniqueInstance<AnimeListViewModel>();
+                    break;
 
-                    case "anime_new":
-                        Display = SimpleIoc.Default.GetInstance<DetailsViewModel>().CreateNew();
-                        break;
+                case ViewRequest.Update:
+                    if (Display.GetType() == typeof(AnimeListViewModel))
+                        Display = SimpleIoc.Default.GetUniqueInstance<AnimeListViewModel>();
+                    break;
 
-                    case "anime_new_multiple":
-                        Display = SimpleIoc.Default.GetInstance<DetailsMultipleViewModel>().CreateNew();
-                        break;
-
-                    default:
-                        return;
-                }
-            });
+                default:
+                    break;
+            }
         }
 
         public ViewModelBase Display

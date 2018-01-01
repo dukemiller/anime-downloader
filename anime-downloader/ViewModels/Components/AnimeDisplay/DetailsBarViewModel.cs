@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Windows;
 using anime_downloader.Classes;
+using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
@@ -51,7 +52,7 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
 
         private async void Refresh()
         {
-            MessengerInstance.Send(new WorkMessage {Working = true});
+            MessengerInstance.Send(ViewState.IsWorking);
 
             var (successful, changesMade) = await _detailService.FillInDetails(_anime);
 
@@ -61,7 +62,7 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
             if (!successful)
                 Methods.Alert("Had trouble finding details about this show.");
 
-            MessengerInstance.Send(new WorkMessage {Working = false});
+            MessengerInstance.Send(ViewState.DoneWorking);
         }
     }
 }

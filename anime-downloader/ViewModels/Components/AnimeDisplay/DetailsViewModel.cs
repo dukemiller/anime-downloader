@@ -53,7 +53,7 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
             ExitCommand = new RelayCommand(() =>
             {
                 AnimeRepository.Save();
-                MessengerInstance.Send(ViewDisplay.Anime);
+                MessengerInstance.Send(Display.Anime);
             });
 
             DetailsBar = SimpleIoc.Default.GetInstance<DetailsBarViewModel>().Load(Anime);
@@ -87,7 +87,7 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
 
             Image = "../../Resources/Images/default.png";
 
-            ExitCommand = new RelayCommand(() => MessengerInstance.Send(ViewDisplay.Anime));
+            ExitCommand = new RelayCommand(() => MessengerInstance.Send(Display.Anime));
 
             // Button
             Text = "Add";
@@ -276,20 +276,20 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
         private void Edit()
         {
             AnimeRepository.Save();
-            MessengerInstance.Send(ViewDisplay.Anime);
+            MessengerInstance.Send(Display.Anime);
         }
 
         private void Create()
         {
             _animeService.Add(Anime);
-            MessengerInstance.Send(ViewDisplay.Anime);
+            MessengerInstance.Send(Display.Anime);
         }
 
         private void CreateAndReturn()
         {
             _animeService.Add(Anime);
-            MessengerInstance.Send("refresh");
-            MessengerInstance.Send(ViewDisplay.Discover);
+            MessengerInstance.Send(ViewRequest.Refresh);
+            MessengerInstance.Send(Display.Discover);
         }
 
         private void Next()

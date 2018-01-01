@@ -280,7 +280,7 @@ namespace anime_downloader.ViewModels.Components
 
             if (anime != null)
             {
-                MessengerInstance.Send(ViewDisplay.Anime);
+                MessengerInstance.Send(Display.Anime);
                 MessengerInstance.Send(anime);
             }
 

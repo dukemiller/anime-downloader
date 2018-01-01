@@ -1,10 +1,9 @@
 ﻿using System;
-using anime_downloader.Classes;
+using anime_downloader.Enums;
 using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
 
 namespace anime_downloader.ViewModels.Displays
 {
@@ -32,9 +31,9 @@ namespace anime_downloader.ViewModels.Displays
 
             UpdateNotificationLogic();
 
-            MessengerInstance.Register<NotificationMessage>(this, async msg =>
+            MessengerInstance.Register<Request>(this, async request =>
             {
-                if (msg.Notification.Equals("check_for_updates") 
+                if (request == Request.CheckForUpdates
                     && DateTime.Now > _updateCheckDelay
                     && DateTime.Now > _settingsService.Version.LastChecked)
                 {
@@ -125,7 +124,7 @@ namespace anime_downloader.ViewModels.Displays
 
         private async void Update()
         {
-            MessengerInstance.Send(new WorkMessage { Working = true });
+            MessengerInstance.Send(ViewState.IsWorking);
             await _versionService.Update();
         }
     }

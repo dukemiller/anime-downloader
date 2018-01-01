@@ -12,7 +12,6 @@ using anime_downloader.Models.Configurations;
 using anime_downloader.Repositories.Interface;
 using anime_downloader.Views;
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Messaging;
 using static anime_downloader.Classes.NativeMethods;
 using Application = System.Windows.Application;
 
@@ -162,7 +161,7 @@ namespace anime_downloader.Classes
                 new MenuItem("&Download latest...", (sender, args) =>
                 {
                     BringWindowToFocus();
-                    MessengerInstance.Send(ViewDisplay.Download);
+                    MessengerInstance.Send(Display.Download);
                     MessengerInstance.Send(new RadioModel<DownloadOption> { Data = DownloadOption.Next });
                 }));
 
@@ -172,8 +171,8 @@ namespace anime_downloader.Classes
                     BringWindowToFocus();
                     if (_credentials.MyAnimeListConfig.LoggedIn)
                     {
-                        MessengerInstance.Send(ViewDisplay.Web);
-                        MessengerInstance.Send(new NotificationMessage("tray_sync"));
+                        MessengerInstance.Send(Display.Web);
+                        MessengerInstance.Send(Request.TraySynchronize);
                     }
                 }));
 
@@ -206,8 +205,8 @@ namespace anime_downloader.Classes
                 new MenuItem("Check for &updates", (sender, args) =>
                 {
                     BringWindowToFocus();
-                    MessengerInstance.Send(ViewDisplay.Home);
-                    MessengerInstance.Send(new NotificationMessage("check_for_updates"));
+                    MessengerInstance.Send(Display.Home);
+                    MessengerInstance.Send(Request.CheckForUpdates);
                 }));
 
             _trayContextMenu.MenuItems.Add(

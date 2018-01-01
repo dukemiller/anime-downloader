@@ -50,7 +50,7 @@ namespace anime_downloader.ViewModels.Components.Download
                 return;
             }
 
-            MessengerInstance.Send(new WorkMessage {Working = true});
+            MessengerInstance.Send(ViewState.IsWorking);
 
             if (await _downloadService.ServiceAvailable())
                 try
@@ -83,7 +83,7 @@ namespace anime_downloader.ViewModels.Components.Download
             else
                 Text += $">> {_downloadService.ServiceName} is currently offline. Try checking later.";
 
-            MessengerInstance.Send(new WorkMessage {Working = false});
+            MessengerInstance.Send(ViewState.DoneWorking);
         }
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace anime_downloader.ViewModels.Components.Download
                 var downloaded = await _downloadService.DownloadAll(animes, AddToText);
 
                 if (downloaded > 0)
-                    MessengerInstance.Send("update");
+                    MessengerInstance.Send(ViewRequest.Update);
 
                 Text += downloaded > 0 
                     ? $">> Found {downloaded} anime downloads." 
@@ -145,7 +145,7 @@ namespace anime_downloader.ViewModels.Components.Download
             }
 
             else 
-                MessengerInstance.Send(ViewDisplay.Download);
+                MessengerInstance.Send(Display.Download);
         }
 
         /// <summary>
