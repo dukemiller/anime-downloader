@@ -1,11 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
+using anime_downloader.Models;
+using anime_downloader.Models.Configurations;
 using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
+using anime_downloader.ViewModels.Components;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
@@ -20,19 +24,22 @@ namespace anime_downloader.ViewModels.Displays
         private readonly IAnimeService _animeService;
         private readonly IDetailProviderService _detailService;
         private readonly IFileService _fileService;
+        private readonly ISettingsRepository _settingsRepository;
         private bool _doingAction;
 
         public MiscViewModel(ICredentialsRepository credentialsRepository, 
             IAnimeRepository animeRepository,
             IAnimeService animeService,
             IDetailProviderService detailService,
-            IFileService fileService)
+            IFileService fileService,
+            ISettingsRepository settingsRepository)
         {
             _credentialsRepository = credentialsRepository;
             _animeRepository = animeRepository;
             _animeService = animeService;
             _detailService = detailService;
             _fileService = fileService;
+            _settingsRepository = settingsRepository;
             SelectedIndex = 0;
             SubmitCommand = new RelayCommand(DoAction, () => !DoingAction);
             // 
@@ -153,6 +160,24 @@ namespace anime_downloader.ViewModels.Displays
 
                 // Update animelist
                 MessengerInstance.Send(ViewRequest.Update);
+            }
+
+            // Move all files on playlist to Watched
+            else if (SelectedIndex == 5)
+            {
+                var files = File.ReadAllLines(PathConfiguration.Playlist)
+                    .Where(p => p.Length > 0 && p.Contains(_settingsRepository.PathConfig.Unwatched))
+                    .Select(p => new AnimeFile(p))
+                    .ToList();
+
+                foreach (var file in files)
+                    Methods.MoveFile(file, 
+                        _settingsRepository.PathConfig.Unwatched,
+                        _settingsRepository.PathConfig.Watched);
+
+                Methods.Alert(files.Count > 0
+                    ? $"Moved {files.Count} files to the watched directory."
+                    : "No files were moved.");
             }
 
             MessengerInstance.Send(ViewState.DoneWorking);

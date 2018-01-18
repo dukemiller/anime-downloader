@@ -1,9 +1,11 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
+using anime_downloader.Models;
 using anime_downloader.ViewModels.Dialogs;
 using MaterialDesignThemes.Wpf;
 
@@ -116,6 +118,22 @@ namespace anime_downloader.Classes
 
         public static bool InRange(int number, int inclusiveBottom, int inclusiveTop) => number >= inclusiveBottom &&
                                                                                          number <= inclusiveTop;
+
+        public static void MoveFile(AnimeFile file, string startPath, string movePath)
+        {
+            var relative = string.Join(Path.DirectorySeparatorChar.ToString(),
+                file.Path.Split(Path.DirectorySeparatorChar)
+                    .Skip(startPath.Split(Path.DirectorySeparatorChar).Length));
+            var newPath = Path.Combine(movePath, relative);
+            var fileDepth = relative.Split(Path.DirectorySeparatorChar);
+            if (fileDepth.Length > 1)
+            {
+                var added = string.Join(Path.DirectorySeparatorChar.ToString(),
+                    fileDepth.Take(fileDepth.Length - 1));
+                Directory.CreateDirectory(Path.Combine(movePath, added));
+            }
+            Directory.Move(file.Path, newPath);
+        }
 
     }
 }

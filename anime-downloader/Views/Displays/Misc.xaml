@@ -54,45 +54,55 @@
                 <GroupBox Margin="0, 0, 5, 0" Header="Anime">
                     <StackPanel>
                         <Label Content="Status"
-                                FontStyle="Italic"
-                                Foreground="DarkGray" />
+                               FontStyle="Italic"
+                               Foreground="DarkGray" />
                         <RadioButton Content="Mark fully watched shows as completed"
-                                        FocusVisualStyle="{x:Null}"
-                                        IsChecked="{Binding SelectedIndex,
+                                     ToolTip="For any show that has your current watched episode equal to its found total, &#x0a;set its status to 'Completed'."
+                                     FocusVisualStyle="{x:Null}"
+                                     IsChecked="{Binding SelectedIndex,
                                                             Converter={StaticResource CompareConverter},
                                                             ConverterParameter=1}" />
                         <Label Content="Files"
-                                FontStyle="Italic"
-                                Foreground="DarkGray" />
+                               FontStyle="Italic"
+                               Foreground="DarkGray" />
                         <RadioButton Content="Move any duplicates to 'My Videos'"
-                                        FocusVisualStyle="{x:Null}"
-                                        IsChecked="{Binding SelectedIndex,
+                                     FocusVisualStyle="{x:Null}"
+                                     ToolTip="Move any episodes that are most likely duplicates to the 'My Videos' folder."
+                                     IsChecked="{Binding SelectedIndex,
                                                             Converter={StaticResource CompareConverter},
                                                             ConverterParameter=2}" />
+                        <RadioButton Content="Move files on created playlist to Watched"
+                                     Margin="5"
+                                     ToolTip="On the playlist created either in the playlist view or manage view, move any of &#x0a; those files that are in your 'Unwatched' directory to the 'Watched' directory."
+                                     FocusVisualStyle="{x:Null}"
+                                     IsChecked="{Binding SelectedIndex,
+                                                            Converter={StaticResource CompareConverter},
+                                                            ConverterParameter=5}" />
                         <Label Content="Episode"
-                                FontStyle="Italic"
-                                Foreground="DarkGray" />
-                        <RadioButton Content="Set episode to last found episode #"
-                                        FocusVisualStyle="{x:Null}"
-                                        IsChecked="{Binding SelectedIndex,
+                               FontStyle="Italic"
+                               Foreground="DarkGray" />
+                        <RadioButton Content="Set episodes to their last found episode #"
+                                     FocusVisualStyle="{x:Null}"
+                                     IsChecked="{Binding SelectedIndex,
                                                             Converter={StaticResource CompareConverter},
                                                             ConverterParameter=4}"
-                                        ToolTip="For every airing show, find the last downloaded episode of it and set the anime's current watched episode to that. This is helpful for re-indexing if something goes wrong." />
+                                     ToolTip="For every airing show, find the last downloaded episode of it and set the anime's current watched &#x0a;episode to that. This is helpful for re-indexing if something goes wrong." />
                     </StackPanel>
                 </GroupBox>
             </StackPanel>
             <StackPanel Grid.Column="1">
                 <GroupBox Header="Third party"
-                            IsHitTestVisible="{Binding LoggedIntoMal}"
-                            Opacity="{Binding LoggedIntoMal,
+                          IsHitTestVisible="{Binding LoggedIntoMal}"
+                          Opacity="{Binding LoggedIntoMal,
                                             Converter={StaticResource BooleanOpacityConverter}}">
                     <StackPanel>
                         <Label Content="API"
-                                FontStyle="Italic"
-                                Foreground="DarkGray" />
+                               FontStyle="Italic"
+                               Foreground="DarkGray" />
                         <RadioButton Content="Regather info on shows without final episode #"
-                                        FocusVisualStyle="{x:Null}"
-                                        IsChecked="{Binding SelectedIndex,
+                                     ToolTip="For any show that is missing a total episode count, attempt to regather&#x0a;information about it."
+                                     FocusVisualStyle="{x:Null}"
+                                     IsChecked="{Binding SelectedIndex,
                                                             Converter={StaticResource CompareConverter},
                                                             ConverterParameter=3}" />
                     </StackPanel>
@@ -100,9 +110,9 @@
             </StackPanel>
         </Grid>
         <Button Grid.Row="1"
-                    HorizontalAlignment="Right"
-                    Command="{Binding SubmitCommand}"
-                    Content="Submit"
-                    IsDefault="True" />
+                HorizontalAlignment="Right"
+                Command="{Binding SubmitCommand}"
+                Content="Submit"
+                IsDefault="True" />
     </Grid>
 </UserControl>
