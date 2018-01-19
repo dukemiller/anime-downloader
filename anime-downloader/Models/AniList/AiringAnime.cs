@@ -14,10 +14,10 @@ namespace anime_downloader.Models.AniList
         public AnimeSeason AnimeSeason { get; set; }
         
         [JsonProperty("start_date")]
-        public DateTime StartDate { get; set; }
+        public DateTime? StartDate { get; set; }
 
         [JsonProperty("end_date")]
-        public object EndDate { get; set; }
+        public DateTime? EndDate { get; set; }
 
         [JsonProperty("description")]
         public string Description

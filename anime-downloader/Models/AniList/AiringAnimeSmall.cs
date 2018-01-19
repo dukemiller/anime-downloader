@@ -30,7 +30,7 @@ namespace anime_downloader.Models.AniList
         public string Type { get; set; }
 
         [JsonProperty("start_date_fuzzy")]
-        public int StartDateFuzzy { get; set; }
+        public int? StartDateFuzzy { get; set; }
 
         [JsonProperty("end_date_fuzzy")]
         public int? EndDateFuzzy { get; set; }
