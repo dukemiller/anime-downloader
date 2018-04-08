@@ -17,7 +17,7 @@ namespace anime_downloader.Services
     {
         private readonly ISettingsRepository _settings;
 
-        private const string Server = @"http://52.42.210.220";
+        private const string Server = @"https://gentle-reef-50454.herokuapp.com";
 
         private readonly HttpClient _client;
 
