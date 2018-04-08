@@ -161,7 +161,7 @@ namespace anime_downloader.ViewModels.Components.Download
 
             var animes = new Dictionary<Anime, List<int>>();
 
-            foreach (var anime in _animeService.AiringAndWatchingAndNotCompleted())
+            foreach (var anime in _animeService.AiringAndWatching)
             {
                 var files = (await _fileService.GetEpisodesAsync(anime, EpisodeStatus.All)).ToList();
                 var (first, last) = (files.FirstOrDefault()?.Episode, files.LastOrDefault()?.Episode);

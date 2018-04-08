@@ -73,6 +73,9 @@ namespace anime_downloader.Classes
             // _ and . can be used for spaces for some subgroups, replace with spaces instead
             filename = new[] { "_", "." }.Aggregate(filename, (current, s) => current.Replace(s, " "));
 
+            // Remove annoying fps counters
+            filename = Regex.Replace(filename, @"\d{2,}\s?fps", "", RegexOptions.IgnoreCase);
+
             if (removeEpisode)
             {
                 var regularEpisodePattern = Regex.Matches(filename, @"\-\s[0-9]{1,}"); // Name {- #}
@@ -121,6 +124,9 @@ namespace anime_downloader.Classes
 
         public static void MoveFile(AnimeFile file, string startPath, string movePath)
         {
+            if (!File.Exists(file.Path))
+                return;
+
             var relative = string.Join(Path.DirectorySeparatorChar.ToString(),
                 file.Path.Split(Path.DirectorySeparatorChar)
                     .Skip(startPath.Split(Path.DirectorySeparatorChar).Length));
