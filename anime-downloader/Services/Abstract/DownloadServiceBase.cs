@@ -345,6 +345,9 @@ namespace anime_downloader.Services.Abstract
 
             // Remove last number of title (usually season number, e.g. Rin-ne 3)
             name = Regex.Replace(name, @"\s\d{1}$", "");
+
+            // Remove specifically '(TV)' meta tags, year meta tags and anything else inside paren is usually significant
+            name = Regex.Replace(name, @"\(TV\)", "");
             
             // Remove literal season declarations from the title
             name = Regex.Replace(name, @"(2nd season|the (?:animation|animated series))", "", RegexOptions.IgnoreCase);
