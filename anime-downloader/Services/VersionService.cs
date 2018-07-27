@@ -70,7 +70,7 @@ namespace anime_downloader.Services
 
             // Rename the current exe to filename + .bak (legal)
             var path = Assembly.GetEntryAssembly().Location;
-            if (path != null)
+            if (path != null && release.Length > 0)
             {
                 File.Move(path, path + ".bak");
 
