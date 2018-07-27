@@ -26,7 +26,7 @@ namespace anime_downloader.Views.Components.AnimeDisplay
                     Anime.SortedRateFlag = 1;
                 else
                     Anime.SortedRateFlag ^= 1;
-            else if (header.Equals("aired"))
+            else if (header.Equals("aired in"))
                 if (column.SortDirection == null)
                     Anime.SortedAiredFlag = 1;
                 else
@@ -39,7 +39,7 @@ namespace anime_downloader.Views.Components.AnimeDisplay
             {
                 settings.SortBy = header.Equals("rating")
                     ? "sortedrating"
-                    : header.Equals("aired") ? "seasonsort" : header;
+                    : header.Equals("aired in") ? "seasonsort" : header;
                 settings.FlagConfig.SortByReversed = column.SortDirection == ListSortDirection.Ascending;
                 settings.Save();
             }
