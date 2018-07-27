@@ -94,10 +94,12 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
             Command = new RelayCommand(
                 Create,
                 () =>
-                    !_animeService.Animes.Any(
-                        a => a.Name.ToLower().Trim().Equals(Anime?.Name?.ToLower().Trim()))
+                    !_animeService.Animes.Any(anime => Anime.Name.ToLower().Trim().Equals(anime.Name.ToLower().Trim()))
                     && Anime?.Name?.Length > 0
             );
+
+            Anime.PropertyChanged -= AnimeOnPropertyChanged;
+            Anime.PropertyChanged += AnimeOnPropertyChanged;
 
             return this;
         }
