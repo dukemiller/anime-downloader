@@ -138,7 +138,15 @@ namespace anime_downloader.Classes
                     fileDepth.Take(fileDepth.Length - 1));
                 Directory.CreateDirectory(Path.Combine(movePath, added));
             }
-            Directory.Move(file.Path, newPath);
+
+            try
+            {
+                Directory.Move(file.Path, newPath);
+            }
+            catch
+            {
+
+            }
         }
 
     }
