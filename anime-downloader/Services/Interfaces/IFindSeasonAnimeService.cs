@@ -5,6 +5,7 @@ using anime_downloader.Models.AniList;
 
 namespace anime_downloader.Services.Interfaces
 {
+
     public interface IFindSeasonAnimeService
     {
         /// <summary>

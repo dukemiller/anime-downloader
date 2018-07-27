@@ -2,17 +2,13 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Net;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using anime_downloader.Classes;
-using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Models.Abstract;
-using anime_downloader.Models.Configurations;
 using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
 using MagnetLink = anime_downloader.Models.MagnetLink;
@@ -88,13 +84,39 @@ namespace anime_downloader.Services.Abstract
             var downloads = mediaSource.Select(m => m.Downloads).Sum() / count;
             return (seeders + downloads) * count;
         }
+        
+        private static List<RemoteMedia> CalculateAndSetPreference(Anime anime, List<RemoteMedia> english, List<RemoteMedia> romanji)
+        {
+            List<RemoteMedia> media;
+
+            var englishScore = HealthScore(english);
+            var romanjiScore = HealthScore(romanji);
+
+            // Set it to romanji, but don't save any titles
+            if (englishScore == -1 && romanjiScore == -1)
+                media = romanji;
+            else if (englishScore > romanjiScore)
+            {
+                anime.Details.PreferredSearchTitle = anime.Details.English;
+                media = english;
+            }
+
+            else
+            {
+                anime.Details.PreferredSearchTitle = anime.Details.Title;
+                media = romanji;
+            }
+
+            return media;
+
+        }
 
         /// <summary>
         ///     A one time but potentially expensive cost to find out the preferred name
         /// </summary>
-        private async Task<IEnumerable<RemoteMedia>> GetMedia(Anime anime, int episode)
+        private async Task<List<RemoteMedia>> GetMedia(Anime anime, int episode)
         {
-            IEnumerable<RemoteMedia> media;
+            List<RemoteMedia> media;
 
             // If there is both an english and romanji title
             if (!string.IsNullOrEmpty(anime.Details.Title) && !string.IsNullOrEmpty(anime.Details.English))
@@ -105,28 +127,25 @@ namespace anime_downloader.Services.Abstract
                 // If there is no preference toward either of them, time to set them
                 else
                 {
-                    var english = (await FindAllMedia(anime, anime.Details.English, episode)).ToList();
-                    var romanji = (await FindAllMedia(anime, anime.Details.Title, episode)).ToList();
 
-                    var englishScore = HealthScore(english);
-                    var romanjiScore = HealthScore(romanji);
-
-                    // Set it to romanji, but don't save any titles
-                    if (englishScore == -1 && romanjiScore == -1)
+                    // If this is the very start of the series, we might also need to find episode start if the show
+                    // is long running and indexing starts at another number (e.g. attack on titan s3 - 38 is episode 01)
+                    if (anime.Episode == 0)
                     {
-                        media = romanji;
+                        var english = await PotentialStartingEpisode(anime.Details.English) ?? (await FindAllMedia(anime, anime.Details.English, episode)).ToList();
+                        var romanji = await PotentialStartingEpisode(anime.Details.Title) ?? (await FindAllMedia(anime, anime.Details.Title, episode)).ToList();
+                        media = CalculateAndSetPreference(anime, english, romanji);
+                        if (media.Count > 0 && !string.IsNullOrEmpty(anime.Details.PreferredSearchTitle))
+                        {
+                            anime.Episode = media.First().Episode - 1;
+                        }
                     }
-
-                    else if (englishScore > romanjiScore)
-                    {
-                        anime.Details.PreferredSearchTitle = anime.Details.English;
-                        media = english;
-                    }
-
+                    
                     else
                     {
-                        anime.Details.PreferredSearchTitle = anime.Details.Title;
-                        media = romanji;
+                        var english = (await FindAllMedia(anime, anime.Details.English, episode)).ToList();
+                        var romanji = (await FindAllMedia(anime, anime.Details.Title, episode)).ToList();
+                        media = CalculateAndSetPreference(anime, english, romanji);
                     }
 
                     AnimeRepository.Save();
@@ -335,7 +354,9 @@ namespace anime_downloader.Services.Abstract
         ///     Many sites have different ways their search works, but on the nyaa.* sites
         ///     this will transform the title into a searchable query.
         /// </summary>
-        protected static string TransformEpisodeSearch(string name, int episode)
+        protected static string TransformEpisodeSearch(string name, int episode) => $"{TransformEpisodeSearch(name)}+{episode:D2}";
+
+        protected static string TransformEpisodeSearch(string name)
         {
             // The kino no tabi regex
             name = Regex.Replace(name, @"(:\s(\w+\s){3,}\-\s(\w+\s){2,}(\w+\s?))", "");
@@ -370,10 +391,10 @@ namespace anime_downloader.Services.Abstract
                 .Replace("Souma", "Souma|Soma")       // ugly hack
                 .Replace("'", "%27");
 
-            return $"{name}+{episode:D2}";
+            return name;
         }
         
-        public async Task<IEnumerable<RemoteMedia>> FindAllMedia(Anime anime, int episode)
+        public async Task<List<RemoteMedia>> FindAllMedia(Anime anime, int episode)
         {
             return await GetMedia(anime, episode);
         }
@@ -390,6 +411,9 @@ namespace anime_downloader.Services.Abstract
 
         public abstract string ServiceUrl { get; }
 
-        public abstract Task<IEnumerable<RemoteMedia>> FindAllMedia(Anime anime, string name, int episode);
+        public abstract Task<List<RemoteMedia>> FindAllMedia(Anime anime, string name, int episode);
+
+        public abstract Task<List<RemoteMedia>> PotentialStartingEpisode(string name);
+
     }
 }

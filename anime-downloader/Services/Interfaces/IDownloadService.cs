@@ -40,14 +40,19 @@ namespace anime_downloader.Services.Interfaces
         Task<int> DownloadSpecificEpisodes(Dictionary<Anime, List<int>> animes, Action<string> output);
 
         /// <summary>
+        ///     Retrieve a (list, health sum) of the potential starting episodes for a given series.
+        /// </summary>
+        Task<List<RemoteMedia>> PotentialStartingEpisode(string name);
+
+        /// <summary>
         ///     Gathers every episode (unfiltered by settings) for {anime}
         /// </summary>
-        Task<IEnumerable<RemoteMedia>> FindAllMedia(Anime anime, string name, int episode);
+        Task<List<RemoteMedia>> FindAllMedia(Anime anime, string name, int episode);
 
         /// <summary>
         ///     Gathers every episode (unfiltered by settings) for {anime}, automatically determining the appropriate name.
         /// </summary>
-        Task<IEnumerable<RemoteMedia>> FindAllMedia(Anime anime, int episode);
+        Task<List<RemoteMedia>> FindAllMedia(Anime anime, int episode);
         
         /// <summary>
         ///     Attempt to start a single piece of media from the list of media.

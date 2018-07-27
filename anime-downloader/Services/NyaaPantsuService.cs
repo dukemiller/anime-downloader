@@ -40,7 +40,7 @@ namespace anime_downloader.Services
 
         public override string ServiceUrl => "https://nyaa.pantsu.cat/";
 
-        public override async Task<IEnumerable<RemoteMedia>> FindAllMedia(Anime anime, string name, int episode)
+        public override async Task<List<RemoteMedia>> FindAllMedia(Anime anime, string name, int episode)
         {
             var document = new XmlDocument();
 
@@ -83,7 +83,7 @@ namespace anime_downloader.Services
                                        .Count(c => c.Contains(episode.ToString("D2")))
                                    >= 2);
 
-            return result?.OrderByDescending(n => n.Name.Contains(anime.Resolution));
+            return result?.OrderByDescending(n => n.Name.Contains(anime.Resolution)).Cast<RemoteMedia>().ToList();
         }
 
         private static Torrent ToTorrent(XmlNode item)
@@ -97,5 +97,10 @@ namespace anime_downloader.Services
 
             return torrent;
         }
+
+        /// <summary>
+        ///     TODO::
+        /// </summary>
+        public override Task<List<RemoteMedia>> PotentialStartingEpisode(string name) => null;
     }
 }

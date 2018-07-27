@@ -66,9 +66,11 @@ namespace anime_downloader.Models
                     return (DateTime.Now - current.StartDate()).Days;
             
             // else, only retrieve this season 
-            return (DateTime.Now - current.StartDate()).Days;
+            return MaxAgeForThisSeason();
         }
 
+        public static int MaxAgeForThisSeason() => (DateTime.Now - Current.StartDate()).Days;
+        
         public DateTime StartDate()
         {
             var month = ((int) Season - 1) * 3 + 1;

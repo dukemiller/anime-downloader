@@ -37,6 +37,47 @@ namespace anime_downloader.Models.Abstract
         public int Downloads { get; set; }
 
         /// <summary>
+        ///     The assumed episode given the name of the media.
+        /// </summary>
+        public int Episode
+        {
+            get
+            {
+                var strippedName = Methods.Strip(Name);
+                var episode = 0;
+
+                if (strippedName.Any(char.IsDigit))
+                {
+                    if (strippedName.Contains("-"))
+                    {
+                        var _ = string.Join("",
+                            strippedName.Replace(" ", "")
+                                .Split('-')
+                                .Last(stripped => stripped.Any(char.IsNumber))
+                                .TakeWhile(char.IsNumber)
+                        );
+
+                        var result = int.TryParse(_, out int number);
+                        episode = result ? number : 0;
+                    }
+
+                    else
+                    {
+                        // Work backwords from the last phrase, taking any token that is only numbers
+                        var _ = strippedName.Split(' ')
+                            .Reverse()
+                            .SkipWhile(chunk => !chunk.All(char.IsDigit))
+                            .FirstOrDefault();
+                        var result = int.TryParse(_, out int number);
+                        episode = result ? number : 0;
+                    }
+                }
+
+                return episode;
+            }
+        }
+
+        /// <summary>
         ///     Returns the subgroup from the name of the file.
         /// </summary>
         public string Subgroup()

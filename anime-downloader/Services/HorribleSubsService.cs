@@ -33,7 +33,7 @@ namespace anime_downloader.Services
 
         public override string ServiceUrl => "http://horriblesubs.info";
         
-        public override async Task<IEnumerable<RemoteMedia>> FindAllMedia(Anime anime, string name, int episode)
+        public override async Task<List<RemoteMedia>> FindAllMedia(Anime anime, string name, int episode)
         {
             if (_nodes == null || (DateTime.Now - _lastUpdatedNodes).Minutes > 10)
                 await RetrieveNodes();
@@ -57,7 +57,9 @@ namespace anime_downloader.Services
                     var words = filtered.ToLower().Split(' ').ToList();
                     return words.Count(word => title.Contains(word)) > (words.Count / 2);
                 })
-                .OrderByDescending(n => n.Name.Contains(anime.Resolution));
+                .OrderByDescending(n => n.Name.Contains(anime.Resolution))
+                .Cast<RemoteMedia>()
+                .ToList();
         }
 
         // 
@@ -107,6 +109,11 @@ namespace anime_downloader.Services
 
             return magnet;
         }
-        
+
+        /// <summary>
+        ///     TODO::
+        /// </summary>
+        public override Task<List<RemoteMedia>> PotentialStartingEpisode(string name) => null;
+
     }
 }
