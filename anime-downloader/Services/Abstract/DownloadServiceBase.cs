@@ -138,6 +138,13 @@ namespace anime_downloader.Services.Abstract
                         if (media.Count > 0 && !string.IsNullOrEmpty(anime.Details.PreferredSearchTitle))
                         {
                             anime.Episode = media.First().Episode - 1;
+
+                            // if this is over the total, kill the total and have it be recalculated by the user later
+                            if (anime.Episode > anime.Details.Total)
+                            {
+                                anime.Details.TotalEpisodes = 0;
+                                anime.Details.OverallTotal = 0;
+                            }
                         }
                     }
                     
