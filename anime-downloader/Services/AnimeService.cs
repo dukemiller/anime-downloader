@@ -30,7 +30,7 @@ namespace anime_downloader.Services
             return Watching
                 .Where(
                     anime =>
-                        anime.Details.HasId &&
+                        (anime.Details.HasId  || anime.Details.OverallTotal > 0 || anime.Details.TotalEpisodes > 0) &&
                         (anime.Details.OverallTotal > 0 && anime.Episode == anime.Details.OverallTotal ||
                          anime.Details.TotalEpisodes > 0 && anime.Episode == anime.Details.TotalEpisodes));
         }
