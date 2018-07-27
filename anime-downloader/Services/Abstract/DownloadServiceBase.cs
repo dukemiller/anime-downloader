@@ -325,13 +325,13 @@ namespace anime_downloader.Services.Abstract
             {
                 var request = (HttpWebRequest) WebRequest.Create(ServiceUrl);
                 request.Timeout = 3000;
-                request.AllowAutoRedirect = false;
-                request.Method = "HEAD";
-
+                request.Method = WebRequestMethods.Http.Head;
+                request.UserAgent = @"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36";
+                request.Accept = "*/*";
+                request.ContentLength = 0;
+                request.Headers = new WebHeaderCollection {"cache-control: no-cache", "accept-encoding: gzip, deflate"};
                 using (var response = await request.GetResponseAsync())
-                {
                     return true;
-                }
             }
             catch (Exception)
             {
