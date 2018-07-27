@@ -5,6 +5,7 @@ namespace anime_downloader.Enums
         Default,
         NameThenEpisode,
         EpisodeThenName,
-        Date
+        Date,
+        RandomNameThenEpisode
     }
 }

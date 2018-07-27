@@ -122,6 +122,9 @@ namespace anime_downloader.Models
                 case PlaylistOrder.Default:
                     stream = Source.OrderBy(file => file.FileName, new WindowsSortComparer());
                     break;
+                case PlaylistOrder.RandomNameThenEpisode:
+                    stream = Source.OrderBy(file => file.Name).ThenBy(file => file.Episode).GroupBy(e => e.Name).Shuffle().SelectMany(e => e);
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }

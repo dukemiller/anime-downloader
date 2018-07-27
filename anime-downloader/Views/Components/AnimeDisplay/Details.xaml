@@ -55,8 +55,8 @@
                                                    TabStripPlacement="Bottom">
             <controls:MetroTabItem Header="Profile">
                 <DockPanel>
+
                     <Border Width="226">
-                        
                         <Image Source="{Binding Image}" />
                     </Border>
 
@@ -65,6 +65,7 @@
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="6*" />
                         </Grid.ColumnDefinitions>
+
                         <Grid.RowDefinitions>
                             <RowDefinition Height="1.2*" />
                             <RowDefinition Height="1*" />
@@ -86,7 +87,6 @@
                             FontWeight="SemiBold"
                             xaml:FocusBehavior.IsFocused="{Binding Anime.Name, Converter={StaticResource StringIsEmptyOrNullConverter}}"
                             Text="{Binding Anime.Name, UpdateSourceTrigger=PropertyChanged}" />
-
 
                         <Label
                             Grid.Row="1"

@@ -43,6 +43,13 @@ namespace anime_downloader.ViewModels.Displays
             Data = PlaylistOrder.Date
         };
 
+        private static readonly RadioModel<PlaylistOrder> RandomNameThenEpisode = new RadioModel<PlaylistOrder>
+        {
+            Header = "Random Name",
+            ToolTip = "Sort by name, randomize the order, then by episode",
+            Data = PlaylistOrder.RandomNameThenEpisode
+        };
+
         private readonly IFileService _fileService;
 
         private readonly ISettingsRepository _settings;
@@ -94,7 +101,7 @@ namespace anime_downloader.ViewModels.Displays
 
             // 
 
-            Options = new ObservableCollection<RadioModel<PlaylistOrder>> {Default, NameThenEpisode, EpisodeThenName, Date};
+            Options = new ObservableCollection<RadioModel<PlaylistOrder>> {Default, NameThenEpisode, EpisodeThenName, Date, RandomNameThenEpisode };
             FileExists = File.Exists(PathConfiguration.Playlist);
             SelectedRadio = Options.Skip(1).First();
         }
