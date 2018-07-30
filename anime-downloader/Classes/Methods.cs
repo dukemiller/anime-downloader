@@ -67,6 +67,9 @@ namespace anime_downloader.Classes
             if (episode.Success)
                 filename = filename.Replace(episode.Groups[1].Value, episode.Groups[2].Value);
 
+            // Remove Season 1 / S1 stuff
+            filename = Regex.Replace(filename, @"\b(s[1-9]\d?|season [1-9]\d?)\b", "", RegexOptions.IgnoreCase);
+
             // Remove entirely anything saying the language sub
             filename = Regex.Replace(filename, @"-?[\s_.]?eng(?:lish|s)?[\s_.]?sub(?:bed|s)?", "", RegexOptions.IgnoreCase);
 
