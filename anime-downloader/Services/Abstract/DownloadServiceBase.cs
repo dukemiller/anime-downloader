@@ -45,6 +45,7 @@ namespace anime_downloader.Services.Abstract
                     {
                         return (false, null);
                     }
+
                     return (true, filePath);
                 });
 
@@ -84,8 +85,9 @@ namespace anime_downloader.Services.Abstract
             var downloads = mediaSource.Select(m => m.Downloads).Sum() / count;
             return (seeders + downloads) * count;
         }
-        
-        private static List<RemoteMedia> CalculateAndSetPreference(Anime anime, List<RemoteMedia> english, List<RemoteMedia> romanji)
+
+        private static List<RemoteMedia> CalculateAndSetPreference(Anime anime, List<RemoteMedia> english,
+            List<RemoteMedia> romanji)
         {
             List<RemoteMedia> media;
 
@@ -108,7 +110,6 @@ namespace anime_downloader.Services.Abstract
             }
 
             return media;
-
         }
 
         /// <summary>
@@ -127,13 +128,14 @@ namespace anime_downloader.Services.Abstract
                 // If there is no preference toward either of them, time to set them
                 else
                 {
-
                     // If this is the very start of the series, we might also need to find episode start if the show
                     // is long running and indexing starts at another number (e.g. attack on titan s3 - 38 is episode 01)
                     if (anime.Episode == 0)
                     {
-                        var english = await PotentialStartingEpisode(anime.Details.English) ?? (await FindAllMedia(anime, anime.Details.English, episode)).ToList();
-                        var romanji = await PotentialStartingEpisode(anime.Details.Title) ?? (await FindAllMedia(anime, anime.Details.Title, episode)).ToList();
+                        var english = await PotentialStartingEpisode(anime.Details.English) ??
+                                      (await FindAllMedia(anime, anime.Details.English, episode)).ToList();
+                        var romanji = await PotentialStartingEpisode(anime.Details.Title) ??
+                                      (await FindAllMedia(anime, anime.Details.Title, episode)).ToList();
                         media = CalculateAndSetPreference(anime, english, romanji);
                         if (media.Count > 0 && !string.IsNullOrEmpty(anime.Details.PreferredSearchTitle))
                         {
@@ -147,7 +149,7 @@ namespace anime_downloader.Services.Abstract
                             }
                         }
                     }
-                    
+
                     else
                     {
                         var english = (await FindAllMedia(anime, anime.Details.English, episode)).ToList();
@@ -245,7 +247,8 @@ namespace anime_downloader.Services.Abstract
             return true;
         }
 
-        public async Task<bool> AttemptDownload(Anime anime, int episode, IEnumerable<RemoteMedia> medias, Action<string> output)
+        public async Task<bool> AttemptDownload(Anime anime, int episode, IEnumerable<RemoteMedia> medias,
+            Action<string> output)
         {
             if (medias == null || anime == null)
                 return false;
@@ -333,7 +336,8 @@ namespace anime_downloader.Services.Abstract
                 var request = (HttpWebRequest) WebRequest.Create(ServiceUrl);
                 request.Timeout = 3000;
                 request.Method = WebRequestMethods.Http.Head;
-                request.UserAgent = @"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36";
+                request.UserAgent =
+                    @"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36";
                 request.Accept = "*/*";
                 request.ContentLength = 0;
                 request.Headers = new WebHeaderCollection {"cache-control: no-cache", "accept-encoding: gzip, deflate"};
@@ -361,7 +365,8 @@ namespace anime_downloader.Services.Abstract
         ///     Many sites have different ways their search works, but on the nyaa.* sites
         ///     this will transform the title into a searchable query.
         /// </summary>
-        protected static string TransformEpisodeSearch(string name, int episode) => $"{TransformEpisodeSearch(name)}+{episode:D2}";
+        protected static string TransformEpisodeSearch(string name, int episode) =>
+            $"{TransformEpisodeSearch(name)}+{episode:D2}";
 
         protected static string TransformEpisodeSearch(string name)
         {
@@ -395,12 +400,12 @@ namespace anime_downloader.Services.Abstract
                 .Replace("'s", "")
                 .Replace(" ", "+")
                 .Replace("!", "%21")
-                .Replace("Souma", "Souma|Soma")       // ugly hack
+                .Replace("Souma", "Souma|Soma") // ugly hack
                 .Replace("'", "%27");
 
             return name;
         }
-        
+
         public async Task<List<RemoteMedia>> FindAllMedia(Anime anime, int episode)
         {
             return await GetMedia(anime, episode);
@@ -421,6 +426,5 @@ namespace anime_downloader.Services.Abstract
         public abstract Task<List<RemoteMedia>> FindAllMedia(Anime anime, string name, int episode);
 
         public abstract Task<List<RemoteMedia>> PotentialStartingEpisode(string name);
-
     }
 }
