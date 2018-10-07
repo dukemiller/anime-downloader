@@ -25,13 +25,16 @@ namespace anime_downloader.ViewModels.Components.Download
 
         private readonly IDownloadService _downloadService;
 
+        private readonly IAnimeRepository _animeRepository;
+
         public OutputViewModel(ISettingsRepository settings, IFileService fileService,
-            IAnimeService animeService, IDownloadService downloadService)
+            IAnimeService animeService, IDownloadService downloadService, IAnimeRepository animeRepository)
         {
             _settings = settings;
             _fileService = fileService;
             _animeService = animeService;
             _downloadService = downloadService;
+            _animeRepository = animeRepository;
         }
 
         public string Text
@@ -139,6 +142,8 @@ namespace anime_downloader.ViewModels.Components.Download
                             anime.Details.NeedsUpdating = true;
                         }
                     } while (downloaded);
+
+                    _animeRepository.Save();
                 }
                 var plural = total > 1 ? "downloads" : "download";
                 Text += total > 0 ? $">> Found {total} anime {plural}." : ">> No new anime found.";
