@@ -11,7 +11,6 @@ using anime_downloader.Services.Interfaces;
 using anime_downloader.Views.Dialogs.MyAnimeList;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
 using MaterialDesignThemes.Wpf;
 
 namespace anime_downloader.ViewModels.Displays
@@ -64,7 +63,7 @@ namespace anime_downloader.ViewModels.Displays
             MessengerInstance.Register<Request>(this, HandleRequest);
             MessengerInstance.Register<ViewRequest>(this, HandleViewAction);
         }
-        
+
         // 
 
         private DateTime LoginAttempt { get; set; } = DateTime.Now;
@@ -157,17 +156,18 @@ namespace anime_downloader.ViewModels.Displays
             // MyAnimeList
 
             ProfileCommand = new RelayCommand(
-                () => Process.Start($"http://myanimelist.net/profile/{_credentialsRepository.MyAnimeListConfig.Username}"),
+                () => Process.Start(
+                    $"http://myanimelist.net/profile/{_credentialsRepository.MyAnimeListConfig.Username}"),
                 () => _credentialsRepository.MyAnimeListConfig.LoggedIn
             );
 
             ImportCommand = new RelayCommand(
-                Import, 
+                Import,
                 () => _credentialsRepository.MyAnimeListConfig.LoggedIn
             );
 
             SyncCommand = new RelayCommand(
-                Sync, 
+                Sync,
                 () => _credentialsRepository.MyAnimeListConfig.LoggedIn && !Synced
             );
         }
@@ -248,14 +248,18 @@ namespace anime_downloader.ViewModels.Displays
         {
             var view = new LoginDialog();
             var result = await DialogHost.Show(view) as MyAnimeListConfiguration;
-            
-            if (result == null || result.Password?.Length < 1 || result.Username?.Length < 1 || DateTime.Now < LoginAttempt)
+
+            if (result == null || result.Password?.Length < 1 || result.Username?.Length < 1 ||
+                DateTime.Now < LoginAttempt)
                 return;
 
             MessengerInstance.Send(ViewState.IsWorking);
-            _credentialsRepository.MyAnimeListConfig = result;
-            _credentialsRepository.MyAnimeListConfig.LoggedIn = await _api.VerifyCredentialsAsync();
-            _credentialsRepository.Save();
+            if (await _api.Login(result.Username, result.Password))
+            {
+                _credentialsRepository.MyAnimeListConfig = result;
+                _credentialsRepository.MyAnimeListConfig.LoggedIn = true;
+                _credentialsRepository.Save();
+            }
             MessengerInstance.Send(ViewState.DoneWorking);
 
             LoginAttempt = DateTime.Now.AddSeconds(5);
@@ -302,8 +306,15 @@ namespace anime_downloader.ViewModels.Displays
         {
             MessengerInstance.Send(ViewState.IsWorking);
             Synchronize = "Synchronizing";
-            await _syncService.Synchronize();
-            _animeRepository.Save();
+            try
+            {
+                await _syncService.Synchronize();
+            }
+            finally
+            {
+                _animeRepository.Save();
+            }
+
             MessengerInstance.Send(ViewRequest.Update);
             MessengerInstance.Send(ViewState.DoneWorking);
             RaiseCommandExecutions();

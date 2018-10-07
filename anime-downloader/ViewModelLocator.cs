@@ -9,7 +9,6 @@ using anime_downloader.Repositories.Interface;
 using anime_downloader.Services;
 using anime_downloader.Services.Interfaces;
 using anime_downloader.ViewModels;
-using anime_downloader.ViewModels.Components;
 using anime_downloader.ViewModels.Components.AnimeDisplay;
 using anime_downloader.ViewModels.Components.Download;
 using anime_downloader.ViewModels.Displays;

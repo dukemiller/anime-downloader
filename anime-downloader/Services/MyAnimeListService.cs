@@ -2,14 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Security.Policy;
 using System.Threading.Tasks;
 using System.Web;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Models.MyAnimeList;
+using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
 using HtmlAgilityPack;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace anime_downloader.Services
 {
@@ -32,6 +37,8 @@ namespace anime_downloader.Services
         public int GetId(Anime anime) => int.TryParse(anime.Details.Id, out int result) ? result : 0;
 
         public void SetId(Anime anime, int id) => anime.Details.Id = id.ToString();
+
+        // ISyncProviderService
 
         public async Task<(bool successful, int id)> FindId(Anime anime)
         {
@@ -139,9 +146,12 @@ namespace anime_downloader.Services
             return (true, int.Parse(result.Id));
         }
 
-        // ISyncProviderService
-
-        public async Task Add(Anime anime) => await _api.AddAsync(anime, GetId(anime));
+        public async Task Add(Anime anime)
+        {
+            var (successful, content) = await _api.AddAsync(anime, GetId(anime));
+            if (successful)
+                anime.Details.NeedsUpdating = false;
+        }
 
         public async Task Update(Anime anime)
         {
@@ -161,14 +171,14 @@ namespace anime_downloader.Services
                     if (string.IsNullOrEmpty(anime.Details.Id))
                     {
                         var (successful, id) = await FindId(anime);
-                        if (successful)
-                            await Add(anime);
-                        else
+                        if (!successful)
                             continue;
                     }
 
-                    // Then edit (if just added)
-                    await Update(anime);
+                    if (await _api.ProfileContains(GetId(anime)))
+                        await Update(anime);
+                    else
+                        await Add(anime);
                 }
 
                 catch (ServerProblemException spx)
@@ -195,6 +205,7 @@ namespace anime_downloader.Services
                 var html = await client.DownloadStringTaskAsync(new Uri($"https://myanimelist.net/anime.php?q={q}"));
                 document.LoadHtml(html);
             }
+
             var link = document.DocumentNode?
                 .SelectSingleNode("//div[@class=\"js-categories-seasonal js-block-list list\"]/table/tr[2]/td[1]")?
                 .Descendants("a")?
@@ -211,8 +222,10 @@ namespace anime_downloader.Services
         private static FindResult ClosestResult(Anime anime, string query, IEnumerable<FindResult> results)
         {
             var closestResults = results
-                .Where(result => !result.Type.Equals("OVA")) // I'm sure i'll regret this
-                .Where(result => !anime.NameStrict || result.NameCollection.Any(r => r.ToLower().Replace(" (tv)", "").Equals(query.ToLower())))
+                .Where(result => !result.Type.Equals("OVA") && !result.Type.Equals("Movie")) // I'm sure i'll regret this
+                .Where(result =>
+                    !anime.NameStrict ||
+                    result.NameCollection.Any(r => r.ToLower().Replace(" (tv)", "").Equals(query.ToLower())))
                 .Select(result => new FindResultDistance(query, result))
                 .OrderBy(result => result.Distance);
 
@@ -248,10 +261,11 @@ namespace anime_downloader.Services
                     anime.Details.Aired = new AnimeSeason
                     {
                         Year = date.Year,
-                        Season = (Season)Math.Ceiling(Convert.ToDouble(date.Month) / 3)
+                        Season = (Season) Math.Ceiling(Convert.ToDouble(date.Month) / 3)
                     };
                 }
             }
+
             if (anime.Details.Ended == null)
             {
                 if (DateTime.TryParse(result.EndDate, out DateTime end))
@@ -259,7 +273,7 @@ namespace anime_downloader.Services
                     anime.Details.Ended = new AnimeSeason
                     {
                         Year = end.Year,
-                        Season = (Season)Math.Ceiling(Convert.ToDouble(end.Month) / 3)
+                        Season = (Season) Math.Ceiling(Convert.ToDouble(end.Month) / 3)
                     };
                 }
             }
@@ -273,6 +287,7 @@ namespace anime_downloader.Services
                 var comparedDate = new DateTime(year, month, 1);
                 return date >= comparedDate;
             }
+
             return false;
         }
     }

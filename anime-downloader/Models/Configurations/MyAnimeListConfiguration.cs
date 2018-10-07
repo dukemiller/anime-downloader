@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using anime_downloader.Models.MyAnimeList;
 using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
@@ -14,7 +15,11 @@ namespace anime_downloader.Models.Configurations
 
         private bool _loggedIn;
 
+        private List<int> _ids = new List<int>();
+
         private ApiCredentials _credentials = new ApiCredentials();
+
+        private DateTime _lastCheckedIds = DateTime.MinValue;
 
         [JsonProperty("username")]
         public string Username
@@ -37,11 +42,28 @@ namespace anime_downloader.Models.Configurations
             set => Set(() => LoggedIn, ref _loggedIn, value);
         }
 
+        [JsonProperty("ids")]
+        public List<int> Ids
+        {
+            get => _ids;
+            set => Set(() => Ids, ref _ids, value);
+        }
+
+        [JsonProperty("last_checked_ids")]
+        public DateTime LastCheckedIds
+        {
+            get => _lastCheckedIds;
+            set => Set(() => LastCheckedIds, ref _lastCheckedIds, value);
+        }
+
+
         [JsonProperty("api")]
         public ApiCredentials Credentials
         {
             get => _credentials;
             set => Set(() => Credentials, ref _credentials, value);
         }
+
+
     }
 }

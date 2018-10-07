@@ -16,6 +16,7 @@ using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace anime_downloader.Services
 {
@@ -37,11 +38,11 @@ namespace anime_downloader.Services
         private const string ApiSearch = "https://myanimelist.net/search/prefix.json?type=anime&keyword={0}&v=1";
 
         private const string UrlLogin = "https://myanimelist.net/login.php?from=%2F";
-        
-        private const string ApiVerify = "https://myanimelist.net/api/account/verify_credentials.xml";
 
         private const string ApiProfile = "https://myanimelist.net/malappinfo.php?u={0}&status=all&type=anime";
-        
+
+        private const string ApiProfileChunked = "https://myanimelist.net/animelist/{0}/load.json";
+
         private static readonly XmlSerializer ProfileDeserializer = new XmlSerializer(typeof(ProfileResult));
 
         private readonly HttpClient _client;
@@ -52,7 +53,8 @@ namespace anime_downloader.Services
 
         // 
 
-        public MyAnimeListInternalApi(ICredentialsRepository credentialsRepository, IDetailProviderService detailProvider)
+        public MyAnimeListInternalApi(ICredentialsRepository credentialsRepository,
+            IDetailProviderService detailProvider)
         {
             _credentialsRepository = credentialsRepository;
             _detailProvider = detailProvider;
@@ -79,15 +81,6 @@ namespace anime_downloader.Services
 
         // 
 
-        public async Task<bool> VerifyCredentialsAsync()
-        {
-            using (var client = new HttpClient(new HttpClientHandler { Credentials = GetCredentials() }))
-            {
-                var response = await client.GetAsync(ApiVerify);
-                return response.StatusCode == HttpStatusCode.OK;
-            }
-        }
-
         public async Task<IEnumerable<ProfileAnimeResult>> GetProfile()
         {
             var url = string.Format(ApiProfile, _credentialsRepository.MyAnimeListConfig.Username);
@@ -99,7 +92,7 @@ namespace anime_downloader.Services
                     return new List<ProfileAnimeResult>();
                 using (var response = new StreamReader(data))
                 {
-                    var result = (ProfileResult)ProfileDeserializer.Deserialize(response);
+                    var result = (ProfileResult) ProfileDeserializer.Deserialize(response);
                     return result.Anime.Where(anime =>
                     {
                         var withinLastThreeYears = DateTime.TryParse(anime?.SeriesStart, out DateTime date) &&
@@ -127,8 +120,15 @@ namespace anime_downloader.Services
         {
             await SetupRequest();
 
-            var response = await Post(ApiAdd, anime, id);
+            var response = await PostAdd(ApiAdd, anime, id);
             var content = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                _credentialsRepository.MyAnimeListConfig.Ids.Add(id);
+                _credentialsRepository.Save();
+            }
+
             return (response.IsSuccessStatusCode, content);
         }
 
@@ -145,70 +145,21 @@ namespace anime_downloader.Services
             return (response.IsSuccessStatusCode, content);
         }
 
-        // 
-
-        private readonly HttpStatusCode[] _errorCodes = 
+        public async Task<bool> ProfileContains(int id)
         {
-            HttpStatusCode.InternalServerError, HttpStatusCode.GatewayTimeout,
-            HttpStatusCode.ServiceUnavailable, HttpStatusCode.BadGateway,
-            HttpStatusCode.BadRequest
-        };
-
-        private async Task<HttpResponseMessage> Post(string url, Anime anime, int id)
-        {
-            var response = await _client.PostAsync(url, await GetPayload(anime, id));
-
-            // Error 400 usually in this context means that the session/cookies/csrf are invalid,
-            // probably because you logged on the site on your own at some point. In the future,
-            // get a more concrete idea on why this happens
-            if (response.StatusCode == HttpStatusCode.BadRequest)
+            if (_credentialsRepository.MyAnimeListConfig.Ids.Count == 0 ||
+                (DateTime.Now - _credentialsRepository.MyAnimeListConfig.LastCheckedIds).Days > 14)
             {
-                await Login();
-                await SetupClient();
-                response = await _client.PostAsync(url, await GetPayload(anime, id));
+                _credentialsRepository.MyAnimeListConfig.Ids =
+                    await FetchIds(_credentialsRepository.MyAnimeListConfig.Username);
+                _credentialsRepository.MyAnimeListConfig.LastCheckedIds = DateTime.Now;
+                _credentialsRepository.Save();
             }
 
-            // If I still get some sort of error, throw it and stop doing any further requests
-            foreach (var code in _errorCodes)
-                if (response.StatusCode == code)
-                    throw new ServerProblemException(code);
-
-            return response;
+            return _credentialsRepository.MyAnimeListConfig.Ids.Contains(id);
         }
 
-        private NetworkCredential GetCredentials() => new NetworkCredential(_credentialsRepository.MyAnimeListConfig.Username, _credentialsRepository.MyAnimeListConfig.Password);
-        
-        private async Task SetupRequest()
-        {
-            if (!_clientReady)
-                await SetupClient();
-
-            if (_credentials.NeedNewToken)
-                await RetrieveCsrf();
-        }
-
-        private async Task SetupClient()
-        {
-            if (string.IsNullOrEmpty(_credentials.Cookies))
-                await Login();
-
-            _client.DefaultRequestHeaders.Clear();
-
-            _client.DefaultRequestHeaders.Host = "myanimelist.net";
-            _client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:55.0) Gecko/20100101 Firefox/55.0");
-            _client.DefaultRequestHeaders.Add("Accept", "*/*");
-            _client.DefaultRequestHeaders.Add("Accept-Language", "en-US,en;q=0.5");
-            _client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
-            _client.DefaultRequestHeaders.Add("X-Requested-With", "XMLHttpRequest");
-
-            _client.DefaultRequestHeaders.Add("DNT", "1");
-            _client.DefaultRequestHeaders.Add("Cookie", _credentials.Cookies);
-            _client.DefaultRequestHeaders.Add("Connection", "keep-alive");
-
-            _clientReady = true;
-        }
-
-        private async Task Login()
+        public async Task<bool> Login(string username, string password)
         {
             var cookieContainer = new CookieContainer();
             var handler = new HttpClientHandler {CookieContainer = cookieContainer};
@@ -231,8 +182,8 @@ namespace anime_downloader.Services
 
                 var pairs = new Dictionary<string, string>
                 {
-                    {"user_name", _credentialsRepository.MyAnimeListConfig.Username},
-                    {"password", _credentialsRepository.MyAnimeListConfig.Password},
+                    {"user_name", username},
+                    {"password", password},
                     {"cookie", "1"},
                     {"sublogin", "Login"},
                     {"submit", "1"},
@@ -241,6 +192,11 @@ namespace anime_downloader.Services
 
                 var content = new FormUrlEncodedContent(pairs);
                 var request = await client.PostAsync(UrlLogin, content);
+                var response = await request.Content.ReadAsStringAsync();
+
+                if (response.Contains("Your username or password is incorrect"))
+                    return false;
+
                 var cookies = string.Join("; ",
                     cookieContainer.GetCookies(new Uri(UrlLogin))
                         .Cast<Cookie>()
@@ -251,9 +207,103 @@ namespace anime_downloader.Services
                 _credentials.CsrfToken = csrf;
                 _credentials.CsrfTokenLastRetrieved = DateTime.Now;
                 _credentials.Cookies = cookies;
-
                 _credentialsRepository.Save();
+                return true;
             }
+        }
+
+        // 
+
+        private async Task<IEnumerable<int>> FetchIds(string username, int page)
+        {
+            var url = string.Format(ApiProfileChunked, username) + (page > 0 ? $"?offset={300 * page}" : "");
+            var request = await _client.GetAsync(url);
+            if (request.StatusCode == HttpStatusCode.BadRequest)
+                return new List<int>();
+            var response = await request.Content.ReadAsStringAsync();
+            var json = (JArray) JsonConvert.DeserializeObject(response);
+            var values = json.Select(j => Convert.ToInt32(j["anime_id"].ToString()));
+            return json.Count == 300
+                ? values.Concat(await FetchIds(username, page + 1))
+                : values;
+        }
+
+        private async Task<List<int>> FetchIds(string username) => (await FetchIds(username, 0)).ToList();
+
+        private readonly HttpStatusCode[] _errorCodes =
+        {
+            HttpStatusCode.InternalServerError, HttpStatusCode.GatewayTimeout,
+            HttpStatusCode.ServiceUnavailable, HttpStatusCode.BadGateway,
+            HttpStatusCode.BadRequest
+        };
+
+        private async Task<HttpResponseMessage> Post(string url, Anime anime, int id)
+        {
+            var response = await _client.PostAsync(url, await GetPayload(anime, id));
+
+            // Error 400 usually in this context means that the session/cookies/csrf are invalid,
+            // probably because you logged on the site on your own at some point. In the future,
+            // get a more concrete idea on why this happens
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                await Login(_credentialsRepository.MyAnimeListConfig.Username,
+                    _credentialsRepository.MyAnimeListConfig.Password);
+                await SetupClient();
+                response = await _client.PostAsync(url, await GetPayload(anime, id));
+            }
+
+            // If I still get some sort of error, throw it and stop doing any further requests
+            foreach (var code in _errorCodes)
+                if (response.StatusCode == code)
+                    throw new ServerProblemException(code);
+
+            return response;
+        }
+
+        private async Task<HttpResponseMessage> PostAdd(string url, Anime anime, int id)
+        {
+            var payload = new StringContent(ToShowRequestJson(anime, id, _credentials.CsrfToken), Encoding.UTF8,
+                "application/json") as HttpContent;
+            var response = await _client.PostAsync(url, payload);
+
+            if (anime.Notes?.Length > 0)
+                return await Post(string.Format(ApiUpdateDetailed, anime.Details.Id), anime, id);
+            return response;
+        }
+
+        private async Task SetupRequest()
+        {
+            if (!_clientReady)
+                await SetupClient();
+
+            if (_credentials.NeedNewToken)
+                await RetrieveCsrf();
+        }
+
+        private async Task SetupClient()
+        {
+            if (string.IsNullOrEmpty(_credentials.Cookies))
+            {
+                if (!(await Login(_credentialsRepository.MyAnimeListConfig.Username,
+                    _credentialsRepository.MyAnimeListConfig.Password)))
+                    return;
+            }
+
+            _client.DefaultRequestHeaders.Clear();
+
+            _client.DefaultRequestHeaders.Host = "myanimelist.net";
+            _client.DefaultRequestHeaders.Add("User-Agent",
+                "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:55.0) Gecko/20100101 Firefox/55.0");
+            _client.DefaultRequestHeaders.Add("Accept", "*/*");
+            _client.DefaultRequestHeaders.Add("Accept-Language", "en-US,en;q=0.5");
+            _client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
+            _client.DefaultRequestHeaders.Add("X-Requested-With", "XMLHttpRequest");
+
+            _client.DefaultRequestHeaders.Add("DNT", "1");
+            _client.DefaultRequestHeaders.Add("Cookie", _credentials.Cookies);
+            _client.DefaultRequestHeaders.Add("Connection", "keep-alive");
+
+            _clientReady = true;
         }
 
         private async Task RetrieveCsrf()
@@ -291,7 +341,8 @@ namespace anime_downloader.Services
 
             return anime.Notes?.Length > 0
                 ? new FormUrlEncodedContent(ToUpdatePairs(anime, id, _credentials.CsrfToken))
-                : new StringContent(ToShowRequestJson(anime, id, _credentials.CsrfToken), Encoding.UTF8, "application/json") as HttpContent;
+                : new StringContent(ToShowRequestJson(anime, id, _credentials.CsrfToken), Encoding.UTF8,
+                    "application/json") as HttpContent;
         }
 
         // 
@@ -303,7 +354,7 @@ namespace anime_downloader.Services
 
             if (date.Contains(" to "))
             {
-                var data = date.Split(new[] { " to " }, StringSplitOptions.None);
+                var data = date.Split(new[] {" to "}, StringSplitOptions.None);
                 start = data[0];
                 end = data[1];
             }
@@ -387,7 +438,7 @@ namespace anime_downloader.Services
                 ? anime.SeriesContinuationEpisode.ToString()
                 : anime.Episode.ToString();
             episode = episode.Replace("-", "");
-            
+
             string status;
 
             switch (anime.Status)
@@ -448,5 +499,4 @@ namespace anime_downloader.Services
             };
         }
     }
-
 }
