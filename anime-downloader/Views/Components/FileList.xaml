@@ -79,14 +79,13 @@
             <TextBox Margin="4"
                      materialDesign:HintAssist.Hint="Filter by name ..."
                      Style="{DynamicResource Filter}"
-                     Text="{Binding Filter,
-                                    UpdateSourceTrigger=PropertyChanged}">
+                     Text="{Binding Filter, Delay=100, UpdateSourceTrigger=PropertyChanged}">
                 <TextBox.InputBindings>
                     <KeyBinding Key="Escape" Command="{Binding ClearFilterCommand}" />
                 </TextBox.InputBindings>
             </TextBox>
         </DockPanel>
-        
+
         <!--  Titlebar  -->
         <GroupBox>
             <GroupBox.Header>
