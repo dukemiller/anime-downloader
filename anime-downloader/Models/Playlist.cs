@@ -33,6 +33,11 @@ namespace anime_downloader.Models
         public bool Sort { get; set; } = true;
 
         /// <summary>
+        ///     If we're creating the playlist from an episode selection vs a playlist.
+        /// </summary>
+        public bool IsEpisodeSelection { get; set; }
+
+        /// <summary>
         ///     The order of how the files will be initially sorted from Source.
         /// </summary>
         public PlaylistOrder Order { private get; set; }
@@ -149,11 +154,15 @@ namespace anime_downloader.Models
             if (Sort)
                 ApplyConfiguration();
 
-            using (var writer = new StreamWriter(PathConfiguration.Playlist, false))
+            var path = IsEpisodeSelection 
+                ? PathConfiguration.EpisodesPlaylist 
+                : PathConfiguration.Playlist;
+
+            using (var writer = new StreamWriter(path, false))
                 foreach (var file in Source)
                     await writer.WriteLineAsync(file.Path);
 
-            return PathConfiguration.Playlist;
+            return path;
         }
     }
 }

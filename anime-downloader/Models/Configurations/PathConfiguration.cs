@@ -84,6 +84,12 @@ namespace anime_downloader.Models.Configurations
         public static string Playlist => Path.Combine(ApplicationDirectory, "playlist.m3u");
 
         /// <summary>
+        ///     The path to the episodes playlist file.
+        /// </summary>
+        [JsonIgnore]
+        public static string EpisodesPlaylist => Path.Combine(ApplicationDirectory, "episodes.m3u");
+
+        /// <summary>
         ///     The path to the log text file.
         /// </summary>
         [JsonIgnore]

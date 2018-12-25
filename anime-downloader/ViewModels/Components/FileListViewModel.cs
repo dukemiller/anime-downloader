@@ -252,7 +252,7 @@ namespace anime_downloader.ViewModels.Components
         private async void Open()
         {
             if (SelectedFiles.Count > 1)
-                Process.Start(await new Playlist {Source = new ObservableCollection<AnimeFile>(SelectedFiles), Sort = false}.Create());
+                Process.Start(await new Playlist {Source = new ObservableCollection<AnimeFile>(SelectedFiles), Sort = false, IsEpisodeSelection = true}.Create());
             else if (SelectedFile != null)
                 Process.Start(SelectedFile.Path);
         }
