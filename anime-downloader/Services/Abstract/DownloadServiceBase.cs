@@ -264,11 +264,11 @@ namespace anime_downloader.Services.Abstract
         {
             output($"Downloading '{anime.Title}' episode '{episode}'.");
 
-            var download = await DownloadMedia(anime, media);
+            var (successful, command) = await DownloadMedia(anime, media);
 
-            if (download.successful)
+            if (successful)
             {
-                StartMedia(media, download.command);
+                StartMedia(media, command);
                 await Log(anime, episode);
             }
 
@@ -277,7 +277,7 @@ namespace anime_downloader.Services.Abstract
                 output($"Download of '{anime.Title}' failed (most likely due to server error).");
             }
 
-            return download.successful;
+            return successful;
         }
 
         public async Task<(bool successful, string command)> DownloadMedia(Anime anime, RemoteMedia media)
