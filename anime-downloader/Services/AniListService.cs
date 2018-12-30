@@ -153,9 +153,18 @@ namespace anime_downloader.Services
             if (!Directory.Exists(SettingsRepository.ImageDirectory))
                 Directory.CreateDirectory(SettingsRepository.ImageDirectory);
 
-            if (File.Exists(SettingsPath))
-                using (var stream = new StreamReader(SettingsPath))
-                    return JsonConvert.DeserializeObject<AniListData>(stream.ReadToEnd());
+            // don't care about re-initializing, not user centered data
+            try
+            {
+                if (File.Exists(SettingsPath))
+                    using (var stream = new StreamReader(SettingsPath))
+                        return JsonConvert.DeserializeObject<AniListData>(stream.ReadToEnd());
+            }
+
+            catch
+            {
+
+            }
 
             return new AniListData();
         }
