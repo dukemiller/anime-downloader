@@ -1,235 +1,227 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web;
 using anime_downloader.Classes;
 using anime_downloader.Models;
 using anime_downloader.Models.AniList;
-using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
 using Newtonsoft.Json;
-using static anime_downloader.Classes.ApiKeys;
 
 namespace anime_downloader.Services
 {
     // http://anilist-api.readthedocs.io/en/latest/anime.html#browse
-    public class AniListApi: IAniListApi
+    public class AniListApi : IAniListApi
     {
-        private readonly ICredentialsRepository _credentialsRepository;
+        private readonly HttpClient _client;
 
-        private ApiCredentials _credentials;
-
-        private const string Prefix = "https://anilist.co/api";
-
-        private static string AnimeUrl(int id) => $"{Prefix}/anime/{id}";
-
-        private static string FullAnimeUrl(int id) => $"{Prefix}/anime/{id}/page";
-
-        private static string SearchUrl(string query) => $"{Prefix}/anime/search/{query}";
-
-        private static string AuthUrl => $"{Prefix}/auth/access_token";
-
-        private static string BrowseUrl => $"{Prefix}/browse/anime";
+        private const string Url = "https://graphql.anilist.co";
 
         // 
 
-        public AniListApi(ICredentialsRepository credentialsRepository)
+        public AniListApi()
         {
-            _credentialsRepository = credentialsRepository;
-            _credentials = _credentialsRepository.AniListConfiguration.Credentials;
+            _client = new HttpClient(new HttpClientHandler
+            {
+                AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip
+            });
         }
 
         // 
 
         public async Task<List<AiringAnime>> GetNewAnimes(AnimeSeason season)
         {
-            return await GetBrowse(await BuildBrowseUrl(season));
+            var variables = new Dictionary<string, object>
+            {
+                {"page", 1},
+                {"season", season.Season.Description().ToUpper()},
+                {"seasonYear", season.Year}
+            };
+
+            return await Fetch(AnilistQueries.FetchSeason, variables);
         }
 
         public async Task<List<AiringAnime>> GetLeftoverAnime(AnimeSeason season)
         {
-            var data = await GetBrowse(await BuildLeftoverUrl(season));
-            return data
-                .Where(anime => anime.Type == "TV")
-                .Where(anime => anime.Airing?.NextEpisode.HasValue == true &&
-                                Methods.InRange(anime.Airing.NextEpisode.Value, 10, 24))
-                .Where(anime => anime.TotalEpisodes > 12)
+            var variables = new Dictionary<string, object>
+            {
+                {"page", 1},
+                {"season", season.Previous().Season.Description().ToUpper()},
+                {"seasonYear", season.Previous().Year},
+            };
+
+            return (await Fetch(AnilistQueries.FetchSeasonOnlyAiring, variables))
+                .Where(anime => anime.Episodes.HasValue && Methods.InRange(anime.Episodes.Value, 10, 24))
+                .Where(anime => anime.Episodes.Value > 12)
                 .ToList();
         }
 
-        public async Task<AiringAnime> GetAnime(int id, bool fullProfile)
+        public async Task<AiringAnime> GetAnime(int id)
         {
-            try
+            var variables = new Dictionary<string, object>
             {
-                using (var client = new HttpClient())
-                {
-                    var request = await client.GetAsync(await BuildAnimeUrl(id, fullProfile));
-                    var response = await request.Content.ReadAsStringAsync();
+                {"page", 1},
+                {"id", id}
+            };
 
-                    return !response.Contains("\"error\"")
-                        ? JsonConvert.DeserializeObject<AiringAnime>(response)
-                        : null;
-                }
-            }
-
-            catch
-            {
-                return null;
-            }
+            return (await Fetch(AnilistQueries.Get, variables)).FirstOrDefault();
         }
 
         public async Task<List<AiringAnime>> FindAnime(string q)
         {
-            return await GetBrowse(await BuildSearchUrl(q));
+            var variables = new Dictionary<string, object>
+            {
+                {"page", 1},
+                {"search", q}
+            };
+
+            return await Fetch(AnilistQueries.Find, variables);
         }
 
         // 
 
-        /// <summary>
-        ///     GET on the /browse/{} endpoint returning AiringAnime, for new/leftover
-        /// </summary>
-        private static async Task<List<AiringAnime>> GetBrowse(string url)
+        private async Task<List<AiringAnime>> Fetch(string query, Dictionary<string, object> variables)
         {
             try
             {
-                using (var client = new HttpClient())
+                var pairs = new Dictionary<string, string>
                 {
-                    var request = await client.GetAsync(url);
-                    var response = await request.Content.ReadAsStringAsync();
-
-                    if (!response.Contains("\"error\""))
-                    {
-                        var animes = JsonConvert
-                            .DeserializeObject<List<AiringAnime>>(response)
-                            .Where(anime => anime.Type.Contains("TV"))
-                            .ToList();
-
-                        return animes;
-                    }
-
-                    return new List<AiringAnime>();
-                }
+                    {"query", query},
+                    {"variables", JsonConvert.SerializeObject(variables)}
+                };
+                var payload = new FormUrlEncodedContent(pairs);
+                var request = await _client.PostAsync(Url, payload);
+                var response = await request.Content.ReadAsStringAsync();
+                var data = JsonConvert.DeserializeObject<AniListResponse>(response);
+                return data.Data.Page.Media.ToList();
             }
 
-            catch
+            catch (Exception e)
             {
                 return new List<AiringAnime>();
             }
         }
-        
-        // URL related
+    }
 
-        /// <summary>
-        ///     Build the url for gathering general anime of this season
-        /// </summary>
-        private async Task<string> BuildBrowseUrl(AnimeSeason animeSeason)
-        {
-            await CheckAuthentication();
-
-            var builder = new UriBuilder(BrowseUrl);
-            var query = HttpUtility.ParseQueryString(builder.Query);
-            query["access_token"] = _credentials.AccessToken;
-            query["year"] = animeSeason.Year.ToString();
-            query["season"] = animeSeason.Season.Description();
-            query["sort"] = "popularity-desc";
-            query["full_page"] = "true";
-            builder.Query = query.ToString();
-            return builder.ToString();
-        }
-
-        /// <summary>
-        ///     Build the url for gathering anime that are leftover from the season previous to the current
-        /// </summary>
-        private async Task<string> BuildLeftoverUrl(AnimeSeason animeSeason)
-        {
-            await CheckAuthentication();
-
-            var builder = new UriBuilder(BrowseUrl);
-            var query = HttpUtility.ParseQueryString(builder.Query);
-            query["access_token"] = _credentials.AccessToken;
-            query["airing_data"] = "true";
-            query["status"] = "Currently Airing";
-            query["year"] = animeSeason.Previous().Year.ToString();
-            query["season"] = animeSeason.Previous().Season.Description();
-            query["sort"] = "popularity-desc";
-            query["full_page"] = "true";
-            builder.Query = query.ToString();
-            return builder.ToString();
-        }
-
-        /// <summary>
-        ///     Build the url for gathering an airing anime profile
-        /// </summary>
-        private async Task<string> BuildAnimeUrl(int id, bool fullProfile = true)
-        {
-            await CheckAuthentication();
-
-            var builder = new UriBuilder(fullProfile ? FullAnimeUrl(id) : AnimeUrl(id));
-            var query = HttpUtility.ParseQueryString(builder.Query);
-            query["access_token"] = _credentials.AccessToken;
-            builder.Query = query.ToString();
-            return builder.ToString();
-        }
-        
-        private async Task<string> BuildAnimeUrl(AiringAnimeSmall anime) => await BuildAnimeUrl(anime.Id);
-        
-        private async Task<string> BuildAnimeUrl(Anime anime) => await BuildAnimeUrl(anime.Details.AniId);
-
-        private async Task<string> BuildSearchUrl(string q)
-        {
-            await CheckAuthentication();
-            var builder = new UriBuilder(SearchUrl(HttpUtility.UrlEncode(q)));
-            var query = HttpUtility.ParseQueryString(builder.Query);
-            query["access_token"] = _credentials.AccessToken;
-            builder.Query = query.ToString();
-            return builder.ToString();
-        }
-
-        // Auth related
-
-        private async Task CheckAuthentication()
-        {
-            ApiCredentials credentials = null;
-
-            // never retrieved: retrieve
-            if (_credentials == null)
-                credentials = await GetCredentials();
-
-            // token expired: update
-            else if (_credentials?.ExpiresDateTime < DateTime.Now)
-                credentials = await GetCredentials();
-
-            // a change was required to be made, save new credentials to settings
-            if (credentials != null)
-            {
-                _credentials = credentials;
-                _credentialsRepository.AniListConfiguration.Credentials = credentials;
-                _credentialsRepository.Save();
+    internal static class AnilistQueries
+    {
+        public const string FetchSeason = @"
+            query ($page: Int, $season: MediaSeason, $seasonYear: Int) {
+              Page(page: $page, perPage: 50) {
+                
+                pageInfo {
+                  currentPage
+                  hasNextPage
+                }
+                
+                media(season: $season, seasonYear: $seasonYear, sort: POPULARITY_DESC, format_in: [TV, TV_SHORT]) {
+                  " + Media + @"
+                }
+              }
             }
-        }
+            ";
 
-        /// <summary>
-        ///     Authenticate to the API server
-        /// </summary>
-        private static async Task<ApiCredentials> GetCredentials()
-        {
-            using (var client = new HttpClient())
-            {
-                var pairs = new Dictionary<string, string>
-                {
-                    {"grant_type", "client_credentials"},
-                    {"client_id", AniListId},
-                    {"client_secret", AniListSecret}
-                };
-                var content = new FormUrlEncodedContent(pairs);
-                var request = await client.PostAsync(AuthUrl, content);
-                var response = await request.Content.ReadAsStringAsync();
-                var credentials = JsonConvert.DeserializeObject<ApiCredentials>(response);
-                return credentials;
+        public const string Get = @"
+            query ($page: Int, $id: Int) {
+              Page(page: $page, perPage: 50) {
+                
+                pageInfo {
+                  currentPage
+                  hasNextPage
+                }
+                
+                media(format_in: [TV, TV_SHORT], id: $id) {
+                " + Media + @"
+                }
+              }
+            }";
+
+        public const string Find = @"
+            query ($page: Int, $search: String) {
+              Page(page: $page, perPage: 50) {
+                
+                pageInfo {
+                  currentPage
+                  hasNextPage
+                }
+                
+                media(format_in: [TV, TV_SHORT], search: $search) {
+                " + Media + @"
+                }
+              }
+            }";
+
+        public const string FetchSeasonOnlyAiring = @"
+            query ($page: Int, $season: MediaSeason, $seasonYear: Int) {
+              Page(page: $page, perPage: 50) {
+                
+                pageInfo {
+                  currentPage
+                  hasNextPage
+                }
+                
+                media(season: $season, seasonYear: $seasonYear, sort: POPULARITY_DESC, format_in: [TV, TV_SHORT], status:RELEASING) {
+                " + Media + @"
+                }
+              }
+            }";
+
+
+        private const string Media = @"
+            id
+            idMal
+
+            title {
+              romaji
+              english
             }
-        }
 
+            genres
+                
+            startDate {
+              year
+              month
+              day
+            }
+
+            endDate {
+              year
+              month
+              day
+            }
+
+            format
+
+            relations {
+              edges {
+                relationType
+                node {
+                  id
+                  format
+                  episodes
+                }
+              }
+            }
+
+            episodes
+
+            coverImage {
+              large
+            }
+
+            source
+
+            description(asHtml: false)
+
+            studios {
+              edges {
+                isMain
+                node {
+                  name
+                }
+              }
+            }";
     }
 }

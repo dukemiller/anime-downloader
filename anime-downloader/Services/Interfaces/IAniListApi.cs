@@ -9,7 +9,7 @@ namespace anime_downloader.Services.Interfaces
     {
         Task<List<AiringAnime>> GetNewAnimes(AnimeSeason season);
         Task<List<AiringAnime>> GetLeftoverAnime(AnimeSeason season);
-        Task<AiringAnime> GetAnime(int id, bool fullProfile);
+        Task<AiringAnime> GetAnime(int id);
         Task<List<AiringAnime>> FindAnime(string q);
     }
 }
