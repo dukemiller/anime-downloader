@@ -16,7 +16,6 @@ using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
 using HtmlAgilityPack;
 using Component = anime_downloader.Enums.Component;
 
