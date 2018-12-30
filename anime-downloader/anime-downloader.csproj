@@ -151,24 +151,26 @@
     <Compile Include="Enums\Status.cs" />
     <Compile Include="Enums\ViewState.cs" />
     <Compile Include="Models\Abstract\RemoteMedia.cs" />
-    <Compile Include="Models\AniList\Actor.cs" />
-    <Compile Include="Models\AniList\Airing.cs" />
-    <Compile Include="Models\AniList\AiringAnimeSmall.cs" />
-    <Compile Include="Models\AniList\Character.cs" />
     <Compile Include="Models\AniList\AiringAnime.cs" />
     <Compile Include="Models\AniList\ApiCredentials.cs" />
-    <Compile Include="Models\AniList\ExternalLink.cs" />
-    <Compile Include="Models\AniList\ListStats.cs" />
-    <Compile Include="Models\AniList\Ranking.cs" />
-    <Compile Include="Models\AniList\Relation.cs" />
-    <Compile Include="Models\AniList\Staff.cs" />
-    <Compile Include="Models\AniList\Studio.cs" />
-    <Compile Include="Models\AniList\Tag.cs" />
+    <Compile Include="Models\AniList\AniListResponse.cs" />
+    <Compile Include="Models\AniList\CoverImage.cs" />
+    <Compile Include="Models\AniList\Data.cs" />
+    <Compile Include="Models\AniList\EndDate.cs" />
+    <Compile Include="Models\AniList\Page.cs" />
+    <Compile Include="Models\AniList\PageInfo.cs" />
+    <Compile Include="Models\AniList\RelationEdge.cs" />
+    <Compile Include="Models\AniList\RelationNode.cs" />
+    <Compile Include="Models\AniList\Relations.cs" />
+    <Compile Include="Models\AniList\StartDate.cs" />
+    <Compile Include="Models\AniList\StudioEdge.cs" />
+    <Compile Include="Models\AniList\StudioNode.cs" />
+    <Compile Include="Models\AniList\Studios.cs" />
+    <Compile Include="Models\AniList\Title.cs" />
     <Compile Include="Models\Anime.cs" />
     <Compile Include="Models\AnimeFile.cs" />
     <Compile Include="Classes\Extensions.cs" />
     <Compile Include="Models\AnimeSeason.cs" />
-    <Compile Include="Models\Configurations\AniListConfiguration.cs" />
     <Compile Include="Models\MagnetLink.cs" />
     <Compile Include="Models\MultipleAnimeDetails.cs" />
     <Compile Include="Models\AnimeFileRange.cs" />
@@ -487,6 +489,7 @@
   <ItemGroup>
     <Resource Include="Resources\Images\default.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(TargetPath)" "$(SolutionDir)"</PostBuildEvent>
