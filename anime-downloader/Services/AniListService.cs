@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
-using anime_downloader.Classes;
 using anime_downloader.Models;
 using anime_downloader.Models.AniList;
 using anime_downloader.Models.Configurations;
 using anime_downloader.Repositories;
 using anime_downloader.Services.Interfaces;
 using Newtonsoft.Json;
-
 
 namespace anime_downloader.Services
 {
@@ -21,6 +19,10 @@ namespace anime_downloader.Services
 
         private readonly AniListData _data;
 
+        private static bool _collecting;
+
+        private readonly SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
+        
         // 
 
         public AniListService(IAniListApi api)
@@ -31,56 +33,48 @@ namespace anime_downloader.Services
 
         // 
         
-        public async Task<List<AiringAnime>> New(AnimeSeason animeSeason)
+        public async Task<List<AiringAnime>> New(AnimeSeason animeSeason, Action startLoading)
         {
-            return await _data.New(AnimeSeason.Current, async () => await _api.GetNewAnimes(animeSeason));
+            return await _data.New(AnimeSeason.Current, async () => await _api.GetNewAnimes(animeSeason), startLoading);
         }
 
-        public async Task<List<AiringAnime>> Leftover(AnimeSeason animeSeason)
+        public async Task<List<AiringAnime>> Leftover(AnimeSeason animeSeason, Action startLoading)
         {
-            return await _data.Leftovers(AnimeSeason.Current, async () => await _api.GetLeftoverAnime(animeSeason));
+            return await _data.Leftovers(AnimeSeason.Current, async () => await _api.GetLeftoverAnime(animeSeason), startLoading);
         }
 
-        public async Task FillInDetails(AnimeSeason season, bool isNew, AiringAnime anime)
+        public async Task CollectResources(AiringAnime anime)
         {
-            anime.Description = "Loading ...";
+            await _semaphoreSlim.WaitAsync();
 
-            var updated = await _api.GetAnime(anime.Id, true);
-
-            if (updated != null)
+            try
             {
-                await _data.UpdateEntry(season, isNew, updated);
-                UpdateObservableProperties(anime, updated);
+                while (_collecting)
+                    await Task.Delay(10);
+
+                _collecting = true;
+                await _data.DownloadImage(anime).ConfigureAwait(false);
             }
 
-            else
-                anime.Description = "";
-        }
+            catch (Exception e)
+            {
+                Console.WriteLine();
+                //
+            }
 
-        // 
+            finally
+            {
+                _semaphoreSlim.Release();
+            }
 
-        /// <summary>
-        ///     It's unfortunate that by updating these properties via reflection
-        ///     i'm not raising propertychanged, so i'll just do it here manually
-        /// </summary>
-        private static void UpdateObservableProperties(AiringAnime original, AiringAnime updated)
-        {
-            original.Description = updated.Description;
-            original.Source = updated.Source;
-            original.Studio = updated.Studio;
-            original.ImagePath = updated.ImagePath;
+            _collecting = false;
         }
     }
 
     [Serializable]
     internal class AniListData
     {
-        private static readonly WebClient Downloader = new WebClient();
-
-        static AniListData()
-        {
-            Downloader.Headers["User-Agent"] = ApiKeys.AniListUserAgent;
-        }
+        private readonly WebClient _downloader = new WebClient();
 
         private AniListData() { }
 
@@ -90,7 +84,7 @@ namespace anime_downloader.Services
         [JsonProperty("data")]
         public Dictionary<string, AniListSeasonData> Data { get; set; } = new Dictionary<string, AniListSeasonData>();
 
-        public async Task<List<AiringAnime>> New(AnimeSeason season, Func<Task<List<AiringAnime>>> getNew)
+        public async Task<List<AiringAnime>> New(AnimeSeason season, Func<Task<List<AiringAnime>>> getNew, Action startLoading)
         {
             if (!Data.ContainsKey(season.Title))
                 Data[season.Title] = new AniListSeasonData();
@@ -102,6 +96,7 @@ namespace anime_downloader.Services
 
             else if (data.New.Count == 0)
             {
+                startLoading();
                 Data[season.Title].New = await getNew();
                 Data[season.Title].LastCheckedNew = DateTime.Now;
                 await Save();
@@ -110,7 +105,7 @@ namespace anime_downloader.Services
             return Data[season.Title].New;
         }
 
-        public async Task<List<AiringAnime>> Leftovers(AnimeSeason season, Func<Task<List<AiringAnime>>> getLeftovers)
+        public async Task<List<AiringAnime>> Leftovers(AnimeSeason season, Func<Task<List<AiringAnime>>> getLeftovers, Action startLoading)
         {
             if (!Data.ContainsKey(season.Title))
                 Data[season.Title] = new AniListSeasonData();
@@ -122,6 +117,7 @@ namespace anime_downloader.Services
 
             if (data.LeftOver.Count == 0)
             {
+                startLoading();
                 Data[season.Title].LeftOver = await getLeftovers();
                 Data[season.Title].LastCheckedLeftover = DateTime.Now;
                 await Save();
@@ -130,26 +126,30 @@ namespace anime_downloader.Services
             return Data[season.Title].LeftOver;
         }
 
-        public async Task UpdateEntry(AnimeSeason season, bool isNew, AiringAnime updated)
+        public async Task DownloadImage(AiringAnime anime)
         {
-            if (!Data.ContainsKey(season.Title))
-                return;
-
-            var list = isNew ? Data[season.Title].New : Data[season.Title].LeftOver;
-            var index = list.IndexOf(list.First(a => a.Id.Equals(updated.Id)));
-            list[index] = updated;
-
-            await DownloadImage(updated);
-            await Save();
-        }
-
-        private static async Task DownloadImage(AiringAnimeSmall anime)
-        {
-            var image = anime.ImageUrlLge;
+            var changed = false;
+            var image = anime.CoverImage.Large;
             var downloadPath = Path.Combine(SettingsRepository.ImageDirectory, $"{anime.Id}.png");
+
+            if (File.Exists(downloadPath))
+            {
+                var length = new FileInfo(downloadPath).Length;
+                if (length < 8)
+                    File.Delete(downloadPath);
+            }
+
             if (!File.Exists(downloadPath))
-                await Downloader.DownloadFileTaskAsync(image, downloadPath);
-            anime.ImagePath = downloadPath;
+                await _downloader.DownloadFileTaskAsync(image, downloadPath).ConfigureAwait(false);
+            
+            if (image != downloadPath)
+            {
+                anime.CoverImage.Large = downloadPath;
+                changed = true;
+            }
+
+            if (changed)
+                await Save();
         }
 
         public static AniListData Load()

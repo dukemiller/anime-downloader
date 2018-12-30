@@ -12,12 +12,7 @@ namespace anime_downloader.Repositories.Interface
         ///     All information specific to myanimelist.
         /// </summary>
         MyAnimeListConfiguration MyAnimeListConfig { get; set; }
-
-        /// <summary>
-        ///     All information specific to anilist.
-        /// </summary>
-        AniListConfiguration AniListConfiguration { get; set; }
-
+        
         /// <summary>
         ///     Save the repository to disk.
         /// </summary>

@@ -36,8 +36,8 @@ namespace anime_downloader.Services
 
             var nearest = animes.OrderBy(a => new[]
             {
-                Methods.LevenshteinDistance(title, a.TitleEnglish),
-                Methods.LevenshteinDistance(title, a.TitleRomaji)
+                Methods.LevenshteinDistance(title, a.Title.English),
+                Methods.LevenshteinDistance(title, a.Title.Romaji)
             }.Min()).FirstOrDefault();
 
             if (nearest != null)
@@ -59,7 +59,7 @@ namespace anime_downloader.Services
 
             if (GetId(anime) > 0)
             {
-                var updated = await _api.GetAnime(GetId(anime), false);
+                var updated = await _api.GetAnime(GetId(anime));
 
                 if (anime.Details.OverallTotal < anime.Details.TotalEpisodes)
                     anime.Details.OverallTotal = anime.Details.TotalEpisodes;
@@ -70,39 +70,39 @@ namespace anime_downloader.Services
                     changesMade = true;
                 }
 
-                if (anime.Details.Title != updated.TitleRomaji)
+                if (anime.Details.Title != updated.Title.Romaji)
                 {
-                    anime.Details.Title = updated.TitleRomaji;
+                    anime.Details.Title = updated.Title.Romaji;
                     changesMade = true;
                 }
 
-                if (anime.Details.English != updated.TitleEnglish)
+                if (anime.Details.English != updated.Title.English)
                 {
-                    anime.Details.English = updated.TitleEnglish;
+                    anime.Details.English = updated.Title.English;
                     changesMade = true;
                 }
 
-                if (updated.TotalEpisodes != 0 && anime.Details.TotalEpisodes != updated.TotalEpisodes)
+                if (updated.Episodes.HasValue && updated.Episodes != 0 && anime.Details.TotalEpisodes != updated.Episodes)
                 {
-                    anime.Details.TotalEpisodes = updated.TotalEpisodes;
-                    anime.Details.OverallTotal = updated.TotalEpisodes;
+                    anime.Details.TotalEpisodes = updated.Episodes.Value;
+                    anime.Details.OverallTotal = updated.Episodes.Value;
                     changesMade = true;
                 }
 
-                if (anime.Details.Image == null && updated.ImagePath != null)
+                if (anime.Details.Image == null && updated.CoverImage.Large != null)
                 {
-                    anime.Details.Image = updated.ImagePath;
+                    anime.Details.Image = updated.CoverImage.Large;
                     changesMade = true;
                 }
 
                 // Date details
 
-                if (updated.StartDate.HasValue)
+                if (updated.StartDate.Month.HasValue && updated.StartDate.Year.HasValue)
                 {
                     var aired = new AnimeSeason
                     {
-                        Year = updated.StartDate.Value.Year,
-                        Season = (Season) Math.Ceiling(Convert.ToDouble(updated.StartDate.Value.Month) / 3)
+                        Year = updated.StartDate.Year.Value,
+                        Season = (Season) Math.Ceiling(Convert.ToDouble(updated.StartDate.Month) / 3)
                     };
 
                     if (anime.Details.Aired != aired)
@@ -112,12 +112,12 @@ namespace anime_downloader.Services
                     }
                 }
 
-                if (updated.EndDate is DateTime end)
+                if (updated.EndDate.Month.HasValue && updated.EndDate.Year.HasValue)
                 {
                     var ended = new AnimeSeason
                     {
-                        Year = end.Year,
-                        Season = (Season)Math.Ceiling(Convert.ToDouble(end.Month) / 3)
+                        Year = updated.EndDate.Year.Value,
+                        Season = (Season)Math.Ceiling(Convert.ToDouble(updated.EndDate.Month.Value) / 3)
                     };
 
                     if (anime.Details.Ended != ended)
@@ -147,17 +147,17 @@ namespace anime_downloader.Services
                 anime.Details.OverallTotal = anime.Details.TotalEpisodes;
 
                 // Loop through every prequel series, summing up the total episode counts
-                Relation relation;
-                var current = await _api.GetAnime(GetId(anime), fullProfile: true);
+                RelationNode relation;
+                var current = await _api.GetAnime(GetId(anime));
 
                 do
                 {
-                    relation = current.Relations.FirstOrDefault(r => r.RelationType == "prequel");
+                    relation = current.Relations.Edges.FirstOrDefault(r => r.RelationType == "prequel")?.Node;
                     if (relation == null)
                         continue;
-                    if (relation.Type == "TV")
-                        anime.Details.OverallTotal += relation.TotalEpisodes ?? 0;
-                    current = await _api.GetAnime(relation.Id, fullProfile: true);
+                    if (relation.Format == "TV")
+                        anime.Details.OverallTotal += relation.Episodes ?? 0;
+                    current = await _api.GetAnime(relation.Id);
                 } while (relation != null && anime.Episode > anime.Details.Total);
 
                 // If after all attempts to change the episode is still greater,

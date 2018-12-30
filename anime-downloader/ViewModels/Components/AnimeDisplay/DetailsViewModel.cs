@@ -109,7 +109,7 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
             Editing = false;
             Anime = new Anime
             {
-                Name = airing.TitleEnglish,
+                Name = airing.Title.English,
                 Episode = 0,
                 Status = Status.Watching,
                 Resolution = "720",
@@ -117,17 +117,18 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
                 Details =
                 {
                     AniId = airing.Id,
+                    Id = airing.IdMal?.ToString(),
                     NeedsUpdating = true,
-                    Image = airing.ImagePath,
+                    Image = airing.CoverImage.Large,
                     Synopsis = airing.Description,
-                    Title = airing.TitleRomaji,
-                    English = airing.TitleEnglish,
-                    Aired = airing.AnimeSeason,
-                    TotalEpisodes = airing.TotalEpisodes,
-                    OverallTotal = airing.TotalEpisodes
+                    Title = airing.Title.Romaji,
+                    English = airing.Title.English,
+                    Aired = AnimeSeason.Current,
+                    TotalEpisodes = airing.Episodes ?? 0,
+                    OverallTotal = airing.Episodes ?? 0
                 }
             };
-            Image = airing.ImagePath;
+            Image = airing.CoverImage.Large;
 
             // 
             Text = "Add";

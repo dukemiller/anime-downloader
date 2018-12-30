@@ -150,7 +150,6 @@
     <Compile Include="Enums\ViewState.cs" />
     <Compile Include="Models\Abstract\RemoteMedia.cs" />
     <Compile Include="Models\AniList\AiringAnime.cs" />
-    <Compile Include="Models\AniList\ApiCredentials.cs" />
     <Compile Include="Models\AniList\AniListResponse.cs" />
     <Compile Include="Models\AniList\CoverImage.cs" />
     <Compile Include="Models\AniList\Data.cs" />

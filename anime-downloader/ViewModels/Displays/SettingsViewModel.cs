@@ -29,7 +29,6 @@ namespace anime_downloader.ViewModels.Displays
             });
 
             Credentials.MyAnimeListConfig.PropertyChanged += Model_PropertyChanged;
-            Credentials.AniListConfiguration.PropertyChanged += Model_PropertyChanged;
             Settings.FlagConfig.PropertyChanged += Model_PropertyChanged;
             Settings.PathConfig.PropertyChanged += Model_PropertyChanged;
         }

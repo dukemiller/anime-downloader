@@ -123,13 +123,12 @@ namespace anime_downloader.Classes
 
         public StringDistance(T item, string name, string comparison)
         {
-            var data = Data(name, comparison);
+            var data = Data(name ?? "", comparison ?? "");
             _distance = Methods.LevenshteinDistance(name, comparison);
             _relevance = (double) data.Item2.Count(a => data.Item1.Contains(a)) / data.Item2.Length;
             Item = item;
         }
-
-
+        
         public double Distance => _distance * (2 - _relevance);
 
         public T Item { get; }

@@ -10,16 +10,23 @@ namespace anime_downloader.Repositories
     [Serializable]
     public class CredentialsRepository: ObservableObject, ICredentialsRepository
     {
+        private MyAnimeListConfiguration _myAnimeListConfig = new MyAnimeListConfiguration();
+
         [JsonIgnore]
         private static string SavePath => Path.Combine(PathConfiguration.ApplicationDirectory, "credentials.json");
 
         // 
 
         [JsonProperty("myanimelist")]
-        public MyAnimeListConfiguration MyAnimeListConfig { get; set; } = new MyAnimeListConfiguration();
-
-        [JsonProperty("anilist")]
-        public AniListConfiguration AniListConfiguration { get; set; } = new AniListConfiguration();
+        public MyAnimeListConfiguration MyAnimeListConfig
+        {
+            get => _myAnimeListConfig;
+            set
+            {
+                _myAnimeListConfig = value;
+                RaisePropertyChanged(nameof(MyAnimeListConfig));
+            }
+        }
 
         // 
 

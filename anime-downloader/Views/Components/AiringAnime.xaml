@@ -16,12 +16,12 @@
                 <RowDefinition Height="8*" />
                 <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
-            <Image Grid.RowSpan="2" Width="226" Source="{Binding ImagePath}" />
+            <Image Grid.RowSpan="2" Width="226" Source="{Binding CoverImage.Large}" />
             <Rectangle Grid.Row="1" Opacity="0.7" Fill="Black" />
             <Label VerticalAlignment="Center"
                    Foreground="#62BDFF"
                    HorizontalAlignment="Center" FontSize="18" FontWeight="DemiBold" Grid.Row="1"
-                   Content="{Binding Studio[0].StudioName}" />
+                   Content="{Binding Studios.Edges[0].StudioNode.Name}" />
         </Grid>
         <DockPanel>
             <DockPanel DockPanel.Dock="Bottom">
@@ -56,12 +56,12 @@
                     <TextBlock Style="{StaticResource MaterialDesignTitleTextBlock}"
                                TextWrapping="Wrap"
                                FontSize="28"
-                               Text="{Binding TitleEnglish}" />
+                               Text="{Binding Title.English}" />
                     <TextBlock
                         Text="{Binding Genres, Converter={StaticResource StringJoinConverter}, StringFormat={}Genres: {0}}" />
                     <UniformGrid Columns="2" Rows="1">
                         <TextBlock Text="{Binding Source, StringFormat={}Source: {0}}"/>
-                        <TextBlock Text="{Binding Type, StringFormat={}Type: {0}}" />
+                        <TextBlock Text="{Binding Format, StringFormat={}Type: {0}}" />
                     </UniformGrid>
                 </StackPanel>
 
