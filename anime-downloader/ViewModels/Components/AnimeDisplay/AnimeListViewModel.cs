@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
@@ -17,6 +18,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using HtmlAgilityPack;
+using Component = anime_downloader.Enums.Component;
 
 namespace anime_downloader.ViewModels.Components.AnimeDisplay
 {
@@ -31,25 +33,19 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
 
         // 
 
-        public AnimeListViewModel(ISettingsRepository settings, IAnimeService animeService)
+        public AnimeListViewModel(ISettingsRepository settings, IAnimeService animeService, ICredentialsRepository credentialsRepository)
         {
             _animeService = animeService;
             Settings = settings;
+            CredentialsRepository = credentialsRepository;
+            CredentialsRepository.PropertyChanged -= ReloadList;
+            CredentialsRepository.PropertyChanged += ReloadList;
 
             // 
 
             Find = new FindViewModel();
-            Find.PropertyChanged += (sender, args) =>
-            {
-                if (args.PropertyName.Equals("Text"))
-                    if (Find.Text.Equals(""))
-                        Animes = new ObservableCollection<Anime>(_animeService.FilteredAndSorted());
-                    else
-                        Animes =
-                            new ObservableCollection<Anime>(
-                                _animeService.FilteredAndSorted().Where(
-                                    a => a.Name.ToLower().Contains(Find.Text.ToLower())));
-            };
+            Find.PropertyChanged -= UpdateListBasedOnFind;
+            Find.PropertyChanged += UpdateListBasedOnFind;
 
             FilterText = Settings.FilterBy;
             Animes = new ObservableCollection<Anime>(_animeService.FilteredAndSorted());
@@ -130,6 +126,8 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
             set => Set(() => Settings, ref _settings, value);
         }
 
+        public ICredentialsRepository CredentialsRepository { get; }
+
         public RelayCommand AddCommand { get; set; }
 
         public RelayCommand AddMultipleCommand { get; set; }
@@ -209,6 +207,20 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
                 Process.Start(link.Attributes["href"].Value);
             else
                 Methods.Alert("No results found.");
+        }
+
+        private void ReloadList(object sender, PropertyChangedEventArgs args)
+        {
+            Animes = new ObservableCollection<Anime>(_animeService.FilteredAndSorted());
+        }
+
+        private void UpdateListBasedOnFind(object sender, PropertyChangedEventArgs args)
+        {
+            if (args.PropertyName.Equals("Text"))
+                if (Find.Text.Equals(""))
+                    Animes = new ObservableCollection<Anime>(_animeService.FilteredAndSorted());
+                else
+                    Animes = new ObservableCollection<Anime>(_animeService.FilteredAndSorted().Where(a => a.Name.ToLower().Contains(Find.Text.ToLower())));
         }
     }
 }

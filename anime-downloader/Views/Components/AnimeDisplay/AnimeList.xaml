@@ -122,6 +122,7 @@
                                 <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsSelected}" Value="False" />
                                 <Condition Binding="{Binding Details.HasId}" Value="True" />
                                 <Condition Binding="{Binding Details.NeedsUpdating}" Value="True" />
+                                <Condition Binding="{Binding Source={StaticResource Locator}, Path=List.CredentialsRepository.MyAnimeListConfig.LoggedIn}" Value="True" />
                             </MultiDataTrigger.Conditions>
                             <Setter Property="Background">
                                 <Setter.Value>

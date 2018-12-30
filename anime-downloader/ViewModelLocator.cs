@@ -128,6 +128,8 @@ namespace anime_downloader
 
         public static AnimeDisplayViewModel Anime => ServiceLocator.Current.GetInstance<AnimeDisplayViewModel>();
 
+        public static AnimeListViewModel List => ServiceLocator.Current.GetInstance<AnimeListViewModel>();
+
         public static SettingsViewModel Settings => ServiceLocator.Current.GetInstance<SettingsViewModel>();
 
         public static DownloadViewModel Download => ServiceLocator.Current.GetInstance<DownloadViewModel>();
