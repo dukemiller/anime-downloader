@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
@@ -336,6 +337,61 @@ namespace anime_downloader.Classes
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return System.Convert.ToInt32(value) + 1;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class SourceConverter : IValueConverter
+    {
+        private static readonly TextInfo TextInfo = new CultureInfo("en-US", false).TextInfo;
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return TextInfo.ToTitleCase(((string) value)?.ToLower() ?? "").Replace("_", " ");
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class FormatConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var format = (value as string)?.ToLower().Replace("_", " ");
+            return format != null && format.Contains("short")
+                ? "Short" 
+                : "";
+//            return str.Contains("Short")
+//                ? "Short"
+//                : "";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class VisibilityNotNullConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null
+                || value is IList l && l.Count == 0
+                || value is IDictionary d && d.Keys.Count == 0
+                || value is ICollection c && c.Count == 0
+                || value is string s && (s.Trim().Length == 0 || parameter is string p && s != p)
+                || value is bool b && !b
+                || value is int i && i == 0)
+                return Visibility.Collapsed;
+            return Visibility.Visible;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -19,7 +19,7 @@
     </UserControl.Resources>
     <Grid Background="White">
         <Grid.RowDefinitions>
-            <RowDefinition Height="9*" />
+            <RowDefinition Height="6.5*" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -28,8 +28,11 @@
         </Grid.ColumnDefinitions>
         <TextBlock Style="{StaticResource MaterialDesignHeadlineTextBlock}"
                    Grid.Row="1" Grid.Column="1"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Center"
                    FontWeight="DemiBold"
                    FontStyle="Italic"
+                   Margin="10,0"
                    Opacity="0.6"
                    Text="{Binding Season.Title}" />
         <controls:MetroAnimatedSingleRowTabControl TabStripMargin="5"

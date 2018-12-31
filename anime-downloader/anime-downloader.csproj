@@ -139,6 +139,8 @@
     <Compile Include="Classes\Xaml\FocusBehavior.cs" />
     <Compile Include="Classes\Xaml\MouseBindings.cs" />
     <Compile Include="Classes\Xaml\MyMultiSelectBehavior.cs" />
+    <Compile Include="Classes\Xaml\SelectableTextBlock.cs" />
+    <Compile Include="Classes\Xaml\TextEditorWrapper.cs" />
     <Compile Include="Enums\Request.cs" />
     <Compile Include="Enums\DownloadOption.cs" />
     <Compile Include="Enums\DownloadProvider.cs" />

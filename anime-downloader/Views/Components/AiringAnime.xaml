@@ -6,26 +6,55 @@
              xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:aniList="clr-namespace:anime_downloader.Models.AniList"
+             xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
              Background="White"
              d:DesignHeight="360"
              d:DesignWidth="680"
              mc:Ignorable="d" d:DataContext="{d:DesignInstance {x:Type aniList:AiringAnime} }">
-    <DockPanel Margin="25,0">
-        <Grid>
+    <DockPanel Margin="28,0">
+        <!-- Image and studio titlebar -->
+        <Grid Width="226">
             <Grid.RowDefinitions>
                 <RowDefinition Height="8*" />
                 <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
-            <Image Grid.RowSpan="2" Width="226" Source="{Binding CoverImage.Large}" />
-            <Rectangle Grid.Row="1" Opacity="0.7" Fill="Black" />
-            <Label VerticalAlignment="Center"
-                   Foreground="#62BDFF"
-                   HorizontalAlignment="Center" FontSize="18" FontWeight="DemiBold" Grid.Row="1"
-                   Content="{Binding Studios.Edges[0].StudioNode.Name}" />
+
+            <Border Grid.ZIndex="1"
+                    VerticalAlignment="Top"
+                    Padding="8,0"
+                    Visibility="{Binding Format, Converter={StaticResource VisibilityNotNullConverter}, ConverterParameter=TV_SHORT}"
+                    HorizontalAlignment="Left">
+                <Border.Background>
+                    <SolidColorBrush Color="Black" Opacity="0.4" />
+                </Border.Background>
+                <TextBlock Text="{Binding Format, Converter={StaticResource FormatConverter}}"
+                           Foreground="White" />
+            </Border>
+
+            <Border Grid.Row="0"
+                    Grid.RowSpan="2">
+                <Image Source="{Binding CoverImage.Large}" />
+            </Border>
+
+            <!-- Studio titlebar -->
+            <Border Grid.Row="1">
+                <Border.Background>
+                    <SolidColorBrush Color="Black" Opacity="0.7" />
+                </Border.Background>
+                <TextBlock
+                    VerticalAlignment="Center"
+                    Foreground="#62BDFF"
+                    HorizontalAlignment="Center" FontSize="18" FontWeight="DemiBold"
+                    TextTrimming="CharacterEllipsis"
+                    Text="{Binding Studios.Edges[0].StudioNode.Name}" />
+            </Border>
+
         </Grid>
-        <DockPanel>
-            <DockPanel DockPanel.Dock="Bottom">
-                <TextBlock VerticalAlignment="Bottom" Padding="10,0">
+        <Grid Margin="0,0,0,27">
+            <DockPanel VerticalAlignment="Bottom" Margin="0,0,0,-25">
+
+                <!-- Counter -->
+                <TextBlock VerticalAlignment="Bottom" Padding="10,0" FontFamily="Calibri">
                     <Run
                         Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:FlipView}}, 
                                                Path=SelectedIndex, 
@@ -37,41 +66,56 @@
                                                 Mode=OneWay,
                                                 Path=(ItemsSource).Count}" />
                 </TextBlock>
+
+                <!-- Add button -->
                 <Button Width="48"
                         HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
                         Height="48"
                         Margin="4,0,-20,0"
                         IsDefault="True"
                         IsTabStop="False"
+                        Grid.ZIndex="1"
+
                         Command="{Binding ElementName=ParentTabControl, Path=DataContext.AddCommand}"
                         Style="{DynamicResource MahApps.Metro.Styles.MetroCircleButtonStyle}">
                     <materialDesign:PackIcon Width="20"
                                              Height="20"
+                                             Grid.ZIndex="1"
                                              Kind="Plus" />
                 </Button>
-            </DockPanel>
-            <DockPanel Margin="8">
-                <StackPanel DockPanel.Dock="Top">
-                   
-                    <TextBlock Style="{StaticResource MaterialDesignTitleTextBlock}"
-                               TextWrapping="Wrap"
-                               FontSize="28"
-                               Text="{Binding Title.English}" />
-                    <TextBlock
-                        Text="{Binding Genres, Converter={StaticResource StringJoinConverter}, StringFormat={}Genres: {0}}" />
-                    <UniformGrid Columns="2" Rows="1">
-                        <TextBlock Text="{Binding Source, StringFormat={}Source: {0}}"/>
-                        <TextBlock Text="{Binding Format, StringFormat={}Type: {0}}" />
-                    </UniformGrid>
-                </StackPanel>
 
-                <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False" IsTabStop="False"
-                              FocusVisualStyle="{x:Null}">
-                    <TextBlock Text="{Binding Description, Converter={StaticResource SynposisSnipConverter}}"
-                               FontSize="14"
-                               TextWrapping="Wrap" Margin="8" />
-                </ScrollViewer>
             </DockPanel>
-        </DockPanel>
+            <DockPanel Margin="8,0,0,10">
+
+                <!-- Title -->
+                <xaml:SelectableTextBlock
+                    TextDecorations="None"
+                    DockPanel.Dock="Top"
+                    Margin="0,0,-26,0"
+                    Focusable="True"
+                    materialDesign:TextFieldAssist.DecorationVisibility="Collapsed"
+                    TextWrapping="WrapWithOverflow"
+                    FontSize="24"
+                    LineHeight="25"
+                    LineStackingStrategy="BlockLineHeight"
+                    FontWeight="Bold"
+                    Text="{Binding Title.English}" />
+
+                <!-- Tags under title  -->
+                <Grid DockPanel.Dock="Top" Opacity="0.3" TextElement.FontSize="16" Margin="0,-1,-25,0">
+                    <TextBlock Text="{Binding Genres, Converter={StaticResource StringJoinConverter}}" />
+                    <TextBlock Text="{Binding Source, Converter={StaticResource SourceConverter}}"
+                               HorizontalAlignment="Right" />
+                </Grid>
+
+                <!-- Description  -->
+                <TextBlock Text="{Binding Description, Converter={StaticResource SynposisSnipConverter}}"
+                           Margin="0,4,0,0"
+                           TextTrimming="CharacterEllipsis"
+                           TextWrapping="Wrap" />
+
+            </DockPanel>
+        </Grid>
     </DockPanel>
 </UserControl>
