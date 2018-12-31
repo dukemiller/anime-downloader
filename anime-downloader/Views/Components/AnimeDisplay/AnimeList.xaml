@@ -38,6 +38,9 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+        <Style x:Key="TitleElementStyle" TargetType="TextBlock">
+            <Setter Property="TextTrimming" Value="WordEllipsis" />
+        </Style>
     </UserControl.Resources>
     <UserControl.InputBindings>
         <KeyBinding Key="F"
@@ -58,6 +61,7 @@
                   IsReadOnly="True"
                   ItemsSource="{Binding Animes}"
                   SelectedItem="{Binding SelectedAnime}"
+                  HorizontalScrollBarVisibility="Hidden"
                   SelectionMode="Extended"
                   SelectionUnit="FullRow"
                   Sorting="DataGrid_OnSorting"
@@ -68,8 +72,9 @@
                 </Style>
             </DataGrid.ColumnHeaderStyle>
             <DataGrid.Columns>
-                <DataGridTextColumn Width="300"
+                <DataGridTextColumn Width="410"
                                     Binding="{Binding Title}"
+                                    ElementStyle="{StaticResource TitleElementStyle}"
                                     Header="Name" >
                 </DataGridTextColumn>
                 <DataGridTextColumn Width="73"
