@@ -1,4 +1,5 @@
 ﻿using System;
+using anime_downloader.Classes;
 using anime_downloader.Enums;
 using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
@@ -124,8 +125,17 @@ namespace anime_downloader.ViewModels.Displays
 
         private async void Update()
         {
-            MessengerInstance.Send(ViewState.IsWorking);
-            await _versionService.Update();
+            try
+            {
+                MessengerInstance.Send(ViewState.IsWorking);
+                await _versionService.Update();
+            }
+            catch
+            {
+                MessengerInstance.Send(ViewState.DoneWorking);
+                Methods.Alert("Update was unsuccessful.");
+            }
+            
         }
     }
 }

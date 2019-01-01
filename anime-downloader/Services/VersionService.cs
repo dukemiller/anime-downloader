@@ -70,8 +70,12 @@ namespace anime_downloader.Services
 
             // Rename the current exe to filename + .bak (legal)
             var path = Assembly.GetEntryAssembly().Location;
-            if (path != null && release.Length > 0)
+            var backupPath = path + ".bak";
+            if (release.Length > 0)
             {
+                if (File.Exists(backupPath))
+                    File.Delete(backupPath);
+
                 File.Move(path, path + ".bak");
 
                 // Download the new file to the original name
@@ -88,7 +92,7 @@ namespace anime_downloader.Services
                 // Delete the previous file
                 var info = new ProcessStartInfo
                 {
-                    Arguments = "/C choice /C Y /N /D Y /T 1 & Del " + path + ".bak",
+                    Arguments = "/C choice /C Y /N /D Y /T 2 & Del " + path + ".bak",
                     WindowStyle = ProcessWindowStyle.Hidden,
                     CreateNoWindow = true,
                     FileName = "cmd.exe"
