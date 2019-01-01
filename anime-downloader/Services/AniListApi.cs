@@ -53,8 +53,7 @@ namespace anime_downloader.Services
             };
 
             return (await Fetch(AnilistQueries.FetchSeasonOnlyAiring, variables))
-                .Where(anime => anime.Episodes.HasValue && Methods.InRange(anime.Episodes.Value, 10, 24))
-                .Where(anime => anime.Episodes.Value > 12)
+                .Where(anime => anime.Episodes >= 12)
                 .ToList();
         }
 
