@@ -45,5 +45,18 @@ namespace anime_downloader.Views.Displays
                 );
             }
         }
+
+        private void FlipView_OnPreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (!(sender is FlipView fv) || !fv.IsVisible)
+                return;
+
+            if (e.Delta < 0)
+                fv.SelectedIndex = fv.SelectedIndex == 0 ? fv.Items.Count - 1 : fv.SelectedIndex - 1;
+            else if (e.Delta > 0)
+                fv.SelectedIndex = (fv.SelectedIndex + 1) % fv.Items.Count;
+
+            e.Handled = true;
+        }
     }
 }

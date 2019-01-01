@@ -49,6 +49,7 @@
                 <controls:FlipView CircularNavigation="True"
                                    IsBannerEnabled="False"
                                    BorderThickness="0"
+                                   PreviewMouseWheel="FlipView_OnPreviewMouseWheel"
                                    MouseOverGlowEnabled="False"
                                    SelectedItem="{Binding SelectedAiring}"
                                    ItemsSource="{Binding AiringShows, Mode=TwoWay}" />
@@ -57,6 +58,7 @@
                 <controls:FlipView CircularNavigation="True"
                                    IsBannerEnabled="False"
                                    BorderThickness="0"
+                                   PreviewMouseWheel="FlipView_OnPreviewMouseWheel"
                                    MouseOverGlowEnabled="False"
                                    SelectedItem="{Binding SelectedLeftover}"
                                    ItemsSource="{Binding LeftoverShows, Mode=TwoWay}" />
