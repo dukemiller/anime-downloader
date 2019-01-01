@@ -21,6 +21,18 @@ namespace anime_downloader.Models
         [JsonIgnore]
         public string Title => $"{Season.Description()} {Year}";
 
+        // 
+
+        public AnimeSeason() { }
+
+        public AnimeSeason(DateTime date)
+        {
+            Year = date.Year;
+            Season = (Season) Math.Ceiling(Convert.ToDouble(date.Month) / 3);
+        }
+
+        // 
+
         public AnimeSeason Next()
         {
             var season = Season == Season.Fall ? Season.Winter : Season+1;
@@ -50,6 +62,19 @@ namespace anime_downloader.Models
         public AnimeSeason Next(int amount) => Applier(animeSeason => animeSeason.Next(), amount);
 
         public AnimeSeason Previous(int amount) => Applier(animeSeason => animeSeason.Previous(), amount);
+
+        public int Difference(AnimeSeason other)
+        {
+            var count = 0;
+            var that = this;
+            while (that > other)
+            {
+                that = that.Previous();
+                count++;
+            }
+
+            return count;
+        }
 
         /// <summary>
         ///     The max age (in days) a torrent can be for it to still be in season

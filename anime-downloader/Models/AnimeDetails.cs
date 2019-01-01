@@ -172,9 +172,14 @@ namespace anime_downloader.Models
         ///     True if the series is still considered airing relative to the current season.
         /// </summary>
         [JsonIgnore]
-        public bool AiringNow => 
-            Aired != null && Aired <= AnimeSeason.Current && 
-            (Ended == null || Ended >= AnimeSeason.Current);
+        public bool AiringNow =>
+            Ended > AnimeSeason.Current  ||
+            Ended == AnimeSeason.Current && OverallTotal > 13 ||     // end date is in the future AND it has more than a season of episodes
+            Aired == AnimeSeason.Current ||                          // season its airing is now, very straightforward
+            Aired < AnimeSeason.Current && Ended == null && (        // >> heuristic guessing for missing information
+                OverallTotal == 0 ||                                 // unknown ending date (ongoing)
+                Total > AnimeSeason.Current.Difference(Aired) * 13)  // enough episodes from airing date
+        ;
 
         /// <summary>
         ///     The calculated total from choosing either the overalltotal or totalepisodes.
