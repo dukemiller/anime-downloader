@@ -163,7 +163,8 @@ namespace anime_downloader.ViewModels.Displays
 
             ImportCommand = new RelayCommand(
                 Import,
-                () => _credentialsRepository.MyAnimeListConfig.LoggedIn
+                () => false                                    // fix this 
+                // () => _credentialsRepository.MyAnimeListConfig.LoggedIn
             );
 
             SyncCommand = new RelayCommand(
