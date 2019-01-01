@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 
 namespace anime_downloader.Services
 {
-    // http://anilist-api.readthedocs.io/en/latest/anime.html#browse
+    // https://anilist.github.io/ApiV2-GraphQL-Docs/
     public class AniListApi : IAniListApi
     {
         private readonly HttpClient _client;

@@ -91,8 +91,8 @@ namespace anime_downloader.Services
 
             var data = Data[season.Title];
             
-            // a week old or there are no entries
-            if ((DateTime.Now - data.LastCheckedNew).Hours > 24 * 7 || data.New.Count == 0)
+            // two weeks old or there are no entries
+            if ((DateTime.Now - data.LastCheckedNew).TotalHours > 24 * 14 || data.New.Count == 0)
             {
                 startLoading();
                 Data[season.Title].New = await getNew();
@@ -110,8 +110,8 @@ namespace anime_downloader.Services
 
             var data = Data[season.Title];
 
-            // a week old or there are no entries
-            if ((DateTime.Now - data.LastCheckedLeftover).Hours > 24 * 7 || data.LeftOver.Count == 0)
+            // two weeks old or there are no entries
+            if ((DateTime.Now - data.LastCheckedLeftover).TotalHours > 24 * 14 || data.LeftOver.Count == 0)
             {
                 startLoading();
                 Data[season.Title].LeftOver = await getLeftovers();
