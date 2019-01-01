@@ -83,6 +83,9 @@ namespace anime_downloader.Services
 
         public bool WatchingAndAiringContains(string name)
         {
+            if (string.IsNullOrEmpty(name))
+                return false;
+
             return Animes
                 .Where(a => a.Details.AiringNow || a.Details.Aired == AnimeSeason.Current || a.Details.Ended == AnimeSeason.Current)
                 .Select(a =>

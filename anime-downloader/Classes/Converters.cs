@@ -50,7 +50,10 @@ namespace anime_downloader.Classes
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var enumerable = value as IEnumerable<string> ?? new List<string>();
-            return string.Join(", ", enumerable.Where(s => !string.IsNullOrEmpty(s)));
+            var result = string.Join(", ", enumerable.Where(s => !string.IsNullOrEmpty(s)));
+            if (string.IsNullOrEmpty(result) && parameter != null)
+                return (string) parameter;
+            return result;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -281,7 +284,7 @@ namespace anime_downloader.Classes
                 .Aggregate(synopsis, (current, pattern) =>
                     Regex.Replace(current, pattern, ""));
             synopsis = Regex.Replace(synopsis, @"[\r\n]{2,}", "\n"); // Multiple linebreaks
-            return synopsis;
+            return synopsis.Trim();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

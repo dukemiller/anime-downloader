@@ -9,5 +9,8 @@ namespace anime_downloader.Models.AniList
 
         [JsonProperty("english")]
         public string English { get; set; } = "";
+
+        [JsonIgnore]
+        public string Main => !string.IsNullOrEmpty(English) ? English : Romaji;
     }
 }

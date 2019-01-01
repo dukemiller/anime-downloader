@@ -100,11 +100,11 @@
                     LineHeight="25"
                     LineStackingStrategy="BlockLineHeight"
                     FontWeight="Bold"
-                    Text="{Binding Title.English}" />
+                    Text="{Binding Title.Main}" />
 
                 <!-- Tags under title  -->
                 <Grid DockPanel.Dock="Top" Opacity="0.3" TextElement.FontSize="16" Margin="0,-1,-25,0">
-                    <TextBlock Text="{Binding Genres, Converter={StaticResource StringJoinConverter}}" />
+                    <TextBlock Text="{Binding Genres, Converter={StaticResource StringJoinConverter}, ConverterParameter='-'}" />
                     <TextBlock Text="{Binding Source, Converter={StaticResource SourceConverter}}"
                                HorizontalAlignment="Right" />
                 </Grid>
