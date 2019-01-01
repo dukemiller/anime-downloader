@@ -135,7 +135,7 @@
                             <TextBlock d:DataContext="{d:DesignInstance Type=models:AnimeFile}"
                                        Margin="-6.5"
                                        Text="{Binding StrippedFilename}"
-                                       ToolTip="{Binding StrippedFilename}" />
+                                       ToolTip="{Binding FileName}" />
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                     <ListBox.ContextMenu>
