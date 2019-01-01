@@ -109,7 +109,7 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
             Editing = false;
             Anime = new Anime
             {
-                Name = airing.Title.English,
+                Name = airing.Title.Main,
                 Episode = 0,
                 Status = Status.Watching,
                 Resolution = "720",
