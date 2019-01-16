@@ -92,7 +92,7 @@ namespace anime_downloader.Classes
                 if (regularEpisodePattern.Count > 0)
                 {
                     var split = filename.Split('-');
-                    filename = string.Join("-", split.Take(split.Length - 1));
+                    filename = string.Join("-", split.Where(c => !Regex.IsMatch(c, @"^\s[0-9]{1,}")));
                 }
 
                 else if (namedEpisodePattern.Count > 0)
