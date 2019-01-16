@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using anime_downloader.Models;
+using anime_downloader.Models.AniList;
 
 namespace anime_downloader.Services.Interfaces
 {
@@ -77,6 +78,6 @@ namespace anime_downloader.Services.Interfaces
         /// </summary>
         Anime ClosestAnime(string name);
 
-        bool WatchingAndAiringContains(string name);
+        bool WatchingAndAiringContains(AiringAnime anime);
     }
 }

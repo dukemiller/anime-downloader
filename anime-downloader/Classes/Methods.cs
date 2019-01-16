@@ -3,16 +3,21 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Input;
 using anime_downloader.Models;
 using anime_downloader.ViewModels.Dialogs;
 using MaterialDesignThemes.Wpf;
 
 namespace anime_downloader.Classes
 {
+    
     public static class Methods
     {
+        /// <summary>
+        ///     Used in a LINQ 'where' predicate to invert the result,
+        ///     e.g. Animes.Where(Not{Anime}(Anime.HasId)) for all anime that dont have an id
+        /// </summary>
+        public static Func<T, bool> Not<T>(Func<T, bool> method) => args => !method(args);
+
         /// <summary>
         ///     Compute the distance between two strings.
         /// </summary>

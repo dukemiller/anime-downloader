@@ -4,6 +4,7 @@ using System.Linq;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
 using anime_downloader.Models;
+using anime_downloader.Models.AniList;
 using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
 
@@ -81,6 +82,8 @@ namespace anime_downloader.Services
 
         public bool Synced => Animes.Any() && !NeedsUpdates.Any();
 
+        public bool WatchingAndAiringContains(AiringAnime anime) => Animes.Any(a => a.Details.Id == anime.IdMal?.ToString() || a.Details.AniId == anime.Id);
+
         public bool WatchingAndAiringContains(string name)
         {
             if (string.IsNullOrEmpty(name))
@@ -117,7 +120,7 @@ namespace anime_downloader.Services
                 .OrderBy(ap => ap.Distance)
                 .FirstOrDefault()?.Item;
         }
-        
+
         public void Add(Anime anime)
         {
             _animeRepository.Animes.Add(anime);

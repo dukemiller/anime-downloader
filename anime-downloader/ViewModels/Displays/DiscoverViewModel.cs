@@ -8,6 +8,7 @@ using anime_downloader.Models.AniList;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using static anime_downloader.Classes.Methods;
 
 namespace anime_downloader.ViewModels.Displays
 {
@@ -117,13 +118,9 @@ namespace anime_downloader.ViewModels.Displays
         private void Refresh()
         {
             if (_airing != null)
-                AiringShows = new ObservableCollection<AiringAnime>(_airing
-                    .Where(anime =>    !_animeService.WatchingAndAiringContains(anime.Title.English)
-                                    && !_animeService.WatchingAndAiringContains(anime.Title.Romaji)));
+                AiringShows = new ObservableCollection<AiringAnime>(_airing.Where(Not<AiringAnime>(_animeService.WatchingAndAiringContains)));
             if (_leftover != null)
-                LeftoverShows = new ObservableCollection<AiringAnime>(_leftover
-                    .Where(anime =>    !_animeService.WatchingAndAiringContains(anime.Title.English)
-                                    && !_animeService.WatchingAndAiringContains(anime.Title.Romaji)));
+                LeftoverShows = new ObservableCollection<AiringAnime>(_leftover.Where(Not<AiringAnime>(_animeService.WatchingAndAiringContains)));
 
             switch (SelectedIndex)
             {
@@ -157,10 +154,7 @@ namespace anime_downloader.ViewModels.Displays
                     if (AiringShows == null)
                     {
                         _airing = await _findService.New(Season, () => MessengerInstance.Send(ViewState.IsLoading));
-                        await Task.Run(() =>
-                            AiringShows = new ObservableCollection<AiringAnime>(_airing
-                                .Where(anime =>    !_animeService.WatchingAndAiringContains(anime.Title.English ?? "")
-                                                && !_animeService.WatchingAndAiringContains(anime.Title.Romaji ?? ""))));
+                        await Task.Run(() => AiringShows = new ObservableCollection<AiringAnime>(_airing.Where(Not<AiringAnime>(_animeService.WatchingAndAiringContains))));
                         MessengerInstance.Send(ViewState.DoneLoading);
                     }
                     break;
@@ -170,10 +164,7 @@ namespace anime_downloader.ViewModels.Displays
                     if (LeftoverShows == null)
                     {
                         _leftover = await _findService.Leftover(Season, () => MessengerInstance.Send(ViewState.IsLoading));
-                        await Task.Run(() =>
-                            LeftoverShows = new ObservableCollection<AiringAnime>(_leftover
-                                .Where(anime =>    !_animeService.WatchingAndAiringContains(anime.Title.English ?? "")
-                                                && !_animeService.WatchingAndAiringContains(anime.Title.Romaji ?? ""))));
+                        await Task.Run(() => LeftoverShows = new ObservableCollection<AiringAnime>(_leftover.Where(Not<AiringAnime>(_animeService.WatchingAndAiringContains))));
                         MessengerInstance.Send(ViewState.DoneLoading);
                     }
                     break;
