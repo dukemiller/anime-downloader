@@ -53,13 +53,6 @@ namespace anime_downloader.Repositories.Interface
         Task<bool> CrucialDirectoriesExist();
 
         /// <summary>
-        ///     Get a command to add a new torrent to the torrent executable to download the file.
-        /// </summary>
-        /// <param name="torrent">The path to the .torrent file.</param>
-        /// <param name="destination">The path to where the file should download to.</param>
-        string TorrentDownloaderCommand(string torrent, string destination);
-
-        /// <summary>
         ///     Save the repository to disk.
         /// </summary>
         void Save();

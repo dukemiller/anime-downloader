@@ -60,16 +60,6 @@ namespace anime_downloader.Services.Interfaces
         Task<bool> AttemptDownload(Anime anime, int episode, IEnumerable<RemoteMedia> medias, Action<string> output);
 
         /// <summary>
-        ///     Downloads the media for the given anime episode.
-        /// </summary>
-        Task<(bool successful, string command)> DownloadMedia(Anime anime, RemoteMedia media);
-
-        /// <summary>
-        ///     Initiate the media.
-        /// </summary>
-        void StartMedia(RemoteMedia media, string command);
-
-        /// <summary>
         ///     Attempts to download the episode and returns the result of doing so.
         /// </summary>
         Task<bool> DownloadEpisode(Anime anime, int episode, RemoteMedia media, Action<string> output);

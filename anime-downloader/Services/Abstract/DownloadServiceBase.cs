@@ -24,52 +24,7 @@ namespace anime_downloader.Services.Abstract
     /// </remarks>
     public abstract class DownloadServiceBase : IDownloadService
     {
-        private async Task<(bool successful, string path)> DownloadTorrent(Torrent torrent)
-        {
-            var torrentName = await torrent.GetTorrentNameAsync();
-            if (torrentName == null)
-                return (false, null);
-            var filePath = Path.Combine(SettingsRepository.PathConfig.Torrents, torrentName);
-
-            // Download file 
-            if (!File.Exists(filePath))
-                return await Task.Run(() =>
-                {
-                    try
-                    {
-                        Downloader.DownloadFile(torrent.Remote, filePath);
-                    }
-
-                    // TODO: heh heh heh
-                    catch (Exception)
-                    {
-                        return (false, null);
-                    }
-
-                    return (true, filePath);
-                });
-
-            return (true, filePath);
-        }
-
-        private void StartInTorrentClient(string command)
-        {
-            var info = new ProcessStartInfo
-            {
-                FileName = SettingsRepository.PathConfig.TorrentDownloader,
-                Arguments = command,
-                UseShellExecute = false,
-                RedirectStandardOutput = true
-            };
-
-            var process = new Process
-            {
-                StartInfo = info
-            };
-
-            Task.Run(() => process.Start());
-        }
-
+        
         /// <summary>
         ///     The arbitrary "health score" of a list of resources for categorizing if
         ///     trusting this selection of results is more capable of representing what
@@ -318,71 +273,19 @@ namespace anime_downloader.Services.Abstract
         {
             output($"Downloading '{anime.Title}' episode '{episode}'.");
 
-            var (successful, command) = await DownloadMedia(anime, media);
+            var download = await MediaManager.Download(anime, media);
 
-            if (successful)
-            {
-                StartMedia(media, command);
+            download.Match(
+                some: command => MediaManager.Start(media, command),
+                none: () => output($"Download of '{anime.Title}' failed (most likely due to server error).")
+            );
+
+            if (download.HasValue)
                 await Log(anime, episode);
-            }
-
-            else
-            {
-                output($"Download of '{anime.Title}' failed (most likely due to server error).");
-            }
-
-            return successful;
+            
+            return download.HasValue;
         }
-
-        public async Task<(bool successful, string command)> DownloadMedia(Anime anime, RemoteMedia media)
-        {
-            var path = "";
-            bool successful;
-
-            var destination = SettingsRepository.PathConfig.Unwatched;
-
-            if (SettingsRepository.FlagConfig.IndividualShowFolders)
-                destination = Path.Combine(destination, anime.Title);
-
-            // Create directory
-            if (!Directory.Exists(destination))
-                Directory.CreateDirectory(destination);
-
-            switch (media)
-            {
-                case Torrent torrent:
-                {
-                    (successful, path) = await DownloadTorrent(torrent);
-                    if (!successful)
-                        return (false, null);
-                    break;
-                }
-
-                case MagnetLink magnet:
-                {
-                    (successful, path) = await Aria.Retrieve(magnet);
-                    if (!successful)
-                        return (false, null);
-                    break;
-                }
-            }
-
-            var command = SettingsRepository.TorrentDownloaderCommand(path, destination);
-
-            return (true, command);
-        }
-
-        public virtual void StartMedia(RemoteMedia media, string command)
-        {
-            switch (media)
-            {
-                case Torrent _:
-                case MagnetLink _:
-                    StartInTorrentClient(command);
-                    break;
-            }
-        }
-
+        
         public async Task<bool> ServiceAvailable()
         {
             try
@@ -419,8 +322,7 @@ namespace anime_downloader.Services.Abstract
         ///     Many sites have different ways their search works, but on the nyaa.* sites
         ///     this will transform the title into a searchable query.
         /// </summary>
-        protected static string TransformEpisodeSearch(string name, int episode) =>
-            $"{TransformEpisodeSearch(name)}+{episode:D2}";
+        protected static string TransformEpisodeSearch(string name, int episode) => $"{TransformEpisodeSearch(name)}+{episode:D2}";
 
         protected static string TransformEpisodeSearch(string name)
         {
@@ -438,7 +340,7 @@ namespace anime_downloader.Services.Abstract
 
             // Remove literal season declarations from the title
             name = Regex.Replace(name, @"(2nd season|the (?:animation|animated series))", "", RegexOptions.IgnoreCase);
-
+            
             // Troublesome characters for the search
             name = Regex.Replace(name, @":|/|-|\.", " ");
 
@@ -460,10 +362,7 @@ namespace anime_downloader.Services.Abstract
             return name;
         }
 
-        public async Task<List<RemoteMedia>> FindAllMedia(Anime anime, int episode)
-        {
-            return await GetMedia(anime, episode);
-        }
+        public async Task<List<RemoteMedia>> FindAllMedia(Anime anime, int episode) => await GetMedia(anime, episode);
 
         // Abstract inheritors
 
