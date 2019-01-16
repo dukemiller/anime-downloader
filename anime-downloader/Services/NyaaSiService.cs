@@ -98,18 +98,18 @@ namespace anime_downloader.Services
                 .ToList();
 
             // get the first episode in any consecutive chain of episodes, e.g. [(1),2,3,(5),(16),17,(32),33]
-                var episodes = result?.Select(item => item.Episode)
-                    .Distinct().OrderBy(i => i)
-                    .Aggregate(new List<List<int>>(), (list, i) =>
-                    {
-                        if (list.Count == 0)
-                            list.Add(new List<int> {i});
-                        else if (list.Last().Last() + 1 != i)
-                            list.Add(new List<int> {i});
-                        else
-                            list.Last().Add(i);
-                        return list;
-                    }).Select(i => i.First());
+            var episodes = result?.Select(item => item.Episode)
+                .Distinct().OrderBy(i => i)
+                .Aggregate(new List<List<int>>(), (list, i) =>
+                {
+                    if (list.Count == 0)
+                        list.Add(new List<int> {i});
+                    else if (list.Last().Last() + 1 != i)
+                        list.Add(new List<int> {i});
+                    else
+                        list.Last().Add(i);
+                    return list;
+                }).Select(i => i.First());
             
             // order by the highest health average of these items
             var highestHealth = episodes?.OrderByDescending(i => (int) Math.Floor(result.Where(r => r.Episode == i).Select(r => r.Health).Average())).FirstOrDefault();

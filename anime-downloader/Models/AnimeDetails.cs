@@ -121,6 +121,12 @@ namespace anime_downloader.Models
         }
 
         /// <summary>
+        ///     If the anime was added and no episodes were attempted to be downloaded.
+        /// </summary>
+        [JsonProperty("just_added")]
+        public bool JustAdded { get; set; }
+
+        /// <summary>
         ///     The total episode count for the series.
         /// </summary>
         [JsonProperty("total_episodes")]

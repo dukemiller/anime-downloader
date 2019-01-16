@@ -82,7 +82,7 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
                 Status = Status.Watching,
                 Resolution = "720",
                 Airing = true,
-                Details = { NeedsUpdating = true }
+                Details = { NeedsUpdating = true, JustAdded = true }
             };
 
             Image = "../../Resources/Images/default.png";
@@ -119,6 +119,7 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
                     AniId = airing.Id,
                     Id = airing.IdMal?.ToString(),
                     NeedsUpdating = true,
+                    JustAdded = true,
                     Image = airing.CoverImage.Large,
                     Synopsis = airing.Description,
                     Title = airing.Title.Romaji,
