@@ -16,8 +16,7 @@
                  VerticalContentAlignment="Center"
                  FontSize="18"
                  IsVisibleChanged="UIElement_OnIsVisibleChanged"
-                 Text="{Binding Text,
-                                UpdateSourceTrigger=PropertyChanged}"
+                 Text="{Binding Text, UpdateSourceTrigger=PropertyChanged, Delay=100}"
                  Visibility="{Binding Visible}">
             <TextBox.InputBindings>
                 <KeyBinding Key="Escape" Command="{Binding ClearCommand}" />
