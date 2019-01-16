@@ -85,7 +85,7 @@ namespace anime_downloader.Models.Abstract
             foreach (Match match in Regex.Matches(Name, @"\[([A-Za-z0-9_µ\s\-]+)\]+"))
             {
                 var result = match.Groups[1].Value;
-                if (result.All(c => !char.IsNumber(c)))
+                if (result.All(c => !char.IsNumber(c)) || result.ToLower() == "normie10032")
                     return result;
             }
             return null;
