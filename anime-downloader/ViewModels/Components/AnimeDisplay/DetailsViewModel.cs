@@ -85,7 +85,7 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
                 Details = { NeedsUpdating = true, JustAdded = true }
             };
 
-            Image = "../../Resources/Images/default.png";
+            Image = "../../../Resources/Images/default.png";
 
             ExitCommand = new RelayCommand(() => MessengerInstance.Send(Display.Anime));
 
@@ -241,11 +241,11 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
                 if (Anime.Details.Image.Contains("https://"))
                     DownloadImage();
                 else
-                    Image = "../../Resources/Images/default.png";
+                    Image = "../../../Resources/Images/default.png";
             }
 
             else
-                Image = "../../Resources/Images/default.png";
+                Image = "../../../Resources/Images/default.png";
         }
 
         private async void DownloadImage()
@@ -262,7 +262,7 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
                 if (new FileInfo(downloadPath).Length / 1024 <= 15)
                 {
                     File.Delete(downloadPath);
-                    Anime.Details.Image = "../../Resources/Images/default.png";
+                    Anime.Details.Image = "../../../Resources/Images/default.png";
                 }
 
                 else
@@ -273,7 +273,7 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
 
             catch
             {
-                Image = "../../Resources/Images/default.png";
+                Image = "../../../Resources/Images/default.png";
             }
         }
 
