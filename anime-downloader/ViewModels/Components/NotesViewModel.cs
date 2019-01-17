@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using anime_downloader.Models;
 using GalaSoft.MvvmLight;
+using static anime_downloader.Classes.Methods;
 
 namespace anime_downloader.ViewModels.Components
 {
@@ -34,7 +35,7 @@ namespace anime_downloader.ViewModels.Components
                 if (stream != null)
                     using (var reader = new StreamReader(stream))
                     {
-                        var text =  (await reader.ReadToEndAsync()).Split('\n').ToList();
+                        var text =  (await reader.ReadToEndAsync()).Split('\n').Select(t => t.Trim()).Where(Not<string>(string.IsNullOrEmpty)).ToList();
                         var releases = text.Select(t => new ReleaseNote { Date = t.Split('T')[0], Subject = string.Join(" ", t.Split(' ').Skip(1)) }).ToList();
                         for (var i = 0; i < releases.Count; i++)
                         {

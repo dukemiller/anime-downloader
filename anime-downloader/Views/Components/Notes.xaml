@@ -15,7 +15,7 @@
         <ItemsControl Margin="4,-2,0,0" ItemsSource="{Binding Notes}" Focusable="False" FocusVisualStyle="{x:Null}" IsTabStop="False">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <DockPanel TextElement.FontSize="16.2" Margin="0,0,0,-26.4" >
+                    <DockPanel TextElement.FontSize="16.2" Margin="0,0,0,-4.6" >
                         <TextBlock Text="{Binding Date}" Padding="0">
                             <TextBlock.Resources>
                                 <Style TargetType="TextBlock">
