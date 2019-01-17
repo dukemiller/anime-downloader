@@ -55,7 +55,7 @@ namespace anime_downloader.ViewModels.Components.Download
 
             MessengerInstance.Send(ViewState.IsWorking);
 
-            if (await _downloadService.ServiceAvailable())
+            if (await _downloadService.Available())
                 try
                 {
                     switch (radio.Data)

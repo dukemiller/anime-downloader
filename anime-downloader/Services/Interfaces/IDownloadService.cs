@@ -25,7 +25,7 @@ namespace anime_downloader.Services.Interfaces
         /// <summary>
         ///     Determine if the service is online.
         /// </summary>
-        Task<bool> ServiceAvailable();
+        Task<bool> Available();
 
         // 
 

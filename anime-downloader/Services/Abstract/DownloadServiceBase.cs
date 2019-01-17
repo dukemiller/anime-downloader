@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -11,7 +10,6 @@ using anime_downloader.Models;
 using anime_downloader.Models.Abstract;
 using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
-using MagnetLink = anime_downloader.Models.MagnetLink;
 
 namespace anime_downloader.Services.Abstract
 {
@@ -169,14 +167,14 @@ namespace anime_downloader.Services.Abstract
             return media;
         }
 
+        // Absolutely generic
+
         /// <summary>
         ///     A one time but potentially expensive cost to find out the preferred name
         /// </summary>
-        private async Task<List<RemoteMedia>> GetMedia(Anime anime, int episode) => string.IsNullOrEmpty(anime.Details.PreferredSearchTitle)
+        public async Task<List<RemoteMedia>> FindAllMedia(Anime anime, int episode) => string.IsNullOrEmpty(anime.Details.PreferredSearchTitle)
             ? await DeterminePreferredSearchTitle(anime, episode)
             : await FindAllMedia(anime, anime.Details.PreferredSearchTitle, episode);
-
-        // Absolutely generic
 
         public string ServiceName => GetType().Name.Replace("Service", "");
 
@@ -186,7 +184,7 @@ namespace anime_downloader.Services.Abstract
 
             foreach (var anime in animes)
             {
-                var result = await GetMedia(anime, anime.NextEpisode);
+                var result = await FindAllMedia(anime, anime.NextEpisode);
                 var download = await AttemptDownload(anime, anime.NextEpisode, result, output);
                 if (download)
                 {
@@ -209,7 +207,7 @@ namespace anime_downloader.Services.Abstract
             foreach (var anime in animes.Keys)
             foreach (var episode in animes[anime])
             {
-                var download = await AttemptDownload(anime, episode, await GetMedia(anime, episode), output);
+                var download = await AttemptDownload(anime, episode, await FindAllMedia(anime, episode), output);
                 if (download)
                 {
                     downloaded++;
@@ -286,7 +284,7 @@ namespace anime_downloader.Services.Abstract
             return download.HasValue;
         }
         
-        public async Task<bool> ServiceAvailable()
+        public async Task<bool> Available()
         {
             try
             {
@@ -361,8 +359,6 @@ namespace anime_downloader.Services.Abstract
 
             return name;
         }
-
-        public async Task<List<RemoteMedia>> FindAllMedia(Anime anime, int episode) => await GetMedia(anime, episode);
 
         // Abstract inheritors
 
