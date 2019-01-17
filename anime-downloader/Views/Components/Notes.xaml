@@ -1,0 +1,38 @@
+﻿<UserControl x:Class="anime_downloader.Views.Components.Notes"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:anime_downloader.Views.Components"
+             xmlns:components="clr-namespace:anime_downloader.ViewModels.Components"
+             mc:Ignorable="d"
+             IsTabStop="False"
+             Width="700"
+             HorizontalAlignment="Left"
+             d:DataContext="{d:DesignInstance components:NotesViewModel}">
+    <DockPanel Margin="4,-4" Background="white">
+        <TextBlock Text="Basic Changelog (last 20 changes)" FontSize="22" DockPanel.Dock="Top" FontWeight="Bold" />
+        <ItemsControl Margin="4,-2,0,0" ItemsSource="{Binding Notes}" Focusable="False" FocusVisualStyle="{x:Null}" IsTabStop="False">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <DockPanel TextElement.FontSize="16.2" Margin="0,0,0,-26.4" >
+                        <TextBlock Text="{Binding Date}" Padding="0">
+                            <TextBlock.Resources>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Opacity" Value="0.1"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Bold}" Value="True">
+                                            <Setter Property="Opacity" Value="1"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Resources>
+                        </TextBlock>
+                        <TextBlock Text=" - "  />
+                        <TextBlock Text="{Binding Subject}"   />
+                    </DockPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </DockPanel>
+</UserControl>

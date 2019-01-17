@@ -4,6 +4,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:components="clr-namespace:anime_downloader.Views.Components"
              DataContext="{Binding Source={StaticResource Locator},
                               Path=Home}"
              Background="White"
@@ -22,6 +23,23 @@
             <RowDefinition Height="7*" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
+
+        <ContentControl Content="{Binding Notes}"
+                        Grid.ZIndex="1" Grid.RowSpan="2" >
+            <ContentControl.Resources>
+                <Style TargetType="ContentControl">
+                    <!-- <Setter Property="Visibility" Value="Collapsed"  TargetName=""/> -->
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsMouseOver, ElementName=Version}" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsMouseOver, ElementName=Version}" Value="False">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ContentControl.Resources>
+        </ContentControl>
 
         <!--A grid for display purposes-->
         <Grid Grid.Row="0" Grid.RowSpan="2">
@@ -81,10 +99,22 @@
             </materialDesign:Card>
             <Label VerticalAlignment="Center"
                    Content="{Binding Version}"
-                   FontStyle="Italic"
                    Foreground="DarkSlateGray"
+                   Name="Version"
                    Margin="12,0,0,0"
-                   Opacity="0.6" />
+                   Opacity="0.4" >
+                <Label.Resources>
+                    <Style TargetType="Label" >
+                        <Setter Property="FontSize" Value="20"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="FontSize" Value="20.5"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+
+                </Label.Resources>
+            </Label>
         </DockPanel>
 
     </Grid>

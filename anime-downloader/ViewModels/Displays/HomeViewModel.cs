@@ -3,8 +3,10 @@ using anime_downloader.Classes;
 using anime_downloader.Enums;
 using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
+using anime_downloader.ViewModels.Components;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Ioc;
 
 namespace anime_downloader.ViewModels.Displays
 {
@@ -80,6 +82,8 @@ namespace anime_downloader.ViewModels.Displays
         // 
 
         public RelayCommand UpdateCommand { get; set; }
+
+        public ViewModelBase Notes { get; set; } = SimpleIoc.Default.GetInstance<NotesViewModel>();
 
         // 
 

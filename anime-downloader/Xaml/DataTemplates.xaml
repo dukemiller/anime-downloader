@@ -90,6 +90,10 @@
         <animeDisplay:DetailsBar DataContext="{Binding}" />
     </DataTemplate>
 
+    <DataTemplate DataType="{x:Type viewModelComponents:NotesViewModel}">
+        <components:Notes DataContext="{Binding .}" />
+    </DataTemplate>
+
     <!--  Dialogs  -->
 
     <DataTemplate DataType="{x:Type viewModelDialogs:LoadingViewModel}">

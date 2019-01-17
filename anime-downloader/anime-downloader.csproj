@@ -198,6 +198,7 @@
     <Compile Include="Enums\PlaylistOptions.cs" />
     <Compile Include="Enums\PlaylistOrder.cs" />
     <Compile Include="Models\RadioModel.cs" />
+    <Compile Include="Models\ReleaseNote.cs" />
     <Compile Include="Models\SemanticVersion.cs" />
     <Compile Include="Models\Torrent.cs" />
     <Compile Include="Classes\Converters.cs" />
@@ -234,6 +235,7 @@
     <Compile Include="Services\VersionService.cs" />
     <Compile Include="Services\MyAnimeListService.cs" />
     <Compile Include="ViewModelLocator.cs" />
+    <Compile Include="ViewModels\Components\NotesViewModel.cs" />
     <Compile Include="ViewModels\Displays\AnimeDisplayViewModel.cs" />
     <Compile Include="ViewModels\Components\AnimeDisplay\DetailsMultipleViewModel.cs" />
     <Compile Include="ViewModels\Components\AnimeDisplay\DetailsViewModel.cs" />
@@ -257,6 +259,9 @@
     <Compile Include="ViewModels\Displays\PlaylistViewModel.cs" />
     <Compile Include="ViewModels\Displays\SettingsViewModel.cs" />
     <Compile Include="ViewModels\Displays\WebViewModel.cs" />
+    <Compile Include="Views\Components\Notes.xaml.cs">
+      <DependentUpon>Notes.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Displays\AnimeDisplay.xaml.cs">
       <DependentUpon>AnimeDisplay.xaml</DependentUpon>
     </Compile>
@@ -326,6 +331,10 @@
     <Compile Include="Views\Displays\Web.xaml.cs">
       <DependentUpon>Web.xaml</DependentUpon>
     </Compile>
+    <Page Include="Views\Components\Notes.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Displays\AnimeDisplay.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -491,7 +500,9 @@
   <ItemGroup>
     <Resource Include="Resources\Images\default.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Text\commits.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(TargetPath)" "$(SolutionDir)"</PostBuildEvent>

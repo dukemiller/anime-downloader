@@ -9,6 +9,7 @@ using anime_downloader.Repositories.Interface;
 using anime_downloader.Services;
 using anime_downloader.Services.Interfaces;
 using anime_downloader.ViewModels;
+using anime_downloader.ViewModels.Components;
 using anime_downloader.ViewModels.Components.AnimeDisplay;
 using anime_downloader.ViewModels.Components.Download;
 using anime_downloader.ViewModels.Displays;
@@ -61,6 +62,7 @@ namespace anime_downloader
             SimpleIoc.Default.Register<LogViewModel>();
             SimpleIoc.Default.Register<OptionsViewModel>();
             SimpleIoc.Default.Register<DetailsBarViewModel>();
+            SimpleIoc.Default.Register<NotesViewModel>(true);
         }
 
         public static void RegisterIDownloadService()
