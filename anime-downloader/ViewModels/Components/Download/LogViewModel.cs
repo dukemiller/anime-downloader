@@ -22,7 +22,7 @@ namespace anime_downloader.ViewModels.Components.Download
             get => _text;
             set => Set(() => Text, ref _text, value);
         }
-
+        
         public async void DisplayLogResults()
         {
             Text = "";

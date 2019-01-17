@@ -79,7 +79,6 @@
             </Storyboard>
 
             <!--  Misc Styles  -->
-
             <Style x:Key="ConsoleBox"
                    TargetType="TextBox">
                 <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
@@ -88,10 +87,30 @@
                 <Setter Property="FontSize" Value="20" />
                 <Setter Property="FontFamily" Value="Yu Gothic" />
                 <Setter Property="BorderThickness" Value="0" />
-                <Setter Property="Padding" Value="4, 0" />
-                <Setter Property="Background" Value="#ECECEC" />
+                <Setter Property="Padding" Value="2, 0" />
+                <Setter Property="Background" >
+                    <Setter.Value>
+                        <SolidColorBrush Color="#ECECEC" Opacity="1"/>
+                    </Setter.Value>
+                </Setter>
                 <Setter Property="VerticalContentAlignment" Value="Top" />
                 <Setter Property="HorizontalContentAlignment" Value="Left" />
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=IsVisible}" 
+                                 Value="True">
+                        <DataTrigger.EnterActions>
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                     From="0.1" To="1.0"
+                                                     Duration="0:0:1.0"
+                                                     />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </DataTrigger.EnterActions>
+                    </DataTrigger>
+                </Style.Triggers>
+                
             </Style>
 
         </ResourceDictionary>
