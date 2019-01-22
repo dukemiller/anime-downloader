@@ -165,7 +165,7 @@ namespace anime_downloader.Services
                 {
                     Methods.Alert($"The episode count for {anime.Name} might be an error.\n\n" +
                                   $"The episode will be set from {anime.Episode} to {anime.Details.OverallTotal}, " +
-                                  $"if this is incorrect then remove this series and attempt to re-add it.");
+                                  "if this is incorrect then remove this series and attempt to re-add it.");
                     anime.Episode = anime.Details.OverallTotal;
                 }
 

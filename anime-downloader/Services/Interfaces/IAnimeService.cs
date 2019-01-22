@@ -46,7 +46,6 @@ namespace anime_downloader.Services.Interfaces
         /// <summary>
         ///     Series that contain a MyAnimeList Id
         /// </summary>
-        /// <returns></returns>
         IEnumerable<Anime> HasId { get; }
 
         /// <summary>

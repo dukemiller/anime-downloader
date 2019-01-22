@@ -97,7 +97,7 @@ namespace anime_downloader.Services
                 return data.Data.Page.Media.ToList();
             }
 
-            catch (Exception e)
+            catch (Exception)
             {
                 return new List<AiringAnime>();
             }

@@ -296,7 +296,7 @@ namespace anime_downloader.Services.Abstract
                 request.Accept = "*/*";
                 request.ContentLength = 0;
                 request.Headers = new WebHeaderCollection {"cache-control: no-cache", "accept-encoding: gzip, deflate"};
-                using (var response = await request.GetResponseAsync())
+                using (await request.GetResponseAsync())
                     return true;
             }
             catch (Exception)

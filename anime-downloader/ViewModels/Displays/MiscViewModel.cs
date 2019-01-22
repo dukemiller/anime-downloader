@@ -9,7 +9,6 @@ using anime_downloader.Models;
 using anime_downloader.Models.Configurations;
 using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
-using anime_downloader.ViewModels.Components;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
@@ -109,7 +108,7 @@ namespace anime_downloader.ViewModels.Displays
                 {
                     foreach (var anime in needsUpdating)
                     {
-                        var (successful, changeMade) = await _detailService.FillInDetails(anime);
+                        var (_, changeMade) = await _detailService.FillInDetails(anime);
                         if (changeMade)
                             updated.Add("-- " + anime.Title);
                     }

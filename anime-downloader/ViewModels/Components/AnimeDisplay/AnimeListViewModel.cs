@@ -216,10 +216,10 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
         private void UpdateListBasedOnFind(object sender, PropertyChangedEventArgs args)
         {
             if (args.PropertyName.Equals("Text"))
-                if (Find.Text.Equals(""))
-                    Animes = new ObservableCollection<Anime>(_animeService.FilteredAndSorted());
-                else
-                    Animes = new ObservableCollection<Anime>(_animeService.FilteredAndSorted().Where(a => a.Name.ToLower().Contains(Find.Text.ToLower())));
+                Animes = Find.Text.Equals("")
+                    ? new ObservableCollection<Anime>(_animeService.FilteredAndSorted())
+                    : new ObservableCollection<Anime>(_animeService.FilteredAndSorted()
+                        .Where(a => a.Name.ToLower().Contains(Find.Text.ToLower())));
         }
     }
 }

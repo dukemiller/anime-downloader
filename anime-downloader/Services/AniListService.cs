@@ -56,10 +56,9 @@ namespace anime_downloader.Services
                 await _data.DownloadImage(anime).ConfigureAwait(false);
             }
 
-            catch (Exception e)
+            catch (Exception)
             {
                 Console.WriteLine();
-                //
             }
 
             finally
@@ -74,6 +73,7 @@ namespace anime_downloader.Services
     [Serializable]
     internal class AniListData
     {
+        [NonSerialized]
         private readonly WebClient _downloader = new WebClient();
 
         private AniListData() { }
@@ -163,7 +163,7 @@ namespace anime_downloader.Services
 
             catch
             {
-
+                // ignored
             }
 
             return new AniListData();

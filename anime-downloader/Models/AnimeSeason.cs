@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Windows.Controls;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
 using Newtonsoft.Json;

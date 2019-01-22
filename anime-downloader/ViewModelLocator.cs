@@ -99,7 +99,7 @@ namespace anime_downloader
 
             if (previous != current)
             {
-                var (updated, failed) = new PatchService().Patch(previous.ToVersion(), current.ToVersion());
+                var (_, failed) = new PatchService().Patch(previous.ToVersion(), current.ToVersion());
                 if (!failed)
                     File.WriteAllText(path, current.ToString());
             }

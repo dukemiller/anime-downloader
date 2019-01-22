@@ -151,9 +151,10 @@ namespace anime_downloader.Classes
             {
                 Directory.Move(file.Path, newPath);
             }
+
             catch
             {
-
+                // ignored
             }
         }
 

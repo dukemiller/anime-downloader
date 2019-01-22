@@ -36,14 +36,12 @@ namespace anime_downloader.Services
 
         public IEnumerable<AnimeFile> GetEpisodes(Anime anime)
         {
-            var episodes = GetEpisodes(EpisodeStatus.All).ToList();
-
-            var name = episodes
+            var name = AllEpisodes
                 .OrderByLevenshtein(a => a.Name, anime.Name)
                 .First()
                 .Name;
 
-            return episodes.Where(e => e.Name.Equals(name));
+            return AllEpisodes.Where(e => e.Name.Equals(name));
         }
 
         public IEnumerable<AnimeFile> GetEpisodes(EpisodeStatus episodeStatus)

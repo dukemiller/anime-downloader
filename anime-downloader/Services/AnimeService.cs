@@ -84,34 +84,6 @@ namespace anime_downloader.Services
 
         public bool WatchingAndAiringContains(AiringAnime anime) => Animes.Any(a => a.Details.Id == anime.IdMal?.ToString() || a.Details.AniId == anime.Id);
 
-        public bool WatchingAndAiringContains(string name)
-        {
-            if (string.IsNullOrEmpty(name))
-                return false;
-
-            return Animes
-                .Where(a => a.Details.AiringNow || a.Details.Aired == AnimeSeason.Current || a.Details.Ended == AnimeSeason.Current)
-                .Select(a =>
-                {
-                    var container = new List<double> {new StringDistance<Anime>(a, name, a.Name).Distance};
-                    
-                    if (a.Details.TitleAndEnglish.Any())
-                        container.Add(a.Details
-                            .TitleAndEnglish
-                            .Select(s => new StringDistance<string>(s, name, s).Distance)
-                            .Min());
-
-                    if (a.Details.SynonymsSplit.Any())
-                        container.Add(a.Details
-                            .SynonymsSplit
-                            .Select(s => new StringDistance<string>(s, name, s).Distance)
-                            .Min());
-
-                    return container.Min();
-                })
-                .Any(ap => ap <= 1);
-        }
-
         public Anime ClosestAnime(string name)
         {
             return Animes

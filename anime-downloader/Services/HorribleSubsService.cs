@@ -93,7 +93,7 @@ namespace anime_downloader.Services
 
         private static MagnetLink ParseHorribleSubNode(XmlNode item)
         {
-            (var title, var link, var pubdate) =
+            var (title, link, pubdate) =
                 (item.SelectSingleNode("title")?.InnerText, 
                 item.SelectSingleNode("link")?.InnerText, 
                 DateTime.Parse(item.SelectSingleNode("pubDate")?.InnerText));

@@ -2,19 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Security.Policy;
 using System.Threading.Tasks;
 using System.Web;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Models.MyAnimeList;
-using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
 using HtmlAgilityPack;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace anime_downloader.Services
 {
@@ -148,14 +143,14 @@ namespace anime_downloader.Services
 
         public async Task Add(Anime anime)
         {
-            var (successful, content) = await _api.AddAsync(anime, GetId(anime));
+            var (successful, _) = await _api.AddAsync(anime, GetId(anime));
             if (successful)
                 anime.Details.NeedsUpdating = false;
         }
 
         public async Task Update(Anime anime)
         {
-            var (successful, content) = await _api.UpdateAsync(anime, GetId(anime));
+            var (successful, _) = await _api.UpdateAsync(anime, GetId(anime));
             if (successful)
                 anime.Details.NeedsUpdating = false;
         }
@@ -170,7 +165,7 @@ namespace anime_downloader.Services
                     // If it needs adding, add it
                     if (string.IsNullOrEmpty(anime.Details.Id))
                     {
-                        var (successful, id) = await FindId(anime);
+                        var (successful, _) = await FindId(anime);
                         if (!successful)
                             continue;
                     }

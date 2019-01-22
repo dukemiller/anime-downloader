@@ -191,7 +191,6 @@
     <Compile Include="Models\MyAnimeList\SearchResponse.cs" />
     <Compile Include="Models\MyAnimeList\ShowRequest.cs" />
     <Compile Include="Models\MyAnimeList\ProfileResult.cs" />
-    <Compile Include="Models\MyAnimeList\UpdateShow.cs" />
     <Compile Include="Models\MyAnimeList\FindResult.cs" />
     <Compile Include="Models\Configurations\PathConfiguration.cs" />
     <Compile Include="Models\Playlist.cs" />

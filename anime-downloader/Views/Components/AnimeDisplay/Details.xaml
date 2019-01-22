@@ -5,7 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
              xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
-             xmlns:components="clr-namespace:anime_downloader.ViewModels.Components"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:animeDisplay="clr-namespace:anime_downloader.ViewModels.Components.AnimeDisplay"
              d:DesignHeight="335"
