@@ -1,49 +1,50 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
 using anime_downloader.Models;
-using anime_downloader.Models.Configurations;
 using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using PropertyChanged;
 
 namespace anime_downloader.ViewModels.Displays
 {
     public class PlaylistViewModel : ViewModelBase
     {
-        private static readonly RadioModel<PlaylistOrder> Default = new RadioModel<PlaylistOrder>
+        private static readonly Radio<PlaylistOrder> Default = new Radio<PlaylistOrder>
         {
             Header = "Default file listing",
             ToolTip = "Default windows lexical filename sort",
             Data = PlaylistOrder.Default
         };
 
-        private static readonly RadioModel<PlaylistOrder> NameThenEpisode = new RadioModel<PlaylistOrder>
+        private static readonly Radio<PlaylistOrder> NameThenEpisode = new Radio<PlaylistOrder>
         {
             Header = "Name then Episode",
             ToolTip = "Sort by anime name instead of file name, then by episode number",
             Data = PlaylistOrder.NameThenEpisode
         };
 
-        private static readonly RadioModel<PlaylistOrder> EpisodeThenName = new RadioModel<PlaylistOrder>
+        private static readonly Radio<PlaylistOrder> EpisodeThenName = new Radio<PlaylistOrder>
         {
             Header = "Episode then Name",
             ToolTip = "Sort starting with the episode number, then by name",
             Data = PlaylistOrder.EpisodeThenName
         };
 
-        private static readonly RadioModel<PlaylistOrder> Date = new RadioModel<PlaylistOrder>
+        private static readonly Radio<PlaylistOrder> Date = new Radio<PlaylistOrder>
         {
             Header = "Date downloaded",
             ToolTip = "When the file was created",
             Data = PlaylistOrder.Date
         };
 
-        private static readonly RadioModel<PlaylistOrder> RandomNameThenEpisode = new RadioModel<PlaylistOrder>
+        private static readonly Radio<PlaylistOrder> RandomNameThenEpisode = new Radio<PlaylistOrder>
         {
             Header = "Random Name",
             ToolTip = "Sort by name, randomize the order, then by episode",
@@ -56,13 +57,9 @@ namespace anime_downloader.ViewModels.Displays
 
         private bool _additionalEpisodesFirst;
         
-        private bool _fileExists;
-        
-        private ObservableCollection<RadioModel<PlaylistOrder>> _options;
-
         private bool _reverseOrder;
 
-        private RadioModel<PlaylistOrder> _selectedRadio;
+        private Radio<PlaylistOrder> _selectedRadio;
 
         private bool _separateShowOrder;
 
@@ -73,12 +70,9 @@ namespace anime_downloader.ViewModels.Displays
             _settings = settings;
             _fileService = fileService;
 
-            // 
-
-            Playlist = new Playlist();
             DemoPlaylist = new Playlist
             {
-                Source = new ObservableCollection<AnimeFile>
+                Source = new List<AnimeFile>
                 {
                     new AnimeFile("[GoodSubs] Slice of life - 01"),
                     new AnimeFile("[GoodSubs] Slice of life - 02"),
@@ -93,28 +87,16 @@ namespace anime_downloader.ViewModels.Displays
                     new AnimeFile("[NoSubs] Adventure - 20")
                 }
             };
-
-            // 
-
-            CreateCommand = new RelayCommand(Create);
-            OpenCommand = new RelayCommand(Open, () => FileExists);
-
-            // 
-
-            Options = new ObservableCollection<RadioModel<PlaylistOrder>> {Default, NameThenEpisode, EpisodeThenName, Date, RandomNameThenEpisode };
-            FileExists = File.Exists(PathConfiguration.Playlist);
+            
             SelectedRadio = Options.Skip(1).First();
         }
 
         // 
 
-        public ObservableCollection<RadioModel<PlaylistOrder>> Options
-        {
-            get => _options;
-            set => Set(() => Options, ref _options, value);
-        }
+        public List<Radio<PlaylistOrder>> Options { get; set; } = Methods.List.Of(Default, NameThenEpisode,
+            EpisodeThenName, Date, RandomNameThenEpisode);
 
-        public RadioModel<PlaylistOrder> SelectedRadio
+        public Radio<PlaylistOrder> SelectedRadio
         {
             get => _selectedRadio;
             set
@@ -146,8 +128,8 @@ namespace anime_downloader.ViewModels.Displays
                 Set(() => ReverseOrder, ref _reverseOrder, value);
                 Playlist.Options ^= PlaylistOptions.Reverse;
                 DemoPlaylist.Options ^= PlaylistOptions.Reverse;
-                DemoPlaylist.ApplyConfiguration();
-            }
+                DemoPlaylist.ApplyConfiguration();  
+            } 
         }
 
         public bool AdditionalEpisodesFirst
@@ -161,31 +143,31 @@ namespace anime_downloader.ViewModels.Displays
                 DemoPlaylist.ApplyConfiguration();
             }
         }
-        
-        private Playlist Playlist { get; }
+
+        public bool FileExists { get; set; } =
+            File.Exists(App.Path.Playlist)
+            && File.ReadAllLines(App.Path.Playlist).Any(File.Exists);
+
+        public Playlist Playlist { get; } = new Playlist();
 
         public Playlist DemoPlaylist { get; }
 
-        public RelayCommand OpenCommand { get; set; }
+        [DependsOn(nameof(FileExists))]
+        public RelayCommand MoveCommand => new RelayCommand(Move, () => FileExists);
 
-        public RelayCommand CreateCommand { get; set; }
-        
-        private bool FileExists
-        {
-            get => _fileExists;
-            set
-            {
-                Set(() => FileExists, ref _fileExists, value);
-                OpenCommand.RaiseCanExecuteChanged();
-            }
-        }
+        [DependsOn(nameof(FileExists))]
+        public RelayCommand OpenCommand => new RelayCommand(Open, () => FileExists);
+
+        public RelayCommand CreateCommand => new RelayCommand(Create);
+
+        public RelayCommand RadioCommand => new RelayCommand(RefreshDemo);
 
         // 
 
         private void Open()
         {
             if (FileExists)
-                Process.Start(PathConfiguration.Playlist);
+                Process.Start(App.Path.Playlist);
         }
 
         private async void Create()
@@ -193,7 +175,7 @@ namespace anime_downloader.ViewModels.Displays
             if (!await _settings.CrucialDirectoriesExist())
                 return;
 
-            Playlist.Source = new ObservableCollection<AnimeFile>(await _fileService.GetEpisodesAsync(EpisodeStatus.Unwatched));
+            Playlist.Source = new List<AnimeFile>(await _fileService.GetEpisodesAsync(EpisodeStatus.Unwatched));
             Playlist.ApplyConfiguration();
 
             if (Playlist.Source.Count == 0)
@@ -201,11 +183,39 @@ namespace anime_downloader.ViewModels.Displays
 
             else
             {
-                await Playlist.Create();
+                FileExists = await Playlist.Create();
                 Methods.Alert("Playlist created.");
             }
 
-            FileExists = File.Exists(PathConfiguration.Playlist);
+        }
+
+        private void RefreshDemo()
+        {
+            if (SelectedRadio?.Data != PlaylistOrder.RandomNameThenEpisode)
+                return;
+
+            DemoPlaylist.ApplyConfiguration();
+        }
+
+        private void Move()
+        {
+            var files = File.ReadAllLines(App.Path.Playlist)
+                .Where(p => p.Length > 0 && p.Contains(_settings.PathConfig.Unwatched))
+                .Select(p => new AnimeFile(p))
+                .ToList();
+
+            foreach (var file in files)
+                Methods.MoveFile(file,
+                    _settings.PathConfig.Unwatched,
+                    _settings.PathConfig.Watched);
+
+            Methods.Alert(files.Count > 0
+                ? $"Moved {files.Count} files to the watched directory."
+                : "No files were moved.");
+
+            // if we moved everything, there's no need for a playlist
+            File.Delete(App.Path.Playlist);
+            FileExists = false;
         }
     }
 }

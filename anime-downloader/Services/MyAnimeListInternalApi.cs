@@ -17,6 +17,7 @@ using anime_downloader.Services.Interfaces;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Optional;
 
 namespace anime_downloader.Services
 {
@@ -88,7 +89,7 @@ namespace anime_downloader.Services
             {
                 var request = (await client.GetAsync(url)).Content;
                 var data = await request.ReadAsStreamAsync();
-                if (data == null || data.Length <= 0)
+                if (data is null || data.Length <= 0)
                     return new List<ProfileAnimeResult>();
                 using (var response = new StreamReader(data))
                 {
@@ -116,7 +117,7 @@ namespace anime_downloader.Services
             return response.Categories.FirstOrDefault()?.Items.Select(ToFindResult).ToList() ?? new List<FindResult>();
         }
 
-        public async Task<(bool successful, string content)> AddAsync(Anime anime, int id)
+        public async Task<Option<string>> AddAsync(Anime anime, int id)
         {
             await SetupRequest();
 
@@ -129,10 +130,12 @@ namespace anime_downloader.Services
                 _credentialsRepository.Save();
             }
 
-            return (response.IsSuccessStatusCode, content);
+            return response.IsSuccessStatusCode 
+                ? content.Some() 
+                : Option.None<string>();
         }
 
-        public async Task<(bool successful, string content)> UpdateAsync(Anime anime, int id)
+        public async Task<Option<string>> UpdateAsync(Anime anime, int id)
         {
             await SetupRequest();
 
@@ -142,7 +145,10 @@ namespace anime_downloader.Services
                 : ApiUpdate;
             var response = await Post(url, anime, id);
             var content = await response.Content.ReadAsStringAsync();
-            return (response.IsSuccessStatusCode, content);
+
+            return response.IsSuccessStatusCode
+                ? content.Some()
+                : Option.None<string>();
         }
 
         public async Task<bool> ProfileContains(int id)
@@ -354,7 +360,7 @@ namespace anime_downloader.Services
 
             if (date.Contains(" to "))
             {
-                var data = date.Split(new[] {" to "}, StringSplitOptions.None);
+                var data = date.Split(" to ");
                 start = data[0];
                 end = data[1];
             }

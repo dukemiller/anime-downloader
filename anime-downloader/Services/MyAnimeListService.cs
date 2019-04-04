@@ -10,6 +10,7 @@ using anime_downloader.Models;
 using anime_downloader.Models.MyAnimeList;
 using anime_downloader.Services.Interfaces;
 using HtmlAgilityPack;
+using Optional;
 
 namespace anime_downloader.Services
 {
@@ -29,13 +30,13 @@ namespace anime_downloader.Services
 
         // IRequireIdentification
 
-        public int GetId(Anime anime) => int.TryParse(anime.Details.Id, out int result) ? result : 0;
+        public Option<int> GetId(Anime anime) => int.TryParse(anime.Details.Id, out var result) ? result.Some() : Option.None<int>();
 
         public void SetId(Anime anime, int id) => anime.Details.Id = id.ToString();
 
         // ISyncProviderService
 
-        public async Task<(bool successful, int id)> FindId(Anime anime)
+        public async Task<Option<int>> FindId(Anime anime)
         {
             var query = string.IsNullOrEmpty(anime.Details.PreferredSearchTitle)
                 ? anime.Title
@@ -76,7 +77,7 @@ namespace anime_downloader.Services
                 {
                     // throw an error then skip
                     Methods.Alert($"1. Absolutely no matching names found for {anime.Title}.");
-                    return (false, 0);
+                    return Option.None<int>();
                 }
             }
 
@@ -84,7 +85,7 @@ namespace anime_downloader.Services
             var result = ClosestResult(anime, query, results);
 
             // if there was no good guess
-            if (result == null)
+            if (result is null)
             {
                 // try slapping a (TV) infront of it because the MAL api is weird sometimes
                 results = await _api.FindAsync(HttpUtility.UrlEncode(query + " (TV)"));
@@ -93,11 +94,11 @@ namespace anime_downloader.Services
                 result = ClosestResult(anime, query, results);
 
                 // if still no result
-                if (result == null)
+                if (result is null)
                 {
                     // throw an error then skip
                     Methods.Alert($"2. No partial matches found from matching names for {query}.");
-                    return (false, 0);
+                    return Option.None<int>();
                 }
             }
 
@@ -125,11 +126,11 @@ namespace anime_downloader.Services
                     }
 
                     // if we've run out of episodes, games over
-                    if (result == null)
+                    if (result is null)
                     {
                         Methods.Alert($"3. Episode mismatch and no new series match for {anime.Title}.\n" +
                                       $"Given total: {total}, current episode: {anime.Episode}");
-                        return (false, 0);
+                        return Option.None<int>();
                     }
 
                     // keep track of episodes to update instead in this variable
@@ -138,20 +139,20 @@ namespace anime_downloader.Services
 
             AddDataToAnime(anime, result);
 
-            return (true, int.Parse(result.Id));
+            return int.Parse(result.Id).Some();
         }
 
         public async Task Add(Anime anime)
         {
-            var (successful, _) = await _api.AddAsync(anime, GetId(anime));
-            if (successful)
+            var successful = await GetId(anime).FlatMapAsync(id => _api.AddAsync(anime, id));
+            if (successful.HasValue)
                 anime.Details.NeedsUpdating = false;
         }
 
         public async Task Update(Anime anime)
         {
-            var (successful, _) = await _api.UpdateAsync(anime, GetId(anime));
-            if (successful)
+            var successful = await GetId(anime).FlatMapAsync(id => _api.UpdateAsync(anime, id));
+            if (successful.HasValue)
                 anime.Details.NeedsUpdating = false;
         }
 
@@ -165,15 +166,18 @@ namespace anime_downloader.Services
                     // If it needs adding, add it
                     if (string.IsNullOrEmpty(anime.Details.Id))
                     {
-                        var (successful, _) = await FindId(anime);
-                        if (!successful)
+                        var successful = await FindId(anime);
+                        if (!successful.HasValue)
                             continue;
                     }
 
-                    if (await _api.ProfileContains(GetId(anime)))
-                        await Update(anime);
-                    else
-                        await Add(anime);
+                    var profileContains = await GetId(anime).MapAsync(id => _api.ProfileContains(id));
+
+                    // todo: figure out a cleaner way to do this
+                    await profileContains.Match(
+                        some: _ => _ ? Update(anime) : Add(anime), 
+                        none: () => Task.Delay(0)
+                    );
                 }
 
                 catch (ServerProblemException spx)
@@ -189,43 +193,33 @@ namespace anime_downloader.Services
 
         public async Task<IEnumerable<Anime>> LoadProfile() => (await _api.GetProfile()).Select(AnimeConverter.ToAnime);
 
-        public async Task<string> FindProfilePage(string text)
+        public async Task<Option<string>> FindProfilePage(string text)
         {
-            string result = null;
-
             var q = HttpUtility.UrlEncode(text);
             var document = new HtmlDocument();
             using (var client = new WebClient())
             {
                 var html = await client.DownloadStringTaskAsync(new Uri($"https://myanimelist.net/anime.php?q={q}"));
-                document.LoadHtml(html);
+                var node = document.LoadPage(html)?.DocumentNode
+                    ?.SelectSingleNode("//div[@class=\"js-categories-seasonal js-block-list list\"]/table/tr[2]/td[1]")
+                    ?.Descendants("a")?.FirstOrDefault().SomeNotNull() ?? Option.None<HtmlNode>();
+                return node.Map(link => link.Attributes["href"].Value);
             }
-
-            var link = document.DocumentNode?
-                .SelectSingleNode("//div[@class=\"js-categories-seasonal js-block-list list\"]/table/tr[2]/td[1]")?
-                .Descendants("a")?
-                .FirstOrDefault();
-
-            if (link != null)
-                result = link.Attributes["href"].Value;
-
-            return result;
         }
 
         // 
 
-        private static FindResult ClosestResult(Anime anime, string query, IEnumerable<FindResult> results)
-        {
-            var closestResults = results
-                .Where(result => !result.Type.Equals("OVA") && !result.Type.Equals("Movie")) // I'm sure i'll regret this
-                .Where(result =>
-                    !anime.NameStrict ||
-                    result.NameCollection.Any(r => r.ToLower().Replace(" (tv)", "").Equals(query.ToLower())))
-                .Select(result => new FindResultDistance(query, result))
-                .OrderBy(result => result.Distance);
+        private static bool Contains(string r, string query) => r.ToLower().Replace(" (tv)", "") == query.ToLower();
 
-            return closestResults.FirstOrDefault()?.Result;
-        }
+        // todo: fix this
+        private static FindResult ClosestResult(Anime anime, string query, IEnumerable<FindResult> results) => results
+            .Where(result => result.Type != ("OVA") && result.Type != "Movie") // I'm sure i'll regret this
+            .Where(result =>
+                !anime.NameStrict || Methods.Flatten<string>(result.English, result.Title, result.Synonyms.Split(';'))
+                    .Any(title => Contains(title, query)))
+            .Select(result => new FindResultDistance(query, result))
+            .OrderBy(result => result.Distance)
+            .FirstOrDefault().Result;
 
         private void AddDataToAnime(Anime anime, FindResult result)
         {
@@ -249,7 +243,7 @@ namespace anime_downloader.Services
 
             anime.Details.Synonyms = result.Synonyms;
 
-            if (anime.Details.Aired == null)
+            if (anime.Details.Aired is null)
             {
                 if (DateTime.TryParse(result.StartDate, out DateTime date))
                 {
@@ -261,7 +255,7 @@ namespace anime_downloader.Services
                 }
             }
 
-            if (anime.Details.Ended == null)
+            if (anime.Details.Ended is null)
             {
                 if (DateTime.TryParse(result.EndDate, out DateTime end))
                 {

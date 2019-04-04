@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using anime_downloader.Classes;
 using anime_downloader.Models.Configurations;
 using anime_downloader.Repositories.Interface;
 using GalaSoft.MvvmLight;
@@ -10,23 +11,13 @@ namespace anime_downloader.Repositories
     [Serializable]
     public class CredentialsRepository: ObservableObject, ICredentialsRepository
     {
-        private MyAnimeListConfiguration _myAnimeListConfig = new MyAnimeListConfiguration();
-
         [JsonIgnore]
-        private static string SavePath => Path.Combine(PathConfiguration.ApplicationDirectory, "credentials.json");
+        private static string SavePath => Path.Combine(App.Path.Directory.Application, "credentials.json");
 
         // 
 
         [JsonProperty("myanimelist")]
-        public MyAnimeListConfiguration MyAnimeListConfig
-        {
-            get => _myAnimeListConfig;
-            set
-            {
-                _myAnimeListConfig = value;
-                RaisePropertyChanged(nameof(MyAnimeListConfig));
-            }
-        }
+        public MyAnimeListConfiguration MyAnimeListConfig { get; set; } = new MyAnimeListConfiguration();
 
         // 
 
@@ -41,9 +32,20 @@ namespace anime_downloader.Repositories
 
         public void Save()
         {
-            using (var stream = new StreamWriter(SavePath))
-                stream.Write(JsonConvert.SerializeObject(this, Formatting.Indented,
-                    new JsonSerializerSettings {DefaultValueHandling = DefaultValueHandling.Ignore}));
+            try
+            {
+                using (var stream = new StreamWriter(SavePath))
+                {
+                    var data = JsonConvert.SerializeObject(this, Formatting.Indented,
+                        new JsonSerializerSettings {DefaultValueHandling = DefaultValueHandling.Ignore});
+                    stream.Write(data);
+                }
+            }
+
+            catch (Exception e)
+            {
+                Methods.Alert($"There was an issue saving your credentials:\n{e.Message}");
+            }
         }
 
     }

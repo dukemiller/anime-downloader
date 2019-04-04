@@ -6,6 +6,7 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:animeDisplay="clr-namespace:anime_downloader.ViewModels.Components.AnimeDisplay"
+             xmlns:xaml="clr-namespace:anime_downloader.Classes.Xaml"
              d:DataContext="{d:DesignInstance {x:Type animeDisplay:AnimeListViewModel}}"
              d:DesignHeight="360"
              d:DesignWidth="780"
@@ -71,7 +72,7 @@
                 </Style>
             </DataGrid.ColumnHeaderStyle>
             <DataGrid.Columns>
-                <DataGridTextColumn Width="410"
+                <DataGridTextColumn Width="419"
                                     Binding="{Binding Title}"
                                     ElementStyle="{StaticResource TitleElementStyle}"
                                     Header="Name" >
@@ -81,20 +82,18 @@
                                     Binding="{Binding EpisodeTotal}"
                                     Header="Episode"
                                     SortMemberPath="Episode" />
-                <DataGridTextColumn Width="98"
+                <DataGridTextColumn Width="90"
                                     CellStyle="{StaticResource Centered}"
                                     Binding="{Binding Status}"
                                     Header="Status" />
-                <DataGridTextColumn Width="60"
+                <DataGridTextColumn Width="65"
                                     CellStyle="{StaticResource Centered}"
                                     Binding="{Binding Rating}"
-                                    Header="Rating"
-                                    SortMemberPath="SortedRating" />
+                                    Header="Rating" />
                 <DataGridTextColumn Width="114"
                                     CellStyle="{StaticResource Centered}"
                                     Binding="{Binding Details.Aired.Title}"
-                                    Header="Aired in"
-                                    SortMemberPath="SeasonSort" />
+                                    Header="Aired in" />
             </DataGrid.Columns>
             <DataGrid.ContextMenu>
                 <ContextMenu>

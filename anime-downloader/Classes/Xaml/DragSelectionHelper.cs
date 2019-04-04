@@ -67,7 +67,7 @@ namespace anime_downloader.Classes.Xaml
         private static void listBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             var listBox = sender as ListBox;
-            if (listBox == null)
+            if (listBox is null)
                 return;
 
             if (e.Key == Key.LeftShift || e.Key == Key.RightShift)

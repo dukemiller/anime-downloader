@@ -6,10 +6,12 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using anime_downloader.Classes;
+using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Models.Abstract;
 using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
+using static anime_downloader.Classes.Methods;
 
 namespace anime_downloader.Services.Abstract
 {
@@ -22,273 +24,64 @@ namespace anime_downloader.Services.Abstract
     /// </remarks>
     public abstract class DownloadServiceBase : IDownloadService
     {
-        
-        /// <summary>
-        ///     The arbitrary "health score" of a list of resources for categorizing if
-        ///     trusting this selection of results is more capable of representing what
-        ///     people search for
-        /// </summary>
-        private static int HealthScore(IReadOnlyCollection<RemoteMedia> mediaSource)
+        protected WebClient Downloader { get; } = new WebClient();
+
+        // 
+
+        public string Name => GetType().Name.Replace("Service", "");
+
+        public async Task<int> Download(DownloadOption option, Action<string> output)
         {
-            // For any "average" torrent, these would be the stats
-            var count = mediaSource.Count;
-            if (count == 0)
-                return -1;
-            var seeders = mediaSource.Select(media => media.Health).Sum() / count;
-            var downloads = mediaSource.Select(m => m.Downloads).Sum() / count;
-            return (seeders + downloads) * count;
-        }
+            var total = 0;
 
-        private static List<RemoteMedia> CalculateAndSetPreference(Anime anime, 
-            List<RemoteMedia> english, string englishTitle,
-            List<RemoteMedia> romanji, string romanjiTitle)
-        {
-            var media = new List<RemoteMedia>();
-
-            var (englishScore, romanjiScore) = (HealthScore(english), HealthScore(romanji));
-
-            // Set it to romanji, but don't save any titles
-            if (englishScore == -1 && romanjiScore == -1)
-                media = romanjiTitle != null ? romanji : english;
-
-            else if (englishScore > romanjiScore && englishTitle != null)
+            switch (option)
             {
-                anime.Details.PreferredSearchTitle = englishTitle;
-                media = english;
-            }
+                case DownloadOption.Next:
+                    foreach (var anime in AnimeService.AiringAndWatchingAndNotCompleted)
+                        if (await DownloadSingleEpisode(anime, anime.NextEpisode, output))
+                            total++;
+                    break;
 
-            else if (englishScore <= romanjiScore && romanjiTitle != null)
-            {
-                anime.Details.PreferredSearchTitle = romanjiTitle;
-                media = romanji;
-            }
-
-            return media.OrderByDescending(n => n.Name.Contains(anime.Resolution)).ThenByDescending(n => n.Health).ToList();
-        }
-
-        /// <summary>
-        ///     Continually slice off the last word of the title, comparing it to the health of the
-        ///     previous search until it either has less score or is 
-        /// </summary>
-        private async Task<(string, List<RemoteMedia>)> UncertainSearch(Anime anime, int episode, string title)
-        {
-            if (string.IsNullOrEmpty(title))
-                return (title, new List<RemoteMedia>());
-
-            List<RemoteMedia> previousMedia = null;
-            var words = title.Split();
-            var count = words.Length;
-            var previousScore = -1;
-
-            do
-            {
-                title = string.Join(" ", words.Take(count--));
-                var media = await PotentialStartingEpisode(title) ?? await FindAllMedia(anime, title, episode);
-                var score = HealthScore(media);
-
-                if (previousMedia == null)
-                    previousMedia = media;
-
-                if (score < previousScore)
-                    return (title, previousMedia);
-
-                previousMedia = media;
-                previousScore = score;
-            } while (count >= 3);
-
-            return (title, previousMedia);
-        }
-
-        private async Task<List<RemoteMedia>> DeterminePreferredSearchTitle(Anime anime, int episode)
-        {
-            List<RemoteMedia> english = new List<RemoteMedia>(), romanji = new List<RemoteMedia>();
-            var media = new List<RemoteMedia>();
-            
-            // If this is the very start of the series, we might also need to find episode start if the show
-            // is long running and indexing starts at another number (e.g. attack on titan s3 - 38 is episode 01)
-            if (anime.Episode == 0)
-            {
-                // the countermeasure to subgroups incorrectly naming the show for whatever reason
-                if (anime.Details.JustAdded)
-                {
-                    string englishTitle, romanjiTitle;
-
-                    (englishTitle, english) = await UncertainSearch(anime, episode, anime.Details.English);
-                    (romanjiTitle, romanji) = await UncertainSearch(anime, episode, anime.Details.Title);
-                    if (english.Count != 0 || romanji.Count != 0)
+                case DownloadOption.Continually:
+                    foreach (var anime in AnimeService.AiringAndWatchingAndNotCompleted)
                     {
-                        media = CalculateAndSetPreference(anime, english, englishTitle, romanji, romanjiTitle);
-                        anime.Details.JustAdded = false;
+                        bool downloaded;
+                        do
+                        {
+                            downloaded = await DownloadSingleEpisode(anime, anime.NextEpisode, output);
+                            if (downloaded)
+                                total++;
+                        } while (downloaded);
                     }
-                }
 
-                // you somehow got to episode=0 while already having added the show
-                else
-                {
-                    english = await PotentialStartingEpisode(anime.Details.English) ??
-                              await FindAllMedia(anime, anime.Details.English, episode);
-                    romanji = await PotentialStartingEpisode(anime.Details.Title) ??
-                              await FindAllMedia(anime, anime.Details.Title, episode);
-                    if (english.Count != 0 || romanji.Count != 0)
-                    {
-                        media = CalculateAndSetPreference(anime, english, anime.Details.English, romanji, anime.Details.Title);
-                    }
-                }
+                    break;
 
-                if (media.Count > 0 && !string.IsNullOrEmpty(anime.Details.PreferredSearchTitle))
-                {
-                    anime.Episode = media.First().Episode - 1;
+                case DownloadOption.Missing:
+                    var animes = await MissingAnime();
+                    foreach (var anime in animes.Keys)
+                    foreach (var episode in animes[anime])
+                        if (await DownloadSingleEpisode(anime, episode, output, false))
+                            total++;
+                        else
+                            break;
 
-                    // if this is over the total, kill the total and have it be recalculated by the user later
-                    if (anime.Episode > anime.Details.Total)
-                    {
-                        anime.Details.TotalEpisodes = 0;
-                        anime.Details.OverallTotal = 0;
-                    }
-                }
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(option), option, null);
             }
 
-            else
-            {
-                if (!string.IsNullOrEmpty(anime.Details.English))
-                    english = await FindAllMedia(anime, anime.Details.English, episode);
-                if (!string.IsNullOrEmpty(anime.Details.Title))
-                    romanji = await FindAllMedia(anime, anime.Details.Title, episode);
-
-                if (english.Count != 0 || romanji.Count != 0)
-                {
-                    media = CalculateAndSetPreference(anime, english, anime.Details.English, romanji,
-                        anime.Details.Title);
-                }
-            }
-
-            AnimeRepository.Save();
-
-            return media;
-        }
-
-        // Absolutely generic
-
-        /// <summary>
-        ///     A one time but potentially expensive cost to find out the preferred name
-        /// </summary>
-        public async Task<List<RemoteMedia>> FindAllMedia(Anime anime, int episode) => string.IsNullOrEmpty(anime.Details.PreferredSearchTitle)
-            ? await DeterminePreferredSearchTitle(anime, episode)
-            : await FindAllMedia(anime, anime.Details.PreferredSearchTitle, episode);
-
-        public string ServiceName => GetType().Name.Replace("Service", "");
-
-        public async Task<int> DownloadAll(IEnumerable<Anime> animes, Action<string> output)
-        {
-            var downloaded = 0;
-
-            foreach (var anime in animes)
-            {
-                var result = await FindAllMedia(anime, anime.NextEpisode);
-                var download = await AttemptDownload(anime, anime.NextEpisode, result, output);
-                if (download)
-                {
-                    downloaded++;
-                    anime.Episode++;
-                    anime.Details.NeedsUpdating = true;
-                }
-            }
-
-            if (downloaded > 0)
+            if (total > 0)
                 AnimeRepository.Save();
 
-            return downloaded;
+            return total;
         }
 
-        public async Task<int> DownloadSpecificEpisodes(Dictionary<Anime, List<int>> animes, Action<string> output)
-        {
-            var downloaded = 0;
-
-            foreach (var anime in animes.Keys)
-            foreach (var episode in animes[anime])
-            {
-                var download = await AttemptDownload(anime, episode, await FindAllMedia(anime, episode), output);
-                if (download)
-                {
-                    downloaded++;
-                    anime.Details.NeedsUpdating = true;
-                }
-            }
-
-            if (downloaded > 0)
-                AnimeRepository.Save();
-
-            return downloaded;
-        }
-
-        public bool CanDownload(RemoteMedia media, Anime anime)
-        {
-            if (anime == null || media == null)
-                return false;
-
-            // Most likely wrong torrent
-            if (anime.NameStrict && !anime.Name.ToLower().Equals(media.StrippedWithNoEpisode.ToLower()))
-                return false;
-
-            // Not the right subgroup
-            if (!string.IsNullOrEmpty(anime.PreferredSubgroup))
-            {
-                if (!media.HasSubgroup())
-                    return false;
-
-                if (!media.Subgroup().ToLower().Contains(anime.PreferredSubgroup.ToLower()))
-                    return false;
-            }
-
-            if (SettingsRepository.FlagConfig.OnlyWhitelisted)
-            {
-                // Torrent listing with no subgroup in the title
-                if (!media.HasSubgroup())
-                    return false;
-
-                // Torrent listing with wrong subgroup
-                if (!SettingsRepository.Subgroups.Select(s => s.ToLower()).Contains(media.Subgroup().ToLower()))
-                    return false;
-            }
-
-            return true;
-        }
-
-        public async Task<bool> AttemptDownload(Anime anime, int episode, IEnumerable<RemoteMedia> medias,
-            Action<string> output)
-        {
-            if (medias == null || anime == null)
-                return false;
-
-            foreach (var media in medias.Where(m => CanDownload(m, anime)))
-                if (await DownloadEpisode(anime, episode, media, output))
-                    return true;
-
-            return false;
-        }
-
-        public async Task<bool> DownloadEpisode(Anime anime, int episode, RemoteMedia media, Action<string> output)
-        {
-            output($"Downloading '{anime.Title}' episode '{episode}'.");
-
-            var download = await MediaManager.Download(anime, media);
-
-            download.Match(
-                some: command => MediaManager.Start(media, command),
-                none: () => output($"Download of '{anime.Title}' failed (most likely due to server error).")
-            );
-
-            if (download.HasValue)
-                await Log(anime, episode);
-            
-            return download.HasValue;
-        }
-        
         public async Task<bool> Available()
         {
             try
             {
-                var request = (HttpWebRequest) WebRequest.Create(ServiceUrl);
+                var request = (HttpWebRequest) WebRequest.Create(Url);
                 request.Timeout = 3000;
                 request.Method = WebRequestMethods.Http.Head;
                 request.UserAgent =
@@ -305,22 +98,91 @@ namespace anime_downloader.Services.Abstract
             }
         }
 
-        protected async Task Log(Anime anime, int episode)
+        // 
+
+        private async Task<List<RemoteMedia>> FindAllMedia(Anime anime, int episode) =>
+            (string.IsNullOrEmpty(anime.Details.PreferredSearchTitle)
+                ? await DownloadPreference.DetermineSearchTitle(anime, episode)
+                : await FindAllMedia(anime, anime.Details.PreferredSearchTitle, episode))
+            .Where(CanDownload(anime))
+            .ToList();
+
+        private Func<RemoteMedia, bool> CanDownload(Anime anime) => media =>
+        {
+            if (anime is null || media is null)
+                return false;
+
+            // Most likely wrong torrent
+            if (anime.NameStrict && !anime.Name.ToLower().Equals(media.StrippedWithNoEpisode.ToLower()))
+                return false;
+
+            // Not the preferred subgroup
+            if (!string.IsNullOrEmpty(anime.PreferredSubgroup)
+                && !media.Subgroup().Exists(subgroup => subgroup.ToLower().Contains(anime.PreferredSubgroup.ToLower())))
+                return false;
+
+            // Not on whitelist
+            if (SettingsRepository.FlagConfig.OnlyWhitelisted
+                && !media.Subgroup().Exists(group =>
+                    SettingsRepository.Subgroups.Select(s => s.ToLower()).Contains(group.ToLower())))
+                return false;
+
+            return true;
+        };
+
+        private static async Task<bool> Download(Anime anime, RemoteMedia media) =>
+            (await MediaManager
+                .Download(anime, media)
+                .MapAsync(command => Tee(MediaManager.Start, media, command))).HasValue;
+
+        private async Task<bool> DownloadSingleEpisode(Anime anime, int episode, Action<string> output,
+            bool update = true)
+        {
+            var medias = await FindAllMedia(anime, episode);
+
+            if (medias.Count <= 0)
+                return false;
+
+            while (Messages.Count > 0)
+                output(Messages.Dequeue());
+
+            foreach (var media in medias)
+            {
+                if (await Download(anime, media))
+                {
+                    output($"Downloading '{anime.Title}' episode '{media.Episode.ValueOr(0)}'.");
+
+                    await Log(anime, episode);
+
+                    if (update)
+                    {
+                        anime.Episode++;
+                        anime.Details.NeedsUpdating = true;
+                    }
+
+                    return true;
+                }
+
+                output($"Download of '{anime.Title}' failed (most likely due to server error).");
+            }
+
+            return false;
+        }
+
+        private static async Task Log(Anime anime, int episode)
         {
             var timestamp = $"{DateTime.Now:[M/d/yyyy @ hh:mm:ss tt]}";
             var message = $"Downloaded '{anime.Title}' episode {episode}.";
-            using (var streamWriter = new StreamWriter(SettingsRepository.PathConfig.Logging, true))
-            {
+            using (var streamWriter = new StreamWriter(App.Path.Logging, true))
                 await streamWriter.WriteLineAsync($"{timestamp} - {message}");
-                streamWriter.Close();
-            }
         }
 
         /// <summary>
         ///     Many sites have different ways their search works, but on the nyaa.* sites
         ///     this will transform the title into a searchable query.
         /// </summary>
-        protected static string TransformEpisodeSearch(string name, int episode) => $"{TransformEpisodeSearch(name)}+{episode:D2}";
+        protected static string TransformEpisodeSearch(string name, int episode) =>
+            $"{TransformEpisodeSearch(name)}+{episode:D2}";
 
         protected static string TransformEpisodeSearch(string name)
         {
@@ -338,7 +200,7 @@ namespace anime_downloader.Services.Abstract
 
             // Remove literal season declarations from the title
             name = Regex.Replace(name, @"(2nd season|the (?:animation|animated series))", "", RegexOptions.IgnoreCase);
-            
+
             // Troublesome characters for the search
             name = Regex.Replace(name, @":|/|-|\.", " ");
 
@@ -360,6 +222,35 @@ namespace anime_downloader.Services.Abstract
             return name;
         }
 
+        private async Task<Dictionary<Anime, List<int>>> MissingAnime()
+        {
+            var animes = new Dictionary<Anime, List<int>>();
+
+            foreach (var anime in AnimeService.AiringAndWatching)
+            {
+                var files = (await FileService.GetEpisodesAsync(anime, EpisodeStatus.All)).ToList();
+                var (first, last) = (files.FirstOrDefault()?.Episode, files.LastOrDefault()?.Episode);
+
+                // No range check needed or something weird happened
+                if (!first.HasValue || !last.HasValue || first == last)
+                    continue;
+
+                for (var episode = first.Value; episode <= last.Value; episode++)
+                    if (files.All(file => file.Episode != episode))
+                    {
+                        if (!animes.ContainsKey(anime))
+                            animes[anime] = new List<int>();
+                        animes[anime].Add(episode);
+                    }
+            }
+
+            return animes;
+        }
+
+        // 
+
+        public Queue<string> Messages { get; } = new Queue<string>();
+
         // Abstract inheritors
 
         protected abstract ISettingsRepository SettingsRepository { get; }
@@ -368,9 +259,9 @@ namespace anime_downloader.Services.Abstract
 
         protected abstract IAnimeService AnimeService { get; }
 
-        protected abstract WebClient Downloader { get; }
+        protected abstract IFileService FileService { get; }
 
-        public abstract string ServiceUrl { get; }
+        public abstract string Url { get; }
 
         public abstract Task<List<RemoteMedia>> FindAllMedia(Anime anime, string name, int episode);
 

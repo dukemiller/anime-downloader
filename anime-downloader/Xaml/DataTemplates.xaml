@@ -74,10 +74,6 @@
         <download:Options DataContext="{Binding}" />
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type downloadVm:LogViewModel}">
-        <download:Log DataContext="{Binding}" />
-    </DataTemplate>
-
     <DataTemplate DataType="{x:Type viewModelComponents:FileListViewModel}">
         <components:FileList DataContext="{Binding}" />
     </DataTemplate>

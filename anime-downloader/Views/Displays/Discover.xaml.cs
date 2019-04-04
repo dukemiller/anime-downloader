@@ -32,7 +32,7 @@ namespace anime_downloader.Views.Displays
             {
                 var currentFlipView = (ParentTabControl.SelectedItem as MetroTabItem)?.Content as FlipView;
 
-                if (currentFlipView == null)
+                if (currentFlipView is null)
                     return;
 
                 await Dispatcher.BeginInvoke(

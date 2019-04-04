@@ -6,8 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using anime_downloader.Models;
 using anime_downloader.Models.AniList;
-using anime_downloader.Models.Configurations;
-using anime_downloader.Repositories;
 using anime_downloader.Services.Interfaces;
 using Newtonsoft.Json;
 
@@ -79,7 +77,7 @@ namespace anime_downloader.Services
         private AniListData() { }
 
         [JsonIgnore]
-        private static readonly string SettingsPath = Path.Combine(PathConfiguration.ApplicationDirectory, "airing_shows.json");
+        private static readonly string SettingsPath = Path.Combine(App.Path.Directory.Application, "airing_shows.json");
         
         [JsonProperty("data")]
         public Dictionary<string, AniListSeasonData> Data { get; set; } = new Dictionary<string, AniListSeasonData>();
@@ -126,7 +124,7 @@ namespace anime_downloader.Services
         {
             var changed = false;
             var image = anime.CoverImage.Large;
-            var downloadPath = Path.Combine(SettingsRepository.ImageDirectory, $"{anime.Id}.png");
+            var downloadPath = Path.Combine(App.Path.Directory.Images, $"{anime.Id}.png");
 
             if (File.Exists(downloadPath))
             {
@@ -150,8 +148,8 @@ namespace anime_downloader.Services
 
         public static AniListData Load()
         {
-            if (!Directory.Exists(SettingsRepository.ImageDirectory))
-                Directory.CreateDirectory(SettingsRepository.ImageDirectory);
+            if (!Directory.Exists(App.Path.Directory.Images))
+                Directory.CreateDirectory(App.Path.Directory.Images);
 
             // don't care about re-initializing, not user centered data
             try

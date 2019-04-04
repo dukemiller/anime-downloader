@@ -8,10 +8,10 @@ using System.Windows;
 using System.Windows.Forms;
 using anime_downloader.Enums;
 using anime_downloader.Models;
-using anime_downloader.Models.Configurations;
 using anime_downloader.Repositories.Interface;
 using anime_downloader.Views;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Ioc;
 using static anime_downloader.Classes.NativeMethods;
 using Application = System.Windows.Application;
 
@@ -19,9 +19,9 @@ namespace anime_downloader.Classes
 {
     public class Tray : ViewModelBase
     {
-        private readonly ISettingsRepository _settings;
+        private static readonly ISettingsRepository Settings = SimpleIoc.Default.GetInstance<ISettingsRepository>();
 
-        private readonly ICredentialsRepository _credentials;
+        private static readonly ICredentialsRepository Credentials = SimpleIoc.Default.GetInstance<ICredentialsRepository>();
 
         /// <summary>
         ///     The menu for the system tray.
@@ -35,15 +35,13 @@ namespace anime_downloader.Classes
 
         // Constructors
 
-        public Tray(ISettingsRepository settings, ICredentialsRepository credentials)
+        public Tray()
         {
-            _settings = settings;
-            _credentials = credentials;
             InitTray();
             InitContextMenu();
 
-            Visible = _settings.FlagConfig.AlwaysShowTray;
-            _settings.FlagConfig.PropertyChanged += FlagChanged;
+            Visible = Settings.FlagConfig.AlwaysShowTray;
+            Settings.FlagConfig.PropertyChanged += FlagChanged;
             MainWindow.Closing += WindowIsClosing;
             MainWindow.StateChanged += WindowStateChanged;
         }
@@ -64,7 +62,7 @@ namespace anime_downloader.Classes
 
         private void FlagChanged(object sender, PropertyChangedEventArgs args)
         {
-            if (_settings.FlagConfig.AlwaysShowTray)
+            if (Settings.FlagConfig.AlwaysShowTray)
                 Visible = true;
 
             else
@@ -83,7 +81,7 @@ namespace anime_downloader.Classes
             switch (MainWindow.WindowState)
             {
                 case WindowState.Normal:
-                    Visible = _settings.FlagConfig.AlwaysShowTray;
+                    Visible = Settings.FlagConfig.AlwaysShowTray;
                     MainWindow.Show();
                     break;
                 case WindowState.Minimized:
@@ -95,7 +93,7 @@ namespace anime_downloader.Classes
 
         private void WindowIsClosing(object sender, CancelEventArgs e)
         {
-            if (_settings.FlagConfig.ExitOnClose && !FullExit)
+            if (Settings.FlagConfig.ExitOnClose && !FullExit)
                 Visible = false;
 
             else if (FullExit)
@@ -162,14 +160,14 @@ namespace anime_downloader.Classes
                 {
                     BringWindowToFocus();
                     MessengerInstance.Send(Display.Download);
-                    MessengerInstance.Send(new RadioModel<DownloadOption> { Data = DownloadOption.Next });
+                    MessengerInstance.Send(new Radio<DownloadOption> { Data = DownloadOption.Next });
                 }));
 
             _trayContextMenu.MenuItems.Add(
                 new MenuItem("&Sync MyAnimeList...", (sender, args) =>
                 {
                     BringWindowToFocus();
-                    if (_credentials.MyAnimeListConfig.LoggedIn)
+                    if (Credentials.MyAnimeListConfig.LoggedIn)
                     {
                         MessengerInstance.Send(Display.Web);
                         MessengerInstance.Send(Request.TraySynchronize);
@@ -181,23 +179,19 @@ namespace anime_downloader.Classes
             _trayContextMenu.MenuItems.Add(
                 new MenuItem("Open &episode folder...", (sender, args) =>
                 {
-                    if (_settings != null && Directory.Exists(_settings.PathConfig.Unwatched))
-                        Process.Start(_settings.PathConfig.Unwatched);
+                    if (Directory.Exists(Settings.PathConfig.Unwatched))
+                        Process.Start(Settings.PathConfig.Unwatched);
                 }));
 
             _trayContextMenu.MenuItems.Add(
                 new MenuItem("Open &watched folder...", (sender, args) =>
                 {
-                    if (_settings != null && Directory.Exists(_settings.PathConfig.Watched))
-                        Process.Start(_settings.PathConfig.Watched);
+                    if (Directory.Exists(Settings.PathConfig.Watched))
+                        Process.Start(Settings.PathConfig.Watched);
                 }));
 
             _trayContextMenu.MenuItems.Add(
-                new MenuItem("Open &application folder...", (sender, args) =>
-                {
-                    if (_settings != null)
-                        Process.Start(PathConfiguration.ApplicationDirectory);
-                }));
+                new MenuItem("Open &application folder...", (sender, args) => Process.Start(App.Path.Directory.Application)));
 
             _trayContextMenu.MenuItems.Add("-");
 

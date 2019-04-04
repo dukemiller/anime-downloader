@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -15,35 +15,23 @@ namespace anime_downloader.ViewModels.Components.Download
 {
     public class OutputViewModel : ViewModelBase
     {
-        private string _text;
-
         private readonly ISettingsRepository _settings;
-
-        private readonly IFileService _fileService;
-
-        private readonly IAnimeService _animeService;
 
         private readonly IDownloadService _downloadService;
 
-        private readonly IAnimeRepository _animeRepository;
+        // 
 
-        public OutputViewModel(ISettingsRepository settings, IFileService fileService,
-            IAnimeService animeService, IDownloadService downloadService, IAnimeRepository animeRepository)
+        public OutputViewModel(ISettingsRepository settings, IDownloadService downloadService)
         {
             _settings = settings;
-            _fileService = fileService;
-            _animeService = animeService;
             _downloadService = downloadService;
-            _animeRepository = animeRepository;
         }
 
-        public string Text
-        {
-            get => _text;
-            set => Set(() => Text, ref _text, value);
-        }
+        // 
 
-        public async void Download(RadioModel<DownloadOption> radio)
+        public string Text { get; set; }
+
+        public async Task Download(Radio<DownloadOption> radio)
         {
             Text = "";
 
@@ -61,15 +49,38 @@ namespace anime_downloader.ViewModels.Components.Download
                     switch (radio.Data)
                     {
                         case DownloadOption.Next:
-                            await CheckForLatestAsync();
+                            Text = ">> Searching for currently airing anime episodes ...\n";
                             break;
+
                         case DownloadOption.Continually:
-                            await GetUpToDateAsync();
+                            if (!await Methods.QuestionYesNo(
+                                "You could potentially download an entire wrong series if\n" +
+                                "the intended series isn't found by your anime name and \n" +
+                                "settings. Be sure everything on your list retrieves the\n" +
+                                "show you intend.\n\n" +
+                                "Are you sure you want to continue?"))
+                            {
+                                MessengerInstance.Send(ViewState.DoneWorking);
+                                MessengerInstance.Send(Display.Download);
+                                return;
+                            }
+
+                            Text = ">> Attempting to catch up on airing anime episodes ...\n";
                             break;
+
                         case DownloadOption.Missing:
-                            await GetMissingEpisodesAsync();
+                            Text = ">> Finding all missing episodes ...\n";
                             break;
+
+                        default:
+                            throw new ArgumentOutOfRangeException();
                     }
+
+                    var downloaded = await _downloadService.Download(radio.Data, Append);
+
+                    Text += downloaded > 0
+                        ? $">> Found {downloaded} anime download{(downloaded == 1 ? "" : "s")}."
+                        : ">> No new anime found.";
                 }
 
                 catch (Exception exception)
@@ -84,110 +95,28 @@ namespace anime_downloader.ViewModels.Components.Download
                 }
 
             else
-                Text += $">> {_downloadService.ServiceName} is currently offline. Try checking later.";
+                Text += $">> {_downloadService.Name} is currently offline. Try checking later.";
 
             MessengerInstance.Send(ViewState.DoneWorking);
         }
 
-        /// <summary>
-        ///     Downloader (Check for latest anime)
-        /// </summary>
-        private async Task CheckForLatestAsync()
+        public async Task Log()
         {
-            var animes = _animeService.AiringAndWatchingAndNotCompleted().ToList();
+            Text = "";
 
-            if (animes.Any())
-            {
-                Text = ">> Searching for currently airing anime episodes ...\n";
-                var downloaded = await _downloadService.DownloadAll(animes, AddToText);
-
-                if (downloaded > 0)
-                    MessengerInstance.Send(ViewRequest.Update);
-
-                Text += downloaded > 0 
-                    ? $">> Found {downloaded} anime downloads." 
-                    : ">> No new anime found.";
-            }
+            if (File.Exists(App.Path.Logging))
+                using (var reader = new StreamReader(App.Path.Logging))
+                {
+                    var data = await reader.ReadToEndAsync();
+                    Text = await Task.Run(() => string.Join("\n", data.Split('\n').Reverse().Skip(1)));
+                }
 
             else
-            {
-                Text += ">> No animes need to be downloaded.";
-            }
+                Text = ">> No downloads have been logged so far.";
         }
 
-        /// <summary>
-        ///     Downloader (Get up to date)
-        /// </summary>
-        private async Task GetUpToDateAsync()
-        {
-            if (await Methods.QuestionYesNo("You could potentially download an entire wrong series if\n" +
-                                            "the intended series isn't found by your anime name and \n" +
-                                            "settings. Be sure everything on your list retrieves the\n" +
-                                            "show you intend.\n\n" +
-                                            "Are you sure you want to continue?"))
-            {
-                var total = 0;
-                Text = ">> Attempting to catch up on airing anime episodes ...\n";
-                foreach (var anime in _animeService.AiringAndWatchingAndNotCompleted())
-                {
-                    bool downloaded;
-                    do
-                    {
-                        var links = await _downloadService.FindAllMedia(anime, anime.NextEpisode);
-                        downloaded = await _downloadService.AttemptDownload(anime, anime.NextEpisode, links, AddToText);
-                        if (downloaded)
-                        {
-                            total++;
-                            anime.Episode++;
-                            anime.Details.NeedsUpdating = true;
-                        }
-                    } while (downloaded);
+        // 
 
-                    _animeRepository.Save();
-                }
-                var plural = total > 1 ? "downloads" : "download";
-                Text += total > 0 ? $">> Found {total} anime {plural}." : ">> No new anime found.";
-            }
-
-            else 
-                MessengerInstance.Send(Display.Download);
-        }
-
-        /// <summary>
-        ///     Downloader (Download missing episodes)
-        /// </summary>
-        /// <remarks>
-        ///     Find and download any episodes in collection anime that are between
-        ///     the range start.episode and last.episode
-        /// </remarks>
-        private async Task GetMissingEpisodesAsync()
-        {
-            Text = ">> Finding all missing episodes ...\n";
-
-            var animes = new Dictionary<Anime, List<int>>();
-
-            foreach (var anime in _animeService.AiringAndWatching)
-            {
-                var files = (await _fileService.GetEpisodesAsync(anime, EpisodeStatus.All)).ToList();
-                var (first, last) = (files.FirstOrDefault()?.Episode, files.LastOrDefault()?.Episode);
-
-                // No range check needed or something weird happened
-                if (!first.HasValue || !last.HasValue || first == last)
-                    continue;
-
-                for (var episode = first.Value; episode <= last.Value; episode++)
-                    if (files.All(file => file.Episode != episode))
-                    {
-                        if (!animes.ContainsKey(anime))
-                            animes[anime] = new List<int>();
-                        animes[anime].Add(episode);
-                    }
-            }
-
-            var total = await _downloadService.DownloadSpecificEpisodes(animes, AddToText);
-            Text += total > 0 ? $">> Found {total} anime downloads." : ">> No new anime found.";
-        }
-
-        private void AddToText(string text) => Text += text + "\n";
+        private void Append(string text) => Text += text + "\n";
     }
 }

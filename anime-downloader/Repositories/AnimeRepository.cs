@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using anime_downloader.Classes;
 using anime_downloader.Models;
-using anime_downloader.Models.Configurations;
 using anime_downloader.Repositories.Interface;
 using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
@@ -13,7 +13,7 @@ namespace anime_downloader.Repositories
     public class AnimeRepository: ObservableObject, IAnimeRepository
     {
         [JsonIgnore]
-        private static string SavePath => Path.Combine(PathConfiguration.ApplicationDirectory, "anime.json");
+        private static string SavePath => Path.Combine(App.Path.Directory.Application, "anime.json");
 
         [JsonProperty("anime")]
         public List<Anime> Animes { get; set; } = new List<Anime>();
@@ -31,9 +31,20 @@ namespace anime_downloader.Repositories
 
         public void Save()
         {
-            using (var stream = new StreamWriter(SavePath))
-                stream.Write(JsonConvert.SerializeObject(this, Formatting.Indented,
-                    new JsonSerializerSettings {DefaultValueHandling = DefaultValueHandling.Ignore}));
+            try
+            {
+                using (var stream = new StreamWriter(SavePath))
+                {
+                    var data = JsonConvert.SerializeObject(this, Formatting.Indented,
+                        new JsonSerializerSettings {DefaultValueHandling = DefaultValueHandling.Ignore});
+                    stream.Write(data);
+                }
+            }
+
+            catch (Exception e)
+            {
+                Methods.Alert($"There was an issue saving the anime list:\n{e.Message}");
+            }
         }
     }
 }

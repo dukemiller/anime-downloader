@@ -33,8 +33,8 @@
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
         <Style TargetType="Label" BasedOn="{StaticResource {x:Type Label}}">
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
         </Style>
     </UserControl.Resources>
     <Grid Background="White">
@@ -53,141 +53,130 @@
                                                    TabStripMargin="5"
                                                    TabStripPlacement="Bottom">
             <controls:MetroTabItem Header="Profile">
-                <DockPanel>
-
-                    <Border Width="226">
+                <DockPanel HorizontalAlignment="Stretch">
+                    <Border Width="226" DockPanel.Dock="Left">
                         <Image Source="{Binding Image}" />
                     </Border>
 
-                    <Grid Margin="10,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="6*" />
-                        </Grid.ColumnDefinitions>
-
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="1.2*" />
-                            <RowDefinition Height="1*" />
-                            <RowDefinition Height="1*" />
-                            <RowDefinition Height="1*" />
-                            <RowDefinition Height="1*" />
-                            <RowDefinition Height="1*" />
-                            <RowDefinition Height="1*" />
-                            <RowDefinition Height="1*" />
-                            <RowDefinition Height="1*" />
-                        </Grid.RowDefinitions>
+                    <DockPanel HorizontalAlignment="Stretch" Margin="10,-10,0,0">
 
                         <TextBox
-                            Grid.Row="0"
-                            Grid.Column="0"
-                            Grid.ColumnSpan="2"
-                            VerticalAlignment="Center"
+                            DockPanel.Dock="Top"
                             FontSize="22"
-                            FontWeight="SemiBold"
+                            FontWeight="Bold"
+                            Margin="0,0,0,4"
                             xaml:FocusBehavior.IsFocused="{Binding Anime.Name, Converter={StaticResource StringIsEmptyOrNullConverter}}"
                             Text="{Binding Anime.Name, UpdateSourceTrigger=PropertyChanged}" />
 
-                        <Label
-                            Grid.Row="1"
-                            Grid.Column="0"
-                            Content="Episode: " ToolTip="The last episode you've watched." />
-                        <DockPanel Width="60"
-                                   HorizontalAlignment="Left"
-                                   Grid.Row="1"
-                                   Grid.Column="1">
-                            <TextBox Width="28"
-                                     VerticalContentAlignment="Center"
-                                     PreviewTextInput="Number_PreviewTextInput"
-                                     Style="{DynamicResource NumberBoxStyle}"
-                                     Text="{Binding Anime.Episode,
-                                                            UpdateSourceTrigger=PropertyChanged}" />
-                            <TextBox BorderThickness="0"
-                                     Foreground="Gray"
-                                     IsHitTestVisible="False"
-                                     IsReadOnly="True"
-                                     Opacity="0.6"
-                                     IsTabStop="False"
-                                     VerticalContentAlignment="Center"
-                                     Style="{DynamicResource NumberBoxStyle}"
-                                     Text="{Binding Anime.Details.Total,
+                        <DockPanel Dock="Top" Margin="0,0,0,4">
+                            <Label Content="Episode: " Width="70" ToolTip="The last episode you've watched." />
+                            <DockPanel>
+                                <TextBox VerticalContentAlignment="Center"
+                                         PreviewTextInput="Number_PreviewTextInput"
+                                         Style="{DynamicResource NumberBoxStyle}"
+                                         Text="{Binding Anime.Episode, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBox BorderThickness="0"
+                                         Foreground="Gray"
+                                         IsHitTestVisible="False"
+                                         IsReadOnly="True"
+                                         Opacity="0.6"
+                                         IsTabStop="False"
+                                         VerticalContentAlignment="Center"
+                                         Style="{DynamicResource NumberBoxStyle}"
+                                         Margin="0,-2,0,0"
+                                         Text="{Binding Anime.Details.Total,
                                                             Mode=OneWay,
                                                             Converter={StaticResource EpisodeConverter},
-                                                            StringFormat={}/{0}}"
-                                     Visibility="{Binding HasIdOrTotal}" />
+                                                            StringFormat={}/ {0}}"
+                                         Visibility="{Binding HasIdOrTotal}" />
+                            </DockPanel>
+                        </DockPanel>
+
+                        <DockPanel Dock="Top" Margin="0,0,0,4">
+                            <Label
+                                Width="70"
+                                Content="Rating: " ToolTip="What you would rate the show (out of 10?)" />
+                            <TextBox VerticalContentAlignment="Center"
+                                     MaxLength="2"
+                                     PreviewTextInput="Rating_PreviewTextInput"
+                                     TextChanged="Rating_TextChanged"
+                                     Style="{DynamicResource NumberBoxStyle}"
+                                     Text="{Binding Anime.Rating}" />
+                        </DockPanel>
+
+                        <DockPanel Dock="Top" Margin="0,0,0,4">
+                            <Label Content="Status: "
+                                   
+                                   Width="70"
+                                   ToolTip="What state you're currently at in regards to watching the show." />
+                            <ComboBox Width="105"
+                                      HorizontalAlignment="Left"
+                                      VerticalAlignment="Center"
+                                      IsSynchronizedWithCurrentItem="True"
+                                      materialDesign:ComboBoxAssist.ClassicMode="True"
+                                      ItemsSource="{Binding Statuses}"
+                                      SelectedItem="{Binding Anime.Status}" />
+                        </DockPanel>
+
+                        <DockPanel Dock="Top" Margin="0,0,0,4">
+                            <Label
+                                Width="70"
+                                Content="Airing: "
+                                ToolTip="Whether the anime is currently airing and will be included on the search for new episodes" />
+
+                            <CheckBox HorizontalAlignment="Left"
+                                      FlowDirection="RightToLeft"
+                                      Margin="0,7,0,0"
+                                      IsChecked="{Binding Anime.Airing}" />
+                        </DockPanel>
+
+                        <DockPanel Dock="Top" Margin="0,0,0,4">
+                            <Label
+                                Width="70"
+                                Content="Airs on: "
+                                ToolTip="Whether the anime is currently airing and will be included on the search for new episodes" />
+                            <TextBlock VerticalAlignment="Center"  Text="{Binding AirDay, TargetNullValue='-'}"/>
+                        </DockPanel>
+
+                        <DockPanel Dock="Top" Margin="0,0,0,4">
+                            <Label Content="Notes: "
+                                   VerticalAlignment="Top"
+                                   Width="70"
+                                   ToolTip="Notes, tags or comments to give the show to remember it" />
+                            <TextBox
+                                TextWrapping="WrapWithOverflow"
+                                Style="{x:Null}"
+                                HorizontalContentAlignment="Left"
+                                VerticalContentAlignment="Top"
+                                VerticalAlignment="Top"
+                                Height="70"
+                                MaxLength="180"
+                                Text="{Binding Anime.Notes, UpdateSourceTrigger=PropertyChanged}"
+                                VerticalScrollBarVisibility="Disabled" />
                         </DockPanel>
 
 
-                        <Label
-                            Grid.Row="2"
-                            Grid.Column="0"
-                            Content="Rating: " ToolTip="What you would rate the show (out of 10?)" />
-                        <TextBox Grid.Row="2"
-                                 Grid.Column="1"
-                                 VerticalContentAlignment="Center"
-                                 Width="15"
-                                 MaxLength="2"
-                                 PreviewTextInput="Rating_PreviewTextInput"
-                                 TextChanged="Rating_TextChanged"
-                                 Style="{DynamicResource NumberBoxStyle}"
-                                 Text="{Binding Anime.Rating}" />
-
-
-                        <Label Content="Status: "
-                               Grid.Row="3"
-                               VerticalAlignment="Center"
-                               VerticalContentAlignment="Center"
-                               Grid.Column="0"
-                               ToolTip="What state you're currently at in regards to watching the show." />
-                        <ComboBox Width="105"
-                                  Grid.Row="3"
-                                  Grid.Column="1"
-                                  HorizontalAlignment="Left"
-                                  VerticalAlignment="Center"
-                                  materialDesign:ComboBoxAssist.ClassicMode="True"
-                                  ItemsSource="{Binding Statuses}"
-                                  SelectedItem="{Binding Anime.Status}" />
-
-                        <Label
-                            Grid.Row="4"
-                            Grid.Column="0"
-                            Content="Airing: "
-                            ToolTip="Whether the anime is currently airing and will be included on the search for new episodes" />
-
-                        <CheckBox HorizontalAlignment="Left"
-                                  FlowDirection="RightToLeft"
-                                  Grid.Row="4"
-                                  Grid.Column="1"
-                                  IsChecked="{Binding Anime.Airing}" />
-
-                        <Label Content="Notes: "
-                               Grid.Row="5"
-                               Grid.Column="0"
-                               ToolTip="Notes, tags or comments to give the show to remember it" />
-                        <TextBox
-                            Grid.Row="5"
-                            Grid.Column="1"
-                            Grid.RowSpan="2"
-                            TextWrapping="WrapWithOverflow"
-                            Style="{x:Null}"
-                            HorizontalContentAlignment="Left"
-                            VerticalContentAlignment="Top"
-                            MaxLength="180"
-                            Text="{Binding Anime.Notes}"
-                            VerticalScrollBarVisibility="Disabled" />
-
-
-                    </Grid>
-
-
+                    </DockPanel>
                 </DockPanel>
             </controls:MetroTabItem>
             <controls:MetroTabItem Header="Details" IsHitTestVisible="{Binding Editing}">
                 <DockPanel>
-                    <TextBlock HorizontalAlignment="Center"
+                    <TextBlock 
                                Style="{StaticResource MaterialDesignTitleTextBlock}"
-                               Text="{Binding Anime.Details.TitleAndEnglish,
-                                                 Converter={StaticResource StringJoinConverter}}"
-                               DockPanel.Dock="Top" />
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               FontSize="22"
+                               TextWrapping="WrapWithOverflow"
+                               TextAlignment="Justify"
+                               Margin="0,0,0,6"
+                               DockPanel.Dock="Top">
+                        <TextBlock.Text>
+                            <MultiBinding Converter="{StaticResource AnimeTitleConverter}">
+                                <Binding Path="Anime.Details.Title" />
+                                <Binding Path="Anime.Details.English" />
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
                     <ContentPresenter
                         HorizontalAlignment="Center"
                         DockPanel.Dock="Bottom"
@@ -196,11 +185,13 @@
                     <ScrollViewer VerticalScrollBarVisibility="Auto" IsTabStop="False">
                         <TextBlock HorizontalAlignment="Stretch"
                                    Style="{StaticResource MaterialDesignBody1TextBlock}"
-                                   FontSize="16"
+                                   TextAlignment="Justify"
+                                   FontSize="17"
                                    Text="{Binding Anime.Details.Synopsis,
                                                       Converter={StaticResource SynposisSnipConverter}}"
                                    TextWrapping="WrapWithOverflow" />
                     </ScrollViewer>
+
                 </DockPanel>
             </controls:MetroTabItem>
             <controls:MetroTabItem Header="Download">
@@ -228,6 +219,7 @@
                               Width="60"
                               VerticalAlignment="Center"
                               VerticalContentAlignment="Center"
+                              IsSynchronizedWithCurrentItem="True"
                               materialDesign:ComboBoxAssist.ClassicMode="True">
                         <ComboBoxItem Content="480"
                                       IsSelected="{Binding Path=Anime.Resolution, Converter={StaticResource StringCompareConverter}, ConverterParameter=480}" />
@@ -260,6 +252,7 @@
                               controls:TextBoxHelper.ClearTextButton="True"
                               VerticalAlignment="Center"
                               HorizontalAlignment="Left"
+                              IsSynchronizedWithCurrentItem="True"
                               materialDesign:ComboBoxAssist.ClassicMode="True"
                               ItemsSource="{Binding SettingsRepository.Subgroups}"
                               SelectedItem="{Binding Anime.PreferredSubgroup,
@@ -279,11 +272,11 @@
                     </ComboBox>
 
                     <Label VerticalAlignment="Center"
-                               FlowDirection="LeftToRight"
-                               Grid.Row="2"
-                               Grid.Column="0"
-                               ToolTip="Whether searching for this anime should match exactly what the name is instead of picking up partial matches."
-                               Content="Exact match: " />
+                           FlowDirection="LeftToRight"
+                           Grid.Row="2"
+                           Grid.Column="0"
+                           ToolTip="Whether searching for this anime should match exactly what the name is instead of picking up partial matches."
+                           Content="Exact match: " />
 
                     <CheckBox Margin="5"
                               HorizontalAlignment="Left"

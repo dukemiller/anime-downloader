@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using anime_downloader.Models.Abstract;
+using Optional;
 
 namespace anime_downloader.Models
 {
     public class MagnetLink: RemoteMedia
     {
-        private int _seeders;
+        private Option<int> _seeders;
 
         /// <summary>
         ///     The hashcode associated with the magnet.
@@ -20,13 +21,13 @@ namespace anime_downloader.Models
         /// <summary>
         ///     Seeder information.
         /// </summary>
-        public int Seeders
+        public Option<int> Seeders
         {
             get => _seeders;
             set
             {
                 _seeders = value;
-                Health = value;
+                value.MatchSome(v => Health = v);
             }
         }
 
@@ -35,11 +36,9 @@ namespace anime_downloader.Models
         /// </summary>
         public string DirectName { get; set; }
 
-        public override string ToString()
-        {
-            return DirectName != null
+        public override string ToString() =>
+            DirectName != null
                 ? $"MagnetLink<name={DirectName}, hash={Hash}>"
                 : $"MagnetLink<name={Name}, hash={Hash}>";
-        }
     }
 }

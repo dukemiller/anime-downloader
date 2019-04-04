@@ -104,7 +104,7 @@
                         HorizontalAlignment="Stretch"
                         Command="{Binding OpenUrlCommand}"
                         CommandParameter="provider"
-                        Content="{Binding DownloadService.ServiceName}" />
+                        Content="{Binding DownloadService.Name}" />
                 </StackPanel>
             </GroupBox>
             <GroupBox

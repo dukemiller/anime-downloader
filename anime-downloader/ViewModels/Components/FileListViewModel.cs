@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
@@ -12,39 +13,20 @@ using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using Microsoft.VisualBasic.FileIO;
+using Optional;
+using Optional.Collections;
+using PropertyChanged;
 
 namespace anime_downloader.ViewModels.Components
 {
     public class FileListViewModel : ViewModelBase
     {
-        private EpisodeStatus _episodeType;
-
-        private ObservableCollection<AnimeFile> _files;
-
-        private string _filter = "";
-
-        private ObservableCollection<AnimeFile> _filteredFiles;
-
-        private bool _hideLabel;
-
-        private string _imageResourcePath;
-
-        private string _movePath;
-
-        private AnimeFile _selectedFile;
-
-        private string _startPath;
-
-        private string _title;
-
         private readonly IFileService _fileService;
 
         private readonly IAnimeService _animeService;
 
-        public RelayCommand<IList> SelectionChangedCommand { get; set; }
-
         // 
-        
+
         public FileListViewModel(IFileService fileService, IAnimeService animeService)
         {
             _fileService = fileService;
@@ -52,75 +34,46 @@ namespace anime_downloader.ViewModels.Components
 
             SelectionChangedCommand = new RelayCommand<IList>(items =>
             {
-                if (items == null)
+                if (items is null)
                     return;
                 SelectedFiles = items.Cast<AnimeFile>().ToList();
             });
-
-            // 
-
-            MoveCommand = new RelayCommand(Move);
-            DeleteCommand = new RelayCommand(Delete);
-            ProfileCommand = new RelayCommand(Profile);
-            OpenCommand = new RelayCommand(Open);
-            CopyCommand = new RelayCommand(() =>
-            {
-                Clipboard.Clear();
-                Clipboard.SetText(string.Join(", ", SelectedFiles.Select(c => c.StrippedFilename)));
-            });
-            ClearFilterCommand = new RelayCommand(() => Filter = "");
-            FolderCommand = new RelayCommand(() => Process.Start(StartPath));
-            MalCommand = new RelayCommand(MyAnimeListProfile);
         }
 
-        // Properties
-        
+        // 
+
+        public RelayCommand<IList> SelectionChangedCommand { get; set; }
+
         private FileSystemWatcher Watcher { get; set; }
 
         /// <summary>
         ///     The parent files that the source retrives views from
         /// </summary>
-        private ObservableCollection<AnimeFile> Files
-        {
-            get => _files;
-            set => Set(() => Files, ref _files, value);
-        }
+        public ObservableCollection<AnimeFile> Files { get; set; } = new ObservableCollection<AnimeFile>();
 
         /// <summary>
         ///     A label simply showing the count of total files
         /// </summary>
+        [DependsOn(nameof(FilteredFiles))]
         public string Label => $"({FilteredFiles?.Count ?? 0} files)";
-        
+
         /// <summary>
         ///     A user flag to note if the file count should be hidden or not
         /// </summary>
-        public bool HideLabel
-        {
-            get => _hideLabel;
-            set => Set(() => HideLabel, ref _hideLabel, value);
-        }
+        public bool HideLabel { get; set; }
 
         /// <summary>
         ///     The actual views display of files
         /// </summary>
-        public ObservableCollection<AnimeFile> FilteredFiles
-        {
-            get => _filteredFiles;
-            set
-            {
-                Set(() => FilteredFiles, ref _filteredFiles, value);
-                RaisePropertyChanged(nameof(Label));
-            }
-        }
+        [DependsOn(nameof(Filter), nameof(Files))]
+        public ObservableCollection<AnimeFile> FilteredFiles => Filter?.Length == 0
+            ? Files
+            : new ObservableCollection<AnimeFile>(Files.Where(file => Methods.Strip(file.Name).ToLower().Contains(Methods.Strip(Filter).ToLower())));
 
         /// <summary>
         ///     Either the only selected file or the first selected of a group of files
         /// </summary>
-        public AnimeFile SelectedFile
-        {
-            get => _selectedFile;
-            set => Set(() => SelectedFile, ref _selectedFile, value);
-        }
+        public AnimeFile SelectedFile { get; set; }
 
         /// <summary>
         ///     All selected files
@@ -130,108 +83,80 @@ namespace anime_downloader.ViewModels.Components
         /// <summary>
         ///     The episode type that will determine what episodes are filled in the Files list
         /// </summary>
-        public EpisodeStatus EpisodeType
-        {
-            get => _episodeType;
-            set
-            {
-                Set(() => EpisodeType, ref _episodeType, value);
-                Files = new ObservableCollection<AnimeFile>(_fileService.GetEpisodes(value));
-                Files.CollectionChanged += (sender, args) => { RaisePropertyChanged(Label); };
-                FilteredFiles = Files;
-            }
-        }
-        
+        public EpisodeStatus? EpisodeType { get; set; }
+
         /// <summary>
         ///     The target destination
         /// </summary>
-        public string MovePath
-        {
-            private get => _movePath;
-            set => Set(() => MovePath, ref _movePath, value);
-        }
+        public string MovePath { get; set; } = "";
 
         /// <summary>
         ///     The source destination
         /// </summary>
-        public string StartPath
-        {
-            private get => _startPath;
-            set
-            {
-                Set(() => StartPath, ref _startPath, value);
+        public string StartPath { get; set; } = "";
 
-                if (!Directory.Exists(StartPath))
-                    return;
-
-                Watcher = new FileSystemWatcher
-                {
-                    Path = StartPath,
-                    IncludeSubdirectories = true,
-                    Filter = "*.*"
-                };
-                Watcher.Deleted += DeleteMethodLogic;
-                Watcher.Renamed += RenameMethodLogic;
-                Watcher.Created += CreateMethodLogic;
-                Watcher.EnableRaisingEvents = true;
-            }
-        }
-        
         /// <summary>
         ///     Display title at the top of the control
         /// </summary>
-        public string Title
-        {
-            get => _title;
-            set => Set(() => Title, ref _title, value);
-        }
+        public string Title { get; set; } = "";
 
         /// <summary>
         ///     Text that determines the FilteredFiles list subset of the Files list
         /// </summary>
-        public string Filter
-        {
-            get => _filter;
-            set
-            {
-                Set(() => Filter, ref _filter, value);
-                if (Filter?.Length == 0)
-                    FilteredFiles = Files;
-                else
-                    FilteredFiles =
-                        new ObservableCollection<AnimeFile>(
-                            Files.Where(af => Methods.Strip(af.Name).ToLower().Contains(Methods.Strip(Filter).ToLower())));
-            }
-        }
+        public string Filter { get; set; } = "";
 
         /// <summary>
         ///     The path for the image representing which direction the files will move
         /// </summary>
-        public string ImageResourcePath
-        {
-            get => _imageResourcePath;
-            set => Set(() => ImageResourcePath, ref _imageResourcePath, value);
-        }
+        public string ImageResourcePath { get; set; } = "";
 
-        // Commands
+        public RelayCommand FolderCommand => new RelayCommand(() => Process.Start(StartPath));
 
-        public RelayCommand FolderCommand { get; set; }
+        public RelayCommand MoveCommand => new RelayCommand(Move);
 
-        public RelayCommand MoveCommand { get; set; }
+        public RelayCommand ProfileCommand => new RelayCommand(Profile);
 
-        public RelayCommand ProfileCommand { get; set; }
+        public RelayCommand MalCommand => new RelayCommand(MyAnimeListProfile);
 
-        public RelayCommand MalCommand { get; set; }
+        public RelayCommand OpenCommand => new RelayCommand(Open);
 
-        public RelayCommand OpenCommand { get; set; }
+        public RelayCommand DeleteCommand => new RelayCommand(Delete);
 
-        public RelayCommand DeleteCommand { get; set; }
+        public RelayCommand CopyCommand => new RelayCommand(Copy);
 
-        public RelayCommand CopyCommand { get; set; }
-
-        public RelayCommand ClearFilterCommand { get; set; }
+        public RelayCommand ClearFilterCommand => new RelayCommand(() => Filter = "");
 
         // 
+
+        private void OnEpisodeTypeChanged()
+        {
+            if (EpisodeType is null)
+                return;
+
+            Files = new ObservableCollection<AnimeFile>(_fileService.GetEpisodes(EpisodeType.Value));
+            Files.CollectionChanged += (sender, args) =>
+            {
+                RaisePropertyChanged(nameof(FilteredFiles));
+                RaisePropertyChanged(nameof(Label));
+            };
+        }
+
+        private void OnStartPathChanged()
+        {
+            if (!Directory.Exists(StartPath))
+                return;
+
+            Watcher = new FileSystemWatcher
+            {
+                Path = StartPath,
+                IncludeSubdirectories = true,
+                Filter = "*.*"
+            };
+            Watcher.Deleted += DeleteMethodLogic;
+            Watcher.Renamed += RenameMethodLogic;
+            Watcher.Created += CreateMethodLogic;
+            Watcher.EnableRaisingEvents = true;
+        }
 
         /// <summary>
         ///     Move all selected files from from {StartPath} to {MovePath}
@@ -243,8 +168,6 @@ namespace anime_downloader.ViewModels.Components
                     Methods.MoveFile(file, StartPath, MovePath);
         }
 
-        
-
         /// <summary>
         ///     Open the selected anime, if multiple files are selected then open as a playlist
         ///     in order of selection
@@ -252,7 +175,17 @@ namespace anime_downloader.ViewModels.Components
         private async void Open()
         {
             if (SelectedFiles.Count > 1)
-                Process.Start(await new Playlist {Source = new ObservableCollection<AnimeFile>(SelectedFiles), Sort = false, IsEpisodeSelection = true}.Create());
+            {
+                var playlist = new Playlist
+                {
+                    Source = SelectedFiles,
+                    Sort = false,
+                    IsEpisodeSelection = true
+                };
+                if (await playlist.Create())
+                    Process.Start(playlist.Path);
+            }
+
             else if (SelectedFile != null)
                 Process.Start(SelectedFile.Path);
         }
@@ -262,19 +195,19 @@ namespace anime_downloader.ViewModels.Components
         /// </summary>
         private void Profile()
         {
-            if (SelectedFile == null)
+            if (SelectedFile is null)
                 return;
 
-            var anime = _fileService.ClosestAnime(_animeService.Animes, SelectedFile);
-
-            if (anime != null)
-            {
-                MessengerInstance.Send(Display.Anime);
-                MessengerInstance.Send(anime);
-            }
-
-            else
-                Methods.Alert($"No anime profile found for {SelectedFile.Name}.");
+            _fileService
+                .ClosestAnime(_animeService.WatchingOrCompleted, SelectedFile, Tolerance.High)
+                .Match(
+                    some: anime =>
+                    {
+                        MessengerInstance.Send(Display.Anime);
+                        MessengerInstance.Send(anime);
+                    },
+                    none: () => Methods.Alert($"No anime profile found for {SelectedFile.Name}.")
+                );
         }
 
         /// <summary>
@@ -297,62 +230,43 @@ namespace anime_downloader.ViewModels.Components
         }
 
         /// <summary>
+        ///     Copy selected stripped filenames to the clipboard.
+        /// </summary>
+        private void Copy()
+        {
+            Clipboard.Clear();
+            Clipboard.SetText(string.Join(", ", SelectedFiles.Select(c => c.StrippedFilename)));
+        }
+
+        /// <summary>
         ///     Open the selected file's MyAnimeList page.
         /// </summary>
         private void MyAnimeListProfile()
-        {
-            if (SelectedFile == null)
-                return;
-            var anime = _fileService.ClosestAnime(_animeService.Animes, SelectedFile);
-            if (anime != null && anime.Details.HasId)
-                    Process.Start($"http://myanimelist.net/anime/{anime.Details.Id}");
-        }
+            => SelectedFile.SomeNotNull().MatchSome(file =>
+                _fileService
+                    .ClosestAnime(_animeService.Animes, file, Tolerance.Low)
+                    .Filter(anime => anime.Details.HasId)
+                    .MatchSome(anime => Process.Start($"http://myanimelist.net/anime/{anime.Details.Id}")));
 
         private void CreateMethodLogic(object sender, FileSystemEventArgs args)
-        {
-            Application.Current.Dispatcher.InvokeAsync(() =>
-            {
-                if (args == null)
-                    return;
+            => Application.Current.Dispatcher.InvokeAsync(()
+                => args
+                    .SomeNotNull()
+                    .Map(arg => arg.FullPath)
+                    .MatchSome(path => Files.AddSorted(new AnimeFile(path))));
 
-                var file = new AnimeFile(args.FullPath);
-                Files.AddSorted(file);
-                FilteredFiles = new ObservableCollection<AnimeFile>(
-                    Files.Where(af => Methods.Strip(af.Name).ToLower().Contains(Methods.Strip(Filter).ToLower()))
-                );
-                RaisePropertyChanged(nameof(Label));
-            });
-        }
+        private void DeleteMethodLogic(object sender, FileSystemEventArgs args) 
+            => Application.Current.Dispatcher.InvokeAsync(() 
+                => args
+                    .SomeNotNull()
+                    .Map(arg => arg.FullPath)
+                    .MatchSome(path => Files.FirstOrNone(file => file.Path == path).MatchSome(file => Files.Remove(file))));
 
-        private void DeleteMethodLogic(object sender, FileSystemEventArgs args)
-        {
-            Application.Current.Dispatcher.InvokeAsync(() =>
-            {
-                if (args == null)
-                    return;
-
-                var file = Files.First(f => f.Path.Equals(args.FullPath));
-                Files.Remove(file);
-                if (FilteredFiles.Contains(file))
-                    FilteredFiles.Remove(file);
-                RaisePropertyChanged(nameof(Label));
-            });
-        }
-
-        private void RenameMethodLogic(object sender, RenamedEventArgs args)
-        {
-            Application.Current.Dispatcher.InvokeAsync(() =>
-            {
-                if (args == null)
-                    return;
-
-                MessageBox.Show($"{args.OldFullPath} {args.FullPath}");
-                var file = Files.First(f => f.Path.Equals(args.FullPath));
-                Files.Remove(file);
-                if (FilteredFiles.Contains(file))
-                    FilteredFiles.Remove(file);
-                RaisePropertyChanged(nameof(Label));
-            });
-        }
+        private void RenameMethodLogic(object sender, RenamedEventArgs args) 
+            => Application.Current.Dispatcher.InvokeAsync(() 
+                => args
+                    .SomeNotNull()
+                    .Map(arg => arg.FullPath)
+                    .MatchSome(path => Files.FirstOrNone(file => file.Path == path).MatchSome(file => Files.Remove(file))));
     }
 }

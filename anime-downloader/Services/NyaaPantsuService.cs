@@ -6,11 +6,13 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
+using anime_downloader.Classes;
 using anime_downloader.Models;
 using anime_downloader.Models.Abstract;
 using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Abstract;
 using anime_downloader.Services.Interfaces;
+using Optional;
 
 namespace anime_downloader.Services
 {
@@ -28,17 +30,17 @@ namespace anime_downloader.Services
 
         protected override IAnimeService AnimeService { get; }
 
-        protected override WebClient Downloader { get; }
-
-        public NyaaPantsuService(ISettingsRepository settingsRepository, IAnimeRepository animeRepository, IAnimeService animeService)
+        protected override IFileService FileService { get; }
+        
+        public NyaaPantsuService(ISettingsRepository settingsRepository, IAnimeRepository animeRepository, IAnimeService animeService, IFileService fileService)
         {
             SettingsRepository = settingsRepository;
             AnimeRepository = animeRepository;
             AnimeService = animeService;
-            Downloader = new WebClient();
+            FileService = fileService;
         }
 
-        public override string ServiceUrl => "https://nyaa.pantsu.cat/";
+        public override string Url => "https://nyaa.pantsu.cat/";
 
         public override async Task<List<RemoteMedia>> FindAllMedia(Anime anime, string name, int episode)
         {
@@ -66,17 +68,19 @@ namespace anime_downloader.Services
             var result = document.SelectNodes("//item")
                 ?.Cast<XmlNode>()
                 .Select(ToTorrent)
-                .Where(item => // Episode is this season
-                {
-                    if (item.Date.HasValue)
-                        return (item.Date.Value - DateTime.Now).Days <= AnimeSeason.MaxAgeFor(anime, episode);
-                    return true;
-                })
+                .Where(item => item.Date.Map(v => (v - DateTime.Now).Days <= AnimeSeason.MaxAgeFor(anime, episode)).ValueOr(true))
                 .Where(item => Regex
                     .Split(item.StrippedName, " ")
                     .Any(s => s.Contains(episode.ToString("D2")) && !s.Contains(episode.ToString("D2") + ".5")));
 
-            if (anime.NameCollection.Any(c => Regex.Replace(c, YearPattern, "").Contains(episode.ToString("D2"))))
+            var names = (anime.Details.HasId
+                    ? new List<string> {anime.Title}
+                    : Methods.Flatten<string>(anime.Details.English, anime.Details.Title, anime.Details.Synonyms.Split(';')))
+                .SelectMany(c => c.Split())
+                .Distinct()
+                .Where(Methods.Not<string>(string.IsNullOrEmpty));
+
+            if (names.Any(c => Regex.Replace(c, YearPattern, "").Contains(episode.ToString("D2"))))
                 result = result?
                     .Where(nyaa => nyaa.StrippedName.Split()
                                        .Select(c => Regex.Replace(c, YearPattern, ""))
@@ -92,7 +96,7 @@ namespace anime_downloader.Services
             {
                 Name = item["title"]?.InnerText,
                 Remote = item["link"]?.InnerText,
-                Date = DateTime.ParseExact(item["pubDate"]?.InnerText, "dd MMM yy HH:mm UTC", CultureInfo.CurrentCulture),
+                Date = Option.Some(DateTime.ParseExact(item["pubDate"]?.InnerText, "dd MMM yy HH:mm UTC", CultureInfo.CurrentCulture))
             };
 
             return torrent;

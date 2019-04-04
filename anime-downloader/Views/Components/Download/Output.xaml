@@ -9,6 +9,33 @@
              d:DesignWidth="680"
              mc:Ignorable="d">
     <TextBox
-        Style="{StaticResource ConsoleBox}"
-        Text="{Binding Text}" />
+        VerticalScrollBarVisibility="Auto"
+        TextWrapping="Wrap"
+        IsReadOnly="True"
+        FontSize="20"
+        FontFamily="Yu Gothic"
+        BorderThickness="0"
+        Padding="4,0"
+        Margin="0,0,-4,0"
+        Background="#ECECEC"
+        Text="{Binding Text}" >
+        <TextBox.Resources>
+            <Style TargetType="TextBox">
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=IsVisible}"
+                                 Value="True">
+                        <DataTrigger.EnterActions>
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                     From="0.1" To="1.0"
+                                                     Duration="0:0:1.0" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </DataTrigger.EnterActions>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </TextBox.Resources>
+    </TextBox>
 </UserControl>

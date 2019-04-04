@@ -9,6 +9,8 @@ using anime_downloader.Models;
 using anime_downloader.Models.AniList;
 using anime_downloader.Services.Interfaces;
 using Newtonsoft.Json;
+using Optional;
+using Optional.Collections;
 
 namespace anime_downloader.Services
 {
@@ -49,7 +51,7 @@ namespace anime_downloader.Services
             {
                 {"page", 1},
                 {"season", season.Previous().Season.Description().ToUpper()},
-                {"seasonYear", season.Previous().Year},
+                {"seasonYear", season.Previous().Year}
             };
 
             return (await Fetch(AnilistQueries.FetchSeasonOnlyAiring, variables))
@@ -57,7 +59,7 @@ namespace anime_downloader.Services
                 .ToList();
         }
 
-        public async Task<AiringAnime> GetAnime(int id)
+        public async Task<Option<AiringAnime>> GetAnime(int id)
         {
             var variables = new Dictionary<string, object>
             {
@@ -65,7 +67,7 @@ namespace anime_downloader.Services
                 {"id", id}
             };
 
-            return (await Fetch(AnilistQueries.Get, variables)).FirstOrDefault();
+            return (await Fetch(AnilistQueries.Get, variables)).FirstOrNone();
         }
 
         public async Task<List<AiringAnime>> FindAnime(string q)

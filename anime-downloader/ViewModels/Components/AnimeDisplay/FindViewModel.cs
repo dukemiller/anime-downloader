@@ -6,39 +6,11 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
 {
     public class FindViewModel : ViewModelBase
     {
-        private string _text;
+        public string Text { get; set; } = "";
 
-        private Visibility _visible;
+        public Visibility Visible { get; set; } = Visibility.Collapsed;
 
-        // 
-
-        public FindViewModel()
-        {
-            Visible = Visibility.Collapsed;
-            ClearCommand = new RelayCommand(() =>
-            {
-                if (Text?.Length > 0)
-                    Text = string.Empty;
-                else
-                    Close();
-            });
-        }
-
-        // 
-
-        public string Text
-        {
-            get => _text;
-            set => Set(() => Text, ref _text, value);
-        }
-
-        public Visibility Visible
-        {
-            get => _visible;
-            set => Set(() => Visible, ref _visible, value);
-        }
-
-        public RelayCommand ClearCommand { get; set; }
+        public RelayCommand ClearCommand => new RelayCommand(Clear);
 
         // 
 
@@ -48,6 +20,14 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
         {
             Visible = Visibility.Collapsed;
             Text = "";
+        }
+
+        public void Clear()
+        {
+            if (Text?.Length > 0)
+                Text = string.Empty;
+            else
+                Close();
         }
     }
 }

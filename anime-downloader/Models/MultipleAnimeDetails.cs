@@ -5,44 +5,14 @@ namespace anime_downloader.Models
 {
     public class MultipleAnimeDetails : ObservableObject
     {
-        private bool _airing;
+        public string Resolution { get; set; } = "";
 
-        private string _episode;
+        public bool Airing { get; set; }
 
-        private string _rating;
+        public Status Status { get; set; }
 
-        private string _resolution;
+        public string Episode { get; set; } = "";
 
-        private Status _status;
-
-        public string Resolution
-        {
-            get => _resolution;
-            set => Set(() => Resolution, ref _resolution, value);
-        }
-
-        public bool Airing
-        {
-            get => _airing;
-            set => Set(() => Airing, ref _airing, value);
-        }
-
-        public Status Status
-        {
-            get => _status;
-            set => Set(() => Status, ref _status, value);
-        }
-
-        public string Episode
-        {
-            get => _episode;
-            set => Set(() => Episode, ref _episode, value);
-        }
-
-        public string Rating
-        {
-            get => _rating;
-            set => Set(() => Rating, ref _rating, value);
-        }
+        public string Rating { get; set; } = "";
     }
 }

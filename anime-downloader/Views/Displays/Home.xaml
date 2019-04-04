@@ -4,8 +4,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             DataContext="{Binding Source={StaticResource Locator},
-                              Path=Home}"
+             DataContext="{Binding Source={StaticResource Locator}, Path=Home}"
              Background="White"
              d:DesignHeight="360"
              d:DesignWidth="680"
@@ -23,11 +22,9 @@
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
 
-        <ContentControl Content="{Binding Notes}"
-                        Grid.ZIndex="1" Grid.RowSpan="2" >
+        <ContentControl Content="{Binding Notes}" Grid.ZIndex="1" Grid.RowSpan="2" >
             <ContentControl.Resources>
                 <Style TargetType="ContentControl">
-                    <!-- <Setter Property="Visibility" Value="Collapsed"  TargetName=""/> -->
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding IsMouseOver, ElementName=Version}" Value="True">
                             <Setter Property="Visibility" Value="Visible" />

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using anime_downloader.Classes;
+using Optional;
 
 namespace anime_downloader.Models.Abstract
 {
@@ -24,7 +25,7 @@ namespace anime_downloader.Models.Abstract
         /// <summary>
         ///     The date published of the remote accessor, if available.
         /// </summary>
-        public DateTime? Date { get; set; }
+        public Option<DateTime> Date { get; set; }
 
         /// <summary>
         ///     An abstract "healthiness" of the media, if by seeders or download count or ...
@@ -32,19 +33,24 @@ namespace anime_downloader.Models.Abstract
         public int Health { get; set; }
 
         /// <summary>
+        ///     The size of the media (in megabytes).
+        /// </summary>
+        public Option<double> Size { get; set; }
+
+        /// <summary>
         ///     A download/retrieval count for the selected media.
         /// </summary>
-        public int Downloads { get; set; }
+        public Option<int> Downloads { get; set; }
 
         /// <summary>
         ///     The assumed episode given the name of the media.
         /// </summary>
-        public int Episode
+        public Option<int> Episode
         {
             get
             {
                 var strippedName = Methods.Strip(Name);
-                var episode = 0;
+                var episode = Option.None<int>();
 
                 if (strippedName.Any(char.IsDigit))
                 {
@@ -57,8 +63,8 @@ namespace anime_downloader.Models.Abstract
                                 .TakeWhile(char.IsNumber)
                         );
 
-                        var result = int.TryParse(_, out int number);
-                        episode = result ? number : 0;
+                        var result = int.TryParse(_, out var number);
+                        episode = result ? number.Some() : Option.None<int>();
                     }
 
                     else
@@ -68,8 +74,8 @@ namespace anime_downloader.Models.Abstract
                             .Reverse()
                             .SkipWhile(chunk => !chunk.All(char.IsDigit))
                             .FirstOrDefault();
-                        var result = int.TryParse(_, out int number);
-                        episode = result ? number : 0;
+                        var result = int.TryParse(_, out var number);
+                        episode = result ? number.Some() : Option.None<int>();
                     }
                 }
 
@@ -80,32 +86,21 @@ namespace anime_downloader.Models.Abstract
         /// <summary>
         ///     Returns the subgroup from the name of the file.
         /// </summary>
-        public string Subgroup()
+        public Option<string> Subgroup()
         {
             foreach (Match match in Regex.Matches(Name, @"\[([A-Za-z0-9_µ\s\-]+)\]+"))
             {
                 var result = match.Groups[1].Value;
-                if (result.All(c => !char.IsNumber(c)) || result.ToLower() == "normie10032")
-                    return result;
+                if (result.All(c => !char.IsNumber(c)))
+                    return result.Some();
             }
-            return null;
+            return Option.None<string>();
         }
-
-        /// <summary>
-        ///     A check if the subgroup exists.
-        /// </summary>
-        public bool HasSubgroup() => Subgroup() != null;
 
         public string StrippedName => Methods.Strip(Name);
 
         public string StrippedWithNoEpisode => Methods.Strip(Name, true);
 
-        /// <summary>
-        ///     A simple representation of the important attributes of a Nyaa object.
-        /// </summary>
-        /// <returns>
-        ///     Summary of torrent providers' values
-        /// </returns>
         public override string ToString() => $"{GetType().Name}<name={Name}, remote={Remote}>";
     }
 }

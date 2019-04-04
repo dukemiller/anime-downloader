@@ -9,61 +9,22 @@ namespace anime_downloader.Models.Configurations
     [Serializable]
     public class MyAnimeListConfiguration : ObservableObject
     {
-        private string _password = "";
-
-        private string _username = "";
-
-        private bool _loggedIn;
-
-        private List<int> _ids = new List<int>();
-
-        private ApiCredentials _credentials = new ApiCredentials();
-
-        private DateTime _lastCheckedIds = DateTime.MinValue;
-
         [JsonProperty("username")]
-        public string Username
-        {
-            get => _username;
-            set => Set(() => Username, ref _username, value);
-        }
+        public string Username { get; set; } = "";
 
         [JsonProperty("password")]
-        public string Password
-        {
-            get => _password;
-            set => Set(() => Password, ref _password, value);
-        }
+        public string Password { get; set; } = "";
 
         [JsonProperty("logged_in")]
-        public bool LoggedIn
-        {
-            get => _loggedIn;
-            set => Set(() => LoggedIn, ref _loggedIn, value);
-        }
+        public bool LoggedIn { get; set; }
 
         [JsonProperty("ids")]
-        public List<int> Ids
-        {
-            get => _ids;
-            set => Set(() => Ids, ref _ids, value);
-        }
+        public List<int> Ids { get; set; } = new List<int>();
 
         [JsonProperty("last_checked_ids")]
-        public DateTime LastCheckedIds
-        {
-            get => _lastCheckedIds;
-            set => Set(() => LastCheckedIds, ref _lastCheckedIds, value);
-        }
-
+        public DateTime LastCheckedIds { get; set; } = DateTime.MinValue;
 
         [JsonProperty("api")]
-        public ApiCredentials Credentials
-        {
-            get => _credentials;
-            set => Set(() => Credentials, ref _credentials, value);
-        }
-
-
+        public ApiCredentials Credentials { get; set; } = new ApiCredentials();
     }
 }

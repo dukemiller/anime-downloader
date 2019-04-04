@@ -2,11 +2,15 @@
 using System.ComponentModel;
 using System.Linq;
 using anime_downloader.Classes;
+using anime_downloader.Classes.Xaml;
 using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Models.AniList;
 using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
+using Optional;
+using Optional.Collections;
+using static anime_downloader.Classes.Methods;
 
 namespace anime_downloader.Services
 {
@@ -16,82 +20,107 @@ namespace anime_downloader.Services
 
         private readonly ISettingsRepository _settingsRepository;
 
+        // 
+
         public AnimeService(ISettingsRepository settingsRepository, IAnimeRepository animeRepository)
         {
             _settingsRepository = settingsRepository;
             _animeRepository = animeRepository;
         }
 
-        public IEnumerable<Anime> Watching => Animes.Where(a => a.Status == Status.Watching);
+        // 
 
         public IEnumerable<Anime> Animes => _animeRepository.Animes;
 
-        public IEnumerable<Anime> FullyWatched()
-        {
-            return Watching
-                .Where(
-                    anime =>
-                        (anime.Details.HasId  || anime.Details.OverallTotal > 0 || anime.Details.TotalEpisodes > 0) &&
-                        (anime.Details.OverallTotal > 0 && anime.Episode == anime.Details.OverallTotal ||
-                         anime.Details.TotalEpisodes > 0 && anime.Episode == anime.Details.TotalEpisodes));
-        }
+        public IEnumerable<Anime> Watching => Animes
+            .Where(Predicates.Watching);
+
+        public IEnumerable<Anime> AiringAndWatching => Animes
+            .Where(Predicates.Watching)
+            .Where(Predicates.MarkedAsAiring);
+
+        public IEnumerable<Anime> NeedsUpdates => Animes
+            .Where(Predicates.NeedsUpdates);
+
+        public IEnumerable<Anime> HasMyAnimeListId => Animes
+            .Where(Predicates.HasMyAnimeListId);
+
+        public IEnumerable<Anime> AiringAndWatchingAndNotCompleted => Animes
+            .Where(Predicates.Watching)
+            .Where(Predicates.MarkedAsAiring)
+            .Where(Predicates.NotCompleted);
+
+        public IEnumerable<Anime> FullyWatched => Animes
+            .Where(Predicates.Watching)
+            .Where(Predicates.OnFinalEpisode);
+
+        public IEnumerable<Anime> WatchingOrCompleted => Animes
+            .Where(Or(Predicates.Watching, Predicates.Completed));
+
+        public bool Synced => Animes.Any() && !NeedsUpdates.Any();
 
         public IEnumerable<Anime> FilteredAndSorted()
         {
             var animes = Animes;
 
-            var propertyDescriptor = TypeDescriptor
-                .GetProperties(typeof(Anime))
-                .Find(_settingsRepository.SortBy, true);
-
             // Filtering
             if (!string.IsNullOrEmpty(_settingsRepository.FilterBy))
-                if (_settingsRepository.FilterBy.Equals("Needs Synchronize"))
-                    animes = animes.Where(anime => anime.Details.HasId && anime.Details.NeedsUpdating);
-                else if (_settingsRepository.FilterBy.Equals("Current Season"))
-                    animes = animes.Where(anime => (anime.Status == Status.Watching || anime.Status == Status.Finished) && anime.Details.HasId && anime.Details.AiringNow);
-                else
+                switch (_settingsRepository.FilterBy)
                 {
-                    var filters = _settingsRepository.FilterBy.Split('/');
-                    animes = animes.Where(a => filters.Any(f => f.Equals(a.Status.Description())));
+                    case "Needs Synchronize":
+                        animes = animes
+                            .Where(Predicates.HasMyAnimeListId)
+                            .Where(Predicates.NeedsUpdates);
+                        break;
+                    case "Current Season":
+                        animes = animes
+                            .Where(Predicates.HasMyAnimeListId)
+                            .Where(Predicates.AiringNow)
+                            .Where(Predicates.WatchingOrFinished);
+                        break;
+                    default:
+                    {
+                        var filters = _settingsRepository.FilterBy.Split('/');
+                        animes = animes.Where(anime => filters.Any(filter => filter.Equals(anime.Status.Description())));
+                        break;
+                    }
                 }
 
             // Ordering
-            return _settingsRepository.FlagConfig.SortByReversed
-                ? animes.OrderByDescending(x => propertyDescriptor?.GetValue(x))
-                : animes.OrderBy(x => propertyDescriptor?.GetValue(x));
+            switch (_settingsRepository.SortBy)
+            {
+                case "rating":
+                    return _settingsRepository.FlagConfig.SortByReversed
+                        ? animes.OrderBy(a => a, new RatingSort(ListSortDirection.Ascending))
+                        : animes.OrderBy(a => a, new RatingSort(ListSortDirection.Descending));
+                case "aired in":
+                    return _settingsRepository.FlagConfig.SortByReversed
+                        ? animes.OrderBy(a => a, new AiringSort(ListSortDirection.Ascending))
+                        : animes.OrderBy(a => a, new AiringSort(ListSortDirection.Descending));
+                default:
+                    var propertyDescriptor = TypeDescriptor
+                        .GetProperties(typeof(Anime))
+                        .Find(_settingsRepository.SortBy, true);
+
+                    return _settingsRepository.FlagConfig.SortByReversed
+                        ? animes.OrderByDescending(anime => propertyDescriptor?.GetValue(anime))
+                        : animes.OrderBy(anime => propertyDescriptor?.GetValue(anime));
+            }
         }
 
-        public IEnumerable<Anime> AiringAndWatchingAndNotCompleted()
-        {
-            return AiringAndWatching
-                .Where(anime =>
-                {
-                    if (anime.Details.HasId && anime.Details.Total != 0)
-                        return anime.Episode != anime.Details.Total;
-                    return true;
-                });
-        }
+        // 
 
-        public IEnumerable<Anime> AiringAndWatching => Watching.Where(a => a.Airing);
+        public bool WatchingAndAiringContains(AiringAnime airing) =>
+            Animes.Any(anime => anime.Details.Id == airing.IdMal?.ToString() || anime.Details.AniId == airing.Id);
 
-        public IEnumerable<Anime> NeedsUpdates => Animes.Where(a => a.Details.NeedsUpdating
-                                                                    && a.Status != Status.Considering);
+        public Option<Anime> ClosestAnime(string name) =>
+            Animes.Select(anime => new StringDistance<Anime>(anime, name, anime.Name))
+                .Where(pair => pair.Distance <= 10)
+                .OrderBy(pair => pair.Distance)
+                .FirstOrNone()
+                .Map(pair => pair.Item);
 
-        public IEnumerable<Anime> HasId => Animes.Where(a => !string.IsNullOrEmpty(a.Details.Id));
-
-        public bool Synced => Animes.Any() && !NeedsUpdates.Any();
-
-        public bool WatchingAndAiringContains(AiringAnime anime) => Animes.Any(a => a.Details.Id == anime.IdMal?.ToString() || a.Details.AniId == anime.Id);
-
-        public Anime ClosestAnime(string name)
-        {
-            return Animes
-                .Select(a => new StringDistance<Anime>(a, name, a.Name))
-                .Where(ap => ap.Distance <= 10)
-                .OrderBy(ap => ap.Distance)
-                .FirstOrDefault()?.Item;
-        }
+        // 
 
         public void Add(Anime anime)
         {
@@ -106,10 +135,6 @@ namespace anime_downloader.Services
         }
 
         public void Remove(string name)
-        {
-            var anime = Animes.First(a => a.Name.ToLower().Equals(name.ToLower()));
-            if (anime != null)
-                Remove(anime);
-        }
+            => Animes.First(a => a.Name.ToLower().Equals(name.ToLower())).SomeNotNull().MatchSome(Remove);
     }
 }

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
 using anime_downloader.Enums;
 using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
@@ -12,147 +9,69 @@ namespace anime_downloader.Models
     public class Anime : ObservableObject
     {
         /// <summary>
-        ///     A variable used sort of like a bit flag for sorting in the data grid.
-        /// </summary>
-        [JsonIgnore]
-        public static int SortedRateFlag;
-
-        /// <summary>
-        ///     Another variable used sort of like a bit flag for sorting in the data grid.
-        /// </summary>
-        [JsonIgnore]
-        public static int SortedAiredFlag;
-
-        private bool _airing;
-
-        private int _episode;
-
-        private AnimeDetails _details;
-
-        private string _name = "";
-
-        private bool _nameStrict;
-
-        private string _notes = "";
-
-        private string _preferredSubgroup;
-
-        private string _rating = "";
-
-        private string _resolution = "";
-
-        private Status _status;
-
-        // 
-
-        public Anime() => Details = new AnimeDetails();
-
-        // 
-
-        /// <summary>
         ///     Main referenced title.
         /// </summary>
         [JsonProperty("name")]
-        public string Name
-        {
-            get => _name;
-            set => Set(() => Name, ref _name, value);
-        }
+        public string Name { get; set; } = "";
 
         /// <summary>
         ///     User's current watched episode.
         /// </summary>
         [JsonProperty("episode")]
-        public int Episode
-        {
-            get => _episode;
-            set => Set(() => Episode, ref _episode, value);
-        }
+        public int Episode { get; set; }
 
         /// <summary>
         ///     User's status on watching the anime.
         /// </summary>
         [JsonProperty("status")]
-        public Status Status
-        {
-            get => _status;
-            set => Set(() => Status, ref _status, value);
-        }
+        public Status Status { get; set; } = Status.Watching;
 
         /// <summary>
         ///     The quality to be downloaded.
         /// </summary>
         [JsonProperty("resolution")]
-        public string Resolution
-        {
-            get => _resolution;
-            set => Set(() => Resolution, ref _resolution, value);
-        }
+        public string Resolution { get; set; } = "720";
 
         /// <summary>
         ///     If the anime is ongoing and currently airing.
         /// </summary>
         [JsonProperty("airing")]
-        public bool Airing
-        {
-            get => _airing;
-            set => Set(() => Airing, ref _airing, value);
-        }
+        public bool Airing { get; set; } = true;
 
         /// <summary>
         ///     if searching for the anime should contain exclusively it's own name with no fragments.
         /// </summary>
         [JsonProperty("name_strict")]
-        public bool NameStrict
-        {
-            get => _nameStrict;
-            set => Set(() => NameStrict, ref _nameStrict, value);
-        }
+        public bool NameStrict { get; set; }
 
         /// <summary>
         ///     If searching for the anime should only download from a specific subgroup if chosen
         /// </summary>
         [JsonProperty("preferred_subgroup")]
-        public string PreferredSubgroup
-        {
-            get => _preferredSubgroup;
-            set => Set(() => PreferredSubgroup, ref _preferredSubgroup, value);
-        }
+        public string PreferredSubgroup { get; set; }
 
         /// <summary>
         ///     The personal rating given for the series.
         /// </summary>
         [JsonProperty("rating")]
-        public string Rating
-        {
-            get => _rating;
-            set => Set(() => Rating, ref _rating, value);
-        }
+        public string Rating { get; set; } = "";
 
         [JsonProperty("details")]
-        public AnimeDetails Details
-        {
-            get => _details;
-            set => Set(() => Details, ref _details, value);
-        }
+        public AnimeDetails Details { get; set; } = new AnimeDetails();
 
         /// <summary>
         ///     User written notes about the show.
         /// </summary>
         [JsonProperty("notes")]
-        public string Notes
-        {
-            get => _notes;
-            set => Set(() => Notes, ref _notes, value);
-        }
-        
+        public string Notes { get; set; } = "";
+
         // 
 
         /// <summary>
         ///     Proper title name of anime.
         /// </summary>
         [JsonIgnore]
-        public string Title => new CultureInfo("en-US", false).TextInfo.ToTitleCase(Name);
+        public string Title => App.TextInfo.ToTitleCase(Name);
 
         /// <summary>
         ///     A zero padded string of the number of the next episode.
@@ -165,7 +84,7 @@ namespace anime_downloader.Models
         /// </summary>
         [JsonIgnore]
         public int SeriesContinuationEpisode => Details.TotalEpisodes - (Details.OverallTotal - Episode);
-        
+
         /// <summary>
         ///     A string representation display of the episode total, e.g. {current}/{total}
         /// </summary>
@@ -188,34 +107,6 @@ namespace anime_downloader.Models
                 }
 
                 return Episode.ToString();
-            }
-        }
-
-        /// <summary>
-        ///     A property used for sorting the rating in the datagrid
-        /// </summary>
-        [JsonIgnore]
-        public int SortedRating => string.IsNullOrEmpty(Rating) ? 13 * SortedRateFlag - 2 : int.Parse(Rating);
-
-        [JsonIgnore]
-        public int SeasonSort => Details.Aired?.Sort ?? (DateTime.Now.Year + 3) * SortedAiredFlag - 2;
-
-        [JsonIgnore]
-        public IEnumerable<string> NameCollection
-        {
-            get
-            {
-                IEnumerable<string> names;
-
-                if (Details.HasId)
-                    names = new[] {Details.English, Details.Title}
-                        .Union(Details.SynonymsSplit)
-                        .SelectMany(c => c.Split())
-                        .Distinct();
-                else
-                    names = Title.Split().Distinct();
-
-                return names.Where(c => c.Length > 0);
             }
         }
     }

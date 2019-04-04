@@ -2,6 +2,7 @@
 using anime_downloader.Classes;
 using anime_downloader.Enums;
 using Newtonsoft.Json;
+using static anime_downloader.Classes.Methods;
 
 namespace anime_downloader.Models
 {
@@ -13,9 +14,6 @@ namespace anime_downloader.Models
 
         [JsonProperty("season")]
         public Season Season { get; set; }
-
-        [JsonIgnore]
-        public int Sort => Year * 10 + (int) Season;
 
         [JsonIgnore]
         public string Title => $"{Season.Description()} {Year}";
@@ -32,15 +30,15 @@ namespace anime_downloader.Models
 
         // 
 
+        public static AnimeSeason Next(AnimeSeason season) => season.Next();
+
+        public static AnimeSeason Previous(AnimeSeason season) => season.Previous();
+
         public AnimeSeason Next()
         {
             var season = Season == Season.Fall ? Season.Winter : Season+1;
             var year = season == Season.Winter ? Year+1 : Year;
-            return new AnimeSeason
-            {
-                Season = season,
-                Year = year
-            };
+            return new AnimeSeason { Season = season, Year = year };
         }
         
         public AnimeSeason Previous()
@@ -50,17 +48,9 @@ namespace anime_downloader.Models
             return new AnimeSeason {Season = season, Year = year};
         }
 
-        private AnimeSeason Applier(Func<AnimeSeason, AnimeSeason> func, int amount)
-        {
-            var that = this;
-            for (var i = 0; i < amount; i++)
-                that = func(that);
-            return that;
-        }
+        public AnimeSeason Next(int amount) => Apply(Next, this, amount);
 
-        public AnimeSeason Next(int amount) => Applier(animeSeason => animeSeason.Next(), amount);
-
-        public AnimeSeason Previous(int amount) => Applier(animeSeason => animeSeason.Previous(), amount);
+        public AnimeSeason Previous(int amount) => Apply(Previous, this, amount);
 
         public int Difference(AnimeSeason other)
         {
@@ -80,17 +70,19 @@ namespace anime_downloader.Models
         /// </summary>
         public static int MaxAgeFor(Anime anime, int episode)
         {
-            var (current, aired) = (Current, anime.Details.Aired);
+            var aired = anime.Details.Aired;
 
-            // If anime was last season and trying to get last season episodes, extend the age
-            if (current.Previous() == aired)
-                if (anime.Details.Total > 20 && episode <= 13)
-                    return (DateTime.Now - aired.StartDate()).Days;
-                else
-                    return (DateTime.Now - current.StartDate()).Days;
-            
-            // else, only retrieve this season 
-            return MaxAgeForThisSeason();
+            if (aired == null)
+                return MaxAgeForThisSeason();
+
+            int days;
+            do
+            {
+                days = (DateTime.Now - aired.StartDate()).Days;
+                aired = aired.Next();
+            } while (aired < Current);
+
+            return days;
         }
 
         public static int MaxAgeForThisSeason() => (DateTime.Now - Current.StartDate()).Days;
@@ -106,7 +98,7 @@ namespace anime_downloader.Models
             Year = DateTime.Now.Year,
             Season = (Season) Math.Ceiling(Convert.ToDouble(DateTime.Now.Month) / 3)
         };
-
+        
         // 
 
         public static bool operator ==(AnimeSeason left, AnimeSeason right) => left?.Year == right?.Year &&

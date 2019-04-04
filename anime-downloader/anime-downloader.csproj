@@ -1,5 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Costura.Fody.3.3.1\build\Costura.Fody.props" Condition="Exists('..\packages\Costura.Fody.3.3.1\build\Costura.Fody.props')" />
+  <Import Project="..\packages\PropertyChanged.Fody.2.6.0\build\PropertyChanged.Fody.props" Condition="Exists('..\packages\PropertyChanged.Fody.2.6.0\build\PropertyChanged.Fody.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -27,6 +29,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -36,6 +39,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Resources\Icons\icon.ico</ApplicationIcon>
@@ -49,6 +53,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -59,11 +64,15 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="anime-downloader.Patch, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\anime-downloader.Patch\bin\Debug\anime-downloader.Patch.dll</HintPath>
+    </Reference>
+    <Reference Include="Costura, Version=3.3.1.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
+      <HintPath>..\packages\Costura.Fody.3.3.1\lib\net40\Costura.dll</HintPath>
     </Reference>
     <Reference Include="GalaSoft.MvvmLight, Version=5.3.0.19026, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
@@ -103,6 +112,9 @@
     <Reference Include="Optional, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Optional.4.0.0\lib\net45\Optional.dll</HintPath>
     </Reference>
+    <Reference Include="PropertyChanged, Version=2.6.0.0, Culture=neutral, PublicKeyToken=ee3ee20bcf148ddd, processorArchitecture=MSIL">
+      <HintPath>..\packages\PropertyChanged.Fody.2.6.0\lib\net452\PropertyChanged.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression.FileSystem" />
@@ -134,16 +146,22 @@
     <Compile Include="Classes\AnimeConverter.cs" />
     <Compile Include="Classes\Attributes.cs" />
     <Compile Include="Classes\Distances.cs" />
+    <Compile Include="Classes\DownloadPreference.cs" />
     <Compile Include="Classes\Exceptions.cs" />
+    <Compile Include="Classes\OptionTaskExtensions.cs" />
+    <Compile Include="Classes\Predicates.cs" />
     <Compile Include="Classes\Sorts.cs" />
     <Compile Include="Classes\MediaManager.cs" />
+    <Compile Include="Classes\VersionManager.cs" />
     <Compile Include="Classes\Xaml\AttachedProperties.cs" />
     <Compile Include="Classes\Xaml\CustomDataGrid.cs" />
     <Compile Include="Classes\Xaml\FocusBehavior.cs" />
+    <Compile Include="Classes\Xaml\Comparers.cs" />
     <Compile Include="Classes\Xaml\MouseBindings.cs" />
     <Compile Include="Classes\Xaml\MyMultiSelectBehavior.cs" />
     <Compile Include="Classes\Xaml\SelectableTextBlock.cs" />
     <Compile Include="Classes\Xaml\TextEditorWrapper.cs" />
+    <Compile Include="Enums\Tolerance.cs" />
     <Compile Include="Enums\Request.cs" />
     <Compile Include="Enums\DownloadOption.cs" />
     <Compile Include="Enums\DownloadProvider.cs" />
@@ -175,7 +193,6 @@
     <Compile Include="Models\AnimeSeason.cs" />
     <Compile Include="Models\MagnetLink.cs" />
     <Compile Include="Models\MultipleAnimeDetails.cs" />
-    <Compile Include="Models\AnimeFileRange.cs" />
     <Compile Include="Models\AnimeDetails.cs" />
     <Compile Include="Models\Configurations\FlagConfiguration.cs" />
     <Compile Include="Models\Configurations\MyAnimeListConfiguration.cs" />
@@ -186,7 +203,6 @@
     <Compile Include="Models\MyAnimeList\ApiCredentials.cs" />
     <Compile Include="Models\MyAnimeList\Category.cs" />
     <Compile Include="Models\MyAnimeList\Payload.cs" />
-    <Compile Include="Models\MyAnimeList\FindResultRoot.cs" />
     <Compile Include="Models\MyAnimeList\Item.cs" />
     <Compile Include="Models\MyAnimeList\SearchResponse.cs" />
     <Compile Include="Models\MyAnimeList\ShowRequest.cs" />
@@ -196,7 +212,7 @@
     <Compile Include="Models\Playlist.cs" />
     <Compile Include="Enums\PlaylistOptions.cs" />
     <Compile Include="Enums\PlaylistOrder.cs" />
-    <Compile Include="Models\RadioModel.cs" />
+    <Compile Include="Models\Radio.cs" />
     <Compile Include="Models\ReleaseNote.cs" />
     <Compile Include="Models\SemanticVersion.cs" />
     <Compile Include="Models\Torrent.cs" />
@@ -241,7 +257,6 @@
     <Compile Include="ViewModels\Components\AnimeDisplay\AnimeListViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\MessageViewModel.cs" />
     <Compile Include="ViewModels\Components\Download\OutputViewModel.cs" />
-    <Compile Include="ViewModels\Components\Download\LogViewModel.cs" />
     <Compile Include="ViewModels\Components\Download\OptionsViewModel.cs" />
     <Compile Include="ViewModels\Components\FileListViewModel.cs" />
     <Compile Include="ViewModels\Components\AnimeDisplay\FindViewModel.cs" />
@@ -278,9 +293,6 @@
     </Compile>
     <Compile Include="Views\Dialogs\Message.xaml.cs">
       <DependentUpon>Message.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Components\Download\Log.xaml.cs">
-      <DependentUpon>Log.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Components\Download\Options.xaml.cs">
       <DependentUpon>Options.xaml</DependentUpon>
@@ -394,10 +406,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Components\Download\Log.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\Components\Download\Options.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -506,13 +514,15 @@
   <PropertyGroup>
     <PostBuildEvent>copy "$(TargetPath)" "$(SolutionDir)"</PostBuildEvent>
   </PropertyGroup>
-  <Import Project="..\packages\Fody.2.0.6\build\netstandard1.4\Fody.targets" Condition="Exists('..\packages\Fody.2.0.6\build\netstandard1.4\Fody.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Fody.2.0.6\build\netstandard1.4\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.2.0.6\build\netstandard1.4\Fody.targets'))" />
+    <Error Condition="!Exists('..\packages\PropertyChanged.Fody.2.6.0\build\PropertyChanged.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\PropertyChanged.Fody.2.6.0\build\PropertyChanged.Fody.props'))" />
+    <Error Condition="!Exists('..\packages\Fody.3.3.5\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.3.3.5\build\Fody.targets'))" />
+    <Error Condition="!Exists('..\packages\Costura.Fody.3.3.1\build\Costura.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Costura.Fody.3.3.1\build\Costura.Fody.props'))" />
   </Target>
+  <Import Project="..\packages\Fody.3.3.5\build\Fody.targets" Condition="Exists('..\packages\Fody.3.3.5\build\Fody.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

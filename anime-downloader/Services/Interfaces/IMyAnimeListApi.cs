@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using anime_downloader.Models;
 using anime_downloader.Models.MyAnimeList;
+using Optional;
 
 namespace anime_downloader.Services.Interfaces
 {
@@ -13,9 +14,9 @@ namespace anime_downloader.Services.Interfaces
 
         Task<bool> Login(string username, string password);
 
-        Task<(bool successful, string content)> AddAsync(Anime anime, int id);
+        Task<Option<string>> AddAsync(Anime anime, int id);
 
-        Task<(bool successful, string content)> UpdateAsync(Anime anime, int id);
+        Task<Option<string>> UpdateAsync(Anime anime, int id);
 
         Task<bool> ProfileContains(int id);
     }

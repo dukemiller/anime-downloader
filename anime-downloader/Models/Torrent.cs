@@ -2,12 +2,13 @@
 using System.Net;
 using System.Threading.Tasks;
 using anime_downloader.Models.Abstract;
+using Optional;
 
 namespace anime_downloader.Models
 {
     public class Torrent: RemoteMedia
     {
-        private int _seeders;
+        private Option<int> _seeders;
 
         /// <summary>
         ///     The description containing seeder & measurement information.
@@ -22,20 +23,15 @@ namespace anime_downloader.Models
         /// <summary>
         ///     The amount of people seeding the torrent.
         /// </summary>
-        public int Seeders
+        public Option<int> Seeders
         {
             get => _seeders;
             set
             {
                 _seeders = value;
-                Health = value;
+                value.MatchSome(v => Health = v);
             }
         }
-
-        /// <summary>
-        ///     The size of the download.
-        /// </summary>
-        public double Size { get; set; }
 
         //
 
@@ -49,13 +45,7 @@ namespace anime_downloader.Models
         /// <summary>
         ///     Gathers the torrent's filename from it's meta-data.
         /// </summary>
-        /// <returns>
-        ///     A valid filename for the torrent.
-        /// </returns>
-        /// <remarks>
-        ///     This is only known to be the case for Nyaa.EU's torrents
-        /// </remarks>
-        public async Task<string> GetTorrentNameAsync()
+        public async Task<string> Filename()
         {
             HttpWebResponse response = null;
 

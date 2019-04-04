@@ -8,6 +8,7 @@ using System.Xml;
 using System.Xml.Linq;
 using anime_downloader.Patch.Services.Interface;
 using Newtonsoft.Json;
+using Formatting = Newtonsoft.Json.Formatting;
 
 namespace anime_downloader.Patch.Services
 {
@@ -42,34 +43,25 @@ namespace anime_downloader.Patch.Services
                     return (false, false);
                 }
 
-                else
+                Output($"Updating from {previous} to {current}.");
+
+                var (updated, failed) = Version_1_x_x();
+
+                if (failed)
                 {
-                    Output($"Updating from {previous} to {current}.");
-
-                    var (updated, failed) = Version_1_x_x();
-
-                    if (failed)
-                    {
-                        Output("Something went wrong. Restoring backup.");
-                        var restored = RestoreBackup();
-                        if (!restored)
-                            Output("Backup corrupted?");
-                        return (false, false);
-                    }
-
-                    else
-                    {
-                        Output("Update complete.");
-                        return (true, false);
-                    }
+                    Output("Something went wrong. Restoring backup.");
+                    var restored = RestoreBackup();
+                    if (!restored)
+                        Output("Backup corrupted?");
+                    return (false, false);
                 }
+
+                Output("Update complete.");
+                return (true, false);
             }
 
-            else
-            {
-                Output("Up to date.");
-                return (false, false);
-            }
+            Output("Up to date.");
+            return (false, false);
         }
 
         // General
@@ -218,7 +210,7 @@ namespace anime_downloader.Patch.Services
         {
             Output("-- Creating settings.json");
 
-            var json = JsonConvert.SerializeXmlNode(main, Newtonsoft.Json.Formatting.Indented, true).Replace("@", "");
+            var json = JsonConvert.SerializeXmlNode(main, Formatting.Indented, true).Replace("@", "");
 
             json = string.Join("\n", json.Split('\n').Skip(3));
             json = "{\n" + json;
@@ -248,7 +240,7 @@ namespace anime_downloader.Patch.Services
         {
             Output("-- Creating credentials.json");
 
-            var json = JsonConvert.SerializeXmlNode(main, Newtonsoft.Json.Formatting.Indented, true).Replace("@", "");
+            var json = JsonConvert.SerializeXmlNode(main, Formatting.Indented, true).Replace("@", "");
             json = json.Replace("\"MyAnimeList\"", "\"myanimelist\"");
             json = json.Replace("\"AccessToken\"", "\"access_token\"");
             json = json.Replace("\"TokenType\"", "\"token_type\"");
@@ -265,7 +257,7 @@ namespace anime_downloader.Patch.Services
         {
             Output("-- Creating anime.json");
 
-            var json = JsonConvert.SerializeXmlNode(anime, Newtonsoft.Json.Formatting.Indented, true).Replace("@", "")
+            var json = JsonConvert.SerializeXmlNode(anime, Formatting.Indented, true).Replace("@", "")
                 .Replace("my_anime_list", "details");
 
             json = json.Replace("\"false\"", "false");

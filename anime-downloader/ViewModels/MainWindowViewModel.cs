@@ -1,62 +1,39 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
-using anime_downloader.Repositories.Interface;
 using anime_downloader.ViewModels.Dialogs;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
-using GalaSoft.MvvmLight.Ioc;
 using MaterialDesignThemes.Wpf;
 
 namespace anime_downloader.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        private bool _busy;
-
-        private int _selectedIndex;
-
         /// <summary>
         ///     Handles logic related to creating and the features of the system tray.
         /// </summary>
         private Tray _tray;
 
-        private bool _isShowing;
-
-        public static bool Loaded;
+        private int _selectedIndex;
 
         // 
 
         public MainWindowViewModel()
         {
-            // Commands
-
-            SetCommands();
-            ButtonCommands = new[]
-            {
-                Home, Anime, Download,
-                Discover, Manage, Misc,
-                Playlist, Settings, Web
-            };
-
-            // Messages
-
             MessengerInstance.Register<Display>(this, HandleViewDisplay);
             MessengerInstance.Register<ViewState>(this, HandleViewState);
-
-            // Etc
-
-            Home.Execute(1);
         }
+
+        // 
 
         public int SelectedIndex
         {
             get => _selectedIndex;
             set
             {
-                if (SelectedIndex == 1 || SelectedIndex == 3)
+                if (value == _selectedIndex && (value == 1 || value == 3))
                     RefreshView();
                 Set(() => SelectedIndex, ref _selectedIndex, value);
             }
@@ -67,76 +44,41 @@ namespace anime_downloader.ViewModels
         /// </summary>
         public void RefreshView() => MessengerInstance.Send(ViewRequest.Reset);
 
-        public bool Busy
-        {
-            get => _busy;
-            set
-            {
-                Set(() => Busy, ref _busy, value);
-                foreach (var _ in ButtonCommands)
-                    _.RaiseCanExecuteChanged();
-            }
-        }
-
-        // 
-
-        public bool IsShowing
-        {
-            get => _isShowing;
-            set => Set(() => IsShowing, ref _isShowing, value);
-        }
-
-        private IEnumerable<RelayCommand> ButtonCommands { get; }
-
-        public RelayCommand CloseCommand { get; set; }
-
-        public RelayCommand LoadedCommand { get; set; }
-
-        public RelayCommand Home { get; set; }
-
-        public RelayCommand Anime { get; set; }
-
-        public RelayCommand Download { get; set; }
-
-        public RelayCommand Manage { get; set; }
-
-        public RelayCommand Misc { get; set; }
-
-        public RelayCommand Playlist { get; set; }
-
-        public RelayCommand Settings { get; set; }
-
-        public RelayCommand Web { get; set; }
+        public bool Busy { get; set; }
         
-        public RelayCommand Discover { get; set; }
+        public bool IsShowing { get; set; }
+        
+        public RelayCommand CloseCommand => new RelayCommand(Close);
+
+        public RelayCommand LoadedCommand => new RelayCommand(Loaded);
+
+        public RelayCommand Home => new RelayCommand(() => SelectedIndex = 0, () => !Busy);
+
+        public RelayCommand Anime => new RelayCommand(() => SelectedIndex = 1, () => !Busy);
+
+        public RelayCommand Discover => new RelayCommand(() => SelectedIndex = 2, () => !Busy);
+
+        public RelayCommand Download => new RelayCommand(() => SelectedIndex = 3, () => !Busy);
+
+        public RelayCommand Manage => new RelayCommand(() => SelectedIndex = 4, () => !Busy);
+
+        public RelayCommand Playlist => new RelayCommand(() => SelectedIndex = 5, () => !Busy);
+
+        public RelayCommand Web => new RelayCommand(() => SelectedIndex = 6, () => !Busy);
+
+        public RelayCommand Settings => new RelayCommand(() => SelectedIndex = 7, () => !Busy);
+
+        public RelayCommand Misc => new RelayCommand(() => SelectedIndex = 8, () => !Busy);
 
         // 
 
-        private void SetCommands()
+        private static void Close() => Application.Current.MainWindow?.Close();
+
+        private void Loaded() => _tray = new Tray();
+
+        private async void HandleViewState(ViewState state)
         {
-            LoadedCommand = new RelayCommand(() =>
-            {
-                CloseCommand = new RelayCommand(Application.Current.MainWindow.Close);
-                CreateTray();
-                Loaded = true;
-            });
-
-            Home     = new RelayCommand(() => SelectedIndex = 0, () => !Busy);
-            Anime    = new RelayCommand(() => SelectedIndex = 1, () => !Busy);
-            Discover = new RelayCommand(() => SelectedIndex = 2, () => !Busy);
-            Download = new RelayCommand(() => SelectedIndex = 3, () => !Busy);
-            Manage   = new RelayCommand(() => SelectedIndex = 4, () => !Busy);
-            Playlist = new RelayCommand(() => SelectedIndex = 5, () => !Busy);
-            Web      = new RelayCommand(() => SelectedIndex = 6, () => !Busy);
-            Settings = new RelayCommand(() => SelectedIndex = 7, () => !Busy);
-            Misc     = new RelayCommand(() => SelectedIndex = 8, () => !Busy);
-
-            // 
-        }
-
-        private async void HandleViewState(ViewState vs)
-        {
-            switch (vs)
+            switch (state)
             {
                 case ViewState.IsLoading:
                     await DialogHost.Show(new LoadingViewModel());
@@ -151,6 +93,8 @@ namespace anime_downloader.ViewModels
                 case ViewState.DoneWorking:
                     Busy = false;
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(state), state, null);
             }
         }
 
@@ -199,11 +143,5 @@ namespace anime_downloader.ViewModels
             }
         }
 
-        private void CreateTray()
-        {
-            _tray = new Tray(
-                SimpleIoc.Default.GetInstance<ISettingsRepository>(),
-                SimpleIoc.Default.GetInstance<ICredentialsRepository>());
-        }
     }
 }

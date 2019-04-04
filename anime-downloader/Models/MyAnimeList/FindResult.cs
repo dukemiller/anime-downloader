@@ -44,9 +44,5 @@ namespace anime_downloader.Models.MyAnimeList
 
         [XmlElement("image")]
         public string Image { get; set; }
-
-        private IEnumerable<string> SynonymsSplit => Synonyms.Split(';');
-
-        public IEnumerable<string> NameCollection => new[] {English, Title}.Union(SynonymsSplit);
     }
 }

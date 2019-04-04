@@ -2,7 +2,6 @@
 using System.IO;
 using anime_downloader.Enums;
 using anime_downloader.Models;
-using anime_downloader.Models.Configurations;
 using anime_downloader.Patch.Services;
 using anime_downloader.Repositories;
 using anime_downloader.Repositories.Interface;
@@ -55,13 +54,12 @@ namespace anime_downloader
             SimpleIoc.Default.Register<WebViewModel>();
 
             // Components
-            SimpleIoc.Default.Register<DetailsMultipleViewModel>();
-            SimpleIoc.Default.Register<DetailsViewModel>();
-            SimpleIoc.Default.Register<AnimeListViewModel>();
-            SimpleIoc.Default.Register<OutputViewModel>();
-            SimpleIoc.Default.Register<LogViewModel>();
-            SimpleIoc.Default.Register<OptionsViewModel>();
-            SimpleIoc.Default.Register<DetailsBarViewModel>();
+            SimpleIoc.Default.Register<DetailsMultipleViewModel>(true);
+            SimpleIoc.Default.Register<DetailsViewModel>(true);
+            SimpleIoc.Default.Register<AnimeListViewModel>(true);
+            SimpleIoc.Default.Register<OutputViewModel>(true);
+            SimpleIoc.Default.Register<OptionsViewModel>(true);
+            SimpleIoc.Default.Register<DetailsBarViewModel>(true);
             SimpleIoc.Default.Register<NotesViewModel>(true);
         }
 
@@ -90,10 +88,10 @@ namespace anime_downloader
         /// </summary>
         private static void PatchCheck()
         {
-            if (!Directory.Exists(PathConfiguration.ApplicationDirectory))
-                Directory.CreateDirectory(PathConfiguration.ApplicationDirectory);
+            if (!Directory.Exists(App.Path.Directory.Application))
+                Directory.CreateDirectory(App.Path.Directory.Application);
 
-            var path = Path.Combine(PathConfiguration.ApplicationDirectory, "version");
+            var path = Path.Combine(App.Path.Directory.Application, "version");
             var current = SemanticVersion.Application;
             var previous = GetLoadedVersion(path);
 

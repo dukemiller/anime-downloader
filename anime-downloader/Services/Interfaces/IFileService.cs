@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using anime_downloader.Enums;
 using anime_downloader.Models;
+using Optional;
 
 namespace anime_downloader.Services.Interfaces
 {
@@ -39,12 +40,12 @@ namespace anime_downloader.Services.Interfaces
         /// <summary>
         ///     Retrieve the file with the lowest episode number found belonging to {anime}
         /// </summary>
-        AnimeFile FirstEpisode(Anime anime);
+        Option<AnimeFile> FirstEpisode(Anime anime);
 
         /// <summary>
         ///     Retrieve the file with the highest episode number found belonging to {anime}
         /// </summary>
-        AnimeFile LastEpisode(Anime anime);
+        Option<AnimeFile> LastEpisode(Anime anime);
 
         /* First or last of everything in sequence */
 
@@ -63,17 +64,17 @@ namespace anime_downloader.Services.Interfaces
         /// <summary>
         ///     The closest anime file compared to {name} in {files} collection
         /// </summary>
-        AnimeFile ClosestFile(IEnumerable<AnimeFile> files, string name);
+        Option<AnimeFile> ClosestFile(IEnumerable<AnimeFile> files, string name);
 
         /// <summary>
         ///     The closest anime compared to {name} in {animes} collection
         /// </summary>
-        Anime ClosestAnime(IEnumerable<Anime> animes, string name);
+        Option<Anime> ClosestAnime(IEnumerable<Anime> animes, string name, Tolerance tolerance);
 
         /// <summary>
         ///     The closest anime compared to {file}'s name in {animes} collection
         /// </summary>
-        Anime ClosestAnime(IEnumerable<Anime> animes, AnimeFile file);
+        Option<Anime> ClosestAnime(IEnumerable<Anime> animes, AnimeFile file, Tolerance tolerance);
 
         // 
         Task<int> MoveDuplicatesAsync();

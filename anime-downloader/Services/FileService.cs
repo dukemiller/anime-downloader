@@ -6,18 +6,17 @@ using System.Threading.Tasks;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
 using anime_downloader.Models;
-using anime_downloader.Models.Configurations;
 using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
+using Optional;
+using Optional.Collections;
+using static anime_downloader.Classes.Methods;
 
 namespace anime_downloader.Services
 {
     public class FileService : IFileService
     {
-        private static readonly string[] FileExtensions =
-        {
-            ".mkv", ".mp4", ".avi"
-        };
+        private static readonly List<string> Extensions = List.Of(".mkv", ".mp4", ".avi");
 
         public FileService(ISettingsRepository settings)
         {
@@ -41,7 +40,7 @@ namespace anime_downloader.Services
                 .First()
                 .Name;
 
-            return AllEpisodes.Where(e => e.Name.Equals(name));
+            return AllEpisodes.Where(episode => episode.Name == name);
         }
 
         public IEnumerable<AnimeFile> GetEpisodes(EpisodeStatus episodeStatus)
@@ -49,7 +48,7 @@ namespace anime_downloader.Services
             try
             {
                 return GetFilesFromStatus(episodeStatus)
-                    .Where(filePath => FileExtensions.Any(ext => filePath.ToLower().EndsWith(ext)))
+                    .Where(filePath => Extensions.Any(ext => filePath.ToLower().EndsWith(ext)))
                     .Select(filePath => new AnimeFile(filePath))
                     .OrderBy(animeFile => animeFile.Name)
                     .ThenBy(animeFile => animeFile.Episode);
@@ -63,37 +62,26 @@ namespace anime_downloader.Services
         public IEnumerable<AnimeFile> GetEpisodes(Anime anime, EpisodeStatus episodeStatus)
         {
             var collection = GetEpisodes(episodeStatus)
-                .GroupBy(episode => episode.Name)
+                .GroupBy(episode => episode.Name.ToLower())
                 .Select(episode => new GroupFileDistance(episode, anime))
                 .Where(episode => episode.Distance <= 25)
                 .OrderBy(episode => episode.Distance)
                 .FirstOrDefault()
-                ?.Group
-                ?.Select(e => e);
+                .Group?.Select(e => e);
             return collection ?? new List<AnimeFile>();
         }
 
-        public AnimeFile FirstEpisode(Anime anime)
-        {
-            return FirstEpisode(GetEpisodes(anime, EpisodeStatus.All));
-        }
+        public Option<AnimeFile> FirstEpisode(Anime anime) => FirstEpisode(GetEpisodes(anime, EpisodeStatus.All));
 
-        public AnimeFile LastEpisode(Anime anime)
-        {
-            return LastEpisode(GetEpisodes(anime, EpisodeStatus.All));
-        }
+        public Option<AnimeFile> LastEpisode(Anime anime) => LastEpisode(GetEpisodes(anime, EpisodeStatus.All));
 
         /* Async */
 
-        public async Task<IEnumerable<AnimeFile>> GetEpisodesAsync(EpisodeStatus episodeStatus)
-        {
-            return await Task.Run(() => GetEpisodes(episodeStatus));
-        }
+        public async Task<IEnumerable<AnimeFile>> GetEpisodesAsync(EpisodeStatus episodeStatus) 
+            => await Task.Run(() => GetEpisodes(episodeStatus));
 
-        public async Task<IEnumerable<AnimeFile>> GetEpisodesAsync(Anime anime, EpisodeStatus episodeStatus)
-        {
-            return await Task.Run(() => GetEpisodes(anime, episodeStatus));
-        }
+        public async Task<IEnumerable<AnimeFile>> GetEpisodesAsync(Anime anime, EpisodeStatus episodeStatus) 
+            => await Task.Run(() => GetEpisodes(anime, episodeStatus));
 
         /* Static */
 
@@ -102,7 +90,7 @@ namespace anime_downloader.Services
             var latest = new List<AnimeFile>();
             var reversed = files.OrderByDescending(animeFile => animeFile.Episode);
             foreach (var anime in reversed)
-                if (!latest.Any(af => af.Name.Equals(anime.Name)))
+                if (latest.All(af => af.Name != anime.Name))
                     latest.Add(anime);
             return latest.OrderBy(af => af.Name);
         }
@@ -120,36 +108,28 @@ namespace anime_downloader.Services
 
         /// A set of retrieval methods for finding anime in the collection without needing to strum up
         /// linq methods, getting the best guess to what the anime is based solely on the given input string
-        public AnimeFile ClosestFile(IEnumerable<AnimeFile> files, string name)
-        {
-            return files
-                .WhereLevenshteinLessThan(anime => anime.Name, name, 11)
-                .FirstOrDefault();
-        }
+        public Option<AnimeFile> ClosestFile(IEnumerable<AnimeFile> files, string name)
+            => files.WhereLevenshteinLessThan(anime => anime.Name, name, 11).FirstOrNone();
 
-        public Anime ClosestAnime(IEnumerable<Anime> animes, AnimeFile file)
-        {
-            return animes
+        public Option<Anime> ClosestAnime(IEnumerable<Anime> animes, AnimeFile file, Tolerance tolerance) =>
+            animes
                 .Select(anime => new StringDistance<Anime>(anime, file.Name,
                     string.IsNullOrEmpty(anime.Details.PreferredSearchTitle)
                         ? anime.Name
                         : anime.Details.PreferredSearchTitle))
-                .Where(pair => pair.Distance <= 10)
+                .Where(pair => pair.Distance <= (tolerance == Tolerance.Low ? 10 : tolerance == Tolerance.Medium ? 15 : 20))
                 .OrderBy(pair => pair.Distance)
-                .FirstOrDefault()?.Item;
-        }
+                .FirstOrNone().Map(pair => pair.Item);
 
-        public Anime ClosestAnime(IEnumerable<Anime> animes, string name)
-        {
-            return animes
+        public Option<Anime> ClosestAnime(IEnumerable<Anime> animes, string name, Tolerance tolerance) =>
+            animes
                 .Select(anime => new StringDistance<Anime>(anime, name,
                     string.IsNullOrEmpty(anime.Details.PreferredSearchTitle)
                         ? anime.Name
                         : anime.Details.PreferredSearchTitle))
-                .Where(pair => pair.Distance <= 10)
+                .Where(pair => pair.Distance <= (tolerance == Tolerance.Low ? 10 : tolerance == Tolerance.Medium ? 15 : 20))
                 .OrderBy(pair => pair.Distance)
-                .FirstOrDefault()?.Item;
-        }
+                .FirstOrNone().Map(pair => pair.Item);
 
         [NeedsUpdating]
         public async Task<int> MoveDuplicatesAsync()
@@ -159,15 +139,15 @@ namespace anime_downloader.Services
             // if there's another anime with the same name and episode count,
             // and it's not in the duplicate list already
             var duplicates = animeEpisodes.Where(episode =>
-                animeEpisodes.Any(otherEpisode => episode != otherEpisode &&
-                                                  episode.Name.Equals(otherEpisode.Name) &&
-                                                  episode.Episode == otherEpisode.Episode
+                animeEpisodes.Any(otherEpisode => episode != otherEpisode 
+                                                  && episode.Name == otherEpisode.Name 
+                                                  && episode.Episode == otherEpisode.Episode
                 )).ToList();
 
             if (duplicates.Any())
                 foreach (var duplicate in duplicates)
                     File.Move(duplicate.Path,
-                        Path.Combine(PathConfiguration.DuplicatesDirectory, duplicate.FileName));
+                        Path.Combine(App.Path.Directory.Duplicates, duplicate.FileName));
 
             return duplicates.Count;
         }
@@ -219,14 +199,10 @@ namespace anime_downloader.Services
             return files;
         }
 
-        public static AnimeFile FirstEpisode(IEnumerable<AnimeFile> episodes)
-        {
-            return episodes?.OrderBy(ep => ep.Episode).FirstOrDefault();
-        }
+        public static Option<AnimeFile> FirstEpisode(IEnumerable<AnimeFile> episodes)
+            => episodes.OrderBy(ep => ep.Episode).FirstOrNone();
 
-        public static AnimeFile LastEpisode(IEnumerable<AnimeFile> episodes)
-        {
-            return episodes?.OrderBy(ep => ep.Episode).LastOrDefault();
-        }
+        public static Option<AnimeFile> LastEpisode(IEnumerable<AnimeFile> episodes)
+            => episodes.OrderBy(ep => ep.Episode).LastOrNone();
     }
 }

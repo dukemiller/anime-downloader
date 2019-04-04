@@ -7,7 +7,6 @@ using System.Net;
 using System.Threading.Tasks;
 using anime_downloader.Models;
 using anime_downloader.Models.Abstract;
-using anime_downloader.Models.Configurations;
 using anime_downloader.Repositories.Interface;
 using GalaSoft.MvvmLight.Ioc;
 using Optional;
@@ -17,7 +16,7 @@ namespace anime_downloader.Classes
     public static class MediaManager
     {
         private static ISettingsRepository SettingsRepository => SimpleIoc.Default.GetInstance<ISettingsRepository>();
-        
+
         // 
 
         /// <summary>
@@ -125,11 +124,11 @@ namespace anime_downloader.Classes
         private static readonly WebClient Client = new WebClient();
 
         // 
-        
+
         public static async Task<Option<string>> Download(Torrent torrent)
         {
-            var torrentName = await torrent.GetTorrentNameAsync();
-            if (torrentName == null)
+            var torrentName = await torrent.Filename();
+            if (torrentName is null)
                 return Option.None<string>();
             var filePath = Path.Combine(SettingsRepository.PathConfig.Torrents, torrentName);
 
@@ -157,28 +156,40 @@ namespace anime_downloader.Classes
 
     internal static class Aria
     {
-        private const string ArchiveUrl = @"https://github.com/aria2/aria2/releases/download/release-1.31.0/aria2-1.31.0-win-32bit-build1.zip";
+        private const string ArchiveUrl =
+            @"https://github.com/aria2/aria2/releases/download/release-1.31.0/aria2-1.31.0-win-32bit-build1.zip";
 
-        private static string Directory => Path.Combine(PathConfiguration.ApplicationDirectory, "aria2");
+        private static string Directory => Path.Combine(App.Path.Directory.Application, "aria2");
 
         private static string Executable => Path.Combine(Directory, "aria2c.exe");
 
         private static ISettingsRepository SettingsRepository => SimpleIoc.Default.GetInstance<ISettingsRepository>();
 
-        private static async Task DownloadAria()
+        private static async Task<bool> DownloadAria()
         {
-            var path = Path.Combine(PathConfiguration.ApplicationDirectory, "aria2.zip");
+            try
+            {
+                var path = Path.Combine(App.Path.Directory.Application, "aria2.zip");
 
-            using (var client = new WebClient())
-                await client.DownloadFileTaskAsync(ArchiveUrl, path);
+                if (!File.Exists(path))
+                    using (var client = new WebClient())
+                        await client.DownloadFileTaskAsync(ArchiveUrl, path);
 
-            ZipFile.ExtractToDirectory(path, PathConfiguration.ApplicationDirectory);
+                ZipFile.ExtractToDirectory(path, App.Path.Directory.Application);
 
-            File.Delete(path);
+                File.Delete(path);
 
-            System.IO.Directory.Move(
-                Path.Combine(PathConfiguration.ApplicationDirectory, "aria2-1.31.0-win-32bit-build1"),
-                Path.Combine(Directory));
+                System.IO.Directory.Move(
+                    Path.Combine(App.Path.Directory.Application, "aria2-1.31.0-win-32bit-build1"),
+                    Path.Combine(Directory));
+
+                return true;
+            }
+
+            catch
+            {
+                return false;
+            }
         }
 
         // 
@@ -188,15 +199,15 @@ namespace anime_downloader.Classes
         /// </summary>
         public static async Task<Option<string>> Download(MagnetLink magnet)
         {
-            string file;
-
             if (!System.IO.Directory.Exists(Directory))
-                await DownloadAria();
+                if (!(await DownloadAria()))
+                    return Option.None<string>();
 
             var info = new ProcessStartInfo
             {
                 FileName = Executable,
-                Arguments = $"--bt-metadata-only=true --bt-save-metadata=true --bt-tracker={string.Join(",", magnet.Trackers)} {magnet.Hash}",
+                Arguments =
+                    $"--bt-metadata-only=true --bt-save-metadata=true --bt-tracker={string.Join(",", magnet.Trackers)} {magnet.Hash}",
                 WorkingDirectory = SettingsRepository.PathConfig.Torrents,
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
@@ -208,33 +219,43 @@ namespace anime_downloader.Classes
                 StartInfo = info
             };
 
-            process.Start();
-
-            var result = await process.StandardOutput.ReadToEndAsync();
-
-            if (result.Contains("Maybe file already exists"))
+            try
             {
-                var torrent = result.Split('\n')
-                                  .First(line => line.Contains(".torrent"))
-                                  .Split('/')
-                                  .Last()
-                                  .Split('.')
-                                  .First() + ".torrent";
+                string file;
 
-                file = Path.Combine(SettingsRepository.PathConfig.Torrents, torrent);
+                process.Start();
+
+                var result = await process.StandardOutput.ReadToEndAsync();
+
+                if (result.Contains("Maybe file already exists"))
+                {
+                    var torrent = result.Split('\n')
+                                      .First(line => line.Contains(".torrent"))
+                                      .Split('/')
+                                      .Last()
+                                      .Split('.')
+                                      .First() + ".torrent";
+
+                    file = Path.Combine(SettingsRepository.PathConfig.Torrents, torrent);
+                }
+
+                else
+                {
+                    file =
+                        result.Split('\n')
+                            .First(line => line.Contains("Saved metadata as"))
+                            .Split("Saved metadata as")[1]
+                            .TrimEnd('.')
+                            .TrimStart(' ');
+                }
+
+                return file.Some();
             }
 
-            else
+            catch
             {
-                file =
-                    result.Split('\n')
-                        .First(line => line.Contains("Saved metadata as"))
-                        .Split(new[] { "Saved metadata as" }, StringSplitOptions.None)[1]
-                        .TrimEnd('.')
-                        .TrimStart(' ');
+                return Option.None<string>();
             }
-
-            return file.Some();
         }
     }
 }

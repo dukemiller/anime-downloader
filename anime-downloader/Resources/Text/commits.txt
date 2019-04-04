@@ -1,0 +1,20 @@
+2019-01-17T01:27:13-07:00 Fix changelog presentation
+2019-01-17T01:13:00-07:00 Add release log mechanism and display to home view
+2019-01-17T01:06:00-07:00 Juggle around interface definitions
+2019-01-17T01:03:09-07:00 Add small animation for transition to downloading output
+2019-01-16T01:38:27-07:00 Add minor delay on anime list find text binding (less lag)
+2019-01-16T01:37:38-07:00 More clearly define NeedsUpdating states in anime list view
+2019-01-16T01:36:26-07:00 Fix the path to actually use the default image resource
+2019-01-16T01:35:50-07:00 Specifically allow normie10032 subs
+2019-01-16T01:33:57-07:00 Fix problem with stripping episode
+2019-01-16T01:32:53-07:00 Fix and improve checking if discovery contains already added anime
+2019-01-16T01:27:37-07:00 Clean and improve the workflow of downloading torrent files
+2019-01-16T01:20:16-07:00 Create method to resolve arbitrary anime names from remote sources
+2019-01-01T01:18:00-07:00 Fix problem with adding from discovery
+2019-01-01T01:05:28-07:00 Add a few error handling states for the updating process
+2019-01-01T01:01:25-07:00 Update heuristic for determining if show is airing
+2019-01-01T01:00:20-07:00 Allow scroll wheel on discovery tab
+2019-01-01T00:49:25-07:00 Fix leftovers to display correct amounts
+2019-01-01T00:48:33-07:00 Update discovery tab results 2 weeks instead of one
+2019-01-01T00:29:18-07:00 Fix discovery tab to show all titles correctly
+2018-12-31T21:36:51-07:00 Show filename instead of stripped name in manage

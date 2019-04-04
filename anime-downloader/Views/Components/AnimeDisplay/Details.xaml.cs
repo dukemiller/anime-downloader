@@ -85,6 +85,5 @@ namespace anime_downloader.Views.Components.AnimeDisplay
             Keyboard.ClearFocus();
             Focus();
         }
-
     }
 }

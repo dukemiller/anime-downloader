@@ -8,6 +8,7 @@ using anime_downloader.Models.AniList;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using Optional;
 using static anime_downloader.Classes.Methods;
 
 namespace anime_downloader.ViewModels.Displays
@@ -17,15 +18,9 @@ namespace anime_downloader.ViewModels.Displays
         private readonly IFindSeasonAnimeService _findService;
         private readonly IAnimeService _animeService;
         private bool _visible;
-        private int _selectedIndex;
         private int? _previousIndex;
-        private AnimeSeason _season = AnimeSeason.Current;
-        private ObservableCollection<AiringAnime> _airingShows;
-        private ObservableCollection<AiringAnime> _leftoverShows;
         private List<AiringAnime> _airing;
         private List<AiringAnime> _leftover;
-        private AiringAnime _selectedAiring;
-        private AiringAnime _selectedLeftover;
 
         // 
 
@@ -33,7 +28,6 @@ namespace anime_downloader.ViewModels.Displays
         {
             _findService = findService;
             _animeService = animeService;
-            AddCommand = new RelayCommand(Add);
 
             MessengerInstance.Register<ViewRequest>(this, HandleViewAction);
 
@@ -48,55 +42,30 @@ namespace anime_downloader.ViewModels.Displays
 
         // 
 
-        public AiringAnime SelectedAiring
-        {
-            get => _selectedAiring;
-            set => Set(() => SelectedAiring, ref _selectedAiring, value);
-        }
+        public AiringAnime SelectedAiring { get; set; }
 
-        public AiringAnime SelectedLeftover
-        {
-            get => _selectedLeftover;
-            set => Set(() => SelectedLeftover, ref _selectedLeftover, value);
-        }
+        public AiringAnime SelectedLeftover { get; set; }
 
-        public AnimeSeason Season
-        {
-            get => _season;
-            set
-            {
-                Set(() => Season, ref _season, value);
-                AiringShows.Clear();
-                LeftoverShows.Clear();
-                LoadPage();
-            }
-        }
+        public AnimeSeason Season { get; set; } = AnimeSeason.Current;
 
-        public int SelectedIndex
-        {
-            get => _selectedIndex;
-            set
-            {
-                Set(() => SelectedIndex, ref _selectedIndex, value);
-                LoadPage();
-            }
-        }
+        public int SelectedIndex { get; set; }
 
-        public ObservableCollection<AiringAnime> AiringShows
-        {
-            get => _airingShows;
-            set => Set(() => AiringShows, ref _airingShows, value);
-        }
+        public List<AiringAnime> AiringShows { get; set; }
 
-        public ObservableCollection<AiringAnime> LeftoverShows
-        {
-            get => _leftoverShows;
-            set => Set(() => LeftoverShows, ref _leftoverShows, value);
-        }
+        public List<AiringAnime> LeftoverShows { get; set; }
 
-        public RelayCommand AddCommand { get; set; }
+        public RelayCommand AddCommand => new RelayCommand(Add);
 
         // 
+
+        private void OnSeasonChanged()
+        {
+            AiringShows.Clear();
+            LeftoverShows.Clear();
+            LoadPage();
+        }
+
+        private void OnSelectedIndexChanged() => LoadPage();
 
         /// <summary>
         ///     Only attempt to load properties from the view when it is visible.
@@ -118,9 +87,9 @@ namespace anime_downloader.ViewModels.Displays
         private void Refresh()
         {
             if (_airing != null)
-                AiringShows = new ObservableCollection<AiringAnime>(_airing.Where(Not<AiringAnime>(_animeService.WatchingAndAiringContains)));
+                AiringShows = _airing.Where(Not<AiringAnime>(_animeService.WatchingAndAiringContains)).ToList();
             if (_leftover != null)
-                LeftoverShows = new ObservableCollection<AiringAnime>(_leftover.Where(Not<AiringAnime>(_animeService.WatchingAndAiringContains)));
+                LeftoverShows = _leftover.Where(Not<AiringAnime>(_animeService.WatchingAndAiringContains)).ToList();
 
             switch (SelectedIndex)
             {
@@ -151,20 +120,20 @@ namespace anime_downloader.ViewModels.Displays
             {
                 // First tab: Airing Shows
                 case 0:
-                    if (AiringShows == null)
+                    if (AiringShows is null)
                     {
                         _airing = await _findService.New(Season, () => MessengerInstance.Send(ViewState.IsLoading));
-                        await Task.Run(() => AiringShows = new ObservableCollection<AiringAnime>(_airing.Where(Not<AiringAnime>(_animeService.WatchingAndAiringContains))));
+                        await Task.Run(() => AiringShows = _airing.Where(Not<AiringAnime>(_animeService.WatchingAndAiringContains)).ToList());
                         MessengerInstance.Send(ViewState.DoneLoading);
                     }
                     break;
 
                 // Second tab: Leftover
                 case 1:
-                    if (LeftoverShows == null)
+                    if (LeftoverShows is null)
                     {
                         _leftover = await _findService.Leftover(Season, () => MessengerInstance.Send(ViewState.IsLoading));
-                        await Task.Run(() => LeftoverShows = new ObservableCollection<AiringAnime>(_leftover.Where(Not<AiringAnime>(_animeService.WatchingAndAiringContains))));
+                        await Task.Run(() => LeftoverShows = _leftover.Where(Not<AiringAnime>(_animeService.WatchingAndAiringContains)).ToList());
                         MessengerInstance.Send(ViewState.DoneLoading);
                     }
                     break;
@@ -173,16 +142,11 @@ namespace anime_downloader.ViewModels.Displays
             }
         }
 
-        private void Add()
+        private void Add() => (SelectedIndex == 0 ? SelectedAiring : SelectedLeftover).SomeNotNull().MatchSome(anime =>
         {
-            var anime = SelectedIndex == 0 ? SelectedAiring : SelectedLeftover;
-            if (anime != null)
-            {
-                MessengerInstance.Send(Display.Anime);
-                MessengerInstance.Send(anime);
-                _previousIndex = SelectedIndex == 0 ? AiringShows.IndexOf(anime) : LeftoverShows.IndexOf(anime);
-            }
-        }
-        
+            MessengerInstance.Send(Display.Anime);
+            MessengerInstance.Send(anime);
+            _previousIndex = SelectedIndex == 0 ? AiringShows.IndexOf(anime) : LeftoverShows.IndexOf(anime);
+        });
     }
 }

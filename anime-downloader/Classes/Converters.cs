@@ -50,17 +50,14 @@ namespace anime_downloader.Classes
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var enumerable = value as IEnumerable<string> ?? new List<string>();
-            var result = string.Join(", ", enumerable.Where(s => !string.IsNullOrEmpty(s)));
+            var result = string.Join(", ", enumerable.Where(Methods.Not<string>(string.IsNullOrEmpty)));
             if (string.IsNullOrEmpty(result) && parameter != null)
                 return (string) parameter;
             return result;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            var str = value as string ?? "";
-            return str.Split(new[] {", "}, StringSplitOptions.RemoveEmptyEntries);
-        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
+            (value as string ?? "").Split(", ");
     }
 
     /// <summary>
@@ -119,9 +116,9 @@ namespace anime_downloader.Classes
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (System.Convert.ToString(value).Equals(System.Convert.ToString(parameter)))
-                return Visibility.Visible;
-            return Visibility.Collapsed;
+            return System.Convert.ToString(value) == System.Convert.ToString(parameter)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -266,7 +263,7 @@ namespace anime_downloader.Classes
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var synopsis = value as string;
-            if (synopsis == null)
+            if (synopsis is null)
                 return "";
             synopsis = synopsis.Replace("&ndash;", "-");
             synopsis = Regex.Replace(synopsis, @"</?[a-zA-Z]{0,3}>", "");
@@ -350,11 +347,9 @@ namespace anime_downloader.Classes
 
     public class SourceConverter : IValueConverter
     {
-        private static readonly TextInfo TextInfo = new CultureInfo("en-US", false).TextInfo;
-
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return TextInfo.ToTitleCase(((string) value)?.ToLower() ?? "").Replace("_", " ");
+            return App.TextInfo.ToTitleCase(((string) value)?.ToLower() ?? "").Replace("_", " ");
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -386,7 +381,7 @@ namespace anime_downloader.Classes
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == null
+            if (value is null
                 || value is IList l && l.Count == 0
                 || value is IDictionary d && d.Keys.Count == 0
                 || value is ICollection c && c.Count == 0
@@ -398,6 +393,23 @@ namespace anime_downloader.Classes
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class AnimeTitleConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            var enumerable = values.OfType<string>().ToArray();
+            var result = string.Join(", ", enumerable.Where(Methods.Not<string>(string.IsNullOrEmpty)));
+            if (string.IsNullOrEmpty(result) && parameter != null)
+                return (string) parameter;
+            return result;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }

@@ -32,11 +32,12 @@
                                                 <RadioButton Margin="5"
                                                              VerticalAlignment="Center"
                                                              VerticalContentAlignment="Center"
-                                                             d:DataContext="{d:DesignInstance d:Type=models:RadioModel}"
+                                                             d:DataContext="{d:DesignInstance d:Type=models:Radio}"
                                                              Content="{Binding Header}"
                                                              FocusVisualStyle="{x:Null}"
                                                              IsChecked="{Binding RelativeSource={RelativeSource TemplatedParent},
                                                                                  Path=IsSelected}"
+                                                             Command="{Binding Source={StaticResource Locator}, Path=Playlist.RadioCommand}"
                                                              Style="{StaticResource {x:Type RadioButton}}"
                                                              ToolTip="{Binding ToolTip}" />
                                             </ControlTemplate>
@@ -68,7 +69,8 @@
                                     This would have no effect if you only have one episode to watch for every series.
                                 </TextBlock>
                             </CheckBox.ToolTip>
-                            <TextBlock Text="Play all episodes that have more than one episode first" TextWrapping="Wrap" />
+                            <TextBlock Text="Play all episodes that have more than one episode first"
+                                       TextWrapping="Wrap" />
                         </CheckBox>
                         <CheckBox Margin="5"
                                   Content="Reverse order"
@@ -82,8 +84,7 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Label Margin="-4"
-                                       Content="{Binding FileName}"
-                                        />
+                                       Content="{Binding FileName}" />
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
@@ -93,10 +94,17 @@
         <DockPanel Grid.Row="1" LastChildFill="False">
             <Button Command="{Binding OpenCommand}"
                     Content="Open"
+                    ToolTip="Open the playlist in your default media player."
+                    DockPanel.Dock="Left" />
+            <Button Command="{Binding MoveCommand}"
+                    Content="Move playlist episodes to watched"
+                    ToolTip="Move episodes currently on the playlist to your 'watched' directory."
+                    Margin="5,0"
                     DockPanel.Dock="Left" />
             <Button Command="{Binding CreateCommand}"
                     Content="Create"
                     DockPanel.Dock="Right"
+                    ToolTip="Create the playlist."
                     IsDefault="True" />
         </DockPanel>
     </Grid>

@@ -17,6 +17,8 @@ using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using HtmlAgilityPack;
+using Optional;
+using Optional.Collections;
 using Component = anime_downloader.Enums.Component;
 
 namespace anime_downloader.ViewModels.Components.AnimeDisplay
@@ -24,27 +26,24 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
     public class AnimeListViewModel : ViewModelBase
     {
         private readonly IAnimeService _animeService;
-        private ObservableCollection<Anime> _animes;
-        private string _filterText;
-        private FindViewModel _find;
-        private Anime _selectedAnime;
-        private ISettingsRepository _settings;
 
         // 
 
-        public AnimeListViewModel(ISettingsRepository settings, IAnimeService animeService, ICredentialsRepository credentialsRepository)
+        public AnimeListViewModel(ISettingsRepository settings, 
+            IAnimeService animeService,
+            ICredentialsRepository credentialsRepository)
         {
             _animeService = animeService;
             Settings = settings;
+
+            // Add listeners
             CredentialsRepository = credentialsRepository;
             CredentialsRepository.PropertyChanged -= ReloadList;
             CredentialsRepository.PropertyChanged += ReloadList;
-
-            // 
-
-            Find = new FindViewModel();
             Find.PropertyChanged -= UpdateListBasedOnFind;
             Find.PropertyChanged += UpdateListBasedOnFind;
+
+            // 
 
             FilterText = Settings.FilterBy;
             Animes = new ObservableCollection<Anime>(_animeService.FilteredAndSorted());
@@ -58,33 +57,16 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
                 SelectedAnimes = items.Cast<Anime>().ToList();
             });
 
-            FindToggleCommand = new RelayCommand(() => Find.Toggle());
-
-            AddCommand = new RelayCommand(Add);
-            AddMultipleCommand = new RelayCommand(AddMultiple);
-            EditCommand = new RelayCommand(Edit);
-            DeleteCommand = new RelayCommand(Delete);
-            SearchCommand = new RelayCommand(Search);
-            CopyCommand = new RelayCommand(() =>
+            MessengerInstance.Register<ViewRequest>(this, request =>
             {
-                Clipboard.Clear();
-                Clipboard.SetText(string.Join(", ", SelectedAnimes.Select(c => c.Title)));
+                if (request == ViewRequest.Refresh)
+                    Animes = new ObservableCollection<Anime>(_animeService.FilteredAndSorted());
             });
         }
 
         // 
 
-        public string FilterText
-        {
-            get => _filterText;
-            set
-            {
-                _filterText = value;
-                Settings.FilterBy = value;
-                Settings.Save();
-                Animes = new ObservableCollection<Anime>(_animeService.FilteredAndSorted());
-            }
-        }
+        public string FilterText { get; set; }
 
         public string Stats
         {
@@ -99,51 +81,44 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
             }
         }
 
-        public FindViewModel Find
-        {
-            get => _find;
-            set => Set(() => Find, ref _find, value);
-        }
-
-        public Anime SelectedAnime
-        {
-            get => _selectedAnime;
-            set => Set(() => SelectedAnime, ref _selectedAnime, value);
-        }
-
-        public ObservableCollection<Anime> Animes
-        {
-            get => _animes;
-            set => Set(() => Animes, ref _animes, value);
-        }
-
-        private List<Anime> SelectedAnimes { get; set; } = new List<Anime>();
-
-        public ISettingsRepository Settings
-        {
-            get => _settings;
-            set => Set(() => Settings, ref _settings, value);
-        }
+        public ISettingsRepository Settings { get; set; }
 
         public ICredentialsRepository CredentialsRepository { get; }
 
-        public RelayCommand AddCommand { get; set; }
+        public FindViewModel Find { get; set; } = new FindViewModel();
 
-        public RelayCommand AddMultipleCommand { get; set; }
+        public Anime SelectedAnime { get; set; }
 
-        public RelayCommand EditCommand { get; set; }
+        public ObservableCollection<Anime> Animes { get; set; }
 
-        public RelayCommand DeleteCommand { get; set; }
+        private List<Anime> SelectedAnimes { get; set; } = new List<Anime>();
 
-        public RelayCommand SearchCommand { get; set; }
+        public RelayCommand AddCommand => new RelayCommand(Add);
 
-        public RelayCommand FindToggleCommand { get; set; }
+        public RelayCommand AddMultipleCommand => new RelayCommand(AddMultiple);
 
-        public RelayCommand CopyCommand { get; set; }
+        public RelayCommand EditCommand => new RelayCommand(Edit);
+
+        public RelayCommand DeleteCommand => new RelayCommand(Delete);
+
+        public RelayCommand SearchCommand => new RelayCommand(Search);
+
+        public RelayCommand FindToggleCommand => new RelayCommand(() => Find.Toggle());
+
+        public RelayCommand CopyCommand => new RelayCommand(Copy);
 
         public RelayCommand<IList> SelectionChangedCommand { get; set; }
 
         // 
+
+        private void OnFilterTextChanged()
+        {
+            if (Settings.FilterBy == FilterText)
+                return;
+            Settings.FilterBy = FilterText;
+            Settings.Save();
+            Animes = new ObservableCollection<Anime>(_animeService.FilteredAndSorted());
+        }
 
         private void Edit()
         {
@@ -164,18 +139,17 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
 
             RaisePropertyChanged(nameof(Stats));
             MessengerInstance.Send(ViewRequest.Refresh);
-            _find.Close();
+            Find.Close();
         }
 
         private async void Search()
         {
-            if (SelectedAnime == null)
+            if (SelectedAnime is null)
                 return;
             if (SelectedAnime.Details.HasId)
                 Process.Start($"http://myanimelist.net/anime/{SelectedAnime.Details.Id}");
             else
             {
-
                 MessengerInstance.Send(ViewState.IsWorking);
                 await SearchAndOpenAsync(SelectedAnime.Name);
                 MessengerInstance.Send(ViewState.DoneWorking);
@@ -186,6 +160,12 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
 
         private void AddMultiple() => MessengerInstance.Send(Component.DetailsMultiple);
 
+        private void Copy()
+        {
+            Clipboard.Clear();
+            Clipboard.SetText(string.Join(", ", SelectedAnimes.Select(c => c.Title)));
+        }
+
         private static async Task SearchAndOpenAsync(string text)
         {
             var q = HttpUtility.UrlEncode(text);
@@ -194,18 +174,14 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
             using (var client = new WebClient())
             {
                 var html = await client.DownloadStringTaskAsync(new Uri($"https://myanimelist.net/anime.php?q={q}"));
-                document.LoadHtml(html);
+                document.LoadPage(html).DocumentNode
+                    .SelectSingleNode("//div[@class=\"js-categories-seasonal js-block-list list\"]/table/tr[2]/td[1]")
+                    .SomeNotNull()
+                    .FlatMap(node => node.Descendants("a").FirstOrNone()).Match(
+                        some: link => Process.Start(link.Attributes["href"].Value),
+                        none: () => Methods.Alert("No results found.")
+                    );
             }
-
-            var link = document.DocumentNode?
-                .SelectSingleNode("//div[@class=\"js-categories-seasonal js-block-list list\"]/table/tr[2]/td[1]")?
-                .Descendants("a")?
-                .FirstOrDefault();
-
-            if (link != null)
-                Process.Start(link.Attributes["href"].Value);
-            else
-                Methods.Alert("No results found.");
         }
 
         private void ReloadList(object sender, PropertyChangedEventArgs args)
@@ -215,8 +191,8 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
 
         private void UpdateListBasedOnFind(object sender, PropertyChangedEventArgs args)
         {
-            if (args.PropertyName.Equals("Text"))
-                Animes = Find.Text.Equals("")
+            if (args.PropertyName == "Text")
+                Animes = Find.Text == ""
                     ? new ObservableCollection<Anime>(_animeService.FilteredAndSorted())
                     : new ObservableCollection<Anime>(_animeService.FilteredAndSorted()
                         .Where(a => a.Name.ToLower().Contains(Find.Text.ToLower())));

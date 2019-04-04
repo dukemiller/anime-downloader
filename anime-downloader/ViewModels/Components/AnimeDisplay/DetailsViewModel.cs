@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Windows;
+using anime_downloader.Classes;
 using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Models.AniList;
@@ -13,22 +14,21 @@ using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Ioc;
+using Optional;
+using Optional.Collections;
+using static anime_downloader.Classes.Methods;
 
 namespace anime_downloader.ViewModels.Components.AnimeDisplay
 {
     public class DetailsViewModel : ViewModelBase
     {
+        private static IFindSeasonAnimeService FindSeasonAnimeService => SimpleIoc.Default.GetInstance<IFindSeasonAnimeService>();
+
         private static readonly WebClient Downloader = new WebClient();
-        private ISettingsRepository _settingsRepository;
+
         private readonly IAnimeService _animeService;
-        private IAnimeRepository _animeRepository;
-        private Anime _anime;
-        private RelayCommand _command;
-        private DetailsBarViewModel _detailsBar;
-        private string _text;
-        private string _image;
+
         private bool _changeMade;
-        private bool _editing;
 
         // 
 
@@ -37,9 +37,6 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
             AnimeRepository = animeRepository;
             SettingsRepository = settingsRepository;
             _animeService = animeService;
-
-            // Behaviors that are the same no matter what condition
-            ClearSubgroupCommand = new RelayCommand(() => Anime.PreferredSubgroup = null);
         }
 
         // 
@@ -69,6 +66,8 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
 
             Anime.PropertyChanged -= AnimeOnPropertyChanged;
             Anime.PropertyChanged += AnimeOnPropertyChanged;
+
+            SetAirDay();
 
             return this;
         }
@@ -129,6 +128,7 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
                     OverallTotal = airing.Episodes ?? 0
                 }
             };
+
             Image = airing.CoverImage.Large;
 
             // 
@@ -151,43 +151,19 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
 
         public static IEnumerable<Status> Statuses => Enum.GetValues(typeof(Status)).Cast<Status>();
 
-        public IAnimeRepository AnimeRepository
-        {
-            get => _animeRepository;
-            set => Set(() => AnimeRepository, ref _animeRepository, value);
-        }
+        public IAnimeRepository AnimeRepository { get; set; }
 
-        public ISettingsRepository SettingsRepository
-        {
-            get => _settingsRepository;
-            set => Set(() => SettingsRepository, ref _settingsRepository, value);
-        }
+        public ISettingsRepository SettingsRepository { get; set; }
 
-        public string Text
-        {
-            get => _text;
-            set => Set(() => Text, ref _text, value);
-        }
+        public string Text { get; set; } = "";
 
-        public string Image
-        {
-            get => _image;
-            set => Set(() => Image, ref _image, value);
-        }
+        public string Image { get; set; } = "";
 
-        public bool Editing
-        {
-            get => _editing;
-            set => Set(() => Editing, ref _editing, value);
-        }
+        public bool Editing { get; set; }
 
         // 
 
-        public RelayCommand Command
-        {
-            get => _command;
-            set => Set(() => Command, ref _command, value);
-        }
+        public RelayCommand Command { get; set; }
 
         public RelayCommand ExitCommand { get; set; }
 
@@ -195,21 +171,29 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
 
         public RelayCommand PreviousCommand { get; set; }
 
-        public RelayCommand ClearSubgroupCommand { get; set; }
+        public RelayCommand ClearSubgroupCommand => new RelayCommand(() => Anime.PreferredSubgroup = null);
 
-        public DetailsBarViewModel DetailsBar
-        {
-            get => _detailsBar;
-            set => Set(() => DetailsBar, ref _detailsBar, value);
-        }
+        public DetailsBarViewModel DetailsBar { get; set; }
 
-        public Anime Anime
-        {
-            get => _anime;
-            set => Set(() => Anime, ref _anime, value);
-        }
+        public Anime Anime { get; set; }
+
+        public DayOfWeek? AirDay { get; set; }
 
         // 
+
+        private async void SetAirDay()
+        {
+            var currentSeason = await FindSeasonAnimeService.New(AnimeSeason.Current, None);
+            currentSeason
+                .FirstOrNone(anime => anime.Id == Anime.Details.AniId)
+                .FlatMap(anime => anime.StartDate.SomeNotNull())
+                .Map(startDate => new DateTime(startDate.Year ?? 0, startDate.Month ?? 0, startDate.Day ?? 0, 0, 0, 0, 0))
+                .Map(dateTime => dateTime.DayOfWeek)
+                .Match(
+                    some: day => AirDay = day,
+                    none: ()  => AirDay = null
+                );
+        }
 
         private void AnimeOnPropertyChanged(object sender, PropertyChangedEventArgs args)
         {
@@ -251,7 +235,7 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
         private async void DownloadImage()
         {
             var image = Anime.Details.Image;
-            var downloadPath = Path.Combine(Repositories.SettingsRepository.ImageDirectory, $"{Anime.Details.Id}.png");
+            var downloadPath = Path.Combine(App.Path.Directory.Images, $"{Anime.Details.Id}.png");
 
             try
             {
@@ -286,12 +270,14 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
         private void Create()
         {
             _animeService.Add(Anime);
+            MessengerInstance.Send(ViewRequest.Refresh);
             MessengerInstance.Send(Display.Anime);
         }
 
         private void CreateAndReturn()
         {
             _animeService.Add(Anime);
+            MessengerInstance.Send(Display.Anime);
             MessengerInstance.Send(ViewRequest.Refresh);
             MessengerInstance.Send(Display.Discover);
         }
@@ -317,8 +303,8 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
                 _changeMade = false;
             }
             var animes = _animeService.FilteredAndSorted().ToList();
-            var anime = animes.First(an => an.Name.Equals(Anime.Name));
-            var position = animes.IndexOf(anime) - 1 >= 0 ? animes.IndexOf(anime) - 1 : animes.Count - 1;
+            var match = animes.First(anime => anime.Name == Anime.Name);
+            var position = animes.IndexOf(match) - 1 >= 0 ? animes.IndexOf(match) - 1 : animes.Count - 1;
             MessengerInstance.Send(animes.ElementAt(position));
         }
     }

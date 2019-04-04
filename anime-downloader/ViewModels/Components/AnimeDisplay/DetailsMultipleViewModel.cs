@@ -7,22 +7,13 @@ using anime_downloader.Models;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using PropertyChanged;
 
 namespace anime_downloader.ViewModels.Components.AnimeDisplay
 {
     public class DetailsMultipleViewModel : ViewModelBase
     {
-        private MultipleAnimeDetails _details;
-
-        private string _header;
-
-        private string _input;
-
-        private RelayCommand _submitActionCommand;
-
         private readonly IAnimeService _animeService;
-
-        private bool _editing;
 
         // 
 
@@ -64,41 +55,24 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
 
         // 
 
-        public bool Editing
-        {
-            get => _editing;
-            set => Set(() => Editing, ref _editing, value);
-        }
+        public bool Editing { get; set; }
 
         private IList<Anime> _animes;
 
-        public string Header
-        {
-            get => _header;
-            set => Set(() => Header, ref _header, value);
-        }
+        public string Header { get; set; }
 
-        public string Input
-        {
-            get => _input;
-            set => Set(() => Input, ref _input, value);
-        }
+        public string Input { get; set; }
 
-        public MultipleAnimeDetails Details
-        {
-            get => _details;
-            set => Set(() => Details, ref _details, value);
-        }
-        
+        public MultipleAnimeDetails Details { get; set; }
+
+        public List<Status> Statuses { get; set; } = Methods.GetValues<Status>();
+
+        [DependsOn(nameof(Editing))]
         public double LoadOpacity => Editing ? 0.6 : 1.0;
 
-        // 
+        public RelayCommand SubmitActionCommand { get; set; }
 
-        public RelayCommand SubmitActionCommand
-        {
-            get => _submitActionCommand;
-            set => Set(() => SubmitActionCommand, ref _submitActionCommand, value);
-        }
+        // 
 
         private void Create()
         {

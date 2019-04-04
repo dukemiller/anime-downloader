@@ -1,11 +1,13 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using anime_downloader.Models;
 using anime_downloader.Models.MyAnimeList;
 
 namespace anime_downloader.Classes
 {
-    public class FindResultDistance
+    public readonly struct FindResultDistance
     {
         /// <summary>
         ///     Realistically the score shouldn't ever range higher than 10,000 unless it's a complete and total mismatch
@@ -16,59 +18,42 @@ namespace anime_downloader.Classes
 
         public FindResultDistance(string name, FindResult result)
         {
-            Name = name;
             Result = result;
-            Names = Name.Trim().ToLower().Split(' ');
-            var synonymDistances = result.Synonyms.Split(';').Select(StringRelevance);
-            Distance =
-                new[] {StringRelevance(result.Title), StringRelevance(result.English)}.Union(synonymDistances)
-                    .Min();
+            var names = name.Trim().ToLower().Split(' ');
+            var distances = new List<double>();
+            distances.AddRange(result.Synonyms.Split(';').Select(word => StringRelevance(names, name, word)));
+            distances.Add(StringRelevance(names, name, result.Title));
+            distances.Add(StringRelevance(names, name, result.English));
+            Distance = distances.Min();
         }
 
-        private string Name { get; }
+        // 
 
         public FindResult Result { get; }
 
         public double Distance { get; }
+        
+        // 
 
-        private string[] Names { get; }
-
-        private double StringRelevance(string comparison)
+        private static double StringRelevance(IEnumerable<string> names, string name, string comparison)
         {
             if (string.IsNullOrEmpty(comparison))
                 return ArbitraryHighValue;
 
-            var distance = Methods.LevenshteinDistance(comparison, Name);
+            var distance = Methods.LevenshteinDistance(comparison, name);
             var array = comparison.ToLower().Trim().Split(' ').Distinct().ToArray();
-            var relevance = (double) array.Count(a => Names.Contains(a)) / array.Length;
+            var relevance = (double) array.Count(names.Contains) / array.Length;
             return distance * (2 - relevance);
         }
     }
 
-    public class GroupFileDistance
+    public readonly struct GroupFileDistance
     {
         private const double Bias = 2.35;
 
         private static readonly string[] CommonTokens = {"no", "to", "na"};
 
-        private readonly int _allMatchBonus;
-
-        private readonly double _distance;
-
-        /// <remarks>
-        ///     Such was the case that words with no matches would match more closely to
-        ///     titles than ones with even half of the phrase matched, so if the word has
-        ///     no matches then incur a harsh penalty
-        /// </remarks>
-        private readonly int _noMatchPenalty;
-
-        private readonly double _ratioToOriginal;
-
-        /// <remarks>
-        ///     If the whole phrase is a single word and it's nonmatching, then the penalty
-        ///     will be marked 100% higher
-        /// </remarks>
-        private readonly int _singleWordPenalty;
+        // 
 
         public GroupFileDistance(IGrouping<string, AnimeFile> grouping, Anime anime)
         {
@@ -81,11 +66,13 @@ namespace anime_downloader.Classes
             var namesplit = Scrub(name);
             var groupsplit = Scrub(grouping.Key);
 
-            _distance = Methods.LevenshteinDistance(name, grouping.Key);
-            _ratioToOriginal = (double) groupsplit.Count(a => namesplit.Contains(a)) / groupsplit.Length;
-            _singleWordPenalty = namesplit.Length == 1 && _ratioToOriginal <= 0 ? 1 : 0;
-            _noMatchPenalty = namesplit.Length > 1 && _ratioToOriginal <= 0 ? 8 : 0;
-            _allMatchBonus = namesplit.Count(a => groupsplit.Contains(a)) == namesplit.Length ? 1 : 0;
+            double distance = Methods.LevenshteinDistance(name, grouping.Key);
+            var ratioToOriginal = (double) groupsplit.Count(a => namesplit.Contains(a)) / groupsplit.Length;
+            var singleWordPenalty = namesplit.Length == 1 && ratioToOriginal <= 0 ? 1 : 0;
+            var noMatchPenalty = namesplit.Length > 1 && ratioToOriginal <= 0 ? 8 : 0;
+            var allMatchBonus = namesplit.Count(a => groupsplit.Contains(a)) == namesplit.Length ? 1 : 0;
+
+            Distance = singleWordPenalty * 20 + distance * (Bias + noMatchPenalty - ratioToOriginal - allMatchBonus);
 
             // Console.WriteLine($@"{_ratioToOriginal} {_distance} {Distance} {grouping.Key}");
 
@@ -96,48 +83,47 @@ namespace anime_downloader.Classes
             */
         }
 
-        public double Distance
-            => _singleWordPenalty * 20 + _distance * (Bias + _noMatchPenalty - _ratioToOriginal - _allMatchBonus);
+        //
+
+        public double Distance { get; }
 
         public IGrouping<string, AnimeFile> Group { get; }
 
-        private static string[] Scrub(string str)
-        {
-            return
-                Regex.Replace(str.ToLower(), @"(:\s(\w+\s){3,}\-\s(\w+\s){2,}(\w+\s?))", "")
-                    .Replace(":", "")
-                    .Replace("-", "")
-                    .OnlyLettersAndSpace()
-                    .Split(' ')
-                    .Distinct()
-                    .Except(CommonTokens)
-                    .ToArray();
-        }
+        //
+
+        private static string[] Scrub(string str) =>
+            ReplacerRegex.Replace(str.ToLower(), "")
+                .Replace(":", "")
+                .Replace("-", "")
+                .OnlyLettersAndSpace()
+                .Split(' ')
+                .Distinct()
+                .Except(CommonTokens)
+                .ToArray();
+
+        private static readonly Regex ReplacerRegex = new Regex(@"(:\s(\w+\s){3,}\-\s(\w+\s){2,}(\w+\s?))");
     }
 
-    public class StringDistance<T>
+    public readonly struct StringDistance<T>
     {
-        private readonly double _distance;
-
-        private readonly double _relevance;
-
         public StringDistance(T item, string name, string comparison)
         {
-            var data = Data(name ?? "", comparison ?? "");
-            _distance = Methods.LevenshteinDistance(name, comparison);
-            _relevance = (double) data.Item2.Count(a => data.Item1.Contains(a)) / data.Item2.Length;
+            var nameWords = Clean(name);
+            var comparisonWords = Clean(comparison);
+            var distance = Methods.LevenshteinDistance(name ?? "", comparison ?? "");
+            var relevance = (double) comparisonWords.Count(word => nameWords.Contains(word)) / comparisonWords.Length;
             Item = item;
+            Distance = distance * (2 - relevance);
         }
-        
-        public double Distance => _distance * (2 - _relevance);
+
+        // 
+
+        public double Distance { get; }
 
         public T Item { get; }
 
-        private static (string[], string[]) Data(string name, string comparison)
-        {
-            var namesplit = name.ToLower().Trim().Split(' ').Distinct().ToArray();
-            var groupsplit = comparison.ToLower().Trim().Split(' ').Distinct().ToArray();
-            return (namesplit, groupsplit);
-        }
+        // 
+
+        private static string[] Clean(string input) => input?.ToLower().Trim().Split(' ').Distinct().ToArray() ?? Array.Empty<string>();
     }
 }

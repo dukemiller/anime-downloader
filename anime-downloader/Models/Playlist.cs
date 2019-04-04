@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using anime_downloader.Classes;
 using anime_downloader.Enums;
-using anime_downloader.Models.Configurations;
 using GalaSoft.MvvmLight;
 
 namespace anime_downloader.Models
@@ -16,16 +15,10 @@ namespace anime_downloader.Models
     /// </summary>
     public class Playlist : ObservableObject
     {
-        private ObservableCollection<AnimeFile> _source;
-
         /// <summary>
         ///     The collection of anime files.
         /// </summary>
-        public ObservableCollection<AnimeFile> Source
-        {
-            get => _source;
-            set => Set(() => Source, ref _source, value);
-        }
+        public List<AnimeFile> Source { get; set; } = new List<AnimeFile>();
 
         /// <summary>
         ///     Specify if any of the sorting options should be applied.
@@ -48,12 +41,18 @@ namespace anime_downloader.Models
         public PlaylistOptions Options { protected internal get; set; }
 
         /// <summary>
+        ///     Determined path to the playlist file.
+        /// </summary>
+        public string Path => IsEpisodeSelection
+            ? App.Path.Episodes
+            : App.Path.Playlist;
+
+        /// <summary>
         ///     Distribute the show order so that no show will appear twice in a row
         ///     if it's possible.
         /// </summary>
         private static IEnumerable<AnimeFile> SeparateShowOrder(IEnumerable<AnimeFile> source)
         {
-
             var sorted = new List<AnimeFile>();
             var current = source.ToList();
 
@@ -143,26 +142,34 @@ namespace anime_downloader.Models
             if (Options.HasFlag(PlaylistOptions.Reverse))
                 stream = stream.Reverse();
 
-            Source = new ObservableCollection<AnimeFile>(stream);
+            Source = stream.ToList();
         }
 
         /// <summary>
         ///     Take the paths from Source and create the playlist.
         /// </summary>
-        public async Task<string> Create()
+        public async Task<bool> Create()
         {
-            if (Sort)
-                ApplyConfiguration();
+            var successful = false;
 
-            var path = IsEpisodeSelection 
-                ? PathConfiguration.EpisodesPlaylist 
-                : PathConfiguration.Playlist;
+            try
+            {
+                if (Sort)
+                    ApplyConfiguration();
+                
+                using (var writer = new StreamWriter(Path, false))
+                    foreach (var file in Source)
+                        await writer.WriteLineAsync(file.Path);
 
-            using (var writer = new StreamWriter(path, false))
-                foreach (var file in Source)
-                    await writer.WriteLineAsync(file.Path);
+                successful = true;
+            }
 
-            return path;
+            catch
+            {
+                // ignored
+            }
+
+            return successful;
         }
     }
 }

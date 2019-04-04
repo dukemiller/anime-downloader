@@ -5,11 +5,13 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
+using anime_downloader.Classes;
 using anime_downloader.Models;
 using anime_downloader.Models.Abstract;
 using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Abstract;
 using anime_downloader.Services.Interfaces;
+using Optional.Linq;
 
 namespace anime_downloader.Services
 {
@@ -21,30 +23,28 @@ namespace anime_downloader.Services
 
         protected override IAnimeService AnimeService { get; }
 
-        protected override WebClient Downloader { get; }
-
-        public HorribleSubsService(ISettingsRepository settingsRepository, IAnimeRepository animeRepository, IAnimeService animeService)
+        protected override IFileService FileService { get; }
+        
+        public HorribleSubsService(ISettingsRepository settingsRepository, IAnimeRepository animeRepository, IAnimeService animeService, IFileService fileService)
         {
             SettingsRepository = settingsRepository;
             AnimeRepository = animeRepository;
             AnimeService = animeService;
-            Downloader = new WebClient();
+            FileService = fileService;
         }
 
-        public override string ServiceUrl => "http://horriblesubs.info";
+        public override string Url => "http://horriblesubs.info";
         
         public override async Task<List<RemoteMedia>> FindAllMedia(Anime anime, string name, int episode)
         {
-            if (_nodes == null || (DateTime.Now - _lastUpdatedNodes).Minutes > 10)
+            if (_nodes is null || (DateTime.Now - _lastUpdatedNodes).Minutes > 10)
                 await RetrieveNodes();
 
             return _nodes
                 .Where(item => // Episode is this season
-                {
-                    if (item.Date.HasValue)
-                        return (item.Date.Value - DateTime.Now).Days <= AnimeSeason.MaxAgeFor(anime, episode);
-                    return true;
-                })
+                    item.Date
+                        .Map(date => (DateTime.Now - date).Days <= AnimeSeason.MaxAgeFor(anime, episode))
+                        .ValueOr(true))
                 .Where(item => item.StrippedName.Contains(episode.ToString()) 
                                 && !item.StrippedName.Contains(episode.ToString() + ".5"))
                 .Where(item => // Name contains everything
@@ -95,8 +95,8 @@ namespace anime_downloader.Services
         {
             var (title, link, pubdate) =
                 (item.SelectSingleNode("title")?.InnerText, 
-                item.SelectSingleNode("link")?.InnerText, 
-                DateTime.Parse(item.SelectSingleNode("pubDate")?.InnerText));
+                item.SelectSingleNode("link")?.InnerText,
+                item.SelectSingleNodeOrNone("pubDate").Map(node => node.InnerText).Map(DateTime.Parse));
 
             var magnet = new MagnetLink
             {
@@ -104,7 +104,7 @@ namespace anime_downloader.Services
                 Remote = link,
                 Date = pubdate,
                 Hash = link.Split('&')[0],
-                Trackers = link.Split(new[] { "&tr=" }, StringSplitOptions.None).Skip(1).ToList()
+                Trackers = link.Split("&tr=").Skip(1).ToList()
             };
 
             return magnet;

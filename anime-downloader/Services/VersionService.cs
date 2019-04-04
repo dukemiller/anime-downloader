@@ -112,7 +112,7 @@ namespace anime_downloader.Services
 
             catch
             {
-                return null;
+                return new SemanticVersion();
             }
         }
 

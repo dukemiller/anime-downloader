@@ -10,35 +10,35 @@ using anime_downloader.Models.Configurations;
 using anime_downloader.Repositories.Interface;
 using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
+using static anime_downloader.Classes.Methods;
 
 namespace anime_downloader.Repositories
 {
     [Serializable]
-    public class SettingsRepository: ObservableObject, ISettingsRepository
+    public class SettingsRepository : ObservableObject, ISettingsRepository
     {
-        [JsonIgnore]
-        public static string SettingsPath => Path.Combine(PathConfiguration.ApplicationDirectory, "settings.json");
-
-        [JsonIgnore]
-        public static string ImageDirectory => Path.Combine(PathConfiguration.ApplicationDirectory, "images");
-
-        // 
-
-        public SettingsRepository()
-        {
-            DefaultValues();
-        }
-
-        // 
-
         [JsonProperty("paths")]
-        public PathConfiguration PathConfig { get; set; }
+        public PathConfiguration PathConfig { get; set; } = new PathConfiguration
+        {
+            Watched = Path.Combine(App.Path.Directory.CurrentWorking, "Watched"),
+            Unwatched = Path.Combine(App.Path.Directory.CurrentWorking, "Shows"),
+            Torrents = Path.Combine(App.Path.Directory.CurrentWorking, "Torrents"),
+            TorrentDownloader = @"C:\Program Files (x86)\uTorrent\uTorrent.exe"
+        };
 
         [JsonProperty("flags")]
-        public FlagConfiguration FlagConfig { get; set; }
+        public FlagConfiguration FlagConfig { get; set; } = new FlagConfiguration
+        {
+            AlwaysShowTray = true,
+            ExitOnClose = true
+        };
 
         [JsonProperty("version")]
-        public VersionCheck Version { get; set; }
+        public VersionCheck Version { get; set; } = new VersionCheck
+        {
+            LastChecked = DateTime.Now,
+            NeedsUpdate = false
+        };
 
         [JsonProperty("provider")]
         public DownloadProvider Provider { get; set; } = DownloadProvider.NyaaSi;
@@ -56,8 +56,8 @@ namespace anime_downloader.Repositories
 
         public static SettingsRepository Load()
         {
-            if (File.Exists(SettingsPath))
-                using (var stream = new StreamReader(SettingsPath))
+            if (File.Exists(App.Path.Settings))
+                using (var stream = new StreamReader(App.Path.Settings))
                     return JsonConvert.DeserializeObject<SettingsRepository>(stream.ReadToEnd());
 
             return new SettingsRepository();
@@ -65,99 +65,27 @@ namespace anime_downloader.Repositories
 
         public void Save()
         {
-            using (var stream = new StreamWriter(SettingsPath))
-                stream.WriteAsync(JsonConvert.SerializeObject(this, Formatting.Indented,
-                    new JsonSerializerSettings {DefaultValueHandling = DefaultValueHandling.Ignore}));
+            try
+            {
+                using (var stream = new StreamWriter(App.Path.Settings))
+                {
+                    var data = JsonConvert.SerializeObject(this, Formatting.Indented,
+                        new JsonSerializerSettings {DefaultValueHandling = DefaultValueHandling.Ignore});
+                    stream.Write(data);
+                }
+            }
+            catch (Exception e)
+            {
+                Alert($"There was an issue saving the settings:\n{e.Message}");
+            }
         }
 
-        public async Task<bool> CrucialDirectoriesExist()
-        {
-            return new[]
-            {
+        public async Task<bool> CrucialDirectoriesExist() =>
+            List.Of(
                 await CheckDirectory(PathConfig.Unwatched, "episode"),
                 await CheckDirectory(PathConfig.Watched, "watched"),
                 await CheckDirectory(PathConfig.Torrents, "torrent files"),
-                CheckFile(PathConfig.TorrentDownloader, "torrent client")
-            }.All(b => b);
-
-        }
-
-        // 
-
-        private static bool ValidPossiblePath(string path)
-        {
-            if (string.IsNullOrWhiteSpace(path) || path.Length <= 2)
-                return false;
-
-            FileInfo fi = null;
-
-            try
-            {
-                fi = new FileInfo(path);
-            }
-
-            catch (ArgumentException) { }
-            catch (PathTooLongException) { }
-            catch (NotSupportedException) { }
-
-            return !ReferenceEquals(fi, null);
-        }
-
-        private static async Task<bool> CheckDirectory(string path, string title)
-        {
-            if (Directory.Exists(path))
-                return true;
-
-            if (ValidPossiblePath(path))
-            {
-                var create = await Methods.QuestionYesNo($"Your {title} folder doesn't seem to exist.\n" +
-                                                         "Would you like to create it at the given path:\n\n" +
-                                                         $"{path}");
-                if (create)
-                    Directory.CreateDirectory(path);
-                else
-                    return false;
-            }
-
-            else
-            {
-                Methods.Alert($"Your path for the {title} folder is invalid, try and enter it again.");
-                return false;
-            }
-
-            return true;
-        }
-
-        private static bool CheckFile(string path, string title)
-        {
-            var exists = File.Exists(path) && path.ToLower().EndsWith(".exe");
-            if (!exists)
-            {
-                Methods.Alert($"Your path for the {title} is invalid, try and enter it again.");
-                return false;
-            }
-            return true;
-        }
-
-        private void DefaultValues()
-        {
-            var path = Directory.GetCurrentDirectory();
-
-            PathConfig = new PathConfiguration
-            {
-                Watched = Path.Combine(path, "Watched"),
-                Unwatched = Path.Combine(path, "Shows"),
-                Torrents = Path.Combine(path, "Torrents"),
-                TorrentDownloader = @"C:\Program Files (x86)\uTorrent\uTorrent.exe"
-            };
-
-            FlagConfig = new FlagConfiguration
-            {
-                AlwaysShowTray = true,
-                ExitOnClose = true
-            };
-
-            Version = new VersionCheck { LastChecked = DateTime.Now, NeedsUpdate = false };
-        }
+                CheckExe(PathConfig.TorrentDownloader, "torrent client")
+            ).All();
     }
 }

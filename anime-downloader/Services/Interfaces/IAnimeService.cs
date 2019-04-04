@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using anime_downloader.Models;
 using anime_downloader.Models.AniList;
+using Optional;
 
 namespace anime_downloader.Services.Interfaces
 {
@@ -36,17 +37,24 @@ namespace anime_downloader.Services.Interfaces
         /// <summary>
         ///     All shows that have been fully watched but are not marked as finished.
         /// </summary>
-        IEnumerable<Anime> FullyWatched();
+        IEnumerable<Anime> FullyWatched { get; }
 
         /// <summary>
         ///     All shows that are airing, watched, and (if they have a total episode count) not completed.
         /// </summary>
-        IEnumerable<Anime> AiringAndWatchingAndNotCompleted();
+        IEnumerable<Anime> AiringAndWatchingAndNotCompleted { get; }
 
         /// <summary>
         ///     Series that contain a MyAnimeList Id
         /// </summary>
-        IEnumerable<Anime> HasId { get; }
+        IEnumerable<Anime> HasMyAnimeListId { get; }
+
+        /// <summary>
+        ///     Series that are currently being watched.
+        /// </summary>
+        IEnumerable<Anime> Watching { get; }
+
+        IEnumerable<Anime> WatchingOrCompleted { get; }
 
         /// <summary>
         ///     If the collection is completely synchronized or not
@@ -75,7 +83,7 @@ namespace anime_downloader.Services.Interfaces
         /// <summary>
         ///     The anime in the collection with the name closest to the input string.
         /// </summary>
-        Anime ClosestAnime(string name);
+        Option<Anime> ClosestAnime(string name);
 
         bool WatchingAndAiringContains(AiringAnime anime);
     }

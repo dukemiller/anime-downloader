@@ -6,81 +6,81 @@ using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Models.AniList;
 using anime_downloader.Services.Interfaces;
+using Optional;
+using Optional.Collections;
+using Optional.Unsafe;
+using static anime_downloader.Classes.Methods;
 
 namespace anime_downloader.Services
 {
-    public class AniListDetailProviderService: IDetailProviderService
+    public class AniListDetailProviderService : IDetailProviderService
     {
         private readonly IAniListApi _api;
 
         // 
 
-        public AniListDetailProviderService(IAniListApi api)
-        {
-            _api = api;
-        }
+        public AniListDetailProviderService(IAniListApi api) => _api = api;
 
         // 
 
-        public int GetId(Anime anime) => anime.Details.AniId;
+        public Option<int> GetId(Anime anime) => anime.Details.AniId.Some();
 
         public void SetId(Anime anime, int id) => anime.Details.AniId = id;
 
-        public async Task<(bool successful, int id)> FindId(Anime anime)
+        public async Task<Option<int>> FindId(Anime anime)
         {
             var title = string.IsNullOrEmpty(anime.Details.PreferredSearchTitle)
                 ? anime.Title
                 : anime.Details.PreferredSearchTitle;
 
-            var animes = await _api.FindAnime(title);
-
-            var nearest = animes.OrderBy(a => new[]
-            {
-                Methods.LevenshteinDistance(title, a.Title.English),
-                Methods.LevenshteinDistance(title, a.Title.Romaji)
-            }.Min()).FirstOrDefault();
-
-            if (nearest != null)
-                return (true, nearest.Id);
-            
-            return (false, 0);
+            return (await _api.FindAnime(title))
+                .OrderBy(airing => Methods.Enumerable
+                    .Of(airing.Title.English, airing.Title.Romaji)
+                    .Select(name => LevenshteinDistance(title, name))
+                    .Min())
+                .FirstOrNone()
+                .Map(n => n.Id);
         }
 
         public async Task<(bool successful, bool changesMade)> FillInDetails(Anime anime)
         {
             var changesMade = false;
 
-            if (GetId(anime) == 0)
+            if (!GetId(anime).HasValue)
+                (await FindId(anime)).MatchSome(id => SetId(anime, id));
+
+            if (GetId(anime).HasValue)
             {
-                var (successful, id) = await FindId(anime);
-                if (successful)
-                    SetId(anime, id);
-            }
+                // todo: redoing this section is too annoying
+                var updated = (await GetId(anime).FlatMapAsync(id => _api.GetAnime(id))).ValueOrDefault();
 
-            if (GetId(anime) > 0)
-            {
-                var updated = await _api.GetAnime(GetId(anime));
+                if (updated is null)
+                    return (false, false);
 
-                if (anime.Details.OverallTotal < anime.Details.TotalEpisodes)
-                    anime.Details.OverallTotal = anime.Details.TotalEpisodes;
+                // titles
 
-                if (anime.Details.Synopsis != updated.Description)
+                if (NotNullDifferent(anime.Details.Synopsis, updated.Description))
                 {
                     anime.Details.Synopsis = updated.Description;
                     changesMade = true;
                 }
 
-                if (anime.Details.Title != updated.Title.Romaji)
+                if (NotNullDifferent(anime.Details.Title, updated.Title.Romaji))
                 {
                     anime.Details.Title = updated.Title.Romaji;
                     changesMade = true;
                 }
 
-                if (anime.Details.English != updated.Title.English)
+                if (NotNullDifferent(anime.Details.English, updated.Title.English))
                 {
                     anime.Details.English = updated.Title.English;
                     changesMade = true;
                 }
+
+                // episode 
+
+                if (anime.Details.OverallTotal < anime.Details.TotalEpisodes)
+                    anime.Details.OverallTotal = anime.Details.TotalEpisodes;
 
                 if (updated.Episodes.HasValue && updated.Episodes != 0 && anime.Details.TotalEpisodes != updated.Episodes)
                 {
@@ -88,14 +88,8 @@ namespace anime_downloader.Services
                     anime.Details.OverallTotal = updated.Episodes.Value;
                     changesMade = true;
                 }
-
-                if (anime.Details.Image == null && updated.CoverImage.Large != null)
-                {
-                    anime.Details.Image = updated.CoverImage.Large;
-                    changesMade = true;
-                }
-
-                // Date details
+                
+                // date 
 
                 if (updated.StartDate.Month.HasValue && updated.StartDate.Year.HasValue)
                 {
@@ -117,7 +111,7 @@ namespace anime_downloader.Services
                     var ended = new AnimeSeason
                     {
                         Year = updated.EndDate.Year.Value,
-                        Season = (Season)Math.Ceiling(Convert.ToDouble(updated.EndDate.Month.Value) / 3)
+                        Season = (Season) Math.Ceiling(Convert.ToDouble(updated.EndDate.Month.Value) / 3)
                     };
 
                     if (anime.Details.Ended != ended)
@@ -126,6 +120,16 @@ namespace anime_downloader.Services
                         changesMade = true;
                     }
                 }
+
+                // misc
+
+                if (anime.Details.Image is null && updated.CoverImage.Large != null)
+                {
+                    anime.Details.Image = updated.CoverImage.Large;
+                    changesMade = true;
+                }
+
+                // continuation
 
                 var continuationChanged = await CheckSeriesContinuation(anime);
 
@@ -147,34 +151,46 @@ namespace anime_downloader.Services
                 anime.Details.OverallTotal = anime.Details.TotalEpisodes;
 
                 // Loop through every prequel series, summing up the total episode counts
-                RelationNode relation;
-                var current = await _api.GetAnime(GetId(anime));
+                Option<RelationNode> node;
+
+                var current = await GetId(anime).FlatMapAsync(id => _api.GetAnime(id));
 
                 do
                 {
-                    relation = current.Relations.Edges.FirstOrDefault(r => r.RelationType == "prequel")?.Node;
-                    if (relation == null)
+                    node = current.FlatMap(airing => airing.Relations
+                        .Edges
+                        .FirstOrNone(edge => edge.RelationType.ToLower() == "prequel")
+                        .Map(edge => edge.Node)
+                    );
+
+                    if (!node.HasValue)
                         continue;
-                    if (relation.Format == "TV")
-                        anime.Details.OverallTotal += relation.Episodes ?? 0;
-                    current = await _api.GetAnime(relation.Id);
-                } while (relation != null && anime.Episode > anime.Details.Total);
+
+                    anime.Details.OverallTotal += node
+                        .Filter(relation => relation.Format.ToLower() == "tv")
+                        .Map(relation => relation.Episodes ?? 0)
+                        .ValueOr(0);
+
+                    current = await node.FlatMapAsync(r => _api.GetAnime(r.Id));
+
+                } while (node.HasValue && anime.Episode > anime.Details.Total);
 
                 // If after all attempts to change the episode is still greater,
                 if (anime.Episode > anime.Details.Total)
                 {
-                    Methods.Alert($"The episode count for {anime.Name} might be an error.\n\n" +
-                                  $"The episode will be set from {anime.Episode} to {anime.Details.OverallTotal}, " +
-                                  "if this is incorrect then remove this series and attempt to re-add it.");
+                    Alert($"The episode count for {anime.Name} might be an error.\n\n" +
+                          $"The episode will be set from {anime.Episode} to {anime.Details.OverallTotal}, " +
+                          "if this is incorrect then remove this series and attempt to re-add it.");
                     anime.Episode = anime.Details.OverallTotal;
                 }
 
                 return true;
-
             }
+
             return false;
         }
 
         // 
+
     }
 }

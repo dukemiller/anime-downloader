@@ -76,13 +76,7 @@
                     </ComboBox>
 
                     <Label Content="Status" />
-                    <ComboBox>
-                        <ComboBoxItem Content="Considering" IsSelected="{Binding Path=Details.Status, Converter={StaticResource StringCompareConverter}, ConverterParameter=Considering}" />
-                        <ComboBoxItem Content="Watching" IsSelected="{Binding Path=Details.Status, Converter={StaticResource StringCompareConverter}, ConverterParameter=Watching}" />
-                        <ComboBoxItem Content="Finished" IsSelected="{Binding Path=Details.Status, Converter={StaticResource StringCompareConverter}, ConverterParameter=Finished}" />
-                        <ComboBoxItem Content="On Hold" IsSelected="{Binding Path=Details.Status, Converter={StaticResource StringCompareConverter}, ConverterParameter='On Hold'}" />
-                        <ComboBoxItem Content="Dropped" IsSelected="{Binding Path=Details.Status, Converter={StaticResource StringCompareConverter}, ConverterParameter=Dropped}" />
-                    </ComboBox>
+                    <ComboBox ItemsSource="{Binding Statuses}" SelectedItem="{Binding Details.Status}" IsSynchronizedWithCurrentItem="True" />
                 </UniformGrid>
             </materialDesign:Card>
 

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using anime_downloader.Models;
 using anime_downloader.Models.AniList;
+using Optional;
 
 namespace anime_downloader.Services.Interfaces
 {
@@ -9,7 +10,7 @@ namespace anime_downloader.Services.Interfaces
     {
         Task<List<AiringAnime>> GetNewAnimes(AnimeSeason season);
         Task<List<AiringAnime>> GetLeftoverAnime(AnimeSeason season);
-        Task<AiringAnime> GetAnime(int id);
+        Task<Option<AiringAnime>> GetAnime(int id);
         Task<List<AiringAnime>> FindAnime(string q);
     }
 }

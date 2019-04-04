@@ -16,7 +16,6 @@ namespace anime_downloader.Services.Interfaces
         /// <summary>
         ///     Refresh the {OnlineVersion} property.
         /// </summary>
-        /// <returns></returns>
         Task<SemanticVersion> RefreshVersion();
 
         /// <summary>

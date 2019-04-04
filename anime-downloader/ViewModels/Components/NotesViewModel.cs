@@ -10,19 +10,11 @@ namespace anime_downloader.ViewModels.Components
 {
     public class NotesViewModel: ViewModelBase
     {
-        private List<ReleaseNote> _notes;
-
-        // 
-
         public NotesViewModel() => Load();
 
         // 
 
-        public List<ReleaseNote> Notes
-        {
-            get => _notes;
-            set => Set(() => Notes, ref _notes, value);
-        }
+        public List<ReleaseNote> Notes { get; set; } = new List<ReleaseNote>();
 
         // 
 
@@ -35,7 +27,7 @@ namespace anime_downloader.ViewModels.Components
                 if (stream != null)
                     using (var reader = new StreamReader(stream))
                     {
-                        var text =  (await reader.ReadToEndAsync()).Split('\n').Select(t => t.Trim()).Where(Not<string>(string.IsNullOrEmpty)).ToList();
+                        var text = (await reader.ReadToEndAsync()).Split('\n').Select(t => t.Trim()).Where(Not<string>(string.IsNullOrEmpty)).ToList();
                         var releases = text.Select(t => new ReleaseNote { Date = t.Split('T')[0], Subject = string.Join(" ", t.Split(' ').Skip(1)) }).ToList();
                         for (var i = 0; i < releases.Count; i++)
                         {

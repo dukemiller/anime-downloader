@@ -17,7 +17,7 @@
                         <RadioButton Margin="5"
                                      VerticalAlignment="Center"
                                      VerticalContentAlignment="Center"
-                                     d:DataContext="{d:DesignInstance d:Type=models:RadioModel}"
+                                     d:DataContext="{d:DesignInstance d:Type=models:Radio}"
                                      IsChecked="{Binding RelativeSource={RelativeSource TemplatedParent},
                                                          Path=IsSelected}"
                                      Style="{DynamicResource ItemStyle}">
@@ -71,13 +71,6 @@
                                      IsChecked="{Binding SelectedIndex,
                                                             Converter={StaticResource CompareConverter},
                                                             ConverterParameter=2}" />
-                        <RadioButton Content="Move files on created playlist to Watched"
-                                     Margin="5"
-                                     ToolTip="On the playlist created either in the playlist view or manage view, move any of &#x0a; those files that are in your 'Unwatched' directory to the 'Watched' directory."
-                                     FocusVisualStyle="{x:Null}"
-                                     IsChecked="{Binding SelectedIndex,
-                                                            Converter={StaticResource CompareConverter},
-                                                            ConverterParameter=5}" />
                         <Label Content="Episode"
                                FontStyle="Italic"
                                Foreground="DarkGray" />

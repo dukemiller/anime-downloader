@@ -11,28 +11,29 @@ namespace anime_downloader.ViewModels.Displays
 {
     public class AnimeDisplayViewModel : ViewModelBase
     {
-        private ViewModelBase _display;
-
         public AnimeDisplayViewModel()
         {
-            // Initial view is the list
-            Display = SimpleIoc.Default.GetUniqueInstance<AnimeListViewModel>();
-
             // Turn an airing anime into an anime model
-            MessengerInstance.Register<AiringAnime>(this, 
-                anime => Display = SimpleIoc.Default.GetInstance<DetailsViewModel>().CreateNewFromAiring(anime));
+            MessengerInstance.Register<AiringAnime>(this, anime => 
+                Display = SimpleIoc.Default.GetInstance<DetailsViewModel>().CreateNewFromAiring(anime));
 
             // Edit single details
-            MessengerInstance.Register<Anime>(this, 
-                anime => Display = SimpleIoc.Default.GetInstance<DetailsViewModel>().EditExisting(anime));
+            MessengerInstance.Register<Anime>(this, anime => 
+                Display = SimpleIoc.Default.GetInstance<DetailsViewModel>().EditExisting(anime));
 
             // Edit multiple details
-            MessengerInstance.Register<List<Anime>>(this, 
-                animes => Display = SimpleIoc.Default.GetInstance<DetailsMultipleViewModel>().EditExisting(animes));
+            MessengerInstance.Register<List<Anime>>(this, animes => 
+                Display = SimpleIoc.Default.GetInstance<DetailsMultipleViewModel>().EditExisting(animes));
 
             MessengerInstance.Register<ViewRequest>(this, HandleViewRequest);
             MessengerInstance.Register<Component>(this, HandleComponent);
         }
+
+        // 
+
+        public ViewModelBase Display { get; set; } = SimpleIoc.Default.GetInstance<AnimeListViewModel>();
+
+        // 
 
         private void HandleComponent(Component _)
         {
@@ -61,26 +62,16 @@ namespace anime_downloader.ViewModels.Displays
             {
                 case ViewRequest.Reset:
                     if (Display.GetType() != typeof(AnimeListViewModel))
-                        Display = SimpleIoc.Default.GetUniqueInstance<AnimeListViewModel>();
+                        Display = SimpleIoc.Default.GetInstance<AnimeListViewModel>();
                     break;
 
                 case ViewRequest.Update:
                     if (Display.GetType() == typeof(AnimeListViewModel))
-                        Display = SimpleIoc.Default.GetUniqueInstance<AnimeListViewModel>();
+                        Display = SimpleIoc.Default.GetInstance<AnimeListViewModel>();
                     break;
 
                 default:
                     break;
-            }
-        }
-
-        public ViewModelBase Display
-        {
-            get => _display;
-            set
-            {
-                Display?.Cleanup();
-                Set(() => Display, ref _display, value);
             }
         }
     }

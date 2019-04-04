@@ -7,13 +7,12 @@ using anime_downloader.Repositories.Interface;
 using anime_downloader.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using PropertyChanged;
 
 namespace anime_downloader.ViewModels.Components.AnimeDisplay
 {
     public class DetailsBarViewModel : ViewModelBase
     {
-        private Anime _anime;
-
         private readonly IDetailProviderService _detailService;
 
         private readonly IAnimeRepository _animeRepository;
@@ -24,37 +23,37 @@ namespace anime_downloader.ViewModels.Components.AnimeDisplay
         {
             _detailService = detailService;
             _animeRepository = animeRepository;
-            ProfileCommand = new RelayCommand(Profile);
-            RefreshCommand = new RelayCommand(Refresh);
         }
 
         public DetailsBarViewModel Load(Anime anime)
         {
-            _anime = anime;
-            RaisePropertyChanged(nameof(MalVisibility));
+            Anime = anime;
             return this;
         }
 
         // 
+
+        public Anime Anime { get; set; }
         
-        public RelayCommand ProfileCommand { get; set; }
+        public RelayCommand ProfileCommand => new RelayCommand(Profile);
 
-        public RelayCommand RefreshCommand { get; set; }
+        public RelayCommand RefreshCommand => new RelayCommand(Refresh);
 
-        public Visibility MalVisibility => _anime.Details.HasId ? Visibility.Visible : Visibility.Collapsed;
+        [DependsOn(nameof(Anime))]
+        public Visibility MalVisibility => Anime.Details.HasId ? Visibility.Visible : Visibility.Collapsed;
         
         // 
 
         private void Profile()
         {
-            Process.Start($"http://myanimelist.net/anime/{_anime.Details.Id}");
+            Process.Start($"http://myanimelist.net/anime/{Anime.Details.Id}");
         }
 
         private async void Refresh()
         {
             MessengerInstance.Send(ViewState.IsWorking);
 
-            var (successful, changesMade) = await _detailService.FillInDetails(_anime);
+            var (successful, changesMade) = await _detailService.FillInDetails(Anime);
 
             if (changesMade)
                 _animeRepository.Save();

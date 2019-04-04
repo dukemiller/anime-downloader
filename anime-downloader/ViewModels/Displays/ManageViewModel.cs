@@ -12,8 +12,6 @@ namespace anime_downloader.ViewModels.Displays
         private readonly ISettingsRepository _settings;
         private readonly IFileService _fileService;
         private readonly IAnimeService _animeService;
-        private FileListViewModel _unwatched;
-        private FileListViewModel _watched;
         
         // 
 
@@ -22,27 +20,19 @@ namespace anime_downloader.ViewModels.Displays
             _settings = settings;
             _fileService = fileService;
             _animeService = animeService;
-            _settings.PathConfig.PropertyChanged += (sender, args) => LoadFolders();
-            LoadFolders();
+            _settings.PathConfig.PropertyChanged += (sender, args) => Load();
+            Load();
         }
 
         // 
         
-        public FileListViewModel Unwatched
-        {
-            get => _unwatched;
-            set => Set(() => Unwatched, ref _unwatched, value);
-        }
+        public FileListViewModel Unwatched { get; set; }
 
-        public FileListViewModel Watched
-        {
-            get => _watched;
-            set => Set(() => Watched, ref _watched, value);
-        }
+        public FileListViewModel Watched { get; set; }
 
         //
 
-        private async void LoadFolders()
+        private async void Load()
         {
             await Task.Run(() =>
             {

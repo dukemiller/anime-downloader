@@ -45,7 +45,7 @@ namespace anime_downloader.Models
                                 .TakeWhile(char.IsNumber)
                         );
 
-                        var result = int.TryParse(_, out int number);
+                        var result = int.TryParse(_, out var number);
                         episode = result ? number : 0;
                     }
 
@@ -56,7 +56,7 @@ namespace anime_downloader.Models
                             .Reverse()
                             .SkipWhile(chunk => !chunk.All(char.IsDigit))
                             .FirstOrDefault();
-                        var result = int.TryParse(_, out int number);
+                        var result = int.TryParse(_, out var number);
                         episode = result ? number : 0;
                     }
                 }

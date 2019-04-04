@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using anime_downloader.Models;
+using Optional;
 
 namespace anime_downloader.Services.Interfaces
 {
@@ -34,6 +35,6 @@ namespace anime_downloader.Services.Interfaces
         ///     Search for the show by querying the page and scraping the results from the DOM.
         /// </summary>
         /// <returns>If a result is found, returns the url for the page, otherwise null.</returns>
-        Task<string> FindProfilePage(string text);
+        Task<Option<string>> FindProfilePage(string text);
     }
 }

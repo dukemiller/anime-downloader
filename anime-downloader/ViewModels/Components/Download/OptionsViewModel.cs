@@ -1,10 +1,12 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 using System.Linq;
+using anime_downloader.Classes;
 using anime_downloader.Enums;
 using anime_downloader.Models;
 using anime_downloader.Repositories.Interface;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using static anime_downloader.Classes.Methods;
 
 namespace anime_downloader.ViewModels.Components.Download
 {
@@ -12,73 +14,57 @@ namespace anime_downloader.ViewModels.Components.Download
     {
         private readonly ISettingsRepository _settings;
 
-        private static readonly RadioModel<DownloadOption> NextEpisode = new RadioModel<DownloadOption>
+        private static readonly Radio<DownloadOption> NextEpisode = new Radio<DownloadOption>
         {
             Header = "Search for next found episode",
             Data = DownloadOption.Next
         };
 
-        private static readonly RadioModel<DownloadOption> Continually = new RadioModel<DownloadOption>
+        private static readonly Radio<DownloadOption> Continually = new Radio<DownloadOption>
         {
             Header = "Continually search until no more are found (good for getting up to date)",
             Data = DownloadOption.Continually
         };
 
-        private static readonly RadioModel<DownloadOption> Missing = new RadioModel<DownloadOption>
+        private static readonly Radio<DownloadOption> Missing = new Radio<DownloadOption>
         {
             Header = "Download any missing episodes between first and last downloaded episode",
             Data = DownloadOption.Missing
         };
-
-        private ObservableCollection<RadioModel<DownloadOption>> _options;
-
-        private RadioModel<DownloadOption> _selectedRadio;
-
-        private DownloadProvider _currentProvider;
-
+        
         // 
 
         public OptionsViewModel(ISettingsRepository settings)
         {
             _settings = settings;
-            _currentProvider = _settings.Provider;
-            Options = new ObservableCollection<RadioModel<DownloadOption>> { NextEpisode, Continually, Missing };
+            CurrentProvider = _settings.Provider;
             SelectedRadio = Options.First();
-            SearchCommand = new RelayCommand(() => MessengerInstance.Send(SelectedRadio));
-            LogCommand = new RelayCommand(() => MessengerInstance.Send(Component.Log));
         }
 
         // 
 
-        public ObservableCollection<RadioModel<DownloadOption>> Options
+        public List<Radio<DownloadOption>> Options { get; set; } = List.Of(NextEpisode, Continually, Missing);
+
+        public List<DownloadProvider> Providers { get; set; } = GetValues<DownloadProvider>();
+
+        public DownloadProvider CurrentProvider { get; set; }
+
+        public Radio<DownloadOption> SelectedRadio { get; set; }
+
+        public RelayCommand SearchCommand => new RelayCommand(() => MessengerInstance.Send(SelectedRadio));
+
+        public RelayCommand LogCommand => new RelayCommand(() => MessengerInstance.Send(Component.Log));
+
+        //
+
+        private void OnCurrentProviderChanged()
         {
-            get => _options;
-            set => Set(() => Options, ref _options, value);
+            if (_settings.Provider == CurrentProvider)
+                return;
+
+            _settings.Provider = CurrentProvider;
+            _settings.Save();
+            ViewModelLocator.RegisterIDownloadService();
         }
-
-        public ObservableCollection<DownloadProvider> Providers { get; set; } =
-            new ObservableCollection<DownloadProvider>(Classes.Extensions.GetValues<DownloadProvider>());
-
-        public DownloadProvider CurrentProvider
-        {
-            get => _currentProvider;
-            set
-            {
-                Set(() => CurrentProvider, ref _currentProvider, value);
-                _settings.Provider = value;
-                _settings.Save();
-                ViewModelLocator.RegisterIDownloadService();
-            }
-        }
-
-        public RadioModel<DownloadOption> SelectedRadio
-        {
-            get => _selectedRadio;
-            set => Set(() => SelectedRadio, ref _selectedRadio, value);
-        }
-
-        public RelayCommand SearchCommand { get; set; }
-
-        public RelayCommand LogCommand { get; set; }
     }
 }
